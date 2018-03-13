@@ -32,6 +32,10 @@
     reflect-metadata "^0.1.12"
     tslib "^1.8.1"
 
+"@hyperapp/html@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@hyperapp/html/-/html-1.0.1.tgz#a6c231a9bf6fa10a4a1a33737ba7499cce06ccd4"
+
 "@sindresorhus/is@^0.7.0":
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.7.0.tgz#9a06f4f137ee84d7df0460c1fdb1135ffa6c50fd"

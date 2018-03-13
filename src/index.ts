@@ -1,4 +1,5 @@
-import { app, h, View } from 'hyperapp';
+import { app, View } from 'hyperapp';
+import { button, h1, main } from '@hyperapp/html';
 
 class State {
     public constructor(public readonly count: number) {
@@ -6,6 +7,7 @@ class State {
 }
 
 class Actions {
+
     public down() {
         return (state: State) => new State(state.count - 1);
     }
@@ -16,10 +18,10 @@ class Actions {
 }
 
 const view: View<State, Actions> = (state, actions) => {
-    return h('main', {}, [
-        h('h1', {}, state.count),
-        h('button', { onclick: actions.down, disabled: state.count <= 0 }, '-'),
-        h('button', { onclick: actions.up }, '+'),
+    return main([
+        h1(state.count),
+        button({ onclick: actions.down, disabled: state.count <= 0 }, '-'),
+        button({ onclick: actions.up }, '+'),
     ]);
 };
 
