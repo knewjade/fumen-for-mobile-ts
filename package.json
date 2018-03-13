@@ -1,0 +1,14 @@
+{
+  "name": "tetfu-sp",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "webpack": "webpack --mode development"
+  },
+  "devDependencies": {
+    "ts-loader": "^4.0.1",
+    "typescript": "^2.7.2",
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.11"
+  }
+}
