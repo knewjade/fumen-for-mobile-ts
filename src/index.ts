@@ -7,7 +7,6 @@ class State {
 }
 
 class Actions {
-
     public down() {
         return (state: State) => new State(state.count - 1);
     }
@@ -28,6 +27,6 @@ const view: View<State, Actions> = (state, actions) => {
 const mainApp = app(new State(0), new Actions(), view, document.body);
 
 // for unittest
-function hello(): string {
+export function hello(): string {
     return 'hello';
 }

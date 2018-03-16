@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "webpack": "webpack --mode development",
-    "lint": "tslint --project tsconfig.json --config tslint.json"
+    "lint": "tslint --project tsconfig.json --config tslint.json",
+    "test": "jest"
   },
   "devDependencies": {
     "@hyperapp/html": "^1.0.1",
