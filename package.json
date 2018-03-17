@@ -10,7 +10,6 @@
   "devDependencies": {
     "@hyperapp/html": "^1.0.1",
     "@types/jest": "^22.2.0",
-    "hyperapp": "^1.1.2",
     "jest": "^22.4.2",
     "ts-jest": "^22.4.1",
     "ts-loader": "^4.0.1",
@@ -21,6 +20,7 @@
     "webpack-cli": "^2.0.11"
   },
   "dependencies": {
+    "hyperapp": "^1.1.2",
     "tslib": "^1.9.0"
   }
 }

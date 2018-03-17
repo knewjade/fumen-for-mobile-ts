@@ -1,7 +1,9 @@
 const path = require('path');
 
 module.exports = {
-    entry: './src/index.ts',
+    entry: [
+        './src/index.ts'
+    ],
     output: {
         filename: 'bundle.js',
         path: path.join(__dirname, 'public/js')
@@ -9,9 +11,12 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.ts$/,
+                test: /\.tsx?$/,
                 use: 'ts-loader'
             }
         ]
+    },
+    resolve: {
+        extensions: ['.ts', '.tsx', '.js', '.jsx']
     }
 };
