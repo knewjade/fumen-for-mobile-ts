@@ -1,7 +1,9 @@
 import { app } from 'hyperapp';
-import { Actions, view } from './view';
+import { actions } from './actions';
+import { view } from './view';
+import { initState } from './states';
 
-app({ count: 0 }, new Actions(), view, document.body);
+app(initState, actions, view, document.body);
 
 // for unittest
 export function hello(): string {
