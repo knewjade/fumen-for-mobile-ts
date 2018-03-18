@@ -2,10 +2,10 @@
   "compilerOptions": {
     "lib": [
       "dom",
-      "es5",
-      "es2015",
-      "es2015.promise",
-      "es2016"
+//      "es5",
+      "es2015"
+//      "es2015.promise",
+//      "es2016"
     ],
     "moduleResolution": "node",
     "jsx": "react",

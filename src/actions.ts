@@ -1,34 +1,47 @@
-import { ActionType } from 'hyperapp';
 import { State } from './states';
+import { Block } from './enums';
+
+type action = (state: State) => Partial<State>;
 
 // ===  Up 操作 ===
 export interface UpActions {
-    up: ActionType<State, Actions<State>>;
+    up: (value: number) => action;
 }
 
 export const upActions: UpActions = {
     up: (value = 1) => state => ({
-        ...state,
         count: state.count + value,
     }),
 };
 
 // === Down 操作 ===
 export interface DownActions {
-    down: ActionType<State, Actions<State>>;
+    down: (value: number) => action;
 }
 
 export const downActions: DownActions = {
     down: (value = 1) => state => ({
-        ...state,
         count: state.count - value,
     }),
 };
 
-// === すべての操作 ===
-export type Actions<State> = UpActions & DownActions;
+// === Off 操作 ===
+export interface OffActions {
+    off: (data: { x: number, y: number }) => action;
+}
 
-export const actions: Actions<State> = {
+export const offActions: OffActions = {
+    off: (data: { x: number, y: number }) => (state) => {
+        state.field[data.x + 10 * data.y] = Block.I;
+        return { field: state.field };
+    },
+};
+
+// === すべての操作 ===
+export type Actions = UpActions & DownActions & OffActions;
+
+export const actions: Actions = {
     ...upActions,
     ...downActions,
+    ...offActions,
 };

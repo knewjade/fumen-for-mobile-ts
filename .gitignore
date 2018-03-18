@@ -4,4 +4,4 @@ dist/
 yarn-*.log
 src/**/*.js
 src/**/*.js.map
-public/js/
+public/bundle.js
