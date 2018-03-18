@@ -1,14 +1,14 @@
 import { State } from './states';
-import { Block } from './enums';
+import { Block } from './view';
 
-type action = (state: State) => Partial<State>;
+export type action = (state: State) => Partial<State>;
 
 // ===  Up 操作 ===
 export interface UpActions {
     up: (value: number) => action;
 }
 
-export const upActions: UpActions = {
+const upActions: UpActions = {
     up: (value = 1) => state => ({
         count: state.count + value,
     }),
@@ -19,7 +19,7 @@ export interface DownActions {
     down: (value: number) => action;
 }
 
-export const downActions: DownActions = {
+const downActions: DownActions = {
     down: (value = 1) => state => ({
         count: state.count - value,
     }),
@@ -28,20 +28,21 @@ export const downActions: DownActions = {
 // === Off 操作 ===
 export interface OffActions {
     off: (data: { x: number, y: number }) => action;
-    change: (data: { width: number, height: number }) => action;
-    refresh: action;
+    // change: (data: { width: number, height: number }) => action;
+    // refresh: action;
 }
 
-export const offActions: OffActions = {
+const offActions: OffActions = {
     off: (data: { x: number, y: number }) => (state) => {
+        console.log('action: off');
         state.field[data.x + 10 * data.y] = Block.I;
         return { field: state.field };
     },
-    change: (data: { width: number, height: number }) => (state) => {
-        console.log('action: change');
-        return { canvas: data };
-    },
-    refresh: state => state,
+    // change: (data: { width: number, height: number }) => (state) => {
+    //     console.log('action: change');
+    //     return { canvas: data };
+    // },
+    // refresh: state => state,
 };
 
 // === すべての操作 ===
