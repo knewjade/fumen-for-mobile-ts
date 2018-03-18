@@ -28,6 +28,8 @@ export const downActions: DownActions = {
 // === Off 操作 ===
 export interface OffActions {
     off: (data: { x: number, y: number }) => action;
+    change: (data: { width: number, height: number }) => action;
+    refresh: action;
 }
 
 export const offActions: OffActions = {
@@ -35,6 +37,11 @@ export const offActions: OffActions = {
         state.field[data.x + 10 * data.y] = Block.I;
         return { field: state.field };
     },
+    change: (data: { width: number, height: number }) => (state) => {
+        console.log('action: change');
+        return { canvas: data };
+    },
+    refresh: state => state,
 };
 
 // === すべての操作 ===
