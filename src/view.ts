@@ -137,12 +137,12 @@ export const game: (hyperStage: HyperStage) => View<State, Actions> = (hyperStag
 export const field: (hyperStage: HyperStage) => View<State, Actions> = (hyperStage) => {
     const layer = new Konva.Layer();
 
-    const BOX_SIZE = 25;
+    const BOX_SIZE = 20;
 
     const rects: Component<RectProps>[] = [];
     for (let ix = 0; ix < 10; ix += 1) {
-        for (let iy = 0; iy < 24; iy += 1) {
-            const rectObj = rect(layer, { ix, iy, size: BOX_SIZE });
+        for (let iy = 23; 0 <= iy; iy -= 1) {
+            const rectObj = rect(layer, { ix, iy, py: 23 - iy, size: BOX_SIZE });
             rects.push(rectObj);
         }
     }
@@ -162,6 +162,7 @@ export const field: (hyperStage: HyperStage) => View<State, Actions> = (hyperSta
 interface RectArgs {
     ix: number;
     iy: number;
+    py: number;
     size: number;
 }
 
@@ -172,10 +173,10 @@ interface RectProps {
 
 export const rect: (layer: Konva.Layer, args: RectArgs) => Component<RectProps> = (layer, args) => {
     const box: Konva.Rect = new Konva.Rect({
-        x: args.ix * args.size,
-        y: args.iy * args.size,
-        width: args.size - 1,
-        height: args.size - 1,
+        x: args.ix * args.size + (args.ix / 2),
+        y: args.py * args.size + (args.py / 2),
+        width: args.size,
+        height: args.size,
         stroke: 'white',
     });
 
@@ -189,14 +190,12 @@ export const rect: (layer: Konva.Layer, args: RectArgs) => Component<RectProps> 
             },
             value: props.state.field[args.iy * 10 + args.ix],
             oncreate: (container: HTMLDivElement) => {
+                console.log('rect: oncreate');
                 box.on('touchmove', () => {
                     props.off({ x: args.ix, y: args.iy });
                 });
-                if (props.state.field[args.iy * 10 + args.ix] === 1) {
-                    box.fill('#333');
-                } else {
-                    box.fill('#599cff');
-                }
+                const value = props.state.field[args.iy * 10 + args.ix];
+                box.fill(getHighlightColor(value));
                 box.draw();
             },
             onupdate: (container: any, attr: any) => {
@@ -204,13 +203,58 @@ export const rect: (layer: Konva.Layer, args: RectArgs) => Component<RectProps> 
                     return;
                 }
                 console.log('xx');
-                if (props.state.field[args.iy * 10 + args.ix] === Piece.I) {
-                    box.fill('#333');
-                } else {
-                    box.fill('#599cff');
-                }
+                const value = props.state.field[args.iy * 10 + args.ix];
+                box.fill(getHighlightColor(value));
                 box.draw();
             },
         });
     };
 };
+
+function getNormalColor(piece: Piece): string {
+    switch (piece) {
+    case Piece.Gray:
+        return '#999999';
+    case Piece.I:
+        return '#009999';
+    case Piece.T:
+        return '#9B009B';
+    case Piece.S:
+        return '#009B00';
+    case Piece.Z:
+        return '#9B0000';
+    case Piece.L:
+        return '#9A6700';
+    case Piece.J:
+        return '#0000BE';
+    case Piece.O:
+        return '#999900';
+    case Piece.Empty:
+        return '#e7e7e7';
+    }
+    throw new MyError();
+}
+
+function getHighlightColor(piece: Piece): string {
+    switch (piece) {
+    case Piece.Gray:
+        return '#CCCCCC';
+    case Piece.I:
+        return '#24CCCD';
+    case Piece.T:
+        return '#CE27CE';
+    case Piece.S:
+        return '#26CE22';
+    case Piece.Z:
+        return '#CE312D';
+    case Piece.L:
+        return '#CD9A24';
+    case Piece.J:
+        return '#3229CF';
+    case Piece.O:
+        return '#CCCE19';
+    case Piece.Empty:
+        return '#e7e7e7';
+    }
+    throw new MyError();
+}

@@ -15,4 +15,9 @@ describe('index', () => {
         const concat = array.slice(-5, 0).concat(array.slice(5, 10), array.slice(0, 5));
         expect(concat).toEqual([5, 6, 7, 8, 9, 0, 1, 2, 3, 4]);
     });
+
+    test('replace', () => {
+        const str = 'a?b?c'.replace(/\?/g, '');
+        expect(str).toEqual('abc');
+    });
 });

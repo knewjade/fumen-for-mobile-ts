@@ -28,8 +28,6 @@ const downActions: DownActions = {
 // === Off 操作 ===
 export interface OffActions {
     off: (data: { x: number, y: number }) => action;
-    // change: (data: { width: number, height: number }) => action;
-    // refresh: action;
 }
 
 const offActions: OffActions = {
@@ -38,18 +36,26 @@ const offActions: OffActions = {
         state.field[data.x + 10 * data.y] = Piece.I;
         return { field: state.field };
     },
-    // change: (data: { width: number, height: number }) => (state) => {
-    //     console.log('action: change');
-    //     return { canvas: data };
-    // },
-    // refresh: state => state,
+};
+
+// === Off 操作 ===
+export interface FumenActions {
+    setField: (data: { field: Piece[] }) => action;
+}
+
+const fumenActions: FumenActions = {
+    setField: (data: { field: Piece[] }) => (state) => {
+        console.log('action: setField');
+        return { field: data.field.concat() };
+    },
 };
 
 // === すべての操作 ===
-export type Actions = UpActions & DownActions & OffActions;
+export type Actions = UpActions & DownActions & OffActions & FumenActions;
 
 export const actions: Actions = {
     ...upActions,
     ...downActions,
     ...offActions,
+    ...fumenActions,
 };

@@ -45,7 +45,7 @@ export function decode(data: string) {
             }
             value += v * Math.pow(ENCODE_TABLE.length, count);
         }
-        console.log(values);
+        // console.log(values);
         return value;
     }
 
@@ -67,7 +67,7 @@ export function decode(data: string) {
                     isChange = true;
                 }
 
-                console.log('#' + block);
+                // console.log('#' + block);
 
                 for (let b = 0; b < block + 1; b += 1) {
                     const x = index % 10;
@@ -89,16 +89,19 @@ export function decode(data: string) {
             currentField = prevField;
             repeatCount -= 1;
         }
-        console.log(currentField);
+        // console.log(currentField);
 
         const actionValue = poll(3);
+        // console.log(actionValue);
+
         const action = getAction(actionValue);
 
         let comment = '';
         if (action.isComment) {
             const commentValues: number[] = [];
             const commentLength = poll(2);
-            for (let commentCounter = 0; commentCounter < (commentLength + 3) / 4; commentCounter += 1) {
+            // console.log(commentLength);
+            for (let commentCounter = 0; commentCounter < Math.floor((commentLength + 3) / 4); commentCounter += 1) {
                 const commentValue = poll(5);
                 commentValues.push(commentValue);
             }
@@ -113,6 +116,7 @@ export function decode(data: string) {
             }
 
             comment = flatten.slice(0, commentLength).map(decodeCommentChar).join('');
+            // console.log(comment);
         }
 
         const page = {
@@ -121,10 +125,12 @@ export function decode(data: string) {
             field: currentField.concat(),
             blockUp: blockUp.concat(),
         };
-        console.log(page);
+        // console.log(page);
         pages.push(page);
 
         if (action.isLock) {
+            currentField = currentField.concat();
+
             if (isMino(action.piece)) {
                 currentField = put(currentField, action.piece, action.rotate, action.coordinate);
             }
@@ -163,10 +169,10 @@ interface FumenAction {
 }
 
 function getAction(v: number): FumenAction {
-    console.log(`action: ${v}`);
+    // console.log(`action: ${v}`);
 
     function parsePiece(n: number) {
-        console.log(`piece: ${n}`);
+        // console.log(`piece: ${n}`);
 
         switch (n) {
         case 0:
@@ -192,7 +198,7 @@ function getAction(v: number): FumenAction {
     }
 
     function parseRotate(n: number, piece: Piece) {
-        console.log(`rotate: ${n}`);
+        // console.log(`rotate: ${n}`);
         switch (n) {
         case 0:
             return Rotate.Reverse;
@@ -269,13 +275,12 @@ function getAction(v: number): FumenAction {
 }
 
 function put(field: Field, piece: Piece, rotate: Rotate, coordinate: Coordinate) {
-    const newField = field.concat();
     const blocks = getBlocks(piece, rotate);
     for (const block of blocks) {
         const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
-        newField[x + y * FIELD_WIDTH] = piece;
+        field[x + y * FIELD_WIDTH] = piece;
     }
-    return newField;
+    return field;
 }
 
 function getBlocks(piece: Piece, rotate: Rotate): number[][] {
@@ -300,7 +305,7 @@ function getPieces(piece: Piece): number[][] {
     case Piece.T:
         return [[0, 0], [-1, 0], [1, 0], [0, 1]];
     case Piece.O:
-        return [[0, 0], [-1, 0], [1, 0], [0, 1]];
+        return [[0, 0], [1, 0], [0, 1], [1, 1]];
     case Piece.L:
         return [[0, 0], [-1, 0], [1, 0], [1, 1]];
     case Piece.J:
@@ -314,15 +319,15 @@ function getPieces(piece: Piece): number[][] {
 }
 
 function rotateRight(positions: number[][]): number[][] {
-    return positions.concat().map(current => [current[1], -current[0]]);
+    return positions.map(current => [current[1], -current[0]]);
 }
 
 function rotateLeft(positions: number[][]): number[][] {
-    return positions.concat().map(current => [-current[1], current[0]]);
+    return positions.map(current => [-current[1], current[0]]);
 }
 
 function rotateReverse(positions: number[][]): number[][] {
-    return positions.concat().map(current => [-current[0], -current[1]]);
+    return positions.map(current => [-current[0], -current[1]]);
 }
 
 function clearLine(field: Field): Field {
@@ -334,7 +339,7 @@ function clearLine(field: Field): Field {
         if (isFilled) {
             const bottom = newField.slice(0, y * FIELD_WIDTH);
             const over = newField.slice((y + 1) * FIELD_WIDTH);
-            newField = bottom.concat(over, Array.from({ length: FIELD_WIDTH }));
+            newField = bottom.concat(over, Array.from({ length: FIELD_WIDTH }).map(() => Piece.Empty));
         }
     }
     return newField;
@@ -345,11 +350,13 @@ function up(field: Field, blockUp: Field): Field {
 }
 
 function mirror(field: Field): Field {
-    let newField: Field = [];
+    const newField: Field = [];
     for (let y = 0; y < field.length; y += 1) {
         const line = field.slice(y * FIELD_WIDTH, (y + 1) * FIELD_WIDTH);
         line.reverse();
-        newField = newField.concat(line);
+        for (const obj of line) {
+            newField.push(obj);
+        }
     }
     return newField;
 }
