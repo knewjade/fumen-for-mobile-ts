@@ -8,7 +8,7 @@ interface Component<Props> {
     (props: Props, children?: VNodeChild<object | null>[]): VNode<object>;
 }
 
-export enum Block {
+export enum Piece {
     Empty = 0,
     I = 1,
     L = 2,
@@ -18,6 +18,13 @@ export enum Block {
     J = 6,
     S = 7,
     Gray = 8,
+}
+
+export enum Rotate {
+    Spawn = 0,
+    Right = 1,
+    Reverse = 2,
+    Left = 3,
 }
 
 class HyperStage {
@@ -91,7 +98,6 @@ export const view: () => View<State, Actions> = () => {
         ]);
     };
 };
-
 
 export const game: (hyperStage: HyperStage) => View<State, Actions> = (hyperStage) => {
     const BOX_SIZE = 25;
@@ -198,7 +204,7 @@ export const rect: (layer: Konva.Layer, args: RectArgs) => Component<RectProps> 
                     return;
                 }
                 console.log('xx');
-                if (props.state.field[args.iy * 10 + args.ix] === Block.I) {
+                if (props.state.field[args.iy * 10 + args.ix] === Piece.I) {
                     box.fill('#333');
                 } else {
                     box.fill('#599cff');

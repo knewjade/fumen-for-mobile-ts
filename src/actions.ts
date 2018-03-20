@@ -1,5 +1,5 @@
 import { State } from './states';
-import { Block } from './view';
+import { Piece } from './view';
 
 export type action = (state: State) => Partial<State>;
 
@@ -35,7 +35,7 @@ export interface OffActions {
 const offActions: OffActions = {
     off: (data: { x: number, y: number }) => (state) => {
         console.log('action: off');
-        state.field[data.x + 10 * data.y] = Block.I;
+        state.field[data.x + 10 * data.y] = Piece.I;
         return { field: state.field };
     },
     // change: (data: { width: number, height: number }) => (state) => {

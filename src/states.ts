@@ -1,8 +1,8 @@
-import { Block } from './view';
+import { Piece } from './view';
 
 export interface State {
     count: number;
-    field: Block[];
+    field: Piece[];
     comment: string;
     canvas: {
         width: number;
@@ -12,7 +12,7 @@ export interface State {
 
 export const initState: State = {
     count: 0,
-    field: Array.from({ length: 240 }).map(ignore => Block.Empty),
+    field: Array.from({ length: 240 }).map(ignore => Piece.Empty),
     comment: 'hello world',
     canvas: {
         width: 15 * 10,

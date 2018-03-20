@@ -2,8 +2,12 @@ import { app } from 'hyperapp';
 import { actions } from './actions';
 import { view } from './view';
 import { initState } from './states';
+import { decode } from './lib/fumen';
 
 app(initState, actions, view(), document.body);
+
+const pages = decode('ghE8JeAgh');
+console.log(pages);
 
 // setTimeout(main.refresh as any, 1);
 // window.onresize = () => {
