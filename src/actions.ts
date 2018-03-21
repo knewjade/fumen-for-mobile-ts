@@ -1,5 +1,5 @@
 import { State } from './states';
-import { Piece } from './view';
+import { Piece } from './lib/enums';
 
 export type action = (state: State) => Partial<State>;
 

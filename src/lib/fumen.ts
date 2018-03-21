@@ -1,4 +1,4 @@
-import { Piece, Rotate } from '../view';
+import { Piece, Rotate } from './enums';
 
 export function decodeToValue(v: string) {
     return ENCODE_TABLE.indexOf(v);

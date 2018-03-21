@@ -1,4 +1,4 @@
-import { Piece } from './view';
+import { Piece } from './lib/enums';
 
 export interface State {
     count: number;
