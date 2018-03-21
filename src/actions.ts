@@ -1,5 +1,4 @@
-import { State } from './states';
-import { Piece } from './lib/enums';
+import { Block, State } from './states';
 
 export type action = (state: State) => Partial<State>;
 
@@ -25,29 +24,25 @@ const downActions: DownActions = {
     }),
 };
 
-// === Off 操作 ===
-export interface OffActions {
-    off: (data: { x: number, y: number }) => action;
-}
-
-const offActions: OffActions = {
-    off: data => (state) => {
-        console.log('action: off');
-        state.field[data.x + 10 * data.y] = Piece.I;
-        return { field: state.field };
-    },
-};
-
 // === Fumen 操作 ===
 export interface FumenActions {
-    setField: (data: { field: Piece[] }) => action;
+    setFieldAndComment: (data: { field: Block[], comment?: string }) => action;
     refresh: (data: { width: number, height: number }) => action;
 }
 
 const fumenActions: FumenActions = {
-    setField: data => () => {
-        console.log('action: setField');
-        return { field: data.field.concat() };
+    setFieldAndComment: ({ field, comment }) => (state) => {
+        console.log('action: setFieldAndComment');
+
+        const isChanged = comment !== undefined && comment !== state.comment.text;
+        return {
+            field,
+            comment: {
+                textColor: isChanged ? 'white' : 'black',
+                backgroundColor: isChanged ? 'green' : 'white',
+                text: comment !== undefined ? comment : state.comment.text,
+            },
+        };
     },
     refresh: data => () => {
         console.log('action: refresh');
@@ -56,11 +51,10 @@ const fumenActions: FumenActions = {
 };
 
 // === すべての操作 ===
-export type Actions = UpActions & DownActions & OffActions & FumenActions;
+export type Actions = UpActions & DownActions & FumenActions;
 
 export const actions: Actions = {
     ...upActions,
     ...downActions,
-    ...offActions,
     ...fumenActions,
 };

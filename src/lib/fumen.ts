@@ -30,7 +30,7 @@ interface Page {
     blockUp: Field;
 }
 
-function isMino(b: Piece) {
+export function isMino(b: Piece) {
     return b !== Piece.Empty && b !== Piece.Gray;
 }
 
@@ -56,6 +56,7 @@ export function decode(data: string) {
 
     const blockUp: Field = Array.from({ length: FIELD_WIDTH }).map(() => Piece.Empty);
     let repeatCount = -1;
+    let comment = '';
     while (0 < values.length) {
         if (repeatCount <= 0) {
             let index = 0;
@@ -97,7 +98,6 @@ export function decode(data: string) {
 
         const action = getAction(actionValue);
 
-        let comment = '';
         if (action.isComment) {
             const commentValues: number[] = [];
             const commentLength = poll(2);
@@ -116,7 +116,7 @@ export function decode(data: string) {
                 }
             }
 
-            comment = flatten.slice(0, commentLength).map(decodeCommentChar).join('');
+            comment = unescape(flatten.slice(0, commentLength).map(decodeCommentChar).join(''));
             // console.log(comment);
         }
 
@@ -284,7 +284,7 @@ function put(field: Field, piece: Piece, rotation: Rotation, coordinate: Coordin
     return field;
 }
 
-function getBlocks(piece: Piece, rotation: Rotation): number[][] {
+export function getBlocks(piece: Piece, rotation: Rotation): number[][] {
     const blocks = getPieces(piece);
     switch (rotation) {
     case Rotation.Spawn:

@@ -1,11 +1,11 @@
 import { app, View, VNode } from 'hyperapp';
-import { button, div, main, span } from '@hyperapp/html';
+import { button, div, main, param, span } from '@hyperapp/html';
 import { action, actions as originActions, Actions } from './actions';
-import { initState, State } from './states';
+import { Block, initState, State } from './states';
 import { HyperStage } from './lib/stage';
 import { Piece } from './lib/enums';
-import { ViewError } from './lib/error';
-import { decode } from './lib/fumen';
+import { FumenError, ViewError } from './lib/error';
+import { decode, getBlocks, isMino } from './lib/fumen';
 // Konvaは最後に読み込むこと！
 // エラー対策：Uncaught ReferenceError: __importDefault is not define
 import * as Konva from 'konva';
@@ -14,16 +14,13 @@ export const view: () => View<State, Actions> = () => {
     // 初期化
     const hyperStage = new HyperStage();
 
-    const layer = new Konva.Layer();
-    hyperStage.addLayer(layer);
-
+    // ブロック
     const blocks = Array.from({ length: 24 * 10 }).map((ignore, index) => {
         const [ix, iy] = [index % 10, Math.floor(index / 10)];
         const py = 23 - iy;
         const box: Konva.Rect = new Konva.Rect({
-            stroke: 'white',
+            strokeWidth: 0,
         });
-        layer.add(box);
         return {
             ix,
             iy,
@@ -31,6 +28,25 @@ export const view: () => View<State, Actions> = () => {
             box,
         };
     });
+
+    {
+        const layer = new Konva.Layer();
+        for (const block of blocks) {
+            layer.add(block.box);
+        }
+        hyperStage.addLayer(layer);
+    }
+
+    // 背景
+    const background: Konva.Rect = new Konva.Rect({
+        fill: '#333',
+        strokeWidth: 0,
+    });
+    {
+        const layer = new Konva.Layer();
+        layer.add(background);
+        hyperStage.addLayer(layer);
+    }
 
     const heights = {
         comment: 30,
@@ -43,12 +59,20 @@ export const view: () => View<State, Actions> = () => {
             width: state.display.width,
             height: state.display.height - (heights.tools + heights.comment),
         };
-        const size = canvas.height / 25;
+        const size = Math.floor(Math.min(canvas.height / 24, canvas.width / 10)) - 1;
+
+        const isHighlights = Array.from({ length: 24 }).map((ignore, lineIndex) => {
+            return blocks.filter(value => value.iy === lineIndex)
+                .every(value => state.field[value.ix + value.iy * 10].piece !== Piece.Empty);
+        });
+
         return div({
             oncreate: () => {
+                // Hyperappでは最上位のノードが最後に実行される
                 hyperStage.batchDraw();
             },
             onupdate: () => {
+                // Hyperappでは最上位のノードが最後に実行される
                 hyperStage.batchDraw();
             },
         }, [
@@ -57,20 +81,32 @@ export const view: () => View<State, Actions> = () => {
                 stage: hyperStage,
                 countUp: actions.up,
             }),  // canvas空間のみ
-            div(blocks.map(value => block({
-                size,
-                position: {
-                    x: value.ix * size + (value.ix / 2),
-                    y: value.py * size + (value.py / 2),
+            field({
+                background,
+                size: {
+                    width: (size + 1) * 10 + 1,
+                    height: (size + 1) * 24 + 1,
                 },
-                value: state.field[value.ix + value.iy * 10],
-                key: `block-${value.ix}-${value.iy}`,
-                rect: value.box,
-            }))),   // canvas内とのマッピング用仮想DOM
+            }, blocks.map((value) => {
+                const blockValue = state.field[value.ix + value.iy * 10];
+                return block({
+                    size,
+                    position: {
+                        x: value.ix * size + value.ix + 1,
+                        y: value.py * size + value.py + 1,
+                    },
+                    piece: blockValue.piece,
+                    key: `block-${value.ix}-${value.iy}`,
+                    rect: value.box,
+                    isHighlight: blockValue.isHighlight || isHighlights[value.iy],
+                });
+            })),   // canvas内とのマッピング用仮想DOM
             menu([
                 comment({
+                    textColor: state.comment.textColor,
+                    backgroundColor: state.comment.backgroundColor,
                     height: heights.comment,
-                }, state.comment + state.count),
+                }, state.count + state.comment.text),
                 tools({
                     height: heights.tools,
                 }, [
@@ -138,13 +174,18 @@ interface BlockProps {
     };
     key: string;
     size: number;
-    value: number;
+    piece: Piece;
     rect: Konva.Rect;
+    isHighlight: boolean;
 }
 
 const block: Component<BlockProps> = (props) => {
     function fill(block: Konva.Rect) {
-        block.fill(getHighlightColor(props.value));
+        if (props.isHighlight) {
+            block.fill(getHighlightColor(props.piece));
+        } else {
+            block.fill(getNormalColor(props.piece));
+        }
     }
 
     function resize(block: Konva.Rect) {
@@ -155,25 +196,23 @@ const block: Component<BlockProps> = (props) => {
         block.setAbsolutePosition(props.position);
     }
 
-    return div({
+    return param({
         key: props.key,
-        style: {
-            display: 'none',
-        },
         size: props.size,
-        value: props.value,
-        x: props.position.x,
-        y: props.position.y,
+        value: props.piece,
+        highlight: props.isHighlight,
+        position: props.position,
         oncreate: () => {
             move(props.rect);
             resize(props.rect);
             fill(props.rect);
         },
         onupdate: (container: any, attr: any) => {
-            if (props.value !== attr.value) {
+            // console.log(container.attributes.x.value);
+            if (props.piece !== attr.value || props.isHighlight !== attr.highlight) {
                 fill(props.rect);
             }
-            if (props.position.x !== attr.x || props.position.y !== attr.y) {
+            if (props.position.x !== attr.position.x || props.position.y !== attr.position.y) {
                 move(props.rect);
             }
             if (props.size !== attr.size) {
@@ -183,19 +222,40 @@ const block: Component<BlockProps> = (props) => {
     });
 };
 
+interface FieldProps {
+    size: {
+        width: number;
+        height: number;
+    };
+    background: Konva.Rect;
+}
+
+const field: Component<FieldProps> = (props, children) => {
+    return param({
+        oncreate: () => {
+            props.background.setSize(props.size);
+        },
+    }, children);
+};
+
 const menu: VNodeWithProps = (children) => {
     return div(children);
 };
 
 interface CommentProps {
     height: number;
+    textColor: string;
+    backgroundColor: string;
 }
 
 const comment: Component<CommentProps> = (props, children) => {
     return div({
         style: {
+            color: props.textColor,
+            backgroundColor: props.backgroundColor,
             width: '100%',
             height: props.height + 'px',
+            whiteSpace: 'nowrap',
         },
     }, [
         span(children),
@@ -230,6 +290,7 @@ const replaced = data.replace(/\?/g, '');
 const pages = decode(replaced);
 let interval: number | undefined;
 let currentPage = 0;
+let comment2 = '';
 
 setTimeout(() => {
     start();
@@ -245,9 +306,71 @@ function toggleAnimation() {
 
 function start() {
     interval = setInterval(() => {
-        router.setField(pages[currentPage]);
+        const page = pages[currentPage];
+        const action = page.action;
+        comment2 = action.isComment ? page.comment : comment2;
+
+        const nextField: Block[] = page.field.map((value) => {
+            return {
+                piece: value,
+            };
+        });
+        if (isMino(action.piece)) {
+            const coordinate = action.coordinate;
+            const blocks = getBlocks(action.piece, action.rotation);
+            for (const block of blocks) {
+                const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
+                nextField[x + y * 10] = {
+                    piece: action.piece,
+                    isHighlight: true,
+                };
+            }
+        }
+
+        router.setFieldAndComment({
+            comment: comment2,
+            field: nextField,
+        });
+
+        if (action.isLock && isMino(action.piece) && comment2.startsWith('#Q=')) {
+            const nextQuiz = (quiz: string, use: Piece): string => {
+                const name = parsePieceName(use);
+                const indexHold = quiz.indexOf('[') + 1;
+                const indexCurrent = quiz.indexOf('(') + 1;
+
+                const get = (value?: string) => {
+                    if (value === undefined || value === ']' || value === ')') {
+                        return '';
+                    }
+                    return value;
+                };
+
+                const holdName = get(quiz[indexHold]);
+                const currentName = get(quiz[indexCurrent]);
+                const nextName = get(quiz[indexCurrent + 2]);
+                const least = get(quiz.substring(indexCurrent + 3));
+
+                // console.log(quiz);
+                // console.log(name, holdName, currentName, nextName);
+
+                if (holdName === name) {
+                    return `#Q=[${currentName}](${nextName})` + least;
+                }
+                if (currentName === name) {
+                    return `#Q=[${holdName}](${nextName})` + least;
+                }
+                if (holdName === '') {
+                    return nextQuiz(`#Q=[${currentName}](${nextName})` + least, use);
+                }
+
+                throw new FumenError('Unexpected quiz');
+            };
+
+            comment2 = nextQuiz(comment2, action.piece);
+        }
+
         currentPage = (currentPage + 1) % pages.length;
-    }, 100);
+    }, 10);
 }
 
 function stop() {
@@ -276,7 +399,53 @@ function getHighlightColor(piece: Piece): string {
     case Piece.O:
         return '#CCCE19';
     case Piece.Empty:
-        return '#e7e7e7';
+        return '#000000';
     }
-    throw new ViewError('Not found color: ' + piece);
+    throw new ViewError('Not found highlight color: ' + piece);
+}
+
+function getNormalColor(piece: Piece): string {
+    switch (piece) {
+    case Piece.Gray:
+        return '#999999';
+    case Piece.I:
+        return '#009999';
+    case Piece.T:
+        return '#9B009B';
+    case Piece.S:
+        return '#009B00';
+    case Piece.Z:
+        return '#9B0000';
+    case Piece.L:
+        return '#9A6700';
+    case Piece.J:
+        return '#0000BE';
+    case Piece.O:
+        return '#999900';
+    case Piece.Empty:
+        return '#000000';
+    }
+    throw new ViewError('Not found normal color: ' + piece);
+}
+
+function parsePieceName(piece: Piece) {
+    // console.log(`piece: ${n}`);
+
+    switch (piece) {
+    case Piece.I:
+        return 'I';
+    case Piece.L:
+        return 'L';
+    case Piece.O:
+        return 'O';
+    case Piece.Z:
+        return 'Z';
+    case Piece.T:
+        return 'T';
+    case Piece.J:
+        return 'J';
+    case Piece.S:
+        return 'S';
+    }
+    throw new FumenError('Unexpected piece');
 }

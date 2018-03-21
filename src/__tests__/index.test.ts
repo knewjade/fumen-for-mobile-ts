@@ -16,4 +16,8 @@ describe('index', () => {
         const str = 'a?b?c'.replace(/\?/g, '');
         expect(str).toEqual('abc');
     });
+
+    test('substring', () => {
+        expect('abc'.substring(10)).toEqual('');
+    });
 });
