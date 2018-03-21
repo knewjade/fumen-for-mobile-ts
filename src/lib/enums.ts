@@ -10,7 +10,7 @@ export enum Piece {
     Gray = 8,
 }
 
-export enum Rotate {
+export enum Rotation {
     Spawn = 0,
     Right = 1,
     Reverse = 2,

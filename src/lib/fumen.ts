@@ -1,4 +1,5 @@
-import { Piece, Rotate } from './enums';
+import { Piece, Rotation } from './enums';
+import { FumenError } from './error';
 
 export function decodeToValue(v: string) {
     return ENCODE_TABLE.indexOf(v);
@@ -41,7 +42,7 @@ export function decode(data: string) {
         for (let count = 0; count < max; count += 1) {
             const v = values.shift()!;
             if (v === undefined) {
-                throw new MyError();
+                throw new FumenError('Unexpected');
             }
             value += v * Math.pow(ENCODE_TABLE.length, count);
         }
@@ -132,7 +133,7 @@ export function decode(data: string) {
             currentField = currentField.concat();
 
             if (isMino(action.piece)) {
-                currentField = put(currentField, action.piece, action.rotate, action.coordinate);
+                currentField = put(currentField, action.piece, action.rotation, action.coordinate);
             }
 
             currentField = clearLine(currentField);
@@ -159,7 +160,7 @@ interface Coordinate {
 
 interface FumenAction {
     piece: Piece;
-    rotate: Rotate;
+    rotation: Rotation;
     coordinate: Coordinate;
     isBlockUp: boolean;
     isMirror: boolean;
@@ -194,47 +195,47 @@ function getAction(v: number): FumenAction {
         case 8:
             return Piece.Gray;
         }
-        throw new MyError();
+        throw new FumenError('Unexpected piece');
     }
 
-    function parseRotate(n: number, piece: Piece) {
-        // console.log(`rotate: ${n}`);
+    function parseRotation(n: number, piece: Piece) {
+        // console.log(`rotation: ${n}`);
         switch (n) {
         case 0:
-            return Rotate.Reverse;
+            return Rotation.Reverse;
         case 1:
-            return piece !== Piece.I ? Rotate.Right : Rotate.Left;
+            return piece !== Piece.I ? Rotation.Right : Rotation.Left;
         case 2:
-            return Rotate.Spawn;
+            return Rotation.Spawn;
         case 3:
-            return piece !== Piece.I ? Rotate.Left : Rotate.Right;
+            return piece !== Piece.I ? Rotation.Left : Rotation.Right;
         }
-        throw new MyError();
+        throw new FumenError('Unexpected rotation');
     }
 
-    function parseCoordinate(n: number, piece: Piece, rotate: Rotate) {
+    function parseCoordinate(n: number, piece: Piece, rotation: Rotation) {
         let x = n % FIELD_WIDTH;
         const originY = Math.floor(n / 10);
         let y = FIELD_TOP - originY - 1;
 
-        if (piece === Piece.O && rotate === Rotate.Left) {
+        if (piece === Piece.O && rotation === Rotation.Left) {
             x += 1;
             y -= 1;
-        } else if (piece === Piece.O && rotate === Rotate.Reverse) {
+        } else if (piece === Piece.O && rotation === Rotation.Reverse) {
             x += 1;
-        } else if (piece === Piece.O && rotate === Rotate.Spawn) {
+        } else if (piece === Piece.O && rotation === Rotation.Spawn) {
             y -= 1;
-        } else if (piece === Piece.I && rotate === Rotate.Reverse) {
+        } else if (piece === Piece.I && rotation === Rotation.Reverse) {
             x += 1;
-        } else if (piece === Piece.I && rotate === Rotate.Left) {
+        } else if (piece === Piece.I && rotation === Rotation.Left) {
             y -= 1;
-        } else if (piece === Piece.S && rotate === Rotate.Spawn) {
+        } else if (piece === Piece.S && rotation === Rotation.Spawn) {
             y -= 1;
-        } else if (piece === Piece.S && rotate === Rotate.Right) {
+        } else if (piece === Piece.S && rotation === Rotation.Right) {
             x -= 1;
-        } else if (piece === Piece.Z && rotate === Rotate.Spawn) {
+        } else if (piece === Piece.Z && rotation === Rotation.Spawn) {
             y -= 1;
-        } else if (piece === Piece.Z && rotate === Rotate.Left) {
+        } else if (piece === Piece.Z && rotation === Rotation.Left) {
             x += 1;
         }
 
@@ -248,9 +249,9 @@ function getAction(v: number): FumenAction {
     let value = v;
     const piece = parsePiece(value % 8);
     value = Math.floor(value / 8);
-    const rotate = parseRotate(value % 4, piece);
+    const rotation = parseRotation(value % 4, piece);
     value = Math.floor(value / 4);
-    const coordinate = parseCoordinate(value % FIELD_BLOCKS, piece, rotate);
+    const coordinate = parseCoordinate(value % FIELD_BLOCKS, piece, rotation);
     value = Math.floor(value / FIELD_BLOCKS);
     const isBlockUp = parseBool(value % 2);
     value = Math.floor(value / 2);
@@ -264,7 +265,7 @@ function getAction(v: number): FumenAction {
 
     return {
         piece,
-        rotate,
+        rotation,
         coordinate,
         isBlockUp,
         isMirror,
@@ -274,8 +275,8 @@ function getAction(v: number): FumenAction {
     };
 }
 
-function put(field: Field, piece: Piece, rotate: Rotate, coordinate: Coordinate) {
-    const blocks = getBlocks(piece, rotate);
+function put(field: Field, piece: Piece, rotation: Rotation, coordinate: Coordinate) {
+    const blocks = getBlocks(piece, rotation);
     for (const block of blocks) {
         const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
         field[x + y * FIELD_WIDTH] = piece;
@@ -283,19 +284,19 @@ function put(field: Field, piece: Piece, rotate: Rotate, coordinate: Coordinate)
     return field;
 }
 
-function getBlocks(piece: Piece, rotate: Rotate): number[][] {
+function getBlocks(piece: Piece, rotation: Rotation): number[][] {
     const blocks = getPieces(piece);
-    switch (rotate) {
-    case Rotate.Spawn:
+    switch (rotation) {
+    case Rotation.Spawn:
         return blocks;
-    case Rotate.Left:
+    case Rotation.Left:
         return rotateLeft(blocks);
-    case Rotate.Reverse:
+    case Rotation.Reverse:
         return rotateReverse(blocks);
-    case Rotate.Right:
+    case Rotation.Right:
         return rotateRight(blocks);
     }
-    throw new MyError();
+    throw new FumenError('Unsupported block');
 }
 
 function getPieces(piece: Piece): number[][] {
@@ -315,7 +316,7 @@ function getPieces(piece: Piece): number[][] {
     case Piece.Z:
         return [[0, 0], [1, 0], [0, 1], [-1, 1]];
     }
-    throw new MyError();
+    throw new FumenError('Unsupported rotation');
 }
 
 function rotateRight(positions: number[][]): number[][] {

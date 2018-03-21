@@ -31,22 +31,27 @@ export interface OffActions {
 }
 
 const offActions: OffActions = {
-    off: (data: { x: number, y: number }) => (state) => {
+    off: data => (state) => {
         console.log('action: off');
         state.field[data.x + 10 * data.y] = Piece.I;
         return { field: state.field };
     },
 };
 
-// === Off 操作 ===
+// === Fumen 操作 ===
 export interface FumenActions {
     setField: (data: { field: Piece[] }) => action;
+    refresh: (data: { width: number, height: number }) => action;
 }
 
 const fumenActions: FumenActions = {
-    setField: (data: { field: Piece[] }) => (state) => {
+    setField: data => () => {
         console.log('action: setField');
         return { field: data.field.concat() };
+    },
+    refresh: data => () => {
+        console.log('action: refresh');
+        return { display: data };
     },
 };
 
