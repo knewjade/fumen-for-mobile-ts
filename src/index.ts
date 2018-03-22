@@ -1,11 +1,11 @@
 import { app, View, VNode } from 'hyperapp';
-import { button, div, input, main, param, s, span } from '@hyperapp/html';
+import { button, div, input, main, param } from '@hyperapp/html';
 import { action, actions as originActions, Actions } from './actions';
 import { Block, initState, State } from './states';
 import { HyperStage } from './lib/stage';
 import { Piece } from './lib/enums';
 import { FumenError, ViewError } from './lib/error';
-import { decode, getBlocks, isMino } from './lib/fumen';
+import { decode, getBlocks, getPieces, isMino } from './lib/fumen';
 import { CSSProperties } from 'typestyle/lib/types';
 // Konvaは最後に読み込むこと！
 // エラー対策：Uncaught ReferenceError: __importDefault is not define
@@ -43,13 +43,54 @@ export const view: () => View<State, Actions> = () => {
 
     // 背景
     const background: Konva.Rect = new Konva.Rect({
-        fill: '#333333',
+        fill: '#333',
         strokeWidth: 0,
         opacity: 1,
     });
     {
         const layer = new Konva.Layer();
         layer.add(background);
+        hyperStage.addLayer(layer);
+    }
+
+    const box2: () => Konva.Rect = () => {
+        return new Konva.Rect({
+            fill: '#333',
+            strokeWidth: 2,
+            stroke: '#333',
+            opacity: 1,
+        });
+    };
+
+    const parts: () => Konva.Rect[] = () => {
+        return Array.from({ length: 4 }).map((ignore, index) => {
+            return new Konva.Rect({
+                strokeWidth: 0,
+                opacity: 1,
+            });
+        });
+    };
+
+    // Hold
+    const hold = {
+        box: box2(),
+        parts: parts(),
+    };
+    const nexts = Array.from({ length: 5 }).map((ignore, index) => {
+        return {
+            index,
+            box: box2(),
+            parts: parts(),
+        };
+    });
+    {
+        const layer = new Konva.Layer();
+        for (const obj of [hold].concat(nexts as typeof hold[])) {
+            layer.add(obj.box);
+            for (const part of obj.parts) {
+                layer.add(part);
+            }
+        }
         hyperStage.addLayer(layer);
     }
 
@@ -79,6 +120,8 @@ export const view: () => View<State, Actions> = () => {
             x: (canvas.width - fieldSize.width) / 2,
             y: (canvas.height - fieldSize.height) / 2,
         };
+        const boxSize = fieldSize.width / 5;
+        const boxMargin = boxSize / 4;
 
         return div({
             oncreate: () => {
@@ -90,29 +133,60 @@ export const view: () => View<State, Actions> = () => {
                 hyperStage.batchDraw();
             },
         }, [
-            game({
+            game({  // canvas空間のみ
                 canvas,
                 stage: hyperStage,
                 countUp: actions.up,
-            }),  // canvas空間のみ
-            field({
-                background,
-                position: top,
-                size: fieldSize,
-            }, blocks.map((value) => {
-                const blockValue = state.field[value.ix + value.iy * 10];
-                return block({
-                    size,
+            }),
+            div([   // canvas:Field とのマッピング用仮想DOM
+                field({
+                    background,
+                    position: top,
+                    size: fieldSize,
+                }, blocks.map((value) => {
+                    const blockValue = state.field[value.ix + value.iy * 10];
+                    return block({
+                        size,
+                        position: {
+                            x: top.x + value.ix * size + value.ix + 1,
+                            y: top.y + value.py * size + value.py + 1,
+                        },
+                        piece: blockValue.piece,
+                        key: `block-${value.ix}-${value.iy}`,
+                        rect: value.box,
+                        highlight: blockValue.highlight || isHighlights[value.iy],
+                    });
+                })),
+                box({
                     position: {
-                        x: top.x + value.ix * size + value.ix + 1,
-                        y: top.y + value.py * size + value.py + 1,
+                        x: top.x - (boxSize + boxMargin / 2),
+                        y: top.y,
                     },
-                    piece: blockValue.piece,
-                    key: `block-${value.ix}-${value.iy}`,
-                    rect: value.box,
-                    isHighlight: blockValue.isHighlight || isHighlights[value.iy],
-                });
-            })),   // canvas内とのマッピング用仮想DOM
+                    size: boxSize,
+                    rect: hold,
+                    visible: true,
+                    piece: {
+                        value: state.hold,
+                        size: boxSize / 4 - 1,
+                        margin: 1,
+                    },
+                }),
+                nexts.map(value => box({
+                    // key: `next-${value.index}`,
+                    position: {
+                        x: top.x + fieldSize.width + boxMargin / 2,
+                        y: top.y + value.index * (boxSize + boxMargin),
+                    },
+                    size: boxSize,
+                    rect: value,
+                    visible: true,
+                    piece: {
+                        value: state.nexts !== undefined ? state.nexts[value.index] : undefined,
+                        size: boxSize / 4 - 1,
+                        margin: 1,
+                    },
+                })),
+            ]),
             menu([
                 comment({
                     textColor: state.comment.textColor,
@@ -189,12 +263,12 @@ interface BlockProps {
     size: number;
     piece: Piece;
     rect: Konva.Rect;
-    isHighlight: boolean;
+    highlight: boolean;
 }
 
 const block: Component<BlockProps> = (props) => {
     function fill(block: Konva.Rect) {
-        if (props.isHighlight) {
+        if (props.highlight) {
             block.fill(getHighlightColor(props.piece));
         } else {
             block.fill(getNormalColor(props.piece));
@@ -213,7 +287,7 @@ const block: Component<BlockProps> = (props) => {
         key: props.key,
         size: props.size,
         value: props.piece,
-        highlight: props.isHighlight,
+        highlight: props.highlight,
         position: props.position,
         oncreate: () => {
             move(props.rect);
@@ -222,7 +296,7 @@ const block: Component<BlockProps> = (props) => {
         },
         onupdate: (container: any, attr: any) => {
             // console.log(container.attributes.x.value);
-            if (props.piece !== attr.value || props.isHighlight !== attr.highlight) {
+            if (props.piece !== attr.value || props.highlight !== attr.highlight) {
                 fill(props.rect);
             }
             if (props.position.x !== attr.position.x || props.position.y !== attr.position.y) {
@@ -261,6 +335,143 @@ const field: Component<FieldProps> = (props, children) => {
             }
             if (props.position.x !== attr.position.x || props.position.y !== attr.position.y) {
                 props.background.setAbsolutePosition(props.position);
+            }
+        },
+    }, children);
+};
+
+interface BoxProps {
+    position: {
+        x: number;
+        y: number;
+    };
+    size: number;
+    rect: {
+        box: Konva.Rect;
+        parts: Konva.Rect[];
+    };
+    piece: {
+        value?: Piece,
+        size: number;
+        margin: number;
+    };
+    visible: boolean;
+}
+
+const box: Component<BoxProps> = (props, children) => {
+    function draw(parts: Konva.Rect[], piece: Piece) {
+        const blocks = getPieces(piece).map(([x, y]) => [x, -y]);
+        const max = {
+            x: 0,
+            y: 0,
+        };
+        const min = {
+            x: 0,
+            y: 0,
+        };
+
+        for (const [x, y] of blocks) {
+            if (max.x < x) {
+                max.x = x;
+            } else if (x < min.x) {
+                min.x = x;
+            }
+
+            if (max.y < y) {
+                max.y = y;
+            } else if (y < min.y) {
+                min.y = y;
+            }
+        }
+
+        const x2 = (max.x - min.x + 1) / 2 + min.x;
+        const y2 = (max.y - min.y + 1) / 2 + min.y;
+
+        const pieceSize = props.piece.size;
+        const pieceMargin = props.piece.margin;
+        const step: (n: number) => number = n => n * pieceSize + Math.floor(n) * pieceMargin;
+
+        // console.log(x2, y2);
+        const center = {
+            x: props.position.x + props.size / 2,
+            y: props.position.y + props.size / 2,
+        };
+        // console.log(center);
+
+        for (let index = 0; index < blocks.length; index += 1) {
+            const [x, y] = blocks[index];
+
+            const part = parts[index];
+
+            part.setAbsolutePosition({
+                x: center.x + step(x - x2) + pieceMargin / 2,
+                y: center.y + step(y - y2) + pieceMargin / 2,
+            });
+            part.setSize({ width: pieceSize, height: pieceSize });
+            part.fill(getHighlightColor(piece));
+        }
+    }
+
+    return param({
+        position: props.position,
+        size: props.size,
+        piece: props.piece,
+        oncreate: () => {
+            props.rect.box.setSize({ width: props.size, height: props.size });
+            props.rect.box.setAbsolutePosition(props.position);
+
+            const piece = props.piece;
+            if (piece.value === undefined) {
+                props.rect.box.hide();
+
+                for (const part of props.rect.parts) {
+                    part.hide();
+                }
+            } else {
+                props.rect.box.show();
+
+                if (isMino(piece.value)) {
+                    for (const part of props.rect.parts) {
+                        part.show();
+                    }
+                    draw(props.rect.parts, piece.value);
+                } else {
+                    for (const part of props.rect.parts) {
+                        part.hide();
+                    }
+                }
+            }
+        },
+        onupdate: (ignore: any, attr: any) => {
+            if (props.size !== attr.size) {
+                props.rect.box.setSize({ width: props.size, height: props.size });
+            }
+            if (props.position.x !== attr.position.x || props.position.y !== attr.position.y) {
+                props.rect.box.setAbsolutePosition(props.position);
+            }
+
+            const piece = props.piece;
+            if (piece.value === undefined) {
+                props.rect.box.hide();
+
+                for (const part of props.rect.parts) {
+                    part.hide();
+                }
+            } else if (piece.value !== attr.piece.value
+                || piece.size !== attr.piece.size
+                || piece.margin !== attr.margin) {
+                props.rect.box.show();
+
+                if (isMino(piece.value)) {
+                    for (const part of props.rect.parts) {
+                        part.show();
+                    }
+                    draw(props.rect.parts, piece.value);
+                } else {
+                    for (const part of props.rect.parts) {
+                        part.hide();
+                    }
+                }
             }
         },
     }, children);
@@ -346,6 +557,39 @@ function toggleAnimation() {
 }
 
 function start() {
+    const get = (value?: string) => {
+        if (value === undefined || value === ']' || value === ')') {
+            return '';
+        }
+        return value;
+    };
+
+    const nextQuiz = (quiz: string, use: Piece): string => {
+        const name = parsePieceName(use);
+        const indexHold = quiz.indexOf('[') + 1;
+        const indexCurrent = quiz.indexOf('(') + 1;
+
+        const holdName = get(quiz[indexHold]);
+        const currentName = get(quiz[indexCurrent]);
+        const nextName = get(quiz[indexCurrent + 2]);
+        const least = get(quiz.substring(indexCurrent + 3));
+
+        // console.log(quiz);
+        // console.log(name, holdName, currentName, nextName);
+
+        if (holdName === name) {
+            return `#Q=[${currentName}](${nextName})` + least;
+        }
+        if (currentName === name) {
+            return `#Q=[${holdName}](${nextName})` + least;
+        }
+        if (holdName === '') {
+            return nextQuiz(`#Q=[${currentName}](${nextName})` + least, use);
+        }
+
+        throw new FumenError('Unexpected quiz');
+    };
+
     interval = setInterval(() => {
         const page = pages[currentPage];
         const action = page.action;
@@ -363,55 +607,43 @@ function start() {
                 const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
                 nextField[x + y * 10] = {
                     piece: action.piece,
-                    isHighlight: true,
+                    highlight: true,
                 };
             }
         }
 
+        let hold;
+        let nexts;
+        let quiz2: string;
+        if (comment2.startsWith('#Q=')) {
+            quiz2 = nextQuiz(comment2, action.piece);
+
+            const g: (s: string) => Piece = (s) => {
+                const s2 = get(s);
+                return s2 !== '' ? parsePiece(s2) : Piece.Empty;
+            };
+
+            const indexHold = quiz2.indexOf('[') + 1;
+            const indexCurrent = quiz2.indexOf('(') + 1;
+            hold = g(quiz2[indexHold]);
+            // console.log(get(quiz2[indexCurrent]));
+            nexts = (get(quiz2[indexCurrent]) + quiz2.substr(indexCurrent + 2, 4)).split('').map(g);
+            // console.log(hold, nexts);
+        }
+
         router.setFieldAndComment({
-            comment: comment2,
+            hold,
+            nexts,
             field: nextField,
+            comment: comment2,
         });
 
         if (action.isLock && isMino(action.piece) && comment2.startsWith('#Q=')) {
-            const nextQuiz = (quiz: string, use: Piece): string => {
-                const name = parsePieceName(use);
-                const indexHold = quiz.indexOf('[') + 1;
-                const indexCurrent = quiz.indexOf('(') + 1;
-
-                const get = (value?: string) => {
-                    if (value === undefined || value === ']' || value === ')') {
-                        return '';
-                    }
-                    return value;
-                };
-
-                const holdName = get(quiz[indexHold]);
-                const currentName = get(quiz[indexCurrent]);
-                const nextName = get(quiz[indexCurrent + 2]);
-                const least = get(quiz.substring(indexCurrent + 3));
-
-                // console.log(quiz);
-                // console.log(name, holdName, currentName, nextName);
-
-                if (holdName === name) {
-                    return `#Q=[${currentName}](${nextName})` + least;
-                }
-                if (currentName === name) {
-                    return `#Q=[${holdName}](${nextName})` + least;
-                }
-                if (holdName === '') {
-                    return nextQuiz(`#Q=[${currentName}](${nextName})` + least, use);
-                }
-
-                throw new FumenError('Unexpected quiz');
-            };
-
-            comment2 = nextQuiz(comment2, action.piece);
+            comment2 = quiz2!;
         }
 
         currentPage = (currentPage + 1) % pages.length;
-    }, 10);
+    }, 600);
 }
 
 function stop() {
@@ -487,6 +719,28 @@ function parsePieceName(piece: Piece) {
         return 'J';
     case Piece.S:
         return 'S';
+    }
+    throw new FumenError('Unexpected piece');
+}
+
+function parsePiece(piece: string) {
+    // console.log(`piece: ${n}`);
+
+    switch (piece) {
+    case 'I':
+        return Piece.I;
+    case 'L':
+        return Piece.L;
+    case 'O':
+        return Piece.O;
+    case 'Z':
+        return Piece.Z;
+    case 'T':
+        return Piece.T;
+    case 'J':
+        return Piece.J;
+    case 'S':
+        return Piece.S;
     }
     throw new FumenError('Unexpected piece');
 }

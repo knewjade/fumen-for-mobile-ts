@@ -299,7 +299,7 @@ export function getBlocks(piece: Piece, rotation: Rotation): number[][] {
     throw new FumenError('Unsupported block');
 }
 
-function getPieces(piece: Piece): number[][] {
+export function getPieces(piece: Piece): number[][] {
     switch (piece) {
     case Piece.I:
         return [[0, 0], [-1, 0], [1, 0], [2, 0]];

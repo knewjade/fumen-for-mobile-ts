@@ -1,4 +1,5 @@
 import { Block, State } from './states';
+import { Piece } from './lib/enums';
 
 export type action = (state: State) => Partial<State>;
 
@@ -26,17 +27,19 @@ const downActions: DownActions = {
 
 // === Fumen 操作 ===
 export interface FumenActions {
-    setFieldAndComment: (data: { field: Block[], comment?: string }) => action;
+    setFieldAndComment: (data: { field: Block[], comment?: string, hold?: Piece, nexts?: Piece[] }) => action;
     refresh: (data: { width: number, height: number }) => action;
 }
 
 const fumenActions: FumenActions = {
-    setFieldAndComment: ({ field, comment }) => (state) => {
+    setFieldAndComment: ({ field, comment, hold, nexts }) => (state) => {
         console.log('action: setFieldAndComment');
 
         const isChanged = comment !== undefined && comment !== state.comment.text;
         return {
             field,
+            hold,
+            nexts,
             comment: {
                 textColor: isChanged ? 'white' : 'black',
                 backgroundColor: isChanged ? 'green' : 'white',

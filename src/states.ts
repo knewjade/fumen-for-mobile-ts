@@ -12,11 +12,13 @@ export interface State {
         width: number;
         height: number;
     };
+    hold: Piece | undefined;
+    nexts: Piece[] | undefined;
 }
 
 export interface Block {
     piece: Piece;
-    isHighlight?: boolean;
+    highlight?: boolean;
 }
 
 export const initState: State = {
@@ -33,4 +35,6 @@ export const initState: State = {
         width: window.document.body.clientWidth,
         height: window.document.body.clientHeight,
     },
+    hold: undefined,
+    nexts: undefined,
 };
