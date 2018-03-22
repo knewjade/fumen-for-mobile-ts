@@ -2164,6 +2164,10 @@ fragment-cache@^0.2.1:
   dependencies:
     map-cache "^0.2.2"
 
+free-style@2.5.1:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/free-style/-/free-style-2.5.1.tgz#5e3f684c470d3bba7e4dbb43524e0a08917e873c"
+
 from2@^2.1.0, from2@^2.1.1:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/from2/-/from2-2.3.0.tgz#8bfb5502bde4a4d36cfdeea007fcca21d7e382af"
@@ -5533,6 +5537,12 @@ typedarray@^0.0.6:
 typescript@^2.7.2:
   version "2.7.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.7.2.tgz#2d615a1ef4aee4f574425cdff7026edf81919836"
+
+typestyle@^1.7.2:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/typestyle/-/typestyle-1.7.2.tgz#22ca9dfeaf334f755030cc6d7799b468bb1ee132"
+  dependencies:
+    free-style "2.5.1"
 
 uglify-es@^3.3.4:
   version "3.3.9"

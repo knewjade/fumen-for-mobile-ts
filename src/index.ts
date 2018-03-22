@@ -1,14 +1,17 @@
 import { app, View, VNode } from 'hyperapp';
-import { button, div, main, param, span } from '@hyperapp/html';
+import { button, div, input, main, param, s, span } from '@hyperapp/html';
 import { action, actions as originActions, Actions } from './actions';
 import { Block, initState, State } from './states';
 import { HyperStage } from './lib/stage';
 import { Piece } from './lib/enums';
 import { FumenError, ViewError } from './lib/error';
 import { decode, getBlocks, isMino } from './lib/fumen';
+import { CSSProperties } from 'typestyle/lib/types';
 // Konvaは最後に読み込むこと！
 // エラー対策：Uncaught ReferenceError: __importDefault is not define
 import * as Konva from 'konva';
+
+const style: (properties: CSSProperties) => CSSProperties = properties => properties;
 
 export const view: () => View<State, Actions> = () => {
     // 初期化
@@ -115,7 +118,8 @@ export const view: () => View<State, Actions> = () => {
                     textColor: state.comment.textColor,
                     backgroundColor: state.comment.backgroundColor,
                     height: heights.comment,
-                }, state.count + state.comment.text),
+                    text: state.count + state.comment.text,
+                }),
                 tools({
                     height: heights.tools,
                 }, [
@@ -145,10 +149,10 @@ interface GameProps {
 const game: Component<GameProps> = (props, children) => {
     return main({
         id: 'container',
-        style: {
+        style: style({
             width: props.canvas.width,
             height: props.canvas.height + 'px',
-        },
+        }),
         oncreate: (container: HTMLMainElement) => {
             // この時点でcontainer内に新しい要素が作られるため、
             // この要素内には hyperapp 管理下の要素を作らないこと
@@ -270,19 +274,32 @@ interface CommentProps {
     height: number;
     textColor: string;
     backgroundColor: string;
+    text: string;
 }
 
-const comment: Component<CommentProps> = (props, children) => {
+const comment: Component<CommentProps> = (props) => {
     return div({
-        style: {
-            color: props.textColor,
+        style: style({
             backgroundColor: props.backgroundColor,
             width: '100%',
             height: props.height + 'px',
             whiteSpace: 'nowrap',
-        },
+        }),
     }, [
-        span(children),
+        input({
+            type: 'text',
+            style: style({
+                color: props.textColor,
+                width: '100%',
+                height: props.height + 'px',
+                lineHeight: props.height + 'px',
+                boxSizing: 'border-box',
+                textAlign: 'center',
+                border: 'none',
+            }),
+            value: props.text,
+            readonly: 'readonly',
+        }),
     ]);
 };
 
@@ -293,10 +310,10 @@ interface ToolsProps {
 const tools: Component<ToolsProps> = (props, children) => {
     return div({
         className: 'page-footer',
-        style: {
+        style: style({
             width: '100%',
             height: props.height + 'px',
-        },
+        }),
     }, children);
 };
 
