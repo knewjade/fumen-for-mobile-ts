@@ -20,6 +20,7 @@ export const view: () => View<State, Actions> = () => {
         const py = 23 - iy;
         const box: Konva.Rect = new Konva.Rect({
             strokeWidth: 0,
+            opacity: 1,
         });
         return {
             ix,
@@ -39,8 +40,9 @@ export const view: () => View<State, Actions> = () => {
 
     // 背景
     const background: Konva.Rect = new Konva.Rect({
-        fill: '#333',
+        fill: '#333333',
         strokeWidth: 0,
+        opacity: 1,
     });
     {
         const layer = new Konva.Layer();
@@ -66,6 +68,15 @@ export const view: () => View<State, Actions> = () => {
                 .every(value => state.field[value.ix + value.iy * 10].piece !== Piece.Empty);
         });
 
+        const fieldSize = {
+            width: (size + 1) * 10 + 1,
+            height: (size + 1) * 24 + 1,
+        };
+        const top = {
+            x: (canvas.width - fieldSize.width) / 2,
+            y: (canvas.height - fieldSize.height) / 2,
+        };
+
         return div({
             oncreate: () => {
                 // Hyperappでは最上位のノードが最後に実行される
@@ -83,17 +94,15 @@ export const view: () => View<State, Actions> = () => {
             }),  // canvas空間のみ
             field({
                 background,
-                size: {
-                    width: (size + 1) * 10 + 1,
-                    height: (size + 1) * 24 + 1,
-                },
+                position: top,
+                size: fieldSize,
             }, blocks.map((value) => {
                 const blockValue = state.field[value.ix + value.iy * 10];
                 return block({
                     size,
                     position: {
-                        x: value.ix * size + value.ix + 1,
-                        y: value.py * size + value.py + 1,
+                        x: top.x + value.ix * size + value.ix + 1,
+                        y: top.y + value.py * size + value.py + 1,
                     },
                     piece: blockValue.piece,
                     key: `block-${value.ix}-${value.iy}`,
@@ -223,6 +232,10 @@ const block: Component<BlockProps> = (props) => {
 };
 
 interface FieldProps {
+    position: {
+        x: number;
+        y: number;
+    };
     size: {
         width: number;
         height: number;
@@ -232,8 +245,19 @@ interface FieldProps {
 
 const field: Component<FieldProps> = (props, children) => {
     return param({
+        position: props.position,
+        size: props.size,
         oncreate: () => {
             props.background.setSize(props.size);
+            props.background.setAbsolutePosition(props.position);
+        },
+        onupdate: (ignore: any, attr: any) => {
+            if (props.size.width !== attr.size.width || props.size.height !== attr.size.height) {
+                props.background.setSize(props.size);
+            }
+            if (props.position.x !== attr.position.x || props.position.y !== attr.position.y) {
+                props.background.setAbsolutePosition(props.position);
+            }
         },
     }, children);
 };
