@@ -2,6 +2,7 @@ import { AnimationState, Piece } from './lib/enums';
 
 export interface State {
     field: Block[];
+    blockUp: Block[];
     comment: {
         text: string;
         textColor: string;
@@ -27,7 +28,10 @@ export interface Block {
 }
 
 export const initState: State = {
-    field: Array.from({ length: 240 }).map((ignore) => {
+    field: Array.from({ length: 230 }).map((ignore) => {
+        return { piece: Piece.Empty };
+    }),
+    blockUp: Array.from({ length: 10 }).map((ignore) => {
         return { piece: Piece.Empty };
     }),
     comment: {

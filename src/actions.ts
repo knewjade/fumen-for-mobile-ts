@@ -6,7 +6,14 @@ import { resources } from './index';
 export type action = (state: State) => Partial<State>;
 
 export interface Actions {
-    setPage: (data: { pageIndex: number, field: Block[], comment?: string, hold?: Piece, nexts?: Piece[] }) => action;
+    setPage: (data: {
+        pageIndex: number,
+        field: Block[],
+        blockUp?: Block[],
+        comment?: string,
+        hold?: Piece,
+        nexts?: Piece[],
+    }) => action;
     refresh: (data: { width: number, height: number }) => action;
     pause: () => action;
     start: () => action;
@@ -17,7 +24,7 @@ export interface Actions {
 }
 
 export const actions: Actions = {
-    setPage: ({ pageIndex, field, comment, hold, nexts }) => (state) => {
+    setPage: ({ pageIndex, field, blockUp, comment, hold, nexts }) => (state) => {
         console.log('action: setFieldAndComment');
 
         const isChanged = comment !== undefined && comment !== state.comment.text;
@@ -25,6 +32,7 @@ export const actions: Actions = {
             field,
             hold,
             nexts,
+            blockUp: blockUp !== undefined ? blockUp : state.blockUp,
             comment: {
                 textColor: isChanged ? 'white' : 'black',
                 backgroundColor: isChanged ? 'green' : 'white',
@@ -107,7 +115,8 @@ function openPage(index: number): action {
     });
 
     return actions.setPage({
-        field: blockUp.concat(field),
+        field,
+        blockUp,
         comment: page.comment,
         pageIndex: index,
     });

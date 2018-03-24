@@ -156,7 +156,7 @@ export function decode(data: string, callback: (page: Page) => void) {
     let pageIndex = 0;
     const values = new Values(data);
     let [prevField, currentField] = [new Field(), new Field()];
-    const blockUp = new FieldLine();
+    let blockUp = new FieldLine();
 
     const store = {
         repeatCount: -1,
@@ -240,6 +240,7 @@ export function decode(data: string, callback: (page: Page) => void) {
 
             if (action.isBlockUp) {
                 currentField.up(blockUp.toShallowField());
+                blockUp = new FieldLine();
             }
 
             if (action.isMirror) {

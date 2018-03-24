@@ -40,11 +40,11 @@ export const view: () => View<State, Actions> = () => {
         };
     });
 
-    const blocks2 = Array.from({ length: 10 }).map((ignore, index) => {
+    const bottomBlocks = Array.from({ length: 10 }).map((ignore, index) => {
         const [ix, iy] = [index % 10, Math.floor(index / 10)];
         const box: Konva.Rect = new Konva.Rect({
             strokeWidth: 0,
-            opacity: 0.5,
+            opacity: 0.75,
         });
         return {
             ix,
@@ -59,7 +59,7 @@ export const view: () => View<State, Actions> = () => {
         for (const block of blocks) {
             layer.add(block.box);
         }
-        for (const block of blocks2) {
+        for (const block of bottomBlocks) {
             layer.add(block.box);
         }
         hyperStage.addLayer(layer);
@@ -145,10 +145,10 @@ export const view: () => View<State, Actions> = () => {
                 .every(value => state.field[value.ix + value.iy * 10].piece !== Piece.Empty);
         });
 
-        const bottomBorderLine = 2.7;
+        const bottomBorderWidth = 2.7;
         const fieldSize = {
             width: (size + 1) * 10 + 1,
-            height: (size + 1) * 24 + 1 + bottomBorderLine + 1,
+            height: (size + 1) * 24 + 1 + bottomBorderWidth + 1,
         };
         const top = {
             x: (canvas.width - fieldSize.width) / 2,
@@ -156,7 +156,7 @@ export const view: () => View<State, Actions> = () => {
         };
         const top2 = {
             x: top.x,
-            y: top.y + (size + 1) * 23 + 1 + bottomBorderLine,
+            y: top.y + (size + 1) * 23 + 1 + bottomBorderWidth,
         };
         const boxSize = Math.min(fieldSize.width / 5 * 1.2, (canvas.width - fieldSize.width) / 2);
         const boxMargin = boxSize / 4;
@@ -213,7 +213,7 @@ export const view: () => View<State, Actions> = () => {
                         endX: top2.x + fieldSize.width,
                         y: top2.y,
                     },
-                    borderWidth: bottomBorderLine,
+                    borderWidth: bottomBorderWidth,
                 }, blocks.map((value) => {
                     const blockValue = state.field[value.ix + value.iy * 10];
                     return block({
@@ -228,8 +228,8 @@ export const view: () => View<State, Actions> = () => {
                         highlight: blockValue.highlight || isHighlights[value.iy],
                     });
                 }).concat(
-                    blocks2.map((value) => {
-                        const blockValue = state.field[value.ix + value.iy * 10];
+                    bottomBlocks.map((value) => {
+                        const blockValue = state.blockUp[value.ix + value.iy * 10];
                         return block({
                             size,
                             position: {
@@ -237,7 +237,7 @@ export const view: () => View<State, Actions> = () => {
                                 y: top2.y + value.py * size + value.py + 1,
                             },
                             piece: blockValue.piece,
-                            key: `bottom-block-${value.ix}-${value.iy}`,
+                            key: `block-up-${value.ix}-${value.iy}`,
                             rect: value.box,
                             highlight: blockValue.highlight || isHighlights[value.iy],
                         });
