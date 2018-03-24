@@ -2,7 +2,7 @@ import { app, View, VNode } from 'hyperapp';
 import { a, button, div, h4, input, main, nav, p, param } from '@hyperapp/html';
 import { action, actions as originActions, Actions } from './actions';
 import { Block, initState, State } from './states';
-import { HyperStage } from './lib/stage';
+import { HyperHammer, HyperStage } from './lib/hyper';
 import { Piece } from './lib/enums';
 import { FumenError, ViewError } from './lib/error';
 import { decode, getBlocks, getPieces, isMino } from './lib/fumen';
@@ -23,6 +23,7 @@ interface ModalInstance {
 export const view: () => View<State, Actions> = () => {
     // 初期化
     const hyperStage = new HyperStage();
+    const hyperHammer = new HyperHammer();
 
     // ブロック
     const blocks = Array.from({ length: 24 * 10 }).map((ignore, index) => {
@@ -134,6 +135,10 @@ export const view: () => View<State, Actions> = () => {
         const boxSize = Math.min(fieldSize.width / 5 * 1.2, (canvas.width - fieldSize.width) / 2);
         const boxMargin = boxSize / 4;
 
+        const tap = (x: number) => {
+            console.log(`${x} / ${canvas.width}`);
+        };
+
         return div({
             oncreate: () => {
                 // Hyperappでは最上位のノードが最後に実行される
@@ -147,6 +152,7 @@ export const view: () => View<State, Actions> = () => {
             game({  // canvas空間のみ
                 canvas,
                 stage: hyperStage,
+                hammer: hyperHammer,
                 countUp: actions.up,
             }),
             div([   // canvas:Field とのマッピング用仮想DOM
@@ -258,6 +264,7 @@ interface GameProps {
         height: number;
     };
     stage: HyperStage;
+    hammer: HyperHammer;
     countUp: (value: number) => action;
 }
 
@@ -268,29 +275,40 @@ const game: Component<GameProps> = (props, children) => {
             width: props.canvas.width,
             height: props.canvas.height + 'px',
         }),
-        oncreate: (container: HTMLMainElement) => {
+        canvas: props.canvas,
+        oncreate: (element: HTMLMainElement) => {
             // この時点でcontainer内に新しい要素が作られるため、
             // この要素内には hyperapp 管理下の要素を作らないこと
             const stage = new Konva.Stage({
-                container,
+                container: element,
                 width: props.canvas.width,
                 height: props.canvas.height,
             });
 
             props.stage.addStage(stage);
 
-            const hammer = new Hammer(container);
-            hammer.get('pinch').set({ enable: true });
-            hammer.on('tap pinch', (ev) => {
-                console.log(ev);
-                toggleAnimation();
-            });
+            const hammer = new Hammer(element);
+            // hammer.get('pinch').set({ enable: true });
+
+            const hyperHammer = props.hammer;
+            hyperHammer.register(hammer);
+            hyperHammer.tap = (event) => {
+                console.log(`${event.center.x} / ${props.canvas.width}`);
+            };
+            hammer.on('tap', hyperHammer.tap);
         },
-        onupdate: () => {
-            const canvasSize = props.stage.size;
-            if (canvasSize.height !== props.canvas.height || canvasSize.width !== props.canvas.width) {
+        onupdate: (element: any, attr: any) => {
+            if (attr.canvas.width !== props.canvas.width || attr.canvas.height !== props.canvas.height) {
                 props.stage.resize(props.canvas);
             }
+            const hyperHammer = props.hammer;
+            hyperHammer.tap = (event) => {
+                if (event.center.x < props.canvas.width / 2) {
+                    console.log('tap left');
+                } else {
+                    console.log('tap right');
+                }
+            };
         },
     }, children);
 };
