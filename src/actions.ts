@@ -1,17 +1,23 @@
 import { Block, State } from './states';
-import { Piece } from './lib/enums';
+import { AnimationState, getBlocks, isMinoPiece, Piece } from './lib/enums';
+import { ViewError } from './lib/error';
+import { resources } from './index';
 
 export type action = (state: State) => Partial<State>;
 
 export interface Actions {
-    setFieldAndComment: (data: { field: Block[], comment?: string, hold?: Piece, nexts?: Piece[] }) => action;
+    setPage: (data: { pageIndex: number, field: Block[], comment?: string, hold?: Piece, nexts?: Piece[] }) => action;
     refresh: (data: { width: number, height: number }) => action;
     pause: () => action;
     start: () => action;
+    setMaxPage: (data: { maxPage: number }) => action;
+    backPage: () => action;
+    nextPage: () => action;
+    goToHead: () => action;
 }
 
 export const actions: Actions = {
-    setFieldAndComment: ({ field, comment, hold, nexts }) => (state) => {
+    setPage: ({ pageIndex, field, comment, hold, nexts }) => (state) => {
         console.log('action: setFieldAndComment');
 
         const isChanged = comment !== undefined && comment !== state.comment.text;
@@ -24,6 +30,10 @@ export const actions: Actions = {
                 backgroundColor: isChanged ? 'green' : 'white',
                 text: comment !== undefined ? comment : state.comment.text,
             },
+            play: {
+                ...state.play,
+                pageIndex,
+            },
         };
     },
     refresh: data => () => {
@@ -34,7 +44,7 @@ export const actions: Actions = {
         return {
             play: {
                 ...state.play,
-                status: 'play',
+                status: AnimationState.Play,
             },
         };
     },
@@ -42,8 +52,63 @@ export const actions: Actions = {
         return {
             play: {
                 ...state.play,
-                status: 'pause',
+                status: AnimationState.Pause,
             },
         };
     },
+    setMaxPage: data => () => {
+        return data;
+    },
+    backPage: () => (state) => {
+        const maxPage = state.maxPage;
+        const action = openPage((state.play.pageIndex - 1 + maxPage) % maxPage);
+        return action(state);
+    },
+    nextPage: () => (state) => {
+        const maxPage = state.maxPage;
+        const action = openPage((state.play.pageIndex + 1) % maxPage);
+        return action(state);
+    },
+    goToHead: () => (state) => {
+        const action = openPage(0);
+        return action(state);
+    },
 };
+
+function openPage(index: number): action {
+    const page = resources.pages[index];
+
+    if (page === undefined) {
+        throw new ViewError('Cannot open page');
+    }
+
+    const field: Block[] = page.field.map((value) => {
+        return {
+            piece: value,
+        };
+    });
+    const move = page.move;
+    if (isMinoPiece(move.piece)) {
+        const coordinate = move.coordinate;
+        const blocks = getBlocks(move.piece, move.rotation);
+        for (const block of blocks) {
+            const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
+            field[x + y * 10] = {
+                piece: move.piece,
+                highlight: true,
+            };
+        }
+    }
+
+    const blockUp = page.blockUp.map((value) => {
+        return {
+            piece: value,
+        };
+    });
+
+    return actions.setPage({
+        field: blockUp.concat(field),
+        comment: page.comment,
+        pageIndex: index,
+    });
+}

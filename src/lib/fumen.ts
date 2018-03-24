@@ -1,164 +1,15 @@
-import { Piece, Rotation } from './enums';
+import { getBlocks, isMinoPiece, Piece, Rotation } from './enums';
 import { FumenError } from './error';
 
-export function decodeToValue(v: string) {
-    return ENCODE_TABLE.indexOf(v);
-}
-
-function decodeCommentChar(index: number) {
-    return COMMENT_TABLE[index];
-}
-
-type Field = Piece[];
-
-const ENCODE_TABLE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-const COMMENT_TABLE =
-    ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
-
-const FIELD_BLOCKS = 240;
-const FIELD_WIDTH = 10;
-const FIELD_TOP = 23;
-
-function createField(): Field {
-    return Array.from({ length: FIELD_BLOCKS }).map(() => Piece.Empty);
-}
-
 interface Page {
-    field: Field;
+    index: number;
+    action: Action;
     comment: string;
-    action: FumenAction;
-    blockUp: Field;
+    field: Piece[];
+    blockUp: Piece[];
 }
 
-export function isMino(b: Piece) {
-    return b !== Piece.Empty && b !== Piece.Gray;
-}
-
-export function decode(data: string) {
-    const values = data.split('').map(decodeToValue);
-
-    function poll(max: number) {
-        let value = 0;
-        for (let count = 0; count < max; count += 1) {
-            const v = values.shift()!;
-            if (v === undefined) {
-                throw new FumenError('Unexpected');
-            }
-            value += v * Math.pow(ENCODE_TABLE.length, count);
-        }
-        // console.log(values);
-        return value;
-    }
-
-    const pages: Page[] = [];
-    let prevField: Field = createField();
-    let currentField: Field = createField();
-
-    const blockUp: Field = Array.from({ length: FIELD_WIDTH }).map(() => Piece.Empty);
-    let repeatCount = -1;
-    let comment = '';
-    while (0 < values.length) {
-        if (repeatCount <= 0) {
-            let index = 0;
-            let isChange = false;
-            while (index < FIELD_BLOCKS) {
-                const diffBlock = poll(2);
-                const diff = Math.floor(diffBlock / FIELD_BLOCKS);
-                const block = diffBlock % FIELD_BLOCKS;
-                if (block !== FIELD_BLOCKS - 1) {
-                    isChange = true;
-                }
-
-                // console.log('#' + block);
-
-                for (let b = 0; b < block + 1; b += 1) {
-                    const x = index % 10;
-                    const y = FIELD_TOP - Math.floor(index / 10) - 1;
-                    if (0 <= y) {
-                        const prevBlockNumber = prevField[x + 10 * y];
-                        currentField[x + y * 10] = diff + prevBlockNumber - 8;
-                    } else {
-                        blockUp[x] += diff - 8;
-                    }
-
-                    index += 1;
-                }
-            }
-            if (!isChange) {
-                repeatCount = poll(1);
-            }
-        } else {
-            currentField = prevField;
-            repeatCount -= 1;
-        }
-        // console.log(currentField);
-
-        const actionValue = poll(3);
-        // console.log(actionValue);
-
-        const action = getAction(actionValue);
-
-        if (action.isComment) {
-            const commentValues: number[] = [];
-            const commentLength = poll(2);
-            // console.log(commentLength);
-            for (let commentCounter = 0; commentCounter < Math.floor((commentLength + 3) / 4); commentCounter += 1) {
-                const commentValue = poll(5);
-                commentValues.push(commentValue);
-            }
-
-            const flatten: number[] = [];
-            const max = COMMENT_TABLE.length + 1;
-            for (let v of commentValues) {
-                for (let count = 0; count < 4; count += 1) {
-                    flatten.push(v % max);
-                    v = Math.floor(v / max);
-                }
-            }
-
-            comment = unescape(flatten.slice(0, commentLength).map(decodeCommentChar).join(''));
-            // console.log(comment);
-        }
-
-        const page = {
-            action,
-            comment,
-            field: currentField.concat(),
-            blockUp: blockUp.concat(),
-        };
-        // console.log(page);
-        pages.push(page);
-
-        if (action.isLock) {
-            currentField = currentField.concat();
-
-            if (isMino(action.piece)) {
-                currentField = put(currentField, action.piece, action.rotation, action.coordinate);
-            }
-
-            currentField = clearLine(currentField);
-
-            if (action.isBlockUp) {
-                currentField = up(currentField, blockUp);
-            }
-
-            if (action.isMirror) {
-                currentField = mirror(currentField);
-            }
-        }
-
-        prevField = currentField;
-    }
-
-    return pages;
-}
-
-interface Coordinate {
-    x: number;
-    y: number;
-}
-
-interface FumenAction {
+interface Action {
     piece: Piece;
     rotation: Rotation;
     coordinate: Coordinate;
@@ -169,12 +20,239 @@ interface FumenAction {
     isLock: boolean;
 }
 
-function getAction(v: number): FumenAction {
-    // console.log(`action: ${v}`);
+interface Coordinate {
+    x: number;
+    y: number;
+}
 
+const FIELD_BLOCKS = 240;
+const FIELD_WIDTH = 10;
+const FIELD_TOP = 23;
+
+const ENCODE_TABLE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+function decodeToValue(v: string): number {
+    return ENCODE_TABLE.indexOf(v);
+}
+
+const COMMENT_TABLE =
+    ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+const MAX_COMMENT_CHAR_VALUE = COMMENT_TABLE.length + 1;
+
+function decodeToCommentChars(v: number): string[] {
+    const array: string[] = [];
+    let value = v;
+    for (let count = 0; count < 4; count += 1) {
+        array.push(COMMENT_TABLE[value % MAX_COMMENT_CHAR_VALUE]);
+        value = Math.floor(value / MAX_COMMENT_CHAR_VALUE);
+    }
+    return array;
+}
+
+class Values {
+    private readonly values: number[];
+
+    constructor(data: string) {
+        this.values = data.split('').map(decodeToValue);
+    }
+
+    poll(max: number): number {
+        let value = 0;
+        for (let count = 0; count < max; count += 1) {
+            const v = this.values.shift();
+            if (v === undefined) {
+                throw new FumenError('Unexpected');
+            }
+            value += v * Math.pow(ENCODE_TABLE.length, count);
+        }
+        return value;
+    }
+
+    isEmpty(): boolean {
+        return this.values.length === 0;
+    }
+}
+
+class Field {
+    private pieces: Piece[];
+
+    constructor(num: number = FIELD_BLOCKS) {
+        this.pieces = Array.from({ length: num }).map(() => Piece.Empty);
+    }
+
+    get(x: number, y: number): Piece {
+        return this.pieces[x + y * FIELD_WIDTH];
+    }
+
+    add(x: number, y: number, value: number) {
+        this.pieces[x + y * FIELD_WIDTH] += value;
+    }
+
+    put(piece: Piece, rotation: Rotation, coordinate: Coordinate) {
+        const blocks = getBlocks(piece, rotation);
+        for (const block of blocks) {
+            const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
+            this.pieces[x + y * FIELD_WIDTH] = piece;
+        }
+    }
+
+    clearLine() {
+        let newField = this.pieces.concat();
+        const top = this.pieces.length / FIELD_WIDTH - 1;
+        for (let y = top; 0 <= y; y -= 1) {
+            const line = this.pieces.slice(y * FIELD_WIDTH, (y + 1) * FIELD_WIDTH);
+            const isFilled = line.every(value => value !== Piece.Empty);
+            if (isFilled) {
+                const bottom = newField.slice(0, y * FIELD_WIDTH);
+                const over = newField.slice((y + 1) * FIELD_WIDTH);
+                newField = bottom.concat(over, Array.from({ length: FIELD_WIDTH }).map(() => Piece.Empty));
+            }
+        }
+        this.pieces = newField;
+    }
+
+    up(blockUp: Field) {
+        this.pieces = blockUp.pieces.concat(this.pieces);
+    }
+
+    mirror() {
+        const newField: Piece[] = [];
+        for (let y = 0; y < this.pieces.length; y += 1) {
+            const line = this.pieces.slice(y * FIELD_WIDTH, (y + 1) * FIELD_WIDTH);
+            line.reverse();
+            for (const obj of line) {
+                newField.push(obj);
+            }
+        }
+        this.pieces = newField;
+    }
+
+    toArray(): Piece[] {
+        return this.pieces.concat();
+    }
+}
+
+class FieldLine {
+    private field: Field;
+
+    constructor() {
+        this.field = new Field(FIELD_WIDTH);
+    }
+
+    add(x: number, value: number) {
+        this.field.add(x, 0, value);
+    }
+
+    toShallowField() {
+        return this.field;
+    }
+
+    toArray(): Piece[] {
+        return this.field.toArray();
+    }
+}
+
+export function decode(data: string, callback: (page: Page) => void) {
+    let pageIndex = 0;
+    const values = new Values(data);
+    let [prevField, currentField] = [new Field(), new Field()];
+    const blockUp = new FieldLine();
+
+    const store = {
+        repeatCount: -1,
+        comment: '',
+    };
+
+    while (!values.isEmpty()) {
+        // Parse field
+        if (store.repeatCount <= 0) {
+            let index = 0;
+            let isChange = false;
+            while (index < FIELD_BLOCKS) {
+                const diffBlock = values.poll(2);
+                const diff = Math.floor(diffBlock / FIELD_BLOCKS);
+
+                const numOfBlocks = diffBlock % FIELD_BLOCKS;
+                if (numOfBlocks !== FIELD_BLOCKS - 1) {
+                    isChange = true;
+                }
+
+                for (let block = 0; block < numOfBlocks + 1; block += 1) {
+                    const x = index % FIELD_WIDTH;
+                    const y = FIELD_TOP - Math.floor(index / FIELD_WIDTH) - 1;
+                    if (0 <= y) {
+                        currentField.add(x, y, diff - 8);
+                    } else {
+                        blockUp.add(x, diff - 8);
+                    }
+
+                    index += 1;
+                }
+            }
+            if (!isChange) {
+                store.repeatCount = values.poll(1);
+            }
+        } else {
+            currentField = prevField;
+            store.repeatCount -= 1;
+        }
+
+        // Parse action
+        const actionValue = values.poll(3);
+        const action = getAction(actionValue);
+
+        // Parse comment
+        if (action.isComment) {
+            const commentValues: number[] = [];
+            const commentLength = values.poll(2);
+
+            for (let commentCounter = 0; commentCounter < Math.floor((commentLength + 3) / 4); commentCounter += 1) {
+                const commentValue = values.poll(5);
+                commentValues.push(commentValue);
+            }
+
+            const flatten: string[] = [];
+            for (const value of commentValues) {
+                const chars = decodeToCommentChars(value);
+                flatten.push(...chars);
+            }
+
+            store.comment = unescape(flatten.slice(0, commentLength).join(''));
+        }
+
+        const page: Page = {
+            action,
+            index: pageIndex,
+            comment: store.comment,
+            field: currentField.toArray(),
+            blockUp: blockUp.toArray(),
+        };
+        callback(page);
+
+        pageIndex += 1;
+
+        if (action.isLock) {
+            if (isMinoPiece(action.piece)) {
+                currentField.put(action.piece, action.rotation, action.coordinate);
+            }
+
+            currentField.clearLine();
+
+            if (action.isBlockUp) {
+                currentField.up(blockUp.toShallowField());
+            }
+
+            if (action.isMirror) {
+                currentField.mirror();
+            }
+        }
+
+        prevField = currentField;
+    }
+}
+
+function getAction(v: number): Action {
     function parsePiece(n: number) {
-        // console.log(`piece: ${n}`);
-
         switch (n) {
         case 0:
             return Piece.Empty;
@@ -199,7 +277,6 @@ function getAction(v: number): FumenAction {
     }
 
     function parseRotation(n: number, piece: Piece) {
-        // console.log(`rotation: ${n}`);
         switch (n) {
         case 0:
             return Rotation.Reverse;
@@ -273,91 +350,4 @@ function getAction(v: number): FumenAction {
         isComment,
         isLock,
     };
-}
-
-function put(field: Field, piece: Piece, rotation: Rotation, coordinate: Coordinate) {
-    const blocks = getBlocks(piece, rotation);
-    for (const block of blocks) {
-        const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
-        field[x + y * FIELD_WIDTH] = piece;
-    }
-    return field;
-}
-
-export function getBlocks(piece: Piece, rotation: Rotation): number[][] {
-    const blocks = getPieces(piece);
-    switch (rotation) {
-    case Rotation.Spawn:
-        return blocks;
-    case Rotation.Left:
-        return rotateLeft(blocks);
-    case Rotation.Reverse:
-        return rotateReverse(blocks);
-    case Rotation.Right:
-        return rotateRight(blocks);
-    }
-    throw new FumenError('Unsupported block');
-}
-
-export function getPieces(piece: Piece): number[][] {
-    switch (piece) {
-    case Piece.I:
-        return [[0, 0], [-1, 0], [1, 0], [2, 0]];
-    case Piece.T:
-        return [[0, 0], [-1, 0], [1, 0], [0, 1]];
-    case Piece.O:
-        return [[0, 0], [1, 0], [0, 1], [1, 1]];
-    case Piece.L:
-        return [[0, 0], [-1, 0], [1, 0], [1, 1]];
-    case Piece.J:
-        return [[0, 0], [-1, 0], [1, 0], [-1, 1]];
-    case Piece.S:
-        return [[0, 0], [-1, 0], [0, 1], [1, 1]];
-    case Piece.Z:
-        return [[0, 0], [1, 0], [0, 1], [-1, 1]];
-    }
-    throw new FumenError('Unsupported rotation');
-}
-
-function rotateRight(positions: number[][]): number[][] {
-    return positions.map(current => [current[1], -current[0]]);
-}
-
-function rotateLeft(positions: number[][]): number[][] {
-    return positions.map(current => [-current[1], current[0]]);
-}
-
-function rotateReverse(positions: number[][]): number[][] {
-    return positions.map(current => [-current[0], -current[1]]);
-}
-
-function clearLine(field: Field): Field {
-    let newField: Field = field;
-    const top = field.length / FIELD_WIDTH - 1;
-    for (let y = top; 0 <= y; y -= 1) {
-        const line = field.slice(y * FIELD_WIDTH, (y + 1) * FIELD_WIDTH);
-        const isFilled = line.every(value => value !== Piece.Empty);
-        if (isFilled) {
-            const bottom = newField.slice(0, y * FIELD_WIDTH);
-            const over = newField.slice((y + 1) * FIELD_WIDTH);
-            newField = bottom.concat(over, Array.from({ length: FIELD_WIDTH }).map(() => Piece.Empty));
-        }
-    }
-    return newField;
-}
-
-function up(field: Field, blockUp: Field): Field {
-    return blockUp.concat(field);
-}
-
-function mirror(field: Field): Field {
-    const newField: Field = [];
-    for (let y = 0; y < field.length; y += 1) {
-        const line = field.slice(y * FIELD_WIDTH, (y + 1) * FIELD_WIDTH);
-        line.reverse();
-        for (const obj of line) {
-            newField.push(obj);
-        }
-    }
-    return newField;
 }

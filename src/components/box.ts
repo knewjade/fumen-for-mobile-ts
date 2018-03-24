@@ -1,5 +1,4 @@
-import { getPieces, isMino } from '../lib/fumen';
-import { Piece } from '../lib/enums';
+import { getPieces, isMinoPiece, Piece } from '../lib/enums';
 import { param } from '@hyperapp/html';
 import { getHighlightColor } from '../lib/colors';
 import { Component } from '../lib/types';
@@ -98,7 +97,7 @@ export const box: Component<BoxProps> = (props, children) => {
             } else {
                 props.rect.box.show();
 
-                if (isMino(piece.value)) {
+                if (isMinoPiece(piece.value)) {
                     for (const part of props.rect.parts) {
                         part.show();
                     }
@@ -130,7 +129,7 @@ export const box: Component<BoxProps> = (props, children) => {
                 || piece.margin !== attr.margin) {
                 props.rect.box.show();
 
-                if (isMino(piece.value)) {
+                if (isMinoPiece(piece.value)) {
                     for (const part of props.rect.parts) {
                         part.show();
                     }

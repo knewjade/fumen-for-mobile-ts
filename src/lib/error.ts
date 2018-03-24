@@ -8,9 +8,6 @@ abstract class BaseError extends Error implements Error {
     }
 }
 
-export class KonvaError extends BaseError {
-}
-
 export class FumenError extends BaseError {
 }
 

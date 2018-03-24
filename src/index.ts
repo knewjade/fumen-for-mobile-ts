@@ -1,11 +1,10 @@
 import { app, View } from 'hyperapp';
 import { a, div, h4, i, p, span } from '@hyperapp/html';
 import { actions as originActions, Actions } from './actions';
-import { Block, initState, State } from './states';
+import { initState, State } from './states';
 import { HyperHammer, HyperStage } from './lib/hyper';
-import { parsePiece, parsePieceName, Piece } from './lib/enums';
-import { FumenError } from './lib/error';
-import { decode, getBlocks, isMino } from './lib/fumen';
+import { AnimationState, Piece, Rotation } from './lib/enums';
+import { decode } from './lib/fumen';
 import { ModalInstance, style } from './lib/types';
 import { field } from './components/field';
 import { block } from './components/block';
@@ -14,7 +13,6 @@ import { modal } from './components/modal';
 import { tools } from './components/tools';
 import { game } from './components/game';
 import { box } from './components/box';
-
 // Konvaは最後に読み込むこと！
 // エラー対策：Uncaught ReferenceError: __importDefault is not define
 import * as Konva from 'konva';
@@ -136,6 +134,20 @@ export const view: () => View<State, Actions> = () => {
         const boxSize = Math.min(fieldSize.width / 5 * 1.2, (canvas.width - fieldSize.width) / 2);
         const boxMargin = boxSize / 4;
 
+        const stopAnimation = () => {
+            if (resources.handlers.animation !== undefined) {
+                clearInterval(resources.handlers.animation);
+                resources.handlers.animation = undefined;
+            }
+        };
+
+        const startAnimation = () => {
+            stopAnimation();
+            resources.handlers.animation = setInterval(() => {
+                actions.nextPage();
+            }, state.play.intervalTime);
+        };
+
         return div({
             oncreate: () => {
                 // Hyperappでは最上位のノードが最後に実行される
@@ -150,6 +162,18 @@ export const view: () => View<State, Actions> = () => {
                 canvas,
                 stage: hyperStage,
                 hammer: hyperHammer,
+                backPage: () => {
+                    actions.backPage();
+                    if (state.play.status === AnimationState.Play) {
+                        startAnimation();
+                    }
+                },
+                nextPage: () => {
+                    actions.nextPage();
+                    if (state.play.status === AnimationState.Play) {
+                        startAnimation();
+                    }
+                },
             }),
             div([   // canvas:Field とのマッピング用仮想DOM
                 field({
@@ -227,7 +251,18 @@ export const view: () => View<State, Actions> = () => {
                             marginLeft: '10px',
                             float: 'left',
                         }),
-                        onclick: () => toggleAnimation(),
+                        onclick: () => {
+                            switch (state.play.status) {
+                            case AnimationState.Play:
+                                actions.pause();
+                                stopAnimation();
+                                break;
+                            default:
+                                actions.start();
+                                startAnimation();
+                                break;
+                            }
+                        },
                     }, state.play.status !== 'pause' ? 'pause' : 'play_arrow'),
                     span({
                         style: style({
@@ -236,7 +271,7 @@ export const view: () => View<State, Actions> = () => {
                             marginLeft: '10px',
                             float: 'left',
                         }),
-                    }, state.play.page + ' / X'),
+                    }, state.play.pageIndex + 1 + ' / ' + state.maxPage),
                 ]),
             ]),
             modal({
@@ -256,7 +291,7 @@ export const view: () => View<State, Actions> = () => {
     };
 };
 
-const router = app(initState, originActions, view(), document.body);
+export const router = app(initState, originActions, view(), document.body);
 
 window.onresize = () => {
     router.refresh({
@@ -266,129 +301,56 @@ window.onresize = () => {
 };
 
 const paramQuery = location.search.substr(1).split('&').find(value => value.startsWith('d='));
-// console.log(param.substr(2));
-
 const data = paramQuery !== undefined ? paramQuery.substr(2) : 'vhAAgH';
-//
-
 const replaced = data.replace(/\?/g, '');
-const pages = decode(replaced);
-let interval: number | undefined;
-let currentPage = 0;
-let comment2 = '';
 
-function toggleAnimation() {
-    if (interval !== undefined) {
-        stop();
-    } else {
-        start();
-    }
+interface Resources {
+    pages: Page[];
+    handlers: {
+        animation?: number;
+    };
 }
 
-const get = (value?: string) => {
-    if (value === undefined || value === ']' || value === ')') {
-        return '';
-    }
-    return value;
+interface Page {
+    comment: string;
+    field: Piece[];
+    blockUp: Piece[];
+    move: Move;
+}
+
+interface Move {
+    piece: Piece;
+    rotation: Rotation;
+    coordinate: {
+        x: number,
+        y: number,
+    };
+}
+
+export const resources: Resources = {
+    pages: [],
+    handlers: {},
 };
 
-const nextQuiz = (quiz: string, use: Piece): string => {
-    const name = parsePieceName(use);
-    const indexHold = quiz.indexOf('[') + 1;
-    const indexCurrent = quiz.indexOf('(') + 1;
-
-    const holdName = get(quiz[indexHold]);
-    const currentName = get(quiz[indexCurrent]);
-    const nextName = get(quiz[indexCurrent + 2]);
-    const least = get(quiz.substring(indexCurrent + 3));
-
-    // console.log(quiz);
-    // console.log(name, holdName, currentName, nextName);
-
-    if (holdName === name) {
-        return `#Q=[${currentName}](${nextName})` + least;
+decode(replaced, (page) => {
+    if (resources.pages.length <= page.index) {
+        router.setMaxPage({ maxPage: page.index + 1 });
     }
-    if (currentName === name) {
-        return `#Q=[${holdName}](${nextName})` + least;
+    resources.pages[page.index] = {
+        comment: page.comment,
+        field: page.field,
+        blockUp: page.blockUp,
+        move: {
+            piece: page.action.piece,
+            rotation: page.action.rotation,
+            coordinate: {
+                x: page.action.coordinate.x,
+                y: page.action.coordinate.y,
+            },
+        },
+    };
+
+    if (page.index === 0) {
+        router.goToHead();
     }
-    if (holdName === '') {
-        return nextQuiz(`#Q=[${currentName}](${nextName})` + least, use);
-    }
-
-    throw new FumenError('Unexpected quiz');
-};
-
-function start() {
-    router.start();
-
-    interval = setInterval(() => {
-        nextPage();
-    }, 600);
-}
-
-export function nextPage() {
-    const page = pages[currentPage];
-    const action = page.action;
-    comment2 = action.isComment ? page.comment : comment2;
-
-    const nextField: Block[] = page.field.map((value) => {
-        return {
-            piece: value,
-        };
-    });
-    if (isMino(action.piece)) {
-        const coordinate = action.coordinate;
-        const blocks = getBlocks(action.piece, action.rotation);
-        for (const block of blocks) {
-            const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
-            nextField[x + y * 10] = {
-                piece: action.piece,
-                highlight: true,
-            };
-        }
-    }
-
-    let hold;
-    let nexts;
-    let quiz2: string;
-    if (comment2.startsWith('#Q=')) {
-        quiz2 = nextQuiz(comment2, action.piece);
-
-        const g: (s: string) => Piece = (s) => {
-            const s2 = get(s);
-            return s2 !== '' ? parsePiece(s2) : Piece.Empty;
-        };
-
-        const indexHold = quiz2.indexOf('[') + 1;
-        const indexCurrent = quiz2.indexOf('(') + 1;
-        hold = g(quiz2[indexHold]);
-        // console.log(get(quiz2[indexCurrent]));
-        nexts = (get(quiz2[indexCurrent]) + quiz2.substr(indexCurrent + 2, 4)).split('').map(g);
-        // console.log(hold, nexts);
-    }
-
-    router.setFieldAndComment({
-        hold,
-        nexts,
-        field: nextField,
-        comment: comment2,
-    });
-
-    if (action.isLock && isMino(action.piece) && comment2.startsWith('#Q=')) {
-        comment2 = quiz2!;
-    }
-
-    currentPage = (currentPage + 1) % pages.length;
-    if (currentPage === 0) {
-        const a = '<div style="position: fixed; top: 0; left: 0;">hello</div>';
-        M.toast({ html: a, displayLength: 1000 });
-    }
-}
-
-function stop() {
-    if (interval !== undefined) {
-        clearInterval(interval);
-        interval = undefined;
-        router.pause();
-    }
-}
+});

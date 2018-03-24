@@ -1,7 +1,6 @@
 import { ViewError } from './error';
 import { Piece } from './enums';
 
-
 export function getHighlightColor(piece: Piece): string {
     switch (piece) {
     case Piece.Gray:

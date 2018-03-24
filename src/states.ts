@@ -1,4 +1,4 @@
-import { Piece } from './lib/enums';
+import { AnimationState, Piece } from './lib/enums';
 
 export interface State {
     field: Block[];
@@ -13,9 +13,11 @@ export interface State {
     };
     hold: Piece | undefined;
     nexts: Piece[] | undefined;
+    maxPage: number;
     play: {
-        status: string;
-        page: number;
+        status: AnimationState;
+        pageIndex: number;
+        intervalTime: number;
     };
 }
 
@@ -39,8 +41,10 @@ export const initState: State = {
     },
     hold: undefined,
     nexts: undefined,
+    maxPage: 0,
     play: {
-        status: 'pause',
-        page: 1,
+        status: AnimationState.Pause,
+        pageIndex: 0,
+        intervalTime: 1000,
     },
 };

@@ -4,7 +4,7 @@ import { default as Konva } from 'konva';
 
 export class HyperStage {
     private stageObj: Konva.Stage | undefined = undefined;
-    private layerBuffer: Konva.Layer[] = [];
+    private readonly layerBuffer: Konva.Layer[] = [];
 
     addStage(stage: Konva.Stage) {
         this.stageObj = stage;
@@ -41,7 +41,7 @@ interface HammerCallbacks {
 
 export class HyperHammer {
     private hammerObj: HammerManager | undefined = undefined;
-    private callbacks: HammerCallbacks = {
+    private readonly callbacks: HammerCallbacks = {
         tap: () => {
         },
     };

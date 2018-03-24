@@ -1,6 +1,5 @@
 import { HyperHammer, HyperStage } from '../lib/hyper';
 import { Component, style } from '../lib/types';
-import { nextPage } from '../index';
 import { main } from '@hyperapp/html';
 
 // Konvaは最後に読み込むこと！
@@ -14,9 +13,18 @@ interface GameProps {
     };
     stage: HyperStage;
     hammer: HyperHammer;
+    backPage: () => void;
+    nextPage: () => void;
 }
 
 export const game: Component<GameProps> = (props, children) => {
+    const onTap = (event: HammerInput) => {
+        if (event.center.x < props.canvas.width / 2) {
+            props.backPage();
+        } else {
+            props.nextPage();
+        }
+    };
     return main({
         id: 'container',
         style: style({
@@ -40,9 +48,7 @@ export const game: Component<GameProps> = (props, children) => {
 
             const hyperHammer = props.hammer;
             hyperHammer.register(hammer);
-            hyperHammer.tap = (event) => {
-                console.log(`${event.center.x} / ${props.canvas.width}`);
-            };
+            hyperHammer.tap = onTap;
             hammer.on('tap', hyperHammer.tap);
         },
         onupdate: (element: any, attr: any) => {
@@ -50,13 +56,7 @@ export const game: Component<GameProps> = (props, children) => {
                 props.stage.resize(props.canvas);
             }
             const hyperHammer = props.hammer;
-            hyperHammer.tap = (event) => {
-                if (event.center.x < props.canvas.width / 2) {
-                    console.log('tap left');
-                } else {
-                    nextPage();
-                }
-            };
+            hyperHammer.tap = onTap;
         },
     }, children);
 };
