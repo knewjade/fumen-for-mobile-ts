@@ -1,7 +1,6 @@
 import { Piece } from './lib/enums';
 
 export interface State {
-    count: number;
     field: Block[];
     comment: {
         text: string;
@@ -14,6 +13,10 @@ export interface State {
     };
     hold: Piece | undefined;
     nexts: Piece[] | undefined;
+    play: {
+        status: string;
+        page: number;
+    };
 }
 
 export interface Block {
@@ -22,7 +25,6 @@ export interface Block {
 }
 
 export const initState: State = {
-    count: 0,
     field: Array.from({ length: 240 }).map((ignore) => {
         return { piece: Piece.Empty };
     }),
@@ -37,4 +39,8 @@ export const initState: State = {
     },
     hold: undefined,
     nexts: undefined,
+    play: {
+        status: 'pause',
+        page: 1,
+    },
 };

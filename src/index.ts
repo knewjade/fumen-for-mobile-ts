@@ -1,6 +1,6 @@
 import { app, View, VNode } from 'hyperapp';
-import { a, button, div, h4, input, main, nav, p, param } from '@hyperapp/html';
-import { action, actions as originActions, Actions } from './actions';
+import { a, div, h4, i, input, li, main, nav, p, param, span, ul } from '@hyperapp/html';
+import { actions as originActions, Actions } from './actions';
 import { Block, initState, State } from './states';
 import { HyperHammer, HyperStage } from './lib/hyper';
 import { Piece } from './lib/enums';
@@ -135,10 +135,6 @@ export const view: () => View<State, Actions> = () => {
         const boxSize = Math.min(fieldSize.width / 5 * 1.2, (canvas.width - fieldSize.width) / 2);
         const boxMargin = boxSize / 4;
 
-        const tap = (x: number) => {
-            console.log(`${x} / ${canvas.width}`);
-        };
-
         return div({
             oncreate: () => {
                 // Hyperappでは最上位のノードが最後に実行される
@@ -153,7 +149,6 @@ export const view: () => View<State, Actions> = () => {
                 canvas,
                 stage: hyperStage,
                 hammer: hyperHammer,
-                countUp: actions.up,
             }),
             div([   // canvas:Field とのマッピング用仮想DOM
                 field({
@@ -209,19 +204,38 @@ export const view: () => View<State, Actions> = () => {
                     textColor: state.comment.textColor,
                     backgroundColor: state.comment.backgroundColor,
                     height: heights.comment,
-                    text: state.count + state.comment.text,
+                    text: state.comment.text,
                 }),
                 tools({
                     height: heights.tools,
                 }, [
-                    button({
-                        className: 'right',
+                    i({
+                        className: 'right material-icons',
                         style: style({
-                            height: heights.tools + 'px',
+                            lineHeight: heights.tools + 'px',
+                            fontSize: heights.tools * 3 / 4 + 'px',
+                            margin: 'auto 10px',
                         }),
                         onclick: () => instance!.open(),
-                    }, 'Logo'),
-                    button({ onclick: () => actions.up(1) }, 'countUp'),
+                    }, 'menu'),
+                    i({
+                        className: 'material-icons',
+                        style: style({
+                            lineHeight: heights.tools + 'px',
+                            fontSize: heights.tools * 3 / 4 + 'px',
+                            marginLeft: '10px',
+                            float: 'left',
+                        }),
+                        onclick: () => toggleAnimation(),
+                    }, state.play.status !== 'pause' ? 'pause' : 'play_arrow'),
+                    span({
+                        style: style({
+                            lineHeight: heights.tools + 'px',
+                            fontSize: '20px',
+                            marginLeft: '10px',
+                            float: 'left',
+                        }),
+                    }, state.play.page + ' / X'),
                 ]),
             ]),
             modal({
@@ -240,16 +254,6 @@ export const view: () => View<State, Actions> = () => {
         ]);
     };
 };
-/*
-<div class="nav-wrapper">
-      <a href="#" class="brand-logo right">Logo</a>
-      <ul id="nav-mobile" class="left hide-on-med-and-down">
-        <li><a href="sass.html">Sass</a></li>
-        <li><a href="badges.html">Components</a></li>
-        <li><a href="collapsible.html">JavaScript</a></li>
-      </ul>
-    </div>
- */
 
 type Children = string | number | (string | number | VNode<{}>)[];
 type VNodeWithProps = (children?: Children) => VNode<any>;
@@ -265,7 +269,6 @@ interface GameProps {
     };
     stage: HyperStage;
     hammer: HyperHammer;
-    countUp: (value: number) => action;
 }
 
 const game: Component<GameProps> = (props, children) => {
@@ -306,7 +309,7 @@ const game: Component<GameProps> = (props, children) => {
                 if (event.center.x < props.canvas.width / 2) {
                     console.log('tap left');
                 } else {
-                    console.log('tap right');
+                    nextPage();
                 }
             };
         },
@@ -586,7 +589,11 @@ const tools: Component<ToolsProps> = (props, children) => {
             margin: 0,
             padding: 0,
         }),
-    }, children);
+    }, [
+        div({
+            className: 'nav-wrapper',
+        }, children),
+    ]);
 };
 
 interface ModalProps {
@@ -629,10 +636,6 @@ let interval: number | undefined;
 let currentPage = 0;
 let comment2 = '';
 
-setTimeout(() => {
-    start();
-}, 0);
-
 function toggleAnimation() {
     if (interval !== undefined) {
         stop();
@@ -641,100 +644,111 @@ function toggleAnimation() {
     }
 }
 
+const get = (value?: string) => {
+    if (value === undefined || value === ']' || value === ')') {
+        return '';
+    }
+    return value;
+};
+
+const nextQuiz = (quiz: string, use: Piece): string => {
+    const name = parsePieceName(use);
+    const indexHold = quiz.indexOf('[') + 1;
+    const indexCurrent = quiz.indexOf('(') + 1;
+
+    const holdName = get(quiz[indexHold]);
+    const currentName = get(quiz[indexCurrent]);
+    const nextName = get(quiz[indexCurrent + 2]);
+    const least = get(quiz.substring(indexCurrent + 3));
+
+    // console.log(quiz);
+    // console.log(name, holdName, currentName, nextName);
+
+    if (holdName === name) {
+        return `#Q=[${currentName}](${nextName})` + least;
+    }
+    if (currentName === name) {
+        return `#Q=[${holdName}](${nextName})` + least;
+    }
+    if (holdName === '') {
+        return nextQuiz(`#Q=[${currentName}](${nextName})` + least, use);
+    }
+
+    throw new FumenError('Unexpected quiz');
+};
+
 function start() {
-    const get = (value?: string) => {
-        if (value === undefined || value === ']' || value === ')') {
-            return '';
-        }
-        return value;
-    };
-
-    const nextQuiz = (quiz: string, use: Piece): string => {
-        const name = parsePieceName(use);
-        const indexHold = quiz.indexOf('[') + 1;
-        const indexCurrent = quiz.indexOf('(') + 1;
-
-        const holdName = get(quiz[indexHold]);
-        const currentName = get(quiz[indexCurrent]);
-        const nextName = get(quiz[indexCurrent + 2]);
-        const least = get(quiz.substring(indexCurrent + 3));
-
-        // console.log(quiz);
-        // console.log(name, holdName, currentName, nextName);
-
-        if (holdName === name) {
-            return `#Q=[${currentName}](${nextName})` + least;
-        }
-        if (currentName === name) {
-            return `#Q=[${holdName}](${nextName})` + least;
-        }
-        if (holdName === '') {
-            return nextQuiz(`#Q=[${currentName}](${nextName})` + least, use);
-        }
-
-        throw new FumenError('Unexpected quiz');
-    };
+    router.start();
 
     interval = setInterval(() => {
-        const page = pages[currentPage];
-        const action = page.action;
-        comment2 = action.isComment ? page.comment : comment2;
-
-        const nextField: Block[] = page.field.map((value) => {
-            return {
-                piece: value,
-            };
-        });
-        if (isMino(action.piece)) {
-            const coordinate = action.coordinate;
-            const blocks = getBlocks(action.piece, action.rotation);
-            for (const block of blocks) {
-                const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
-                nextField[x + y * 10] = {
-                    piece: action.piece,
-                    highlight: true,
-                };
-            }
-        }
-
-        let hold;
-        let nexts;
-        let quiz2: string;
-        if (comment2.startsWith('#Q=')) {
-            quiz2 = nextQuiz(comment2, action.piece);
-
-            const g: (s: string) => Piece = (s) => {
-                const s2 = get(s);
-                return s2 !== '' ? parsePiece(s2) : Piece.Empty;
-            };
-
-            const indexHold = quiz2.indexOf('[') + 1;
-            const indexCurrent = quiz2.indexOf('(') + 1;
-            hold = g(quiz2[indexHold]);
-            // console.log(get(quiz2[indexCurrent]));
-            nexts = (get(quiz2[indexCurrent]) + quiz2.substr(indexCurrent + 2, 4)).split('').map(g);
-            // console.log(hold, nexts);
-        }
-
-        router.setFieldAndComment({
-            hold,
-            nexts,
-            field: nextField,
-            comment: comment2,
-        });
-
-        if (action.isLock && isMino(action.piece) && comment2.startsWith('#Q=')) {
-            comment2 = quiz2!;
-        }
-
-        currentPage = (currentPage + 1) % pages.length;
+        nextPage();
     }, 600);
+}
+
+function nextPage() {
+    const page = pages[currentPage];
+    const action = page.action;
+    comment2 = action.isComment ? page.comment : comment2;
+
+    const nextField: Block[] = page.field.map((value) => {
+        return {
+            piece: value,
+        };
+    });
+    if (isMino(action.piece)) {
+        const coordinate = action.coordinate;
+        const blocks = getBlocks(action.piece, action.rotation);
+        for (const block of blocks) {
+            const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
+            nextField[x + y * 10] = {
+                piece: action.piece,
+                highlight: true,
+            };
+        }
+    }
+
+    let hold;
+    let nexts;
+    let quiz2: string;
+    if (comment2.startsWith('#Q=')) {
+        quiz2 = nextQuiz(comment2, action.piece);
+
+        const g: (s: string) => Piece = (s) => {
+            const s2 = get(s);
+            return s2 !== '' ? parsePiece(s2) : Piece.Empty;
+        };
+
+        const indexHold = quiz2.indexOf('[') + 1;
+        const indexCurrent = quiz2.indexOf('(') + 1;
+        hold = g(quiz2[indexHold]);
+        // console.log(get(quiz2[indexCurrent]));
+        nexts = (get(quiz2[indexCurrent]) + quiz2.substr(indexCurrent + 2, 4)).split('').map(g);
+        // console.log(hold, nexts);
+    }
+
+    router.setFieldAndComment({
+        hold,
+        nexts,
+        field: nextField,
+        comment: comment2,
+    });
+
+    if (action.isLock && isMino(action.piece) && comment2.startsWith('#Q=')) {
+        comment2 = quiz2!;
+    }
+
+    currentPage = (currentPage + 1) % pages.length;
+    if (currentPage === 0) {
+        const a = '<div style="position: fixed; top: 0; left: 0;">hello</div>';
+        M.toast({ html: a, displayLength: 1000 });
+    }
 }
 
 function stop() {
     if (interval !== undefined) {
         clearInterval(interval);
         interval = undefined;
+        router.pause();
     }
 }
 

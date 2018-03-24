@@ -3,35 +3,14 @@ import { Piece } from './lib/enums';
 
 export type action = (state: State) => Partial<State>;
 
-// ===  Up 操作 ===
-export interface UpActions {
-    up: (value: number) => action;
-}
-
-const upActions: UpActions = {
-    up: (value = 1) => state => ({
-        count: state.count + value,
-    }),
-};
-
-// === Down 操作 ===
-export interface DownActions {
-    down: (value: number) => action;
-}
-
-const downActions: DownActions = {
-    down: (value = 1) => state => ({
-        count: state.count - value,
-    }),
-};
-
-// === Fumen 操作 ===
-export interface FumenActions {
+export interface Actions {
     setFieldAndComment: (data: { field: Block[], comment?: string, hold?: Piece, nexts?: Piece[] }) => action;
     refresh: (data: { width: number, height: number }) => action;
+    pause: () => action;
+    start: () => action;
 }
 
-const fumenActions: FumenActions = {
+export const actions: Actions = {
     setFieldAndComment: ({ field, comment, hold, nexts }) => (state) => {
         console.log('action: setFieldAndComment');
 
@@ -51,13 +30,20 @@ const fumenActions: FumenActions = {
         console.log('action: refresh');
         return { display: data };
     },
-};
-
-// === すべての操作 ===
-export type Actions = UpActions & DownActions & FumenActions;
-
-export const actions: Actions = {
-    ...upActions,
-    ...downActions,
-    ...fumenActions,
+    start: () => (state) => {
+        return {
+            play: {
+                ...state.play,
+                status: 'play',
+            },
+        };
+    },
+    pause: () => (state) => {
+        return {
+            play: {
+                ...state.play,
+                status: 'pause',
+            },
+        };
+    },
 };
