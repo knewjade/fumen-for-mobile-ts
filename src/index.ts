@@ -25,9 +25,9 @@ export const view: () => View<State, Actions> = () => {
     const hyperHammer = new HyperHammer();
 
     // ブロック
-    const blocks = Array.from({ length: 24 * 10 }).map((ignore, index) => {
+    const blocks = Array.from({ length: 23 * 10 }).map((ignore, index) => {
         const [ix, iy] = [index % 10, Math.floor(index / 10)];
-        const py = 23 - iy;
+        const py = 22 - iy;
         const box: Konva.Rect = new Konva.Rect({
             strokeWidth: 0,
             opacity: 1,
@@ -40,9 +40,26 @@ export const view: () => View<State, Actions> = () => {
         };
     });
 
+    const blocks2 = Array.from({ length: 10 }).map((ignore, index) => {
+        const [ix, iy] = [index % 10, Math.floor(index / 10)];
+        const box: Konva.Rect = new Konva.Rect({
+            strokeWidth: 0,
+            opacity: 0.5,
+        });
+        return {
+            ix,
+            iy,
+            box,
+            py: 0,
+        };
+    });
+
     {
         const layer = new Konva.Layer();
         for (const block of blocks) {
+            layer.add(block.box);
+        }
+        for (const block of blocks2) {
             layer.add(block.box);
         }
         hyperStage.addLayer(layer);
@@ -54,9 +71,14 @@ export const view: () => View<State, Actions> = () => {
         strokeWidth: 0,
         opacity: 1,
     });
+    const line = new Konva.Line({
+        points: [],
+        stroke: '#d8d8d8',
+    });
     {
         const layer = new Konva.Layer();
         layer.add(background);
+        layer.add(line);
         hyperStage.addLayer(layer);
     }
 
@@ -123,13 +145,18 @@ export const view: () => View<State, Actions> = () => {
                 .every(value => state.field[value.ix + value.iy * 10].piece !== Piece.Empty);
         });
 
+        const bottomBorderLine = 2.7;
         const fieldSize = {
             width: (size + 1) * 10 + 1,
-            height: (size + 1) * 24 + 1,
+            height: (size + 1) * 24 + 1 + bottomBorderLine + 1,
         };
         const top = {
             x: (canvas.width - fieldSize.width) / 2,
             y: (canvas.height - fieldSize.height) / 2,
+        };
+        const top2 = {
+            x: top.x,
+            y: top.y + (size + 1) * 23 + 1 + bottomBorderLine,
         };
         const boxSize = Math.min(fieldSize.width / 5 * 1.2, (canvas.width - fieldSize.width) / 2);
         const boxMargin = boxSize / 4;
@@ -178,8 +205,15 @@ export const view: () => View<State, Actions> = () => {
             div([   // canvas:Field とのマッピング用仮想DOM
                 field({
                     background,
+                    line,
                     position: top,
                     size: fieldSize,
+                    borderPosition: {
+                        startX: top2.x,
+                        endX: top2.x + fieldSize.width,
+                        y: top2.y,
+                    },
+                    borderWidth: bottomBorderLine,
                 }, blocks.map((value) => {
                     const blockValue = state.field[value.ix + value.iy * 10];
                     return block({
@@ -193,7 +227,22 @@ export const view: () => View<State, Actions> = () => {
                         rect: value.box,
                         highlight: blockValue.highlight || isHighlights[value.iy],
                     });
-                })),
+                }).concat(
+                    blocks2.map((value) => {
+                        const blockValue = state.field[value.ix + value.iy * 10];
+                        return block({
+                            size,
+                            position: {
+                                x: top2.x + value.ix * size + value.ix + 1,
+                                y: top2.y + value.py * size + value.py + 1,
+                            },
+                            piece: blockValue.piece,
+                            key: `bottom-block-${value.ix}-${value.iy}`,
+                            rect: value.box,
+                            highlight: blockValue.highlight || isHighlights[value.iy],
+                        });
+                    }),
+                )),
                 box({
                     position: {
                         x: top.x - (boxSize + boxMargin / 2),
