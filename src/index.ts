@@ -126,7 +126,7 @@ export const view: () => View<State, Actions> = () => {
     }
 
     const heights = {
-        comment: 30,
+        comment: 35,
         tools: 50,
     };
 

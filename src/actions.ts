@@ -69,8 +69,50 @@ export const actions: Actions = {
     },
     reload: () => (state) => {
         log('action: reload');
-        const action = actions.openPage({ pageIndex: state.play.pageIndex });
-        return action(state);
+        const index = state.play.pageIndex;
+        const page = resources.pages[index];
+
+        if (page === undefined) {
+            throw new ViewError('Cannot open page');
+        }
+
+        const comment = resources.pages[page.commentRef].comment;
+        let hold;
+        let nexts: Piece[] = [];
+        if (comment !== undefined && comment.startsWith('#Q=')) {
+            let quiz = new Quiz(comment);
+
+            for (let i = page.commentRef; i < index; i += 1) {
+                const operation = resources.pages[i].quizOperation;
+                if (operation !== undefined) {
+                    quiz = quiz.operate(operation);
+                }
+            }
+
+            const operation = resources.pages[index].quizOperation;
+            if (operation !== undefined) {
+                quiz = quiz.operate(operation);
+            }
+
+            hold = quiz.getHold();
+            nexts = quiz.getNexts(5);
+        } else {
+            for (const page of resources.pages.slice(index + 1)) {
+                const piece = page.move.piece;
+                if (page.isLock && isMinoPiece(piece)) {
+                    nexts.push(piece);
+                }
+
+                if (5 <= nexts.length) {
+                    break;
+                }
+            }
+        }
+
+        return {
+            hold,
+            nexts,
+        };
     },
     start: () => (state) => {
         log('action: start');

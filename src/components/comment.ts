@@ -12,6 +12,7 @@ export const comment: Component<CommentProps> = (props) => {
         width: '100%',
         height: props.height + 'px',
         lineHeight: props.height + 'px',
+        fontSize: props.height * 0.6 + 'px',
         boxSizing: 'border-box',
         textAlign: 'center',
         border: 'none',
