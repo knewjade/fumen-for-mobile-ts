@@ -86,12 +86,12 @@
     <ol>
         <li> 以下のいずれかのコードをコピーする「<a href="http://fumen.zui.jp">連続テト譜エディタ</a>」から本ツールへ移動するとき、どこのタブで開くか選んでください）
             <ul>
-                <li style="margin: 5px;"> 同じタブで開く <br>
-                    <textarea readonly>javascript:(function(){encode(1);window.location.href='https://knewjade.github.io/fumen-for-mobile/index.html?d='+encodeURIComponent(document.getElementById('tx').value);})();</textarea>
+                <li style="margin: 5px;"> 同じタブで開く<br>
+                    <textarea id="sametab" readonly onclick="this.select();">javascript:(function(){encode(1);window.location.href='https://knewjade.github.io/fumen-for-mobile/index.html?d='+encodeURIComponent(document.getElementById('tx').value);})();</textarea>
                 </li>
 
-                <li style="margin: 5px;"> 違うタブで開く <br>
-                    <textarea readonly>javascript:(function(){encode(1);window.open('https://knewjade.github.io/fumen-for-mobile/index.html?d='+encodeURIComponent(document.getElementById('tx').value), '_blank');})();</textarea>
+                <li style="margin: 5px;"> 違うタブで開く<br>
+                    <textarea id="newtab" readonly onclick="this.select();">javascript:(function(){encode(1);window.open('https://knewjade.github.io/fumen-for-mobile/index.html?d='+encodeURIComponent(document.getElementById('tx').value), '_blank');})();</textarea>
                 </li>
             </ul>
         </li>
