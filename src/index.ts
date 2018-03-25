@@ -476,7 +476,8 @@ export const resources: Resources = {
 };
 
 const extract = (data: string) => {
-    const replaced = data.replace(/\?/g, '');
+    const decoded = decodeURIComponent(data);
+    const replaced = decoded.replace(/\?/g, '');
 
     for (const prefix of ['v115@', 'm115@', 'd115@']) {
         const index = replaced.indexOf(prefix);
