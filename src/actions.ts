@@ -163,7 +163,6 @@ function openPage(index: number): action {
     if (comment !== undefined && comment.startsWith('#Q=')) {
         let quiz = new Quiz(comment);
 
-        console.log(page.commentRef);
         for (let i = page.commentRef; i < index; i += 1) {
             const operation = resources.pages[i].quizOperation;
             if (operation !== undefined) {

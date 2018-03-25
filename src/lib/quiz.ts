@@ -4,6 +4,7 @@ import { Operation } from './fumen';
 
 export class Quiz {
     constructor(private readonly quiz: string) {
+        console.log(quiz);
     }
 
     getOperation(used: Piece): Operation {
@@ -29,6 +30,9 @@ export class Quiz {
         const index = this.quiz.indexOf('(') + 1;
         const name = this.quiz[index];
         if (name === undefined) {
+            return '';
+        }
+        if (name === ')') {
             return '';
         }
         return name;
