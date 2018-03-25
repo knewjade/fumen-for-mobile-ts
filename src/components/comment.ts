@@ -2,16 +2,27 @@ import { Component, style } from '../lib/types';
 import { div, input } from '@hyperapp/html';
 
 interface CommentProps {
+    isChanged: boolean;
     height: number;
-    textColor: string;
-    backgroundColor: string;
     text: string;
 }
 
 export const comment: Component<CommentProps> = (props) => {
+    const commentStyle = style({
+        width: '100%',
+        height: props.height + 'px',
+        lineHeight: props.height + 'px',
+        boxSizing: 'border-box',
+        textAlign: 'center',
+        border: 'none',
+    });
+
+    if (props.isChanged) {
+        commentStyle.color = '#fff';
+    }
+
     return div({
         style: style({
-            backgroundColor: props.backgroundColor,
             width: '100%',
             height: props.height + 'px',
             whiteSpace: 'nowrap',
@@ -19,15 +30,8 @@ export const comment: Component<CommentProps> = (props) => {
     }, [
         input({
             type: 'text',
-            style: style({
-                color: props.textColor,
-                width: '100%',
-                height: props.height + 'px',
-                lineHeight: props.height + 'px',
-                boxSizing: 'border-box',
-                textAlign: 'center',
-                border: 'none',
-            }),
+            className: props.isChanged ? 'green darken-1' : '',
+            style: commentStyle,
             value: props.text,
             readonly: 'readonly',
         }),

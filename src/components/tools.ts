@@ -7,7 +7,7 @@ interface ToolsProps {
 
 export const tools: Component<ToolsProps> = (props, children) => {
     return nav({
-        className: 'page-footer',
+        className: 'teal page-footer',
         style: style({
             width: '100%',
             height: props.height + 'px',

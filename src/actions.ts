@@ -34,8 +34,7 @@ export const actions: Actions = {
             nexts,
             blockUp: blockUp !== undefined ? blockUp : state.blockUp,
             comment: {
-                textColor: isChanged ? 'white' : 'black',
-                backgroundColor: isChanged ? 'green' : 'white',
+                isChanged,
                 text: comment !== undefined ? comment : state.comment.text,
             },
             play: {

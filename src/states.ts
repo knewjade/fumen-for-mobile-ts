@@ -5,8 +5,7 @@ export interface State {
     blockUp: Block[];
     comment: {
         text: string;
-        textColor: string;
-        backgroundColor: string;
+        isChanged: boolean;
     };
     display: {
         width: number;
@@ -36,8 +35,7 @@ export const initState: State = {
     }),
     comment: {
         text: '',
-        textColor: 'black',
-        backgroundColor: 'white',
+        isChanged: false,
     },
     display: {
         width: window.document.body.clientWidth,

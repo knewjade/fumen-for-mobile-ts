@@ -13,6 +13,8 @@ import { modal } from './components/modal';
 import { tools } from './components/tools';
 import { game } from './components/game';
 import { box } from './components/box';
+import { ViewError } from './lib/error';
+
 // Konvaは最後に読み込むこと！
 // エラー対策：Uncaught ReferenceError: __importDefault is not define
 import * as Konva from 'konva';
@@ -128,7 +130,7 @@ export const view: () => View<State, Actions> = () => {
         tools: 50,
     };
 
-    let instance: ModalInstance | undefined = undefined;
+    // let instance: ModalInstance | undefined = undefined;
     // 全体の構成を1関数にまとめる
     return (state, actions) => {
         const canvas = {
@@ -275,30 +277,81 @@ export const view: () => View<State, Actions> = () => {
             ]),
             div([
                 comment({
-                    textColor: state.comment.textColor,
-                    backgroundColor: state.comment.backgroundColor,
+                    isChanged: state.comment.isChanged,
                     height: heights.comment,
                     text: state.comment.text,
                 }),
                 tools({
                     height: heights.tools,
                 }, [
-                    i({
-                        className: 'right material-icons',
+                    a({
+                        href: './help.html',
+                    },[
+                        i({
+                            // z-depth-1
+                            className: 'right material-icons',
+                            style: style({
+                                fontSize: heights.tools * 2.5 / 4 + 'px',
+                                height: heights.tools - 10 + 'px',
+                                lineHeight: heights.tools - 10 + 'px',
+                                margin: '5px',
+                                border: 'dashed 1px #fff',
+                                boxSizing: 'border-box',
+                                width: '65px',
+                                textAlign: 'center',
+                            }),
+                        }, 'help_outline'),
+                    ]),
+                    div({
                         style: style({
                             lineHeight: heights.tools + 'px',
-                            fontSize: heights.tools * 3 / 4 + 'px',
-                            margin: 'auto 10px',
+                            height: heights.tools + 'px',
+                            width: (canvas.width / 2 - 210 / 2) + 'px',
+                            float: 'left',
                         }),
-                        onclick: () => instance!.open(),
-                    }, 'menu'),
+                    }),
+                    a({
+                        className: 'modal-trigger',
+                        href: '#modal',
+                    },[
+                        i({
+                            className: 'material-icons',
+                            style: style({
+                                fontSize: heights.tools * 2.7 / 4 + 'px',
+                                height: heights.tools - 10 + 'px',
+                                lineHeight: heights.tools - 10 + 'px',
+                                margin: '5px',
+                                border: 'dashed 1px #fff',
+                                boxSizing: 'border-box',
+                                width: '65px',
+                                float: 'left',
+                                textAlign: 'center',
+                            }),
+                        }, 'open_in_new'),
+                    ]),
+                    span({
+                        style: style({
+                            lineHeight: heights.tools + 'px',
+                            fontSize: '20px',
+                            margin: '0px',
+                            // marginLeft: '10px',
+                            float: 'left',
+                            width: '80px',
+                            textAlign: 'center',
+                        }),
+                    }, state.play.pageIndex + 1 + ' / ' + state.maxPage),
                     i({
                         className: 'material-icons',
                         style: style({
-                            lineHeight: heights.tools + 'px',
-                            fontSize: heights.tools * 3 / 4 + 'px',
-                            marginLeft: '10px',
+                            fontSize: heights.tools * 3.3 / 4 + 'px',
+                            height: heights.tools - 10 + 'px',
+                            lineHeight: heights.tools - 10 + 'px',
+                            margin: '5px',
+                            border: 'dashed 1px #fff',
+                            boxSizing: 'border-box',
+                            width: '65px',
                             float: 'left',
+                            textAlign: 'center',
                         }),
                         onclick: () => {
                             switch (state.play.status) {
@@ -313,19 +366,11 @@ export const view: () => View<State, Actions> = () => {
                             }
                         },
                     }, state.play.status !== 'pause' ? 'pause' : 'play_arrow'),
-                    span({
-                        style: style({
-                            lineHeight: heights.tools + 'px',
-                            fontSize: '20px',
-                            marginLeft: '10px',
-                            float: 'left',
-                        }),
-                    }, state.play.pageIndex + 1 + ' / ' + state.maxPage),
                 ]),
             ]),
             modal({
                 oncreate: (element) => {
-                    instance = M.Modal.init(element);
+                    M.Modal.init(element);
                 },
             }, [
                 h4('Modal Header'),
@@ -351,7 +396,6 @@ window.onresize = () => {
 
 const paramQuery = location.search.substr(1).split('&').find(value => value.startsWith('d='));
 const data = paramQuery !== undefined ? paramQuery.substr(2) : 'vhAAgH';
-const replaced = data.replace(/\?/g, '');
 
 interface Resources {
     pages: Page[];
@@ -381,7 +425,19 @@ export const resources: Resources = {
     handlers: {},
 };
 
-decode(replaced, (page) => {
+const extract = (data: string) => {
+    const replaced = data.replace(/\?/g, '');
+    if (data.includes('@')) {
+        if (data.startsWith('v115@')) {
+            return replaced.substr(5);
+        }
+        window.alert('Support v115 only');
+        throw new ViewError('Support v115 only');
+    }
+    return replaced;
+};
+
+decode(extract(data), (page) => {
     if (resources.pages.length <= page.index) {
         router.setMaxPage({ maxPage: page.index + 1 });
     }
