@@ -1,12 +1,15 @@
-import { getBlocks, isMinoPiece, Piece, Rotation } from './enums';
+import { getBlocks, isMinoPiece, parsePieceName, Piece, Rotation } from './enums';
 import { FumenError } from './error';
+import { Quiz } from './quiz';
 
 export interface Page {
     index: number;
     action: Action;
-    comment: string;
+    comment?: string;
+    commentRef: number;
     field: Piece[];
     blockUp: Piece[];
+    quizOperation?: Operation;
 }
 
 interface Action {
@@ -23,6 +26,12 @@ interface Action {
 interface Coordinate {
     x: number;
     y: number;
+}
+
+export enum Operation {
+    Direct = 'direct',
+    Swap = 'swap',
+    Stock = 'stock',
 }
 
 const FIELD_BLOCKS = 240;
@@ -158,9 +167,14 @@ export function decode(data: string, callback: (page: Page) => void) {
     let [prevField, currentField] = [new Field(), new Field()];
     let blockUp = new FieldLine();
 
-    const store = {
+    const store: {
+        repeatCount: number,
+        lastCommentPageIndex: number;
+        quiz?: Quiz,
+    } = {
         repeatCount: -1,
-        comment: '',
+        lastCommentPageIndex: 0,
+        quiz: undefined,
     };
 
     while (!values.isEmpty()) {
@@ -202,6 +216,7 @@ export function decode(data: string, callback: (page: Page) => void) {
         const action = getAction(actionValue);
 
         // Parse comment
+        let comment = undefined;
         if (action.isComment) {
             const commentValues: number[] = [];
             const commentLength = values.poll(2);
@@ -217,16 +232,37 @@ export function decode(data: string, callback: (page: Page) => void) {
                 flatten.push(...chars);
             }
 
-            store.comment = unescape(flatten.slice(0, commentLength).join(''));
+            comment = unescape(flatten.slice(0, commentLength).join(''));
+            store.lastCommentPageIndex = pageIndex;
+
+            if (comment.startsWith('#Q=')) {
+                store.quiz = new Quiz(comment);
+            }
+        } else if (store.quiz !== undefined && store.lastCommentPageIndex + 30 <= pageIndex) {
+            comment = store.quiz.toStr();
+            store.lastCommentPageIndex = pageIndex;
         }
 
         const page: Page = {
             action,
+            comment,
             index: pageIndex,
-            comment: store.comment,
             field: currentField.toArray(),
             blockUp: blockUp.toArray(),
+            commentRef: store.lastCommentPageIndex,
         };
+
+        let quizOperation: Operation | undefined = undefined;
+        if (store.quiz !== undefined && action.isLock && isMinoPiece(action.piece)) {
+            const operation = store.quiz.getOperation(action.piece);
+            store.quiz = store.quiz.operate(operation);
+            quizOperation = operation;
+        }
+
+        if (quizOperation !== undefined) {
+            page.quizOperation = quizOperation;
+        }
+
         callback(page);
 
         pageIndex += 1;
@@ -352,3 +388,10 @@ function getAction(v: number): Action {
         isLock,
     };
 }
+
+const get = (value?: string) => {
+    if (value === undefined || value === ']' || value === ')') {
+        throw new FumenError('Unexpected value in quiz');
+    }
+    return value;
+};

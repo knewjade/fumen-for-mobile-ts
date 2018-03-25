@@ -2,6 +2,7 @@ import { Block, State } from './states';
 import { AnimationState, getBlocks, isMinoPiece, Piece } from './lib/enums';
 import { ViewError } from './lib/error';
 import { resources } from './index';
+import { Quiz } from './lib/quiz';
 
 export type action = (state: State) => Partial<State>;
 
@@ -22,7 +23,6 @@ export interface Actions {
     openPage: (data: { pageIndex: number }) => action;
     backPage: () => action;
     nextPage: () => action;
-    goToHead: () => action;
     inputFumenData: (data: { value?: string }) => action;
     showOpenErrorMessage: (data: { message: string }) => action;
 }
@@ -105,11 +105,6 @@ export const actions: Actions = {
         const action = openPage((state.play.pageIndex + 1) % maxPage);
         return action(state);
     },
-    goToHead: () => (state) => {
-        log('action: goToHead');
-        const action = openPage(0);
-        return action(state);
-    },
     inputFumenData: ({ value }) => (state) => {
         log('action: inputFumenData');
         return {
@@ -162,10 +157,37 @@ function openPage(index: number): action {
         };
     });
 
+    let comment = resources.pages[page.commentRef].comment;
+    let hold;
+    let nexts;
+    if (comment !== undefined && comment.startsWith('#Q=')) {
+        let quiz = new Quiz(comment);
+
+        console.log(page.commentRef);
+        for (let i = page.commentRef; i < index; i += 1) {
+            const operation = resources.pages[i].quizOperation;
+            if (operation !== undefined) {
+                quiz = quiz.operate(operation);
+            }
+        }
+
+        comment = quiz.toStr();
+
+        const operation = resources.pages[index].quizOperation;
+        if (operation !== undefined) {
+            quiz = quiz.operate(operation);
+        }
+
+        hold = quiz.getHold();
+        nexts = quiz.getNexts(5);
+    }
+
     return actions.setPage({
         field,
+        hold,
+        nexts,
         blockUp,
-        comment: page.comment,
+        comment,
         pageIndex: index,
     });
 }

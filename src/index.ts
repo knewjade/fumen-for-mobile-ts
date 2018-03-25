@@ -4,7 +4,7 @@ import { actions as originActions, Actions } from './actions';
 import { initState, State } from './states';
 import { HyperHammer, HyperStage } from './lib/hyper';
 import { AnimationState, Piece, Rotation } from './lib/enums';
-import { decode, Page as FumenPage } from './lib/fumen';
+import { decode, Operation, Page as FumenPage } from './lib/fumen';
 import { ModalInstance, style } from './lib/types';
 import { field } from './components/field';
 import { block } from './components/block';
@@ -161,7 +161,7 @@ export const view: () => View<State, Actions> = () => {
             x: top.x,
             y: top.y + (size + 1) * 23 + 1 + bottomBorderWidth,
         };
-        const boxSize = Math.min(fieldSize.width / 5 * 1.2, (canvas.width - fieldSize.width) / 2);
+        const boxSize = Math.min(fieldSize.width / 5 * 1.1, (canvas.width - fieldSize.width) / 2);
         const boxMargin = boxSize / 4;
 
         const stopAnimation = () => {
@@ -290,6 +290,7 @@ export const view: () => View<State, Actions> = () => {
                         href: '#open-modal',
                     }, [
                         icon({
+                            width: 55,
                             height: heights.tools,
                             scale: 0.675,
                         }, 'open_in_new'),
@@ -297,9 +298,9 @@ export const view: () => View<State, Actions> = () => {
                     span({
                         style: style({
                             lineHeight: heights.tools + 'px',
-                            fontSize: '20px',
+                            fontSize: '18px',
                             margin: '0px 10px',
-                            minWidth: '90px',
+                            minWidth: '85px',
                             textAlign: 'center',
                             whiteSpace: 'nowrap',
                         }),
@@ -319,6 +320,7 @@ export const view: () => View<State, Actions> = () => {
                         },
                     }, [
                         icon({
+                            width: 55,
                             height: heights.tools,
                             scale: 0.825,
                         }, state.play.status !== 'pause' ? 'pause' : 'play_arrow'),
@@ -332,6 +334,7 @@ export const view: () => View<State, Actions> = () => {
                         }),
                     }, [
                         icon({
+                            width: 45,
                             height: heights.tools,
                             scale: 0.625,
                         }, 'help_outline'),
@@ -381,9 +384,8 @@ export const view: () => View<State, Actions> = () => {
                             return;
                         }
 
-                        const backup = {
-                            ...resources.fumen,
-                        };
+                        const backup = resources.pages.concat();
+
                         try {
                             decode(extract(state.fumen.value), setPage);
 
@@ -393,7 +395,7 @@ export const view: () => View<State, Actions> = () => {
 
                             actions.inputFumenData({ value: undefined });
                         } catch (e) {
-                            resources.fumen = backup;
+                            resources.pages = backup;
                             actions.openPage({ pageIndex: state.play.pageIndex });
                             if (e instanceof ViewError) {
                                 actions.showOpenErrorMessage({ message: e.message });
@@ -432,10 +434,12 @@ interface Resources {
 }
 
 interface Page {
-    comment: string;
+    comment?: string;
+    commentRef: number;
     field: Piece[];
     blockUp: Piece[];
     move: Move;
+    quizOperation?: Operation;
 }
 
 interface Move {
@@ -468,8 +472,10 @@ const setPage = (page: FumenPage) => {
     if (resources.pages.length <= page.index) {
         router.setMaxPage({ maxPage: page.index + 1 });
     }
+
     resources.pages[page.index] = {
         comment: page.comment,
+        commentRef: page.commentRef,
         field: page.field,
         blockUp: page.blockUp,
         move: {
@@ -480,12 +486,14 @@ const setPage = (page: FumenPage) => {
                 y: page.action.coordinate.y,
             },
         },
+        quizOperation: page.quizOperation,
     };
 
     if (page.index === 0) {
-        router.goToHead();
+        router.openPage({ pageIndex: page.index });
     }
 };
+
 try {
     decode(extract(data), setPage);
 } catch (e) {
