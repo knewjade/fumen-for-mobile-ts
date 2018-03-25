@@ -5,7 +5,11 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-93540402-5"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
         gtag('js', new Date());
         gtag('config', 'UA-93540402-5');
     </script>
@@ -33,21 +37,112 @@
             margin: 10px;
         }
     </style>
+
+    <script language="JavaScript" type="text/JavaScript">
+        <!--
+        function copy(e, id) {
+            var element = document.getElementById(id);
+            var selection = document.getSelection();
+            selection.selectAllChildren(element);
+            // .selectAllChildren(element);
+            var result = document.execCommand('copy');
+            if (result) {
+                M.toast({ html: 'copied to clipboard' });
+            }
+        }
+        //-->
+    </script>
+
 </head>
 <body>
 
 <section>
-    <h2>テト譜の開き方</h2>
+    <h4>概要</h4>
 
-    <h3>ブックマークレットから開く</h3>
-    <p>ok</p>
-
-    <h3>UI上から直接から開く</h3>
-    <p>ok</p>
+    <p>
+        <a href="http://fumen.zui.jp">連続テト譜エディタ</a>のデータをスマートフォン上でみるために表示を再構成したページです。
+    </p>
 </section>
 
+<hr>
+
 <section>
-    <a href="./index.html">back</a>
+    <h4>操作方法</h4>
+
+    <p>
+    <ol>
+        <li>画面右半分をタップ →　次のページに進む</li>
+        <li>画面左半分をタップ →　前のページに戻る</li>
+        <li><i class="material-icons">play_arrow</i>をタップ → 自動再生</li>
+    </ol>
+    </p>
+
+</section>
+
+<hr>
+
+<section>
+    <h4>テト譜の開き方</h4>
+
+    <h5>UI上から直接から開く</h5>
+
+    <p>
+    <ol>
+        <li> 下メニューの<i class="material-icons">open_in_new</i>をタップする</li>
+
+        <li>テキストボック内に テト譜のURL or v115@から始まるデータ をペーストする</li>
+
+        <li>Openボタンをタップする</li>
+    </ol>
+    </p>
+
+    <h5>ブックマークレットから開く</h5>
+
+    <p>
+    <ol>
+        <li> 以下のいずれかのコードをコピーする「<a href="http://fumen.zui.jp">連続テト譜エディタ</a>」から本ツールへ移動するとき、どこのタブで開くか選んでください）
+            <ul>
+                <li>
+                    <div class="card-panel">
+                        <a class="btn" onclick="copy(this, 'bookmarklet-sametab');">copy to clipboard</a><br>
+                        <span id='bookmarklet-sametab'>javascript:(function(){encode(1);window.location.href=\'https://knewjade.github.io/fumen-for-mobile/index.html?d=\'+encodeURIComponent(document.getElementById(\'tx\').value);})();</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="card-panel">
+                        <a class="btn" onclick="copy(this, 'bookmarklet-newtab');">copy to clipboard</a><br>
+                        <span id='bookmarklet-newtab'>javascript:(function(){encode(1);window.open(\'https://knewjade.github.io/fumen-for-mobile/index.html?d=\'+encodeURIComponent(document.getElementById(\'tx\').value), \'_blank\');})();</span>
+                    </div>
+                </li>
+            </ul>
+        </li>
+
+        <li>ブラウザのブックマークにコードを貼り付けて保存する（このページをお気に入りしたあと、URL部分をコードに編集するとやりやすいです）</li>
+
+        <li>開きたいフィールドデータを<a href="http://fumen.zui.jp">連続テト譜エディタ</a>で開く</li>
+
+        <li>1. で保存したブックマークを開く</li>
+    </ol>
+    </p>
+
+</section>
+
+<hr>
+
+<section>
+    <h4>連絡先</h4>
+
+    <p>
+        疑問点や指摘がございましたら、twitter から 作者 (newjade) までご連絡ください
+    </p>
+
+    <a href="https://twitter.com/1millim">twitter @1millim https://twitter.com/1millim</a>
+</section>
+
+<hr>
+
+<section>
+    <h5><a href="./index.html">back</a></h5>
 </section>
 
 </body>
