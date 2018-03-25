@@ -37,22 +37,6 @@
             margin: 10px;
         }
     </style>
-
-    <script language="JavaScript" type="text/JavaScript">
-        <!--
-        function copy(e, id) {
-            var element = document.getElementById(id);
-            var selection = document.getSelection();
-            selection.selectAllChildren(element);
-            // .selectAllChildren(element);
-            var result = document.execCommand('copy');
-            if (result) {
-                M.toast({ html: 'copied to clipboard' });
-            }
-        }
-        //-->
-    </script>
-
 </head>
 <body>
 
@@ -102,17 +86,12 @@
     <ol>
         <li> 以下のいずれかのコードをコピーする「<a href="http://fumen.zui.jp">連続テト譜エディタ</a>」から本ツールへ移動するとき、どこのタブで開くか選んでください）
             <ul>
-                <li>
-                    <div class="card-panel">
-                        <a class="btn" onclick="copy(this, 'bookmarklet-sametab');">copy to clipboard</a><br>
-                        <span id='bookmarklet-sametab'>javascript:(function(){encode(1);window.location.href=\'https://knewjade.github.io/fumen-for-mobile/index.html?d=\'+encodeURIComponent(document.getElementById(\'tx\').value);})();</span>
-                    </div>
+                <li style="margin: 5px;"> 同じタブで開く <br>
+                    <textarea readonly>javascript:(function(){encode(1);window.location.href='https://knewjade.github.io/fumen-for-mobile/index.html?d='+encodeURIComponent(document.getElementById('tx').value);})();</textarea>
                 </li>
-                <li>
-                    <div class="card-panel">
-                        <a class="btn" onclick="copy(this, 'bookmarklet-newtab');">copy to clipboard</a><br>
-                        <span id='bookmarklet-newtab'>javascript:(function(){encode(1);window.open(\'https://knewjade.github.io/fumen-for-mobile/index.html?d=\'+encodeURIComponent(document.getElementById(\'tx\').value), \'_blank\');})();</span>
-                    </div>
+
+                <li style="margin: 5px;"> 違うタブで開く <br>
+                    <textarea readonly>javascript:(function(){encode(1);window.open('https://knewjade.github.io/fumen-for-mobile/index.html?d='+encodeURIComponent(document.getElementById('tx').value), '_blank');})();</textarea>
                 </li>
             </ul>
         </li>
