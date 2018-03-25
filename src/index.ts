@@ -1,5 +1,5 @@
 import { app, View } from 'hyperapp';
-import { a, div, h4, i, p, span } from '@hyperapp/html';
+import { a, div, h4, i, p, span, li } from '@hyperapp/html';
 import { actions as originActions, Actions } from './actions';
 import { initState, State } from './states';
 import { HyperHammer, HyperStage } from './lib/hyper';
@@ -287,46 +287,23 @@ export const view: () => View<State, Actions> = () => {
                 }, [
                     a({
                         href: './help.html',
-                    },[
-                        icon({
-                            className: 'right',
-                            height: heights.tools,
-                            scale: 0.625,
-                        }, 'help_outline'),
-                    ]),
-                    div({
-                        style: style({
-                            lineHeight: heights.tools + 'px',
-                            height: heights.tools + 'px',
-                            width: (canvas.width / 2 - 210 / 2) + 'px',
-                            float: 'left',
-                        }),
-                    }),
-                    a({
-                        className: 'modal-trigger',
-                        href: '#modal',
-                    },[
+                    }, [
                         icon({
                             height: heights.tools,
                             scale: 0.675,
-                            float: 'left',
                         }, 'open_in_new'),
                     ]),
                     span({
                         style: style({
                             lineHeight: heights.tools + 'px',
                             fontSize: '20px',
-                            margin: '0px',
-                            // marginLeft: '10px',
-                            float: 'left',
-                            width: '80px',
+                            margin: '0px 10px',
+                            minWidth: '90px',
                             textAlign: 'center',
+                            whiteSpace: 'nowrap',
                         }),
                     }, state.play.pageIndex + 1 + ' / ' + state.maxPage),
-                    icon({
-                        height: heights.tools,
-                        scale: 0.825,
-                        float: 'left',
+                    a({
                         onclick: () => {
                             switch (state.play.status) {
                             case AnimationState.Play:
@@ -339,7 +316,25 @@ export const view: () => View<State, Actions> = () => {
                                 break;
                             }
                         },
-                    }, state.play.status !== 'pause' ? 'pause' : 'play_arrow'),
+                    }, [
+                        icon({
+                            height: heights.tools,
+                            scale: 0.825,
+                        }, state.play.status !== 'pause' ? 'pause' : 'play_arrow'),
+                    ]),
+                    a({
+                        href: './help.html',
+                        style: style({
+                            marginLeft: 'auto',
+                            position: 'absolute',
+                            right: '10px',
+                        }),
+                    }, [
+                        icon({
+                            height: heights.tools,
+                            scale: 0.625,
+                        }, 'help_outline'),
+                    ]),
                 ]),
             ]),
             modal({
