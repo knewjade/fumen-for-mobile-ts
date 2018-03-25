@@ -38,6 +38,7 @@ export const field: Component<FieldProps> = (props, children) => {
             props.line.strokeWidth(props.borderWidth);
         },
         onupdate: (ignore: any, attr: any) => {
+            console.log('update');
             if (props.size.width !== attr.size.width || props.size.height !== attr.size.height) {
                 props.background.setSize(props.size);
             }

@@ -11,13 +11,17 @@ export interface State {
         width: number;
         height: number;
     };
-    hold: Piece | undefined;
-    nexts: Piece[] | undefined;
+    hold?: Piece;
+    nexts?: Piece[];
     maxPage: number;
     play: {
         status: AnimationState;
         pageIndex: number;
         intervalTime: number;
+    };
+    fumen: {
+        value?: string;
+        errorMessage?: string;
     };
 }
 
@@ -48,5 +52,9 @@ export const initState: State = {
         status: AnimationState.Pause,
         pageIndex: 0,
         intervalTime: 1000,
+    },
+    fumen: {
+        value: undefined,
+        errorMessage: undefined,
     },
 };

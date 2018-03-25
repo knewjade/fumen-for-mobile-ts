@@ -1,10 +1,10 @@
 import { app, View } from 'hyperapp';
-import { a, div, h4, i, p, span, li } from '@hyperapp/html';
+import { a, div, h4, span, textarea } from '@hyperapp/html';
 import { actions as originActions, Actions } from './actions';
 import { initState, State } from './states';
 import { HyperHammer, HyperStage } from './lib/hyper';
 import { AnimationState, Piece, Rotation } from './lib/enums';
-import { decode } from './lib/fumen';
+import { decode, Page as FumenPage } from './lib/fumen';
 import { ModalInstance, style } from './lib/types';
 import { field } from './components/field';
 import { block } from './components/block';
@@ -15,7 +15,6 @@ import { game } from './components/game';
 import { box } from './components/box';
 import { ViewError } from './lib/error';
 import { icon } from './components/icon';
-
 // Konvaは最後に読み込むこと！
 // エラー対策：Uncaught ReferenceError: __importDefault is not define
 import * as Konva from 'konva';
@@ -131,7 +130,8 @@ export const view: () => View<State, Actions> = () => {
         tools: 50,
     };
 
-    // let instance: ModalInstance | undefined = undefined;
+    let openModalInstance: ModalInstance | undefined = undefined;
+
     // 全体の構成を1関数にまとめる
     return (state, actions) => {
         const canvas = {
@@ -286,7 +286,8 @@ export const view: () => View<State, Actions> = () => {
                     height: heights.tools,
                 }, [
                     a({
-                        href: './help.html',
+                        className: 'modal-trigger',
+                        href: '#open-modal',
                     }, [
                         icon({
                             height: heights.tools,
@@ -338,17 +339,71 @@ export const view: () => View<State, Actions> = () => {
                 ]),
             ]),
             modal({
-                oncreate: (element) => {
-                    M.Modal.init(element);
+                id: 'open-modal',
+                oncreate: (element: HTMLDivElement) => {
+                    openModalInstance = M.Modal.init(element);
                 },
             }, [
-                h4('Modal Header'),
-                p('A bunch of text'),
+                h4('テト譜を開く'),
+                textarea({
+                    rows: 2,
+                    style: style({
+                        width: '100%',
+                        border: state.fumen.errorMessage !== undefined ? 'solid 1px #ff5252' : undefined,
+                    }),
+                    oninput: (e: any) => {
+                        const value = e.target.value !== '' ? e.target.value : undefined;
+                        actions.inputFumenData({ value });
+                    },
+                    value: state.fumen.value,
+                    placeholder: 'URL or v115@~ / Support v115 only',
+                }),
+                span({
+                    className: 'red-text text-accent-2',
+                    style: style({
+                        display: state.fumen.errorMessage !== undefined ? undefined : 'none',
+                    }),
+                }, state.fumen.errorMessage),
             ], [
                 a({
-                    href: '#!',
-                    class: 'modal-action modal-close waves-effect waves-green btn-flat',
-                }, 'Agree'),
+                    class: 'modal-action modal-close waves-effect waves-teal btn-flat',
+                    onclick: () => {
+                        actions.inputFumenData({ value: undefined });
+                    },
+                }, 'Cancel'),
+                a({
+                    class: 'waves-effect waves-teal btn-flat' + (
+                        state.fumen.value === undefined || state.fumen.errorMessage !== undefined ? ' disabled' : ''
+                    ),
+                    onclick: () => {
+                        if (state.fumen.value === undefined) {
+                            actions.showOpenErrorMessage({ message: 'データを入力してください' });
+                            return;
+                        }
+
+                        const backup = {
+                            ...resources.fumen,
+                        };
+                        try {
+                            decode(extract(state.fumen.value), setPage);
+
+                            if (openModalInstance !== undefined) {
+                                openModalInstance.close();
+                            }
+
+                            actions.inputFumenData({ value: undefined });
+                        } catch (e) {
+                            resources.fumen = backup;
+                            actions.openPage({ pageIndex: state.play.pageIndex });
+                            if (e instanceof ViewError) {
+                                actions.showOpenErrorMessage({ message: e.message });
+                            } else {
+                                actions.showOpenErrorMessage({ message: 'テト譜を読み込めませんでした' });
+                            }
+                            return;
+                        }
+                    },
+                }, 'Open'),
             ]),
         ]);
     };
@@ -357,7 +412,7 @@ export const view: () => View<State, Actions> = () => {
 export const router = app(initState, originActions, view(), document.body);
 
 window.onresize = () => {
-    router.refresh({
+    router.resize({
         width: window.document.body.clientWidth,
         height: window.document.body.clientHeight,
     });
@@ -370,6 +425,9 @@ interface Resources {
     pages: Page[];
     handlers: {
         animation?: number;
+    };
+    fumen: {
+        data?: string;
     };
 }
 
@@ -392,6 +450,7 @@ interface Move {
 export const resources: Resources = {
     pages: [],
     handlers: {},
+    fumen: {},
 };
 
 const extract = (data: string) => {
@@ -400,13 +459,12 @@ const extract = (data: string) => {
         if (data.startsWith('v115@')) {
             return replaced.substr(5);
         }
-        window.alert('Support v115 only');
-        throw new ViewError('Support v115 only');
+        throw new ViewError('v115のデータのみ対応しています');
     }
     return replaced;
 };
 
-decode(extract(data), (page) => {
+const setPage = (page: FumenPage) => {
     if (resources.pages.length <= page.index) {
         router.setMaxPage({ maxPage: page.index + 1 });
     }
@@ -427,4 +485,13 @@ decode(extract(data), (page) => {
     if (page.index === 0) {
         router.goToHead();
     }
-});
+};
+try {
+    decode(extract(data), setPage);
+} catch (e) {
+    if (e instanceof ViewError) {
+        router.setComment({ comment: 'テト譜を読み込めませんでした: ' + e.message });
+    } else {
+        router.setComment({ comment: 'テト譜を読み込めませんでした' });
+    }
+}

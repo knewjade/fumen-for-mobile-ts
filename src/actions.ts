@@ -14,18 +14,26 @@ export interface Actions {
         hold?: Piece,
         nexts?: Piece[],
     }) => action;
-    refresh: (data: { width: number, height: number }) => action;
+    setComment: (data: { comment: string }) => action;
+    resize: (data: { width: number, height: number }) => action;
     pause: () => action;
     start: () => action;
     setMaxPage: (data: { maxPage: number }) => action;
+    openPage: (data: { pageIndex: number }) => action;
     backPage: () => action;
     nextPage: () => action;
     goToHead: () => action;
+    inputFumenData: (data: { value?: string }) => action;
+    showOpenErrorMessage: (data: { message: string }) => action;
+}
+
+function log(msg: string) {
+    console.log(msg);
 }
 
 export const actions: Actions = {
     setPage: ({ pageIndex, field, blockUp, comment, hold, nexts }) => (state) => {
-        console.log('action: setFieldAndComment');
+        log('action: setFieldAndComment');
 
         const isChanged = comment !== undefined && comment !== state.comment.text;
         return {
@@ -43,11 +51,23 @@ export const actions: Actions = {
             },
         };
     },
-    refresh: data => () => {
-        console.log('action: refresh');
+    setComment: ({ comment }) => (state) => {
+        log('action: setComment');
+
+        const isChanged = comment !== undefined && comment !== state.comment.text;
+        return {
+            comment: {
+                isChanged,
+                text: comment !== undefined ? comment : state.comment.text,
+            },
+        };
+    },
+    resize: data => () => {
+        log('action: resize');
         return { display: data };
     },
     start: () => (state) => {
+        log('action: start');
         return {
             play: {
                 ...state.play,
@@ -56,6 +76,7 @@ export const actions: Actions = {
         };
     },
     pause: () => (state) => {
+        log('action: pause');
         return {
             play: {
                 ...state.play,
@@ -64,21 +85,49 @@ export const actions: Actions = {
         };
     },
     setMaxPage: data => () => {
+        log('action: setMaxPage');
         return data;
     },
+    openPage: ({ pageIndex }) => (state) => {
+        log('action: openPage');
+        const action = openPage(pageIndex);
+        return action(state);
+    },
     backPage: () => (state) => {
+        log('action: backPage');
         const maxPage = state.maxPage;
         const action = openPage((state.play.pageIndex - 1 + maxPage) % maxPage);
         return action(state);
     },
     nextPage: () => (state) => {
+        log('action: nextPage');
         const maxPage = state.maxPage;
         const action = openPage((state.play.pageIndex + 1) % maxPage);
         return action(state);
     },
     goToHead: () => (state) => {
+        log('action: goToHead');
         const action = openPage(0);
         return action(state);
+    },
+    inputFumenData: ({ value }) => (state) => {
+        log('action: inputFumenData');
+        return {
+            fumen: {
+                ...state.fumen,
+                value,
+                errorMessage: undefined,
+            },
+        };
+    },
+    showOpenErrorMessage: ({ message }) => (state) => {
+        log('action: showOpenErrorMessage');
+        return {
+            fumen: {
+                ...state.fumen,
+                errorMessage: message,
+            },
+        };
     },
 };
 

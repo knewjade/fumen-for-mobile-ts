@@ -1,7 +1,7 @@
 import { getBlocks, isMinoPiece, Piece, Rotation } from './enums';
 import { FumenError } from './error';
 
-interface Page {
+export interface Page {
     index: number;
     action: Action;
     comment: string;
