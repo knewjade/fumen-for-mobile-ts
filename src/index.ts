@@ -14,6 +14,7 @@ import { tools } from './components/tools';
 import { game } from './components/game';
 import { box } from './components/box';
 import { ViewError } from './lib/error';
+import { icon } from './components/icon';
 
 // Konvaは最後に読み込むこと！
 // エラー対策：Uncaught ReferenceError: __importDefault is not define
@@ -147,7 +148,7 @@ export const view: () => View<State, Actions> = () => {
                 .every(value => state.field[value.ix + value.iy * 10].piece !== Piece.Empty);
         });
 
-        const bottomBorderWidth = 2.7;
+        const bottomBorderWidth = 2.4;
         const fieldSize = {
             width: (size + 1) * 10 + 1,
             height: (size + 1) * 24 + 1 + bottomBorderWidth + 1,
@@ -213,7 +214,7 @@ export const view: () => View<State, Actions> = () => {
                     borderPosition: {
                         startX: top2.x,
                         endX: top2.x + fieldSize.width,
-                        y: top2.y,
+                        y: top2.y - bottomBorderWidth / 2,
                     },
                     borderWidth: bottomBorderWidth,
                 }, blocks.map((value) => {
@@ -287,19 +288,10 @@ export const view: () => View<State, Actions> = () => {
                     a({
                         href: './help.html',
                     },[
-                        i({
-                            // z-depth-1
-                            className: 'right material-icons',
-                            style: style({
-                                fontSize: heights.tools * 2.5 / 4 + 'px',
-                                height: heights.tools - 10 + 'px',
-                                lineHeight: heights.tools - 10 + 'px',
-                                margin: '5px',
-                                border: 'dashed 1px #fff',
-                                boxSizing: 'border-box',
-                                width: '65px',
-                                textAlign: 'center',
-                            }),
+                        icon({
+                            className: 'right',
+                            height: heights.tools,
+                            scale: 0.625,
                         }, 'help_outline'),
                     ]),
                     div({
@@ -314,19 +306,10 @@ export const view: () => View<State, Actions> = () => {
                         className: 'modal-trigger',
                         href: '#modal',
                     },[
-                        i({
-                            className: 'material-icons',
-                            style: style({
-                                fontSize: heights.tools * 2.7 / 4 + 'px',
-                                height: heights.tools - 10 + 'px',
-                                lineHeight: heights.tools - 10 + 'px',
-                                margin: '5px',
-                                border: 'dashed 1px #fff',
-                                boxSizing: 'border-box',
-                                width: '65px',
-                                float: 'left',
-                                textAlign: 'center',
-                            }),
+                        icon({
+                            height: heights.tools,
+                            scale: 0.675,
+                            float: 'left',
                         }, 'open_in_new'),
                     ]),
                     span({
@@ -340,19 +323,10 @@ export const view: () => View<State, Actions> = () => {
                             textAlign: 'center',
                         }),
                     }, state.play.pageIndex + 1 + ' / ' + state.maxPage),
-                    i({
-                        className: 'material-icons',
-                        style: style({
-                            fontSize: heights.tools * 3.3 / 4 + 'px',
-                            height: heights.tools - 10 + 'px',
-                            lineHeight: heights.tools - 10 + 'px',
-                            margin: '5px',
-                            border: 'dashed 1px #fff',
-                            boxSizing: 'border-box',
-                            width: '65px',
-                            float: 'left',
-                            textAlign: 'center',
-                        }),
+                    icon({
+                        height: heights.tools,
+                        scale: 0.825,
+                        float: 'left',
                         onclick: () => {
                             switch (state.play.status) {
                             case AnimationState.Play:
