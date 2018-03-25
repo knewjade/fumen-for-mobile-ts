@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "webpack": "webpack --mode development",
+    "webpack:prod": "webpack --mode production",
     "lint": "tslint --project tsconfig.json --config tslint.json",
     "test": "jest"
   },
