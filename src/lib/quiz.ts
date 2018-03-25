@@ -4,7 +4,6 @@ import { Operation } from './fumen';
 
 export class Quiz {
     constructor(private readonly quiz: string) {
-        console.log(quiz);
     }
 
     getOperation(used: Piece): Operation {

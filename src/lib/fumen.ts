@@ -10,6 +10,7 @@ export interface Page {
     field: Piece[];
     blockUp: Piece[];
     quizOperation?: Operation;
+    isLastPage: boolean;
 }
 
 interface Action {
@@ -241,6 +242,9 @@ export function decode(data: string, callback: (page: Page) => void) {
         } else if (store.quiz !== undefined && store.lastCommentPageIndex + 30 <= pageIndex) {
             comment = store.quiz.toStr();
             store.lastCommentPageIndex = pageIndex;
+        } else if (pageIndex === 0) {
+            comment = '';
+            store.lastCommentPageIndex = pageIndex;
         }
 
         const page: Page = {
@@ -250,6 +254,7 @@ export function decode(data: string, callback: (page: Page) => void) {
             field: currentField.toArray(),
             blockUp: blockUp.toArray(),
             commentRef: store.lastCommentPageIndex,
+            isLastPage: values.isEmpty(),
         };
 
         let quizOperation: Operation | undefined = undefined;

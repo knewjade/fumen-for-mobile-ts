@@ -17,6 +17,7 @@ export interface Actions {
     }) => action;
     setComment: (data: { comment: string }) => action;
     resize: (data: { width: number, height: number }) => action;
+    reload: () => action;
     pause: () => action;
     start: () => action;
     setMaxPage: (data: { maxPage: number }) => action;
@@ -28,7 +29,7 @@ export interface Actions {
 }
 
 function log(msg: string) {
-    console.log(msg);
+    // console.log(msg);
 }
 
 export const actions: Actions = {
@@ -65,6 +66,11 @@ export const actions: Actions = {
     resize: data => () => {
         log('action: resize');
         return { display: data };
+    },
+    reload: () => (state) => {
+        log('action: reload');
+        const action = actions.openPage({ pageIndex: state.play.pageIndex });
+        return action(state);
     },
     start: () => (state) => {
         log('action: start');
@@ -159,7 +165,7 @@ function openPage(index: number): action {
 
     let comment = resources.pages[page.commentRef].comment;
     let hold;
-    let nexts;
+    let nexts: Piece[] = [];
     if (comment !== undefined && comment.startsWith('#Q=')) {
         let quiz = new Quiz(comment);
 
@@ -179,6 +185,17 @@ function openPage(index: number): action {
 
         hold = quiz.getHold();
         nexts = quiz.getNexts(5);
+    } else {
+        for (const page of resources.pages.slice(index + 1)) {
+            const piece = page.move.piece;
+            if (page.isLock && isMinoPiece(piece)) {
+                nexts.push(piece);
+            }
+
+            if (5 <= nexts.length) {
+                break;
+            }
+        }
     }
 
     return actions.setPage({

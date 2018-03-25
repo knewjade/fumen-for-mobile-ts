@@ -2,7 +2,6 @@ import { Piece } from '../lib/enums';
 import { param } from '@hyperapp/html';
 import { getHighlightColor, getNormalColor } from '../lib/colors';
 import { Component } from '../lib/types';
-
 // Konvaは最後に読み込むこと！
 // エラー対策：Uncaught ReferenceError: __importDefault is not define
 import * as Konva from 'konva';
@@ -13,15 +12,21 @@ interface BlockProps {
         y: number;
     };
     key: string;
-    size: number;
+    size: {
+        width: number,
+        height: number,
+    };
     piece: Piece;
     rect: Konva.Rect;
     highlight: boolean;
+    background: string;
 }
 
 export const block: Component<BlockProps> = (props) => {
     function fill(block: Konva.Rect) {
-        if (props.highlight) {
+        if (props.piece === Piece.Empty) {
+            block.fill(props.background);
+        } else if (props.highlight) {
             block.fill(getHighlightColor(props.piece));
         } else {
             block.fill(getNormalColor(props.piece));
@@ -29,7 +34,7 @@ export const block: Component<BlockProps> = (props) => {
     }
 
     function resize(block: Konva.Rect) {
-        block.setSize({ width: props.size, height: props.size });
+        block.setSize(props.size);
     }
 
     function move(block: Konva.Rect) {
@@ -42,6 +47,7 @@ export const block: Component<BlockProps> = (props) => {
         value: props.piece,
         highlight: props.highlight,
         position: props.position,
+        background: props.background,
         oncreate: () => {
             move(props.rect);
             resize(props.rect);
@@ -49,13 +55,16 @@ export const block: Component<BlockProps> = (props) => {
         },
         onupdate: (container: any, attr: any) => {
             // console.log(container.attributes.x.value);
-            if (props.piece !== attr.value || props.highlight !== attr.highlight) {
+            if (props.piece !== attr.value
+                || props.highlight !== attr.highlight
+                || props.background !== attr.background
+            ) {
                 fill(props.rect);
             }
             if (props.position.x !== attr.position.x || props.position.y !== attr.position.y) {
                 move(props.rect);
             }
-            if (props.size !== attr.size) {
+            if (props.size.width !== attr.size.width || props.size.height !== attr.size.height) {
                 resize(props.rect);
             }
         },

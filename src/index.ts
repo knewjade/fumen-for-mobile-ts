@@ -139,7 +139,7 @@ export const view: () => View<State, Actions> = () => {
             height: state.display.height - (heights.tools + heights.comment),
         };
         const size = Math.min(
-            Math.floor(Math.min(canvas.height / 24, canvas.width / 10)) - 2,
+            Math.floor(Math.min(canvas.height / 23.5, canvas.width / 10)) - 2,
             (canvas.width / 16),
         );
 
@@ -151,7 +151,7 @@ export const view: () => View<State, Actions> = () => {
         const bottomBorderWidth = 2.4;
         const fieldSize = {
             width: (size + 1) * 10 + 1,
-            height: (size + 1) * 24 + 1 + bottomBorderWidth + 1,
+            height: (size + 1) * 23.5 + 1 + bottomBorderWidth + 1,
         };
         const top = {
             x: (canvas.width - fieldSize.width) / 2,
@@ -159,7 +159,7 @@ export const view: () => View<State, Actions> = () => {
         };
         const top2 = {
             x: top.x,
-            y: top.y + (size + 1) * 23 + 1 + bottomBorderWidth,
+            y: top.y + (size + 1) * 22.5 + 1 + bottomBorderWidth,
         };
         const boxSize = Math.min(fieldSize.width / 5 * 1.1, (canvas.width - fieldSize.width) / 2);
         const boxMargin = boxSize / 4;
@@ -220,21 +220,28 @@ export const view: () => View<State, Actions> = () => {
                 }, blocks.map((value) => {
                     const blockValue = state.field[value.ix + value.iy * 10];
                     return block({
-                        size,
+                        size: {
+                            width: size,
+                            height: value.py !== 0 ? size : size / 2,
+                        },
                         position: {
                             x: top.x + value.ix * size + value.ix + 1,
-                            y: top.y + value.py * size + value.py + 1,
+                            y: top.y + Math.max(0, value.py - 0.5) * size + value.py + 1,
                         },
                         piece: blockValue.piece,
                         key: `block-${value.ix}-${value.iy}`,
                         rect: value.box,
                         highlight: blockValue.highlight || isHighlights[value.iy],
+                        background: value.iy < 20 ? '#000' : '#333',
                     });
                 }).concat(
                     bottomBlocks.map((value) => {
                         const blockValue = state.blockUp[value.ix + value.iy * 10];
                         return block({
-                            size,
+                            size: {
+                                width: size,
+                                height: size,
+                            },
                             position: {
                                 x: top2.x + value.ix * size + value.ix + 1,
                                 y: top2.y + value.py * size + value.py + 1,
@@ -243,6 +250,7 @@ export const view: () => View<State, Actions> = () => {
                             key: `block-up-${value.ix}-${value.iy}`,
                             rect: value.box,
                             highlight: blockValue.highlight || isHighlights[value.iy],
+                            background: '#000',
                         });
                     }),
                 )),
@@ -344,12 +352,20 @@ export const view: () => View<State, Actions> = () => {
             modal({
                 id: 'open-modal',
                 oncreate: (element: HTMLDivElement) => {
-                    openModalInstance = M.Modal.init(element);
+                    openModalInstance = M.Modal.init(element, {
+                        onOpenEnd: (e: any) => {
+                            const element = document.getElementById('open-textarea');
+                            if (element !== null) {
+                                element.focus();
+                            }
+                        },
+                    });
                 },
             }, [
                 h4('テト譜を開く'),
                 textarea({
-                    rows: 2,
+                    id: 'open-textarea',
+                    rows: 3,
                     style: style({
                         width: '100%',
                         border: state.fumen.errorMessage !== undefined ? 'solid 1px #ff5252' : undefined,
@@ -385,6 +401,7 @@ export const view: () => View<State, Actions> = () => {
                         }
 
                         const backup = resources.pages.concat();
+                        actions.pause();
 
                         try {
                             decode(extract(state.fumen.value), setPage);
@@ -440,6 +457,7 @@ interface Page {
     blockUp: Piece[];
     move: Move;
     quizOperation?: Operation;
+    isLock: boolean;
 }
 
 interface Move {
@@ -493,10 +511,13 @@ const setPage = (page: FumenPage) => {
             },
         },
         quizOperation: page.quizOperation,
+        isLock: page.action.isLock,
     };
 
     if (page.index === 0) {
         router.openPage({ pageIndex: page.index });
+    } else if (page.isLastPage) {
+        router.reload();
     }
 };
 
