@@ -459,12 +459,18 @@ export const resources: Resources = {
 
 const extract = (data: string) => {
     const replaced = data.replace(/\?/g, '');
-    if (data.includes('@')) {
-        if (data.startsWith('v115@')) {
-            return replaced.substr(5);
+
+    for (const prefix of ['v115@', 'm115@', 'd115@']) {
+        const index = replaced.indexOf(prefix);
+        if (0 <= index) {
+            return replaced.substr(index + prefix.length);
         }
+    }
+
+    if (data.includes('@')) {
         throw new ViewError('v115のデータのみ対応しています');
     }
+
     return replaced;
 };
 

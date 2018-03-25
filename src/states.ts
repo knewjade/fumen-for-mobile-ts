@@ -52,7 +52,7 @@ export const initState: State = {
     play: {
         status: AnimationState.Pause,
         pageIndex: 0,
-        intervalTime: 1000,
+        intervalTime: 1500,
     },
     fumen: {
         value: undefined,

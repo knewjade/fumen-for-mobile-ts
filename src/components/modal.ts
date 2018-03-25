@@ -12,7 +12,7 @@ type ModalFunc = (props: ModalProps, content: Children, footer: Children) => VNo
 export const modal: ModalFunc = (props, content, footer) => {
     return div({
         ...props,
-        className: 'modal bottom-sheet',
+        className: 'modal',
     }, [
         div({
             className: 'modal-content',
