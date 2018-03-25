@@ -525,9 +525,10 @@ const setPage = (page: FumenPage) => {
 try {
     decode(extract(data), setPage);
 } catch (e) {
-    if (e instanceof ViewError) {
-        router.setComment({ comment: 'テト譜を読み込めませんでした: ' + e.message });
-    } else {
-        router.setComment({ comment: 'テト譜を読み込めませんでした' });
-    }
+    throw e;
+    // if (e instanceof ViewError) {
+    //     router.setComment({ comment: 'テト譜を読み込めませんでした: ' + e.message });
+    // } else {
+    //     router.setComment({ comment: 'テト譜を読み込めませんでした' });
+    // }
 }

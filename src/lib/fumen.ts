@@ -238,6 +238,8 @@ export function decode(data: string, callback: (page: Page) => void) {
 
             if (comment.startsWith('#Q=')) {
                 store.quiz = new Quiz(comment);
+            } else {
+                store.quiz = undefined;
             }
         } else if (store.quiz !== undefined && store.lastCommentPageIndex + 30 <= pageIndex) {
             comment = store.quiz.toStr();
