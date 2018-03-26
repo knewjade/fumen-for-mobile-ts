@@ -314,6 +314,7 @@ export const view: () => View<State, Actions> = () => {
                         }),
                     }, state.play.pageIndex + 1 + ' / ' + state.maxPage),
                     a({
+                        href: '#',
                         onclick: () => {
                             switch (state.play.status) {
                             case AnimationState.Play:
