@@ -437,7 +437,8 @@ window.onresize = () => {
     });
 };
 
-const paramQuery = location.search.substr(1).split('&').find(value => value.startsWith('d='));
+const url = decodeURIComponent(location.search);
+const paramQuery = url.substr(1).split('&').find(value => value.startsWith('d='));
 const data = paramQuery !== undefined ? paramQuery.substr(2) : 'vhAAgH';
 
 interface Resources {
