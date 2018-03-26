@@ -353,12 +353,12 @@ export const view: () => View<State, Actions> = () => {
                 id: 'open-modal',
                 oncreate: (element: HTMLDivElement) => {
                     openModalInstance = M.Modal.init(element, {
-                        onOpenEnd: () => setTimeout(() => {
+                        onOpenEnd: () => {
                             const element = document.getElementById('open-textarea');
                             if (element !== null) {
                                 element.focus();
                             }
-                        }, 10),
+                        },
                     });
                 },
             }, [
