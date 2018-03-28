@@ -1,6 +1,6 @@
 import { Block, State } from './states';
 import { AnimationState, getBlocks, isMinoPiece, Piece } from './lib/enums';
-import { ViewError } from './lib/error';
+import { ViewError } from './lib/errors';
 import { resources } from './index';
 import { Quiz } from './lib/quiz';
 

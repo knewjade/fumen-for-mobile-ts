@@ -1,4 +1,4 @@
-import { ViewError } from './error';
+import { ViewError } from './errors';
 import { Piece } from './enums';
 
 export function getHighlightColor(piece: Piece): string {

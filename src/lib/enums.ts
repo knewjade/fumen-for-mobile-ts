@@ -1,4 +1,4 @@
-import { FumenError } from './error';
+import { FumenError } from './errors';
 
 export enum Piece {
     Empty = 0,

@@ -1,5 +1,5 @@
 import { getBlocks, isMinoPiece, parsePieceName, Piece, Rotation } from './enums';
-import { FumenError } from './error';
+import { FumenError } from './errors';
 import { Quiz } from './quiz';
 
 export interface Page {

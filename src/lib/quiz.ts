@@ -1,4 +1,4 @@
-import { FumenError } from './error';
+import { FumenError } from './errors';
 import { parsePiece, parsePieceName, Piece } from './enums';
 import { Operation } from './fumen';
 

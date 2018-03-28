@@ -13,7 +13,7 @@ import { modal } from './components/modal';
 import { tools } from './components/tools';
 import { game } from './components/game';
 import { box } from './components/box';
-import { ViewError } from './lib/error';
+import { ViewError } from './lib/errors';
 import { icon } from './components/icon';
 // Konvaは最後に読み込むこと！
 // エラー対策：Uncaught ReferenceError: __importDefault is not define
