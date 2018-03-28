@@ -94,8 +94,8 @@ export const actions: Actions = {
                 quiz = quiz.operate(operation);
             }
 
-            hold = quiz.getHold();
-            nexts = quiz.getNexts(5);
+            hold = quiz.getHoldPiece();
+            nexts = quiz.getNextPieces(5);
         } else {
             for (const page of resources.pages.slice(index + 1)) {
                 const piece = page.move.piece;
@@ -225,8 +225,8 @@ function openPage(index: number): action {
             quiz = quiz.operate(operation);
         }
 
-        hold = quiz.getHold();
-        nexts = quiz.getNexts(5);
+        hold = quiz.getHoldPiece();
+        nexts = quiz.getNextPieces(5);
     } else {
         for (const page of resources.pages.slice(index + 1)) {
             const piece = page.move.piece;
