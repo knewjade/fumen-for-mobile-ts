@@ -3,20 +3,29 @@ import { parsePiece, parsePieceName, Piece } from './enums';
 import { Operation } from './fumen';
 
 export class Quiz {
-    private readonly quiz: string;
+    static verify(quiz: string): boolean {
+        const replaced = this.trim(quiz);
 
-    constructor(quiz: string) {
-        const replaced = quiz.trim().replace(/\s+/g, '');
         if (!replaced.match(/^#Q=\[[TIOSZJL]{0,1}]\([TIOSZJL]{0,1}\)[TIOSZJL]*$/i)) {
-            throw new FumenError(`Unexpected format of quiz: ${quiz}`);
+            return false;
         }
 
         const index = replaced.indexOf(')');
-        if (replaced[index - 1] === '(' && replaced[index + 1] !== undefined) {
+        return !(replaced[index - 1] === '(' && replaced[index + 1] !== undefined);
+    }
+
+    private static trim(quiz: string) {
+        return quiz.trim().replace(/\s+/g, '');
+    }
+
+    private readonly quiz: string;
+
+    constructor(quiz: string) {
+        if (!Quiz.verify(quiz)) {
             throw new FumenError(`Current piece doesn't exist, however next pieces exist: ${quiz}`);
         }
 
-        this.quiz = replaced;
+        this.quiz = Quiz.trim(quiz);
     }
 
     getOperation(used: Piece): Operation {

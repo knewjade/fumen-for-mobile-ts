@@ -1,6 +1,7 @@
-import { getBlocks, isMinoPiece, parsePieceName, Piece, Rotation } from './enums';
+import { isMinoPiece, Piece, Rotation } from './enums';
 import { FumenError } from './errors';
 import { Quiz } from './quiz';
+import { Field } from './fumen/field';
 
 export interface Page {
     index: number;
@@ -28,6 +29,7 @@ interface Coordinate {
     x: number;
     y: number;
 }
+
 
 export enum Operation {
     Direct = 'direct',
@@ -80,65 +82,6 @@ class Values {
 
     isEmpty(): boolean {
         return this.values.length === 0;
-    }
-}
-
-class Field {
-    private pieces: Piece[];
-
-    constructor(num: number = FIELD_BLOCKS) {
-        this.pieces = Array.from({ length: num }).map(() => Piece.Empty);
-    }
-
-    get(x: number, y: number): Piece {
-        return this.pieces[x + y * FIELD_WIDTH];
-    }
-
-    add(x: number, y: number, value: number) {
-        this.pieces[x + y * FIELD_WIDTH] += value;
-    }
-
-    put(piece: Piece, rotation: Rotation, coordinate: Coordinate) {
-        const blocks = getBlocks(piece, rotation);
-        for (const block of blocks) {
-            const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
-            this.pieces[x + y * FIELD_WIDTH] = piece;
-        }
-    }
-
-    clearLine() {
-        let newField = this.pieces.concat();
-        const top = this.pieces.length / FIELD_WIDTH - 1;
-        for (let y = top; 0 <= y; y -= 1) {
-            const line = this.pieces.slice(y * FIELD_WIDTH, (y + 1) * FIELD_WIDTH);
-            const isFilled = line.every(value => value !== Piece.Empty);
-            if (isFilled) {
-                const bottom = newField.slice(0, y * FIELD_WIDTH);
-                const over = newField.slice((y + 1) * FIELD_WIDTH);
-                newField = bottom.concat(over, Array.from({ length: FIELD_WIDTH }).map(() => Piece.Empty));
-            }
-        }
-        this.pieces = newField;
-    }
-
-    up(blockUp: Field) {
-        this.pieces = blockUp.pieces.concat(this.pieces);
-    }
-
-    mirror() {
-        const newField: Piece[] = [];
-        for (let y = 0; y < this.pieces.length; y += 1) {
-            const line = this.pieces.slice(y * FIELD_WIDTH, (y + 1) * FIELD_WIDTH);
-            line.reverse();
-            for (const obj of line) {
-                newField.push(obj);
-            }
-        }
-        this.pieces = newField;
-    }
-
-    toArray(): Piece[] {
-        return this.pieces.concat();
     }
 }
 
@@ -236,13 +179,13 @@ export function decode(data: string, callback: (page: Page) => void) {
             comment = unescape(flatten.slice(0, commentLength).join(''));
             store.lastCommentPageIndex = pageIndex;
 
-            if (comment.startsWith('#Q=')) {
+            if (Quiz.verify(comment)) {
                 store.quiz = new Quiz(comment);
             } else {
                 store.quiz = undefined;
             }
         } else if (store.quiz !== undefined && store.lastCommentPageIndex + 30 <= pageIndex) {
-            comment = store.quiz.toStr();
+            comment = store.quiz;
             store.lastCommentPageIndex = pageIndex;
         } else if (pageIndex === 0) {
             comment = '';
@@ -395,10 +338,3 @@ function getAction(v: number): Action {
         isLock,
     };
 }
-
-const get = (value?: string) => {
-    if (value === undefined || value === ']' || value === ')') {
-        throw new FumenError('Unexpected value in quiz');
-    }
-    return value;
-};

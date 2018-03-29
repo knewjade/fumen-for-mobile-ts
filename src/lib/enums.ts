@@ -49,7 +49,7 @@ export function parsePieceName(piece: Piece) {
 export function parsePiece(piece: string) {
     // console.log(`piece: ${n}`);
 
-    switch (piece) {
+    switch (piece.toUpperCase()) {
     case 'I':
         return Piece.I;
     case 'L':
@@ -64,6 +64,11 @@ export function parsePiece(piece: string) {
         return Piece.J;
     case 'S':
         return Piece.S;
+    case 'X':
+        return Piece.Gray;
+    case ' ':
+    case '_':
+        return Piece.Empty;
     }
     throw new FumenError('Unexpected piece: ' + piece);
 }
