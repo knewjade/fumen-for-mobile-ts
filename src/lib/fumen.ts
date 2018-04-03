@@ -1,4 +1,4 @@
-import { isMinoPiece, Piece, Rotation } from './enums';
+import { isMinoPiece, Operation, Piece, Rotation } from './enums';
 import { FumenError } from './errors';
 import { Quiz } from './quiz';
 import { Field } from './fumen/field';
@@ -28,13 +28,6 @@ interface Action {
 interface Coordinate {
     x: number;
     y: number;
-}
-
-
-export enum Operation {
-    Direct = 'direct',
-    Swap = 'swap',
-    Stock = 'stock',
 }
 
 const FIELD_BLOCKS = 240;

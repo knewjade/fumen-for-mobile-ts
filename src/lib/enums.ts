@@ -24,6 +24,12 @@ export enum AnimationState {
     Play = 'play',
 }
 
+export enum Operation {
+    Direct = 'direct',
+    Swap = 'swap',
+    Stock = 'stock',
+}
+
 export function parsePieceName(piece: Piece) {
     // console.log(`piece: ${n}`);
 
@@ -47,8 +53,6 @@ export function parsePieceName(piece: Piece) {
 }
 
 export function parsePiece(piece: string) {
-    // console.log(`piece: ${n}`);
-
     switch (piece.toUpperCase()) {
     case 'I':
         return Piece.I;
