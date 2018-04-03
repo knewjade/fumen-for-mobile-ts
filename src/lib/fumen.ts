@@ -261,7 +261,12 @@ export function decode(data: string, callback: (page: Page) => void) {
 
         let quizOperation: Operation | undefined = undefined;
         if (store.quiz !== undefined && action.isLock && isMinoPiece(action.piece)) {
-            const operation = store.quiz.getOperation(action.piece);
+            let operation;
+            try {
+                operation = store.quiz.getOperation(action.piece);
+            } catch (e) {
+                operation = Operation.Direct;
+            }
             store.quiz = store.quiz.operate(operation);
             quizOperation = operation;
         }
