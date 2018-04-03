@@ -3,7 +3,14 @@ import { parsePiece, parsePieceName, Piece } from './enums';
 import { Operation } from './fumen';
 
 export class Quiz {
-    constructor(private readonly quiz: string) {
+    private readonly quiz: string;
+
+    constructor(quiz: string) {
+        this.quiz = Quiz.trim(quiz);
+    }
+
+    private static trim(quiz: string) {
+        return quiz.trim().replace(/\s+/g, '');
     }
 
     getOperation(used: Piece): Operation {
