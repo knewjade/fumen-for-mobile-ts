@@ -1,9 +1,9 @@
-import { getBlocks, parsePiece, Piece, Rotation } from '../enums';
+import { FieldConstants, getBlocks, parsePiece, Piece, Rotation } from '../enums';
 import { FumenError } from '../errors';
 
-const FIELD_WIDTH = 10;
-const FIELD_TOP = 23;
-const FIELD_BLOCKS = (FIELD_TOP + 1) * FIELD_WIDTH;
+const FIELD_WIDTH = FieldConstants.Width;
+const FIELD_TOP = FieldConstants.Height;
+const FIELD_BLOCKS = (FIELD_TOP + FieldConstants.Garbage) * FIELD_WIDTH;
 
 export class Field {
     static load(...lines: string[]): Field {
@@ -94,5 +94,25 @@ export class Field {
 
     get numOfBlocks(): number {
         return this.pieces.length;
+    }
+}
+
+export class FieldLine {
+    private field: Field;
+
+    constructor() {
+        this.field = new Field(FieldConstants.Width);
+    }
+
+    add(x: number, value: number) {
+        this.field.add(x, 0, value);
+    }
+
+    toShallowField() {
+        return this.field;
+    }
+
+    toArray(): Piece[] {
+        return this.field.toArray();
     }
 }

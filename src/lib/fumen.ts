@@ -1,7 +1,8 @@
-import { isMinoPiece, Operation, Piece, Rotation } from './enums';
+import { FieldConstants, isMinoPiece, Operation, Piece } from './enums';
 import { FumenError } from './errors';
 import { Quiz } from './quiz';
-import { Field } from './fumen/field';
+import { Field, FieldLine } from './fumen/field';
+import { Action, getAction } from './fumen/action';
 
 export interface Page {
     index: number;
@@ -13,26 +14,6 @@ export interface Page {
     quizOperation?: Operation;
     isLastPage: boolean;
 }
-
-interface Action {
-    piece: Piece;
-    rotation: Rotation;
-    coordinate: Coordinate;
-    isBlockUp: boolean;
-    isMirror: boolean;
-    isColor: boolean;
-    isComment: boolean;
-    isLock: boolean;
-}
-
-interface Coordinate {
-    x: number;
-    y: number;
-}
-
-const FIELD_BLOCKS = 240;
-const FIELD_WIDTH = 10;
-const FIELD_TOP = 23;
 
 const ENCODE_TABLE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
@@ -78,25 +59,9 @@ class Values {
     }
 }
 
-class FieldLine {
-    private field: Field;
-
-    constructor() {
-        this.field = new Field(FIELD_WIDTH);
-    }
-
-    add(x: number, value: number) {
-        this.field.add(x, 0, value);
-    }
-
-    toShallowField() {
-        return this.field;
-    }
-
-    toArray(): Piece[] {
-        return this.field.toArray();
-    }
-}
+const FIELD_WIDTH = FieldConstants.Width;
+const FIELD_TOP = FieldConstants.Height;
+const FIELD_BLOCKS = (FIELD_TOP + FieldConstants.Garbage) * FIELD_WIDTH;
 
 export function decode(data: string, callback: (page: Page) => void) {
     let pageIndex = 0;
@@ -119,7 +84,7 @@ export function decode(data: string, callback: (page: Page) => void) {
         if (store.repeatCount <= 0) {
             let index = 0;
             let isChange = false;
-            while (index < FIELD_BLOCKS) {
+            while (index < FieldConstants.Width) {
                 const diffBlock = values.poll(2);
                 const diff = Math.floor(diffBlock / FIELD_BLOCKS);
 
@@ -153,7 +118,7 @@ export function decode(data: string, callback: (page: Page) => void) {
         const action = getAction(actionValue);
 
         // Parse comment
-        let comment = undefined;
+        let comment: string | undefined = undefined;
         if (action.isComment) {
             const commentValues: number[] = [];
             const commentLength = values.poll(2);
@@ -178,7 +143,7 @@ export function decode(data: string, callback: (page: Page) => void) {
                 store.quiz = undefined;
             }
         } else if (store.quiz !== undefined && store.lastCommentPageIndex + 30 <= pageIndex) {
-            comment = store.quiz;
+            comment = store.quiz.format().quiz;
             store.lastCommentPageIndex = pageIndex;
         } else if (pageIndex === 0) {
             comment = '';
@@ -229,105 +194,4 @@ export function decode(data: string, callback: (page: Page) => void) {
 
         prevField = currentField;
     }
-}
-
-function getAction(v: number): Action {
-    function parsePiece(n: number) {
-        switch (n) {
-        case 0:
-            return Piece.Empty;
-        case 1:
-            return Piece.I;
-        case 2:
-            return Piece.L;
-        case 3:
-            return Piece.O;
-        case 4:
-            return Piece.Z;
-        case 5:
-            return Piece.T;
-        case 6:
-            return Piece.J;
-        case 7:
-            return Piece.S;
-        case 8:
-            return Piece.Gray;
-        }
-        throw new FumenError('Unexpected piece');
-    }
-
-    function parseRotation(n: number, piece: Piece) {
-        switch (n) {
-        case 0:
-            return Rotation.Reverse;
-        case 1:
-            return piece !== Piece.I ? Rotation.Right : Rotation.Left;
-        case 2:
-            return Rotation.Spawn;
-        case 3:
-            return piece !== Piece.I ? Rotation.Left : Rotation.Right;
-        }
-        throw new FumenError('Unexpected rotation');
-    }
-
-    function parseCoordinate(n: number, piece: Piece, rotation: Rotation) {
-        let x = n % FIELD_WIDTH;
-        const originY = Math.floor(n / 10);
-        let y = FIELD_TOP - originY - 1;
-
-        if (piece === Piece.O && rotation === Rotation.Left) {
-            x += 1;
-            y -= 1;
-        } else if (piece === Piece.O && rotation === Rotation.Reverse) {
-            x += 1;
-        } else if (piece === Piece.O && rotation === Rotation.Spawn) {
-            y -= 1;
-        } else if (piece === Piece.I && rotation === Rotation.Reverse) {
-            x += 1;
-        } else if (piece === Piece.I && rotation === Rotation.Left) {
-            y -= 1;
-        } else if (piece === Piece.S && rotation === Rotation.Spawn) {
-            y -= 1;
-        } else if (piece === Piece.S && rotation === Rotation.Right) {
-            x -= 1;
-        } else if (piece === Piece.Z && rotation === Rotation.Spawn) {
-            y -= 1;
-        } else if (piece === Piece.Z && rotation === Rotation.Left) {
-            x += 1;
-        }
-
-        return { x, y };
-    }
-
-    function parseBool(n: number) {
-        return n !== 0;
-    }
-
-    let value = v;
-    const piece = parsePiece(value % 8);
-    value = Math.floor(value / 8);
-    const rotation = parseRotation(value % 4, piece);
-    value = Math.floor(value / 4);
-    const coordinate = parseCoordinate(value % FIELD_BLOCKS, piece, rotation);
-    value = Math.floor(value / FIELD_BLOCKS);
-    const isBlockUp = parseBool(value % 2);
-    value = Math.floor(value / 2);
-    const isMirror = parseBool(value % 2);
-    value = Math.floor(value / 2);
-    const isColor = parseBool(value % 2);
-    value = Math.floor(value / 2);
-    const isComment = parseBool(value % 2);
-    value = Math.floor(value / 2);
-    const isLock = !parseBool(value % 2);
-
-    return {
-        piece,
-        rotation,
-        coordinate,
-        isBlockUp,
-        isMirror,
-        isColor,
-        isComment,
-        isLock,
-    };
 }

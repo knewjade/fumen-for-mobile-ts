@@ -30,9 +30,13 @@ export enum Operation {
     Stock = 'stock',
 }
 
-export function parsePieceName(piece: Piece) {
-    // console.log(`piece: ${n}`);
+export enum FieldConstants {
+    Width = 10,
+    Height = 23,
+    Garbage = 1,
+}
 
+export function parsePieceName(piece: Piece) {
     switch (piece) {
     case Piece.I:
         return 'I';

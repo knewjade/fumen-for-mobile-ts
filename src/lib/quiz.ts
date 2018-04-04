@@ -1,6 +1,5 @@
 import { FumenError } from './errors';
-import { parsePiece, parsePieceName, Piece } from './enums';
-import { Operation } from './fumen';
+import { Operation, parsePiece, parsePieceName, Piece } from './enums';
 
 export class Quiz {
     static verify(quiz: string): boolean {
@@ -18,7 +17,7 @@ export class Quiz {
         return quiz.trim().replace(/\s+/g, '');
     }
 
-    private readonly quiz: string;
+    public readonly quiz: string;
 
     constructor(quiz: string) {
         if (!Quiz.verify(quiz)) {

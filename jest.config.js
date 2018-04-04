@@ -13,5 +13,5 @@ module.exports = {
     ],
     roots: ["<rootDir>/src/"],
     collectCoverage: true,
-    coverageReporters: ['clover'],
+    coverageReporters: ['html'],
 };

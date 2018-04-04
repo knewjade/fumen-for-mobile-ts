@@ -1,6 +1,5 @@
 import { Quiz } from '../quiz';
-import { Piece } from '../enums';
-import { Operation } from '../fumen';
+import { Operation, Piece } from '../enums';
 import { FumenError } from '../errors';
 
 describe('quiz', () => {
