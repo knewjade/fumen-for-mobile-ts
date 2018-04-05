@@ -4,7 +4,7 @@ import { actions as originActions, Actions } from './actions';
 import { initState, State } from './states';
 import { HyperHammer, HyperStage } from './lib/hyper';
 import { AnimationState, Piece, Rotation } from './lib/enums';
-import { decode, Operation, Page as FumenPage } from './lib/fumen';
+import { decode, Operation, Page as FumenPage } from './lib/fumen/fumen';
 import { ModalInstance, style } from './lib/types';
 import { field } from './components/field';
 import { block } from './components/block';

@@ -1,8 +1,8 @@
-import { FieldConstants, isMinoPiece, Operation, Piece } from './enums';
-import { FumenError } from './errors';
-import { Quiz } from './quiz';
-import { Field, FieldLine } from './fumen/field';
-import { Action, getAction } from './fumen/action';
+import { FieldConstants, isMinoPiece, Operation, Piece } from '../enums';
+import { FumenError } from '../errors';
+import { Quiz } from '../quiz';
+import { Field, FieldLine } from './field';
+import { Action, getAction } from './action';
 
 export interface Page {
     index: number;
@@ -29,7 +29,8 @@ function decodeToCommentChars(v: number): string[] {
     const array: string[] = [];
     let value = v;
     for (let count = 0; count < 4; count += 1) {
-        array.push(COMMENT_TABLE[value % MAX_COMMENT_CHAR_VALUE]);
+        const index = value % MAX_COMMENT_CHAR_VALUE;
+        array.push(COMMENT_TABLE[index]);
         value = Math.floor(value / MAX_COMMENT_CHAR_VALUE);
     }
     return array;
@@ -63,7 +64,7 @@ const FIELD_WIDTH = FieldConstants.Width;
 const FIELD_TOP = FieldConstants.Height;
 const FIELD_BLOCKS = (FIELD_TOP + FieldConstants.Garbage) * FIELD_WIDTH;
 
-export function decode(data: string, callback: (page: Page) => void) {
+export async function decode(data: string, callback: (page: Page) => void | Promise<void>): Promise<void> {
     let pageIndex = 0;
     const values = new Values(data);
     let [prevField, currentField] = [new Field(), new Field()];
@@ -171,7 +172,7 @@ export function decode(data: string, callback: (page: Page) => void) {
             page.quizOperation = quizOperation;
         }
 
-        callback(page);
+        await callback(page);
 
         pageIndex += 1;
 
