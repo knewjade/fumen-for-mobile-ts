@@ -23,7 +23,7 @@ export function getAction(v: number): Action {
     let value = v;
     const piece = parsePiece(value % 8);
     value = Math.floor(value / 8);
-    const rotation = parseRotation(value % 4, piece);
+    const rotation = parseRotation(value % 4);
     value = Math.floor(value / 4);
     const coordinate = parseCoordinate(value % FIELD_BLOCKS, piece, rotation);
     value = Math.floor(value / FIELD_BLOCKS);
@@ -73,16 +73,16 @@ function parsePiece(n: number) {
     throw new FumenError('Unexpected piece');
 }
 
-function parseRotation(n: number, piece: Piece) {
+function parseRotation(n: number) {
     switch (n) {
     case 0:
         return Rotation.Reverse;
     case 1:
-        return piece !== Piece.I ? Rotation.Right : Rotation.Left;
+        return Rotation.Right;
     case 2:
         return Rotation.Spawn;
     case 3:
-        return piece !== Piece.I ? Rotation.Left : Rotation.Right;
+        return Rotation.Left;
     }
     throw new FumenError('Unexpected rotation');
 }

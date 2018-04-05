@@ -35,7 +35,7 @@ function decodeToCommentChars(v: number): string[] {
     return array;
 }
 
-class Values {
+export class Values {
     private readonly values: number[];
 
     constructor(data: string) {
