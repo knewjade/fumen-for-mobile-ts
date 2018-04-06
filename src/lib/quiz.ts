@@ -17,7 +17,7 @@ export class Quiz {
         return quiz.trim().replace(/\s+/g, '');
     }
 
-    public readonly quiz: string;
+    private readonly quiz: string;
 
     constructor(quiz: string) {
         if (!Quiz.verify(quiz)) {
@@ -158,5 +158,12 @@ export class Quiz {
             }
             return parsePiece(name);
         });
+    }
+
+    toString(): string {
+        if (this.quiz === '#Q=[]()') {
+            return '';
+        }
+        return this.quiz;
     }
 }

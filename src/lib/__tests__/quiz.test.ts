@@ -60,6 +60,11 @@ describe('quiz', () => {
             const format = quiz.format();
             expect(format).toEqual(new Quiz('#Q=[T](I)SZOJL'));
         });
+
+        it('toString', () => {
+            const str = quiz.toString();
+            expect(str).toEqual('#Q=[T](I)SZOJL');
+        });
     });
 
     describe('hold & current / last one', () => {
@@ -169,6 +174,11 @@ describe('quiz', () => {
             const format = quiz.format();
             expect(format).toEqual(new Quiz('#Q=[](I)L'));
         });
+
+        it('toString', () => {
+            const str = quiz.toString();
+            expect(str).toEqual('#Q=[](I)L');
+        });
     });
 
     describe('hold only', () => {
@@ -230,6 +240,11 @@ describe('quiz', () => {
         it('format', () => {
             const format = quiz.format();
             expect(format).toEqual(new Quiz('#Q=[]()'));
+        });
+
+        it('toString', () => {
+            const str = quiz.toString();
+            expect(str).toEqual('');
         });
     });
 });

@@ -1,10 +1,38 @@
-import { FieldConstants, isMinoPiece, Operation, Piece } from '../enums';
+import { FieldConstants, isMinoPiece, Operation, Piece, Rotation } from '../enums';
 import { FumenError } from '../errors';
 import { Quiz } from '../quiz';
 import { Field, FieldLine } from './field';
 import { Action, getAction } from './action';
 
 export interface Page {
+    Index: number;
+    LastPage: boolean;
+    Field: Field;
+    SentLine: FieldLine;
+    Piece?: {
+        Lock: boolean;
+        Type: Piece;
+        Rotation: Rotation;
+        Coordinate: {
+            x: number,
+            y: number,
+        };
+    };
+    Comment: {
+        Text?: string;
+        Ref?: number;
+    };
+    Quiz?: {
+        Operation: Operation;
+    };
+    Flags: {
+        Send: boolean;
+        Mirrored: boolean;
+        Colorize: boolean;
+    };
+}
+
+interface FumenPage {
     index: number;
     action: Action;
     comment?: string;
@@ -76,7 +104,7 @@ export async function decode(data: string, callback: (page: Page) => void | Prom
         quiz?: Quiz,
     } = {
         repeatCount: -1,
-        lastCommentPageIndex: 0,
+        lastCommentPageIndex: -1,
         quiz: undefined,
     };
 
@@ -144,14 +172,13 @@ export async function decode(data: string, callback: (page: Page) => void | Prom
                 store.quiz = undefined;
             }
         } else if (store.quiz !== undefined && store.lastCommentPageIndex + 30 <= pageIndex) {
-            comment = store.quiz.format().quiz;
+            comment = store.quiz.format().toString();
             store.lastCommentPageIndex = pageIndex;
         } else if (pageIndex === 0) {
             comment = '';
-            store.lastCommentPageIndex = pageIndex;
         }
 
-        const page: Page = {
+        const page: FumenPage = {
             action,
             comment,
             index: pageIndex,
@@ -172,7 +199,41 @@ export async function decode(data: string, callback: (page: Page) => void | Prom
             page.quizOperation = quizOperation;
         }
 
-        await callback(page);
+        // 加工
+        let piece2;
+        if (action.piece !== Piece.Empty) {
+            piece2 = {
+                Lock: action.isLock,
+                Type: action.piece,
+                Rotation: action.rotation,
+                Coordinate: action.coordinate,
+            };
+        }
+
+        const com: {
+            Text?: string;
+            Ref?: number;
+        } = {};
+
+        if (action.isComment) {
+            com.Text = comment;
+        } else {
+            com.Ref = store.lastCommentPageIndex;
+        }
+
+        await callback({
+            Index: pageIndex,
+            LastPage: values.isEmpty(),
+            Field: currentField,
+            SentLine: blockUp,
+            Piece: piece2,
+            Comment: com,
+            Flags: {
+                Send: action.isBlockUp,
+                Mirrored: action.isMirror,
+                Colorize: action.isColor,
+            },
+        });
 
         pageIndex += 1;
 
