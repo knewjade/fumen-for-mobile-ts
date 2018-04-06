@@ -5,30 +5,30 @@ import { Field, FieldLine } from './field';
 import { Action, getAction } from './action';
 
 export interface Page {
-    Index: number;
-    LastPage: boolean;
-    Field: Field;
-    SentLine: FieldLine;
-    Piece?: {
-        Lock: boolean;
-        Type: Piece;
-        Rotation: Rotation;
-        Coordinate: {
+    index: number;
+    lastPage: boolean;
+    field: Field;
+    sentLine: FieldLine;
+    piece?: {
+        lock: boolean;
+        type: Piece;
+        rotation: Rotation;
+        coordinate: {
             x: number,
             y: number,
         };
     };
-    Comment: {
-        Text?: string;
-        Ref?: number;
+    comment: {
+        text?: string;
+        ref?: number;
     };
-    Quiz?: {
-        Operation: Operation;
+    quiz?: {
+        operation?: Operation;
     };
-    Flags: {
-        Send: boolean;
-        Mirrored: boolean;
-        Colorize: boolean;
+    flags: {
+        send: boolean;
+        mirrored: boolean;
+        colorize: boolean;
     };
 }
 
@@ -95,8 +95,8 @@ const FIELD_BLOCKS = (FIELD_TOP + FieldConstants.Garbage) * FIELD_WIDTH;
 export async function decode(data: string, callback: (page: Page) => void | Promise<void>): Promise<void> {
     let pageIndex = 0;
     const values = new Values(data);
-    let [prevField, currentField] = [new Field(), new Field()];
-    let blockUp = new FieldLine();
+    let [prevField, currentField] = [new Field({}), new Field({})];
+    let blockUp = new FieldLine({});
 
     const store: {
         repeatCount: number,
@@ -113,11 +113,12 @@ export async function decode(data: string, callback: (page: Page) => void | Prom
         if (store.repeatCount <= 0) {
             let index = 0;
             let isChange = false;
-            while (index < FieldConstants.Width) {
+            while (index < FIELD_BLOCKS) {
                 const diffBlock = values.poll(2);
                 const diff = Math.floor(diffBlock / FIELD_BLOCKS);
 
                 const numOfBlocks = diffBlock % FIELD_BLOCKS;
+
                 if (numOfBlocks !== FIELD_BLOCKS - 1) {
                     isChange = true;
                 }
@@ -203,36 +204,44 @@ export async function decode(data: string, callback: (page: Page) => void | Prom
         let piece2;
         if (action.piece !== Piece.Empty) {
             piece2 = {
-                Lock: action.isLock,
-                Type: action.piece,
-                Rotation: action.rotation,
-                Coordinate: action.coordinate,
+                lock: action.isLock,
+                type: action.piece,
+                rotation: action.rotation,
+                coordinate: action.coordinate,
             };
         }
 
         const com: {
-            Text?: string;
-            Ref?: number;
+            text?: string;
+            ref?: number;
         } = {};
 
         if (action.isComment) {
-            com.Text = comment;
+            com.text = comment;
         } else {
-            com.Ref = store.lastCommentPageIndex;
+            com.ref = store.lastCommentPageIndex;
+        }
+
+        let q;
+        if (store.quiz !== undefined) {
+            q = {
+                operation: quizOperation,
+            };
         }
 
         await callback({
-            Index: pageIndex,
-            LastPage: values.isEmpty(),
-            Field: currentField,
-            SentLine: blockUp,
-            Piece: piece2,
-            Comment: com,
-            Flags: {
-                Send: action.isBlockUp,
-                Mirrored: action.isMirror,
-                Colorize: action.isColor,
+            index: pageIndex,
+            lastPage: values.isEmpty(),
+            field: currentField.copy(),
+            sentLine: blockUp.copy(),
+            piece: piece2,
+            comment: com,
+            flags: {
+                send: action.isBlockUp,
+                mirrored: action.isMirror,
+                colorize: action.isColor,
             },
+            quiz: q,
         });
 
         pageIndex += 1;
@@ -246,7 +255,7 @@ export async function decode(data: string, callback: (page: Page) => void | Prom
 
             if (action.isBlockUp) {
                 currentField.up(blockUp.toShallowField());
-                blockUp = new FieldLine();
+                blockUp = new FieldLine({});
             }
 
             if (action.isMirror) {

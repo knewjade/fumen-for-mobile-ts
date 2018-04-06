@@ -16,13 +16,13 @@ export class Field {
         return Field.loadInner(blocks, blocks.length);
     }
 
-    private static loadInner(blocks: string, num?: number): Field {
-        const len = num !== undefined ? num : blocks.length;
+    private static loadInner(blocks: string, length?: number): Field {
+        const len = length !== undefined ? length : blocks.length;
         if (len % 10 !== 0) {
             throw new FumenError('Num of block in field should be mod 10');
         }
 
-        const field = num !== undefined ? new Field(num) : new Field();
+        const field = length !== undefined ? new Field({ length }) : new Field({});
         for (let index = 0; index < len; index += 1) {
             const block = blocks[index];
             field.set(index % 10, Math.floor((len - index - 1) / 10), parsePiece(block));
@@ -30,10 +30,19 @@ export class Field {
         return field;
     }
 
+    private readonly length: number;
     private pieces: Piece[];
 
-    constructor(private readonly num: number = FIELD_BLOCKS) {
-        this.pieces = Array.from({ length: num }).map(() => Piece.Empty);
+    constructor({ pieces, length = FIELD_BLOCKS }: {
+        pieces?: Piece[],
+        length?: number,
+    }) {
+        if (pieces !== undefined) {
+            this.pieces = pieces;
+        } else {
+            this.pieces = Array.from({ length }).map(() => Piece.Empty);
+        }
+        this.length = length;
     }
 
     get(x: number, y: number): Piece {
@@ -72,8 +81,7 @@ export class Field {
     }
 
     up(blockUp: Field) {
-        console.log(blockUp);
-        this.pieces = blockUp.pieces.concat(this.pieces).slice(0, this.num);
+        this.pieces = blockUp.pieces.concat(this.pieces).slice(0, this.length);
     }
 
     mirror() {
@@ -95,13 +103,22 @@ export class Field {
     get numOfBlocks(): number {
         return this.pieces.length;
     }
+
+    copy(): Field {
+        return new Field({ pieces: this.pieces.concat(), length: this.length });
+    }
 }
 
 export class FieldLine {
+    static load(line: string): FieldLine {
+        const field = Field.loadMinify(line);
+        return new FieldLine({ field });
+    }
+
     private field: Field;
 
-    constructor() {
-        this.field = new Field(FieldConstants.Width);
+    constructor(params: { field?: Field }) {
+        this.field = params.field !== undefined ? params.field : new Field({ length: FieldConstants.Width });
     }
 
     add(x: number, value: number) {
@@ -114,5 +131,9 @@ export class FieldLine {
 
     toArray(): Piece[] {
         return this.field.toArray();
+    }
+
+    copy(): FieldLine {
+        return new FieldLine({ field: this.field.copy() });
     }
 }

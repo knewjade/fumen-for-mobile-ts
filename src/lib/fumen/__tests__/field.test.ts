@@ -46,7 +46,7 @@ describe('field', () => {
     });
 
     test('get & add', () => {
-        const field = new Field();
+        const field = new Field({});
         for (let y = 0; y < 23; y += 1) {
             for (let x = 0; x < 10; x += 1) {
                 expect(field.get(x, y)).toEqual(Piece.Empty);
@@ -62,7 +62,7 @@ describe('field', () => {
 
     describe('put', () => {
         test('I-Spawn', () => {
-            const field = new Field();
+            const field = new Field({});
             field.put(Piece.I, Rotation.Spawn, { x: 1, y: 0 });
 
             expect(field.get(0, 0)).toEqual(Piece.I);
@@ -72,7 +72,7 @@ describe('field', () => {
         });
 
         test('S-Left', () => {
-            const field = new Field();
+            const field = new Field({});
             field.put(Piece.S, Rotation.Left, { x: 3, y: 4 });
 
             expect(field.get(2, 5)).toEqual(Piece.S);
@@ -163,7 +163,7 @@ describe('field', () => {
     });
 
     test('to array', () => {
-        const field = new Field();
+        const field = new Field({});
         const array = field.toArray();
         expect(array).toHaveLength(240);
         expect(array.every(value => value === Piece.Empty)).toBeTruthy();
