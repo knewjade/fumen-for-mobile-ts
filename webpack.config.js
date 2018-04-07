@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     entry: [
-        './src/index.ts'
+        './src/actions.ts'
     ],
     output: {
         filename: 'bundle.js',

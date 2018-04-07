@@ -1,4 +1,4 @@
-import { decode, Page } from '../fumen';
+import { decode, extract, Page } from '../fumen';
 import { Field, FieldLine } from '../field';
 import { Operation, Piece, Rotation } from '../../enums';
 import { FumenError } from '../../errors';
@@ -548,5 +548,51 @@ describe('fumen', () => {
             ),
             sentLine: new FieldLine({}),
         } as Page);
+    });
+
+    describe('extract', () => {
+        test('pass', () => {
+            const data = extract('vhAAgH');
+            expect(data).toEqual('vhAAgH');
+        });
+
+        test('v115@', () => {
+            const data = extract('v115@vhATLJ');
+            expect(data).toEqual('vhATLJ');
+        });
+
+        test('m115@', () => {
+            const data = extract('m115@vhAJEJ');
+            expect(data).toEqual('vhAJEJ');
+        });
+
+        test('d115@', () => {
+            const data = extract('d115@vhAMLJ');
+            expect(data).toEqual('vhAMLJ');
+        });
+
+        test('fumen.zui.jp', () => {
+            const data = extract('http://fumen.zui.jp/?v115@vhANKJ');
+            expect(data).toEqual('vhANKJ');
+        });
+
+        test('knewjade.github.io with options', () => {
+            const data = extract('https://knewjade.github.io/fumen-for-mobile/?d=v115@vhAmKJ&dummy=3');
+            expect(data).toEqual('vhAmKJ');
+        });
+
+        test('with spaces', () => {
+            const data = extract('     v115@ehD 8 MeA gH   ');
+            expect(data).toEqual('ehD8MeAgH');
+        });
+
+        test('includes ?', () => {
+            const data = extract('v115@vfA8HeA8HeA8JeA8HeA8JeA8HeA8JeA8HeA8JeA8He?A8JeA8ReAgH');
+            expect(data).toEqual('vfA8HeA8HeA8JeA8HeA8JeA8HeA8JeA8HeA8JeA8HeA8JeA8ReAgH');
+        });
+
+        test('v110@', () => {
+            expect(() => extract('v110@7eAA4G')).toThrow(FumenError);
+        });
     });
 });

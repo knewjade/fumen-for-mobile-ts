@@ -1,11 +1,19 @@
-import { Block, State } from './states';
+import { Block, initState, State } from './states';
 import { AnimationState, Piece } from './lib/enums';
+import { decode, Page } from './lib/fumen/fumen';
+import { view } from './view';
+import { app } from 'hyperapp';
 
-export type action = update | refresh;
-export type update = (state: Readonly<State>) => Partial<Readonly<State>>;
-export type refresh = (state: Readonly<State>) => undefined;
+export type action = (state: Readonly<State>) => Partial<State> | undefined;
 
 export interface Actions {
+    loadFumen: (args: { fumen: string }) => action;
+    updatePages: (args: { pages: Page[] }) => action;
+    inputFumenData: (args: { value?: string }) => action;
+    startAnimation: () => action;
+    pauseAnimation: () => action;
+
+
     setPage: (data: {
         pageIndex: number,
         field: Block[],
@@ -17,25 +25,64 @@ export interface Actions {
     setComment: (data: { comment: string }) => action;
     resize: (data: { width: number, height: number }) => action;
     reload: () => action;
-    pause: () => action;
-    start: () => action;
-    setMaxPage: (data: { maxPage: number }) => action;
     openPage: (data: { pageIndex: number }) => action;
     backPage: () => action;
     nextPage: () => action;
-    inputFumenData: (data: { value?: string }) => action;
-    loadFumen: (data: { value?: string }) => action;
     showOpenErrorMessage: (data: { message: string }) => action;
-    stopAnimation: () => action;
-    startAnimation: () => action;
-}
-
-function log(msg: string) {
-    console.log(msg);
 }
 
 export const actions: Readonly<Actions> = {
-    setPage: ({ pageIndex, field, blockUp, comment, hold, nexts }) => (state): Partial<State> => {
+    loadFumen: ({ fumen }) => (state) => {
+        log('action: loadFumen = ' + fumen);
+
+        (async () => {
+            const pages: Page[] = [];
+            await decode(fumen, (page) => {
+                pages[page.index] = page;
+            });
+            router.updatePages({ pages });
+        })();
+
+        return undefined;
+    },
+    updatePages: ({ pages }) => (state) => {
+        log('action: updatePages = ' + pages.length);
+
+        return mix(state, [
+            supportActions.setMaxPage({ maxPage: pages.length }),
+            () => ({ fumen: { pages } }),
+        ]);
+    },
+    inputFumenData: ({ value }) => (state) => {
+        log('action: inputFumenData');
+        return {
+            fumen: {
+                ...state.fumen,
+                value,
+                errorMessage: undefined,
+            },
+        };
+    },
+    startAnimation: () => (state) => {
+        log('action: startAnimation');
+        return {
+            play: {
+                ...state.play,
+                status: AnimationState.Play,
+            },
+        };
+    },
+    pauseAnimation: () => (state) => {
+        log('action: pauseAnimation');
+        return {
+            play: {
+                ...state.play,
+                status: AnimationState.Pause,
+            },
+        };
+    },
+
+    setPage: ({ pageIndex, field, blockUp, comment, hold, nexts }) => (state) => {
         log('action: setFieldAndComment');
 
         const isChanged = comment !== undefined && comment !== state.comment.text;
@@ -54,7 +101,7 @@ export const actions: Readonly<Actions> = {
             },
         };
     },
-    setComment: ({ comment }) => (state): Partial<State> => {
+    setComment: ({ comment }) => (state) => {
         log('action: setComment');
 
         const isChanged = comment !== undefined && comment !== state.comment.text;
@@ -65,72 +112,79 @@ export const actions: Readonly<Actions> = {
             },
         };
     },
-    resize: data => (): Partial<State> => {
+    resize: data => () => {
         log('action: resize');
         return { display: data };
     },
-    reload: () => (state): undefined => {
+    reload: () => (state) => {
         log('action: reload');
         return undefined;
     },
-    start: () => (state): Partial<State> => {
-        log('action: start');
-        return {
-            play: {
-                ...state.play,
-                status: AnimationState.Play,
-            },
-        };
-    },
-    pause: () => (state): Partial<State> => {
-        log('action: pause');
-        return {
-            play: {
-                ...state.play,
-                status: AnimationState.Pause,
-            },
-        };
-    },
-    setMaxPage: data => (): Partial<State> => {
-        log('action: setMaxPage');
-        return data;
-    },
-    openPage: ({ pageIndex }) => (state): undefined => {
+
+
+    openPage: ({ pageIndex }) => (state) => {
         log('action: openPage');
         return undefined;
     },
-    backPage: () => (state): undefined => {
+    backPage: () => (state) => {
         log('action: backPage');
         return undefined;
     },
-    nextPage: () => (state): undefined => {
+    nextPage: () => (state) => {
         log('action: nextPage');
-        return undefined;
+        return {};
     },
-    inputFumenData: ({ value }) => (state): Partial<State> => {
-        log('action: inputFumenData');
-        return {
-            fumen: {
-                ...state.fumen,
-                value,
-                errorMessage: undefined,
-            },
-        };
-    },
-    loadFumen: ({ value }) => (state): undefined => {
-        log('action: loadFumen');
-        return undefined;
-    },
-    stopAnimation: () => (): undefined => {
-        log('action: stopAnimation');
-        return undefined;
-    },
-    startAnimation: () => (): undefined => {
-        log('action: startAnimation');
-        return undefined;
-    },
-    showOpenErrorMessage: ({ message }) => (state): undefined => {
+
+
+    showOpenErrorMessage: ({ message }) => (state) => {
         log('action: showOpenErrorMessage');
         return undefined;
     },
 };
+
+interface SupportActions {
+    setMaxPage: (data: { maxPage: number }) => action;
+}
+
+const supportActions: SupportActions = {
+    setMaxPage: ({ maxPage }: { maxPage: number }) => (): Partial<State> => {
+        log('support action: setMaxPage = ' + maxPage);
+        return { maxPage };
+    },
+};
+
+function log(msg: string) {
+    console.log(msg);
+}
+
+function mix(
+    state: Readonly<State>,
+    actions: action[],
+): Partial<Readonly<State>> {
+    let merged: Partial<Readonly<State>> = {};
+    for (const action of actions) {
+        const partial = action(state);
+        merged = {
+            ...merged,
+            ...partial,
+        };
+    }
+    return merged;
+}
+
+export const router = app(initState, actions, view(), document.body);
+
+window.onresize = () => {
+    router.resize({
+        width: window.document.body.clientWidth,
+        height: window.document.body.clientHeight,
+    });
+};
+
+function extractFumenFromURL() {
+    const url = decodeURIComponent(location.search);
+    const paramQuery = url.substr(1).split('&').find(value => value.startsWith('d='));
+    return paramQuery !== undefined ? paramQuery.substr(2) : 'v115@vhAAgH';
+}
+
+router.loadFumen({ fumen: extractFumenFromURL() });

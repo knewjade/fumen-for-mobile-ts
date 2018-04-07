@@ -1,4 +1,5 @@
 import { AnimationState, Piece } from './lib/enums';
+import { Page } from './lib/fumen/fumen';
 
 // Immutableにする
 export interface State {
@@ -31,9 +32,6 @@ export interface State {
 export interface Block {
     piece: Piece;
     highlight?: boolean;
-}
-
-interface Page {
 }
 
 export const initState: Readonly<State> = {

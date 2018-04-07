@@ -1,7 +1,7 @@
-import { app, View } from 'hyperapp';
+import { View } from 'hyperapp';
 import { a, div, h4, span, textarea } from '@hyperapp/html';
-import { actions as originActions, Actions } from './actions';
-import { initState, State } from './states';
+import { Actions } from './actions';
+import { State } from './states';
 import { HyperHammer, HyperStage } from './lib/hyper';
 import { AnimationState, Piece } from './lib/enums';
 import { ModalInstance, style } from './lib/types';
@@ -176,15 +176,9 @@ export const view: () => View<State, Actions> = () => {
                 hammer: hyperHammer,
                 backPage: () => {
                     actions.backPage();
-                    if (state.play.status === AnimationState.Play) {
-                        actions.startAnimation();
-                    }
                 },
                 nextPage: () => {
                     actions.nextPage();
-                    if (state.play.status === AnimationState.Play) {
-                        actions.startAnimation();
-                    }
                 },
             }),
             div([   // canvas:Field とのマッピング用仮想DOM
@@ -300,10 +294,10 @@ export const view: () => View<State, Actions> = () => {
                         onclick: () => {
                             switch (state.play.status) {
                             case AnimationState.Play:
-                                actions.pause();
+                                actions.pauseAnimation();
                                 break;
                             default:
-                                actions.start();
+                                actions.startAnimation();
                                 break;
                             }
                         },
@@ -383,20 +377,3 @@ export const view: () => View<State, Actions> = () => {
         ]);
     };
 };
-
-export const router = app(initState, originActions, view(), document.body);
-
-window.onresize = () => {
-    router.resize({
-        width: window.document.body.clientWidth,
-        height: window.document.body.clientHeight,
-    });
-};
-
-function extractFumenFromURL() {
-    const url = decodeURIComponent(location.search);
-    const paramQuery = url.substr(1).split('&').find(value => value.startsWith('d='));
-    return paramQuery !== undefined ? paramQuery.substr(2) : undefined;
-}
-
-router.loadFumen({ value: extractFumenFromURL() });

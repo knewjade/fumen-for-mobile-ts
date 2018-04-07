@@ -3,6 +3,7 @@ import { Quiz } from './quiz';
 import { Field, FieldLine } from './field';
 import { getAction } from './action';
 import { Values } from './values';
+import { FumenError } from '../errors';
 
 export interface Page {
     index: number;
@@ -51,7 +52,33 @@ const FIELD_WIDTH = FieldConstants.Width;
 const FIELD_TOP = FieldConstants.Height;
 const FIELD_BLOCKS = (FIELD_TOP + FieldConstants.Garbage) * FIELD_WIDTH;
 
-export async function decode(data: string, callback: (page: Page) => void | Promise<void>): Promise<void> {
+export function extract(str: string): string {
+    let data = str;
+
+    // v115@~
+    const prefix = '115@';
+    const prefixIndex = str.indexOf(prefix);
+    if (0 <= prefixIndex) {
+        data = data.substr(prefixIndex + prefix.length);
+    }
+
+    // url parameters
+    const paramIndex = data.indexOf('&');
+    if (0 <= paramIndex) {
+        data = data.substring(0, paramIndex);
+    }
+
+    // v114@~
+    if (data.includes('@')) {
+        throw new FumenError('Fumen is supported v115 only');
+    }
+
+    return data.trim().replace(/[?\s]+/g, '');
+}
+
+export async function decode(fumen: string, callback: (page: Page) => void | Promise<void>): Promise<void> {
+    const data = extract(fumen);
+
     let pageIndex = 0;
     const values = new Values(data);
     let [prevField, currentField] = [new Field({}), new Field({})];
