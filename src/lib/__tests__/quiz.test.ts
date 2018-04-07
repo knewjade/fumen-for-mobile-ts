@@ -1,4 +1,4 @@
-import { Quiz } from '../quiz';
+import { Quiz } from '../fumen/quiz';
 import { Operation, Piece } from '../enums';
 import { FumenError } from '../errors';
 

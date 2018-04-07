@@ -3,8 +3,7 @@ import { a, div, h4, span, textarea } from '@hyperapp/html';
 import { actions as originActions, Actions } from './actions';
 import { initState, State } from './states';
 import { HyperHammer, HyperStage } from './lib/hyper';
-import { AnimationState, Operation, Piece, Rotation } from './lib/enums';
-import { decode, Page as FumenPage } from './lib/fumen/fumen';
+import { AnimationState, Piece } from './lib/enums';
 import { ModalInstance, style } from './lib/types';
 import { field } from './components/field';
 import { block } from './components/block';
@@ -13,11 +12,8 @@ import { modal } from './components/modal';
 import { tools } from './components/tools';
 import { game } from './components/game';
 import { box } from './components/box';
-import { ViewError } from './lib/errors';
 import { icon } from './components/icon';
-// Konvaは最後に読み込むこと！
-// エラー対策：Uncaught ReferenceError: __importDefault is not define
-import * as Konva from 'konva';
+import konva = require('konva');
 
 declare const M: any;
 
@@ -30,7 +26,7 @@ export const view: () => View<State, Actions> = () => {
     const blocks = Array.from({ length: 23 * 10 }).map((ignore, index) => {
         const [ix, iy] = [index % 10, Math.floor(index / 10)];
         const py = 22 - iy;
-        const box: Konva.Rect = new Konva.Rect({
+        const box: konva.Rect = new konva.Rect({
             strokeWidth: 0,
             opacity: 1,
         });
@@ -44,7 +40,7 @@ export const view: () => View<State, Actions> = () => {
 
     const bottomBlocks = Array.from({ length: 10 }).map((ignore, index) => {
         const [ix, iy] = [index % 10, Math.floor(index / 10)];
-        const box: Konva.Rect = new Konva.Rect({
+        const box: konva.Rect = new konva.Rect({
             strokeWidth: 0,
             opacity: 0.75,
         });
@@ -57,7 +53,7 @@ export const view: () => View<State, Actions> = () => {
     });
 
     {
-        const layer = new Konva.Layer();
+        const layer = new konva.Layer();
         for (const block of blocks) {
             layer.add(block.box);
         }
@@ -68,24 +64,24 @@ export const view: () => View<State, Actions> = () => {
     }
 
     // 背景
-    const background: Konva.Rect = new Konva.Rect({
+    const background: konva.Rect = new konva.Rect({
         fill: '#333',
         strokeWidth: 0,
         opacity: 1,
     });
-    const line = new Konva.Line({
+    const line = new konva.Line({
         points: [],
         stroke: '#d8d8d8',
     });
     {
-        const layer = new Konva.Layer();
+        const layer = new konva.Layer();
         layer.add(background);
         layer.add(line);
         hyperStage.addLayer(layer);
     }
 
-    const box2: () => Konva.Rect = () => {
-        return new Konva.Rect({
+    const box2: () => konva.Rect = () => {
+        return new konva.Rect({
             fill: '#333',
             strokeWidth: 2,
             stroke: '#333',
@@ -93,9 +89,9 @@ export const view: () => View<State, Actions> = () => {
         });
     };
 
-    const parts: () => Konva.Rect[] = () => {
-        return Array.from({ length: 4 }).map((ignore, index) => {
-            return new Konva.Rect({
+    const parts: () => konva.Rect[] = () => {
+        return Array.from({ length: 4 }).map(() => {
+            return new konva.Rect({
                 strokeWidth: 0,
                 opacity: 1,
             });
@@ -115,7 +111,7 @@ export const view: () => View<State, Actions> = () => {
         };
     });
     {
-        const layer = new Konva.Layer();
+        const layer = new konva.Layer();
         for (const obj of [hold].concat(nexts as typeof hold[])) {
             layer.add(obj.box);
             for (const part of obj.parts) {
@@ -164,20 +160,6 @@ export const view: () => View<State, Actions> = () => {
         const boxSize = Math.min(fieldSize.width / 5 * 1.1, (canvas.width - fieldSize.width) / 2);
         const boxMargin = boxSize / 4;
 
-        const stopAnimation = () => {
-            if (resources.handlers.animation !== undefined) {
-                clearInterval(resources.handlers.animation);
-                resources.handlers.animation = undefined;
-            }
-        };
-
-        const startAnimation = () => {
-            stopAnimation();
-            resources.handlers.animation = setInterval(() => {
-                actions.nextPage();
-            }, state.play.intervalTime);
-        };
-
         return div({
             oncreate: () => {
                 // Hyperappでは最上位のノードが最後に実行される
@@ -195,13 +177,13 @@ export const view: () => View<State, Actions> = () => {
                 backPage: () => {
                     actions.backPage();
                     if (state.play.status === AnimationState.Play) {
-                        startAnimation();
+                        actions.startAnimation();
                     }
                 },
                 nextPage: () => {
                     actions.nextPage();
                     if (state.play.status === AnimationState.Play) {
-                        startAnimation();
+                        actions.startAnimation();
                     }
                 },
             }),
@@ -236,7 +218,7 @@ export const view: () => View<State, Actions> = () => {
                     });
                 }).concat(
                     bottomBlocks.map((value) => {
-                        const blockValue = state.blockUp[value.ix + value.iy * 10];
+                        const blockValue = state.sentLine[value.ix + value.iy * 10];
                         return block({
                             size: {
                                 width: size,
@@ -319,11 +301,9 @@ export const view: () => View<State, Actions> = () => {
                             switch (state.play.status) {
                             case AnimationState.Play:
                                 actions.pause();
-                                stopAnimation();
                                 break;
                             default:
                                 actions.start();
-                                startAnimation();
                                 break;
                             }
                         },
@@ -396,32 +376,7 @@ export const view: () => View<State, Actions> = () => {
                         state.fumen.value === undefined || state.fumen.errorMessage !== undefined ? ' disabled' : ''
                     ),
                     onclick: () => {
-                        if (state.fumen.value === undefined) {
-                            actions.showOpenErrorMessage({ message: 'データを入力してください' });
-                            return;
-                        }
-
-                        const backup = resources.pages.concat();
-                        actions.pause();
-
-                        try {
-                            decode(extract(state.fumen.value), setPage);
-
-                            if (openModalInstance !== undefined) {
-                                openModalInstance.close();
-                            }
-
-                            actions.inputFumenData({ value: undefined });
-                        } catch (e) {
-                            resources.pages = backup;
-                            actions.openPage({ pageIndex: state.play.pageIndex });
-                            if (e instanceof ViewError) {
-                                actions.showOpenErrorMessage({ message: e.message });
-                            } else {
-                                actions.showOpenErrorMessage({ message: 'テト譜を読み込めませんでした' });
-                            }
-                            return;
-                        }
+                        // TODO: open fumen
                     },
                 }, 'Open'),
             ]),
@@ -438,94 +393,10 @@ window.onresize = () => {
     });
 };
 
-const url = decodeURIComponent(location.search);
-const paramQuery = url.substr(1).split('&').find(value => value.startsWith('d='));
-const data = paramQuery !== undefined ? paramQuery.substr(2) : 'vhAAgH';
-
-interface Resources {
-    pages: Page[];
-    handlers: {
-        animation?: number;
-    };
-    fumen: {
-        data?: string;
-    };
+function extractFumenFromURL() {
+    const url = decodeURIComponent(location.search);
+    const paramQuery = url.substr(1).split('&').find(value => value.startsWith('d='));
+    return paramQuery !== undefined ? paramQuery.substr(2) : undefined;
 }
 
-interface Page {
-    comment?: string;
-    commentRef: number;
-    field: Piece[];
-    blockUp: Piece[];
-    move: Move;
-    quizOperation?: Operation;
-    isLock: boolean;
-}
-
-interface Move {
-    piece: Piece;
-    rotation: Rotation;
-    coordinate: {
-        x: number,
-        y: number,
-    };
-}
-
-export const resources: Resources = {
-    pages: [],
-    handlers: {},
-    fumen: {},
-};
-
-const extract = (data: string) => {
-    const decoded = decodeURIComponent(data);
-    const replaced = decoded.replace(/\?/g, '');
-
-    for (const prefix of ['v115@', 'm115@', 'd115@']) {
-        const index = replaced.indexOf(prefix);
-        if (0 <= index) {
-            return replaced.substr(index + prefix.length);
-        }
-    }
-
-    if (data.includes('@')) {
-        throw new ViewError('v115のデータのみ対応しています');
-    }
-
-    return replaced;
-};
-
-const setPage = (page: FumenPage) => {
-    if (resources.pages.length <= page.index) {
-        router.setMaxPage({ maxPage: page.index + 1 });
-    }
-
-    resources.pages[page.index] = {
-        comment: page.comment,
-        commentRef: page.commentRef,
-        field: page.field,
-        blockUp: page.blockUp,
-        move: {
-            piece: page.action.piece,
-            rotation: page.action.rotation,
-            coordinate: {
-                x: page.action.coordinate.x,
-                y: page.action.coordinate.y,
-            },
-        },
-        quizOperation: page.quizOperation,
-        isLock: page.action.isLock,
-    };
-
-    if (page.index === 0) {
-        router.openPage({ pageIndex: page.index });
-    } else if (page.isLastPage) {
-        router.reload();
-    }
-};
-
-try {
-    decode(extract(data), setPage);
-} catch (e) {
-    router.setComment({ comment: 'テト譜を読み込めませんでした: ' + e.message });
-}
+router.loadFumen({ value: extractFumenFromURL() });

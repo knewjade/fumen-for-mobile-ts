@@ -1,28 +1,31 @@
 import { AnimationState, Piece } from './lib/enums';
 
+// Immutableにする
 export interface State {
-    field: Block[];
-    blockUp: Block[];
-    comment: {
-        text: string;
-        isChanged: boolean;
-    };
-    display: {
+    field: ReadonlyArray<Readonly<Block>>;
+    sentLine: ReadonlyArray<Readonly<Block>>;
+    comment: Readonly<{
+        readonly text: string;
+        readonly isChanged: boolean;
+    }>;
+    display: Readonly<{
         width: number;
         height: number;
-    };
+    }>;
     hold?: Piece;
-    nexts?: Piece[];
+    nexts?: ReadonlyArray<Piece>;
     maxPage: number;
-    play: {
+    play: Readonly<{
         status: AnimationState;
         pageIndex: number;
         intervalTime: number;
-    };
-    fumen: {
+    }>;
+    fumen: Readonly<{
+        pages: ReadonlyArray<Readonly<Page>>;
         value?: string;
         errorMessage?: string;
-    };
+    }>;
+    handlers: Readonly<{}>;
 }
 
 export interface Block {
@@ -30,11 +33,14 @@ export interface Block {
     highlight?: boolean;
 }
 
-export const initState: State = {
+interface Page {
+}
+
+export const initState: Readonly<State> = {
     field: Array.from({ length: 230 }).map((ignore) => {
         return { piece: Piece.Empty };
     }),
-    blockUp: Array.from({ length: 10 }).map((ignore) => {
+    sentLine: Array.from({ length: 10 }).map((ignore) => {
         return { piece: Piece.Empty };
     }),
     comment: {
@@ -54,7 +60,9 @@ export const initState: State = {
         intervalTime: 1500,
     },
     fumen: {
+        pages: [],
         value: undefined,
         errorMessage: undefined,
     },
+    handlers: {},
 };

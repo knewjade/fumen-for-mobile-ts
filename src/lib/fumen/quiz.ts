@@ -1,5 +1,5 @@
-import { FumenError } from './errors';
-import { Operation, parsePiece, parsePieceName, Piece } from './enums';
+import { FumenError } from '../errors';
+import { Operation, parsePiece, parsePieceName, Piece } from '../enums';
 
 export class Quiz {
     static verify(quiz: string): boolean {

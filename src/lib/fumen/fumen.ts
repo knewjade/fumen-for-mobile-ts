@@ -1,5 +1,5 @@
 import { FieldConstants, isMinoPiece, Operation, Piece, Rotation } from '../enums';
-import { Quiz } from '../quiz';
+import { Quiz } from './quiz';
 import { Field, FieldLine } from './field';
 import { getAction } from './action';
 import { Values } from './values';

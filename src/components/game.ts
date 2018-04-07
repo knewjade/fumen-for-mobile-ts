@@ -1,10 +1,7 @@
 import { HyperHammer, HyperStage } from '../lib/hyper';
 import { Component, style } from '../lib/types';
 import { main } from '@hyperapp/html';
-
-// Konvaは最後に読み込むこと！
-// エラー対策：Uncaught ReferenceError: __importDefault is not define
-import * as Konva from 'konva';
+import konva = require('konva');
 
 interface GameProps {
     canvas: {
@@ -35,7 +32,7 @@ export const game: Component<GameProps> = (props, children) => {
         oncreate: (element: HTMLMainElement) => {
             // この時点でcontainer内に新しい要素が作られるため、
             // この要素内には hyperapp 管理下の要素を作らないこと
-            const stage = new Konva.Stage({
+            const stage = new konva.Stage({
                 container: element,
                 width: props.canvas.width,
                 height: props.canvas.height,

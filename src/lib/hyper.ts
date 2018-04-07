@@ -1,19 +1,17 @@
-// Konvaは最後に読み込むこと！
-// エラー対策：Uncaught ReferenceError: __importDefault is not define
-import { default as Konva } from 'konva';
+import konva = require('konva');
 
 export class HyperStage {
-    private stageObj: Konva.Stage | undefined = undefined;
-    private readonly layerBuffer: Konva.Layer[] = [];
+    private stageObj: konva.Stage | undefined = undefined;
+    private readonly layerBuffer: konva.Layer[] = [];
 
-    addStage(stage: Konva.Stage) {
+    addStage(stage: konva.Stage) {
         this.stageObj = stage;
         while (0 < this.layerBuffer.length) {
             this.stageObj.add(this.layerBuffer.pop()!);
         }
     }
 
-    addLayer(layer: Konva.Layer) {
+    addLayer(layer: konva.Layer) {
         if (this.stageObj !== undefined) {
             this.stageObj.add(layer);
         } else {

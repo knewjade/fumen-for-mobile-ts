@@ -2,10 +2,7 @@ import { getPieces, isMinoPiece, Piece } from '../lib/enums';
 import { param } from '@hyperapp/html';
 import { getHighlightColor } from '../lib/colors';
 import { Component } from '../lib/types';
-
-// Konvaは最後に読み込むこと！
-// エラー対策：Uncaught ReferenceError: __importDefault is not define
-import * as Konva from 'konva';
+import konva = require('konva');
 
 interface BoxProps {
     position: {
@@ -14,8 +11,8 @@ interface BoxProps {
     };
     size: number;
     rect: {
-        box: Konva.Rect;
-        parts: Konva.Rect[];
+        box: konva.Rect;
+        parts: konva.Rect[];
     };
     piece: {
         value?: Piece,
@@ -26,7 +23,7 @@ interface BoxProps {
 }
 
 export const box: Component<BoxProps> = (props, children) => {
-    function draw(parts: Konva.Rect[], piece: Piece) {
+    function draw(parts: konva.Rect[], piece: Piece) {
         const blocks = getPieces(piece).map(([x, y]) => [x, -y]);
         const max = {
             x: 0,

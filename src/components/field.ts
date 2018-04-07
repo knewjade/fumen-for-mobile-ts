@@ -1,8 +1,6 @@
 import { param } from '@hyperapp/html';
 import { Component } from '../lib/types';
-// Konvaは最後に読み込むこと！
-// エラー対策：Uncaught ReferenceError: __importDefault is not define
-import * as Konva from 'konva';
+import konva = require('konva');
 
 interface FieldProps {
     position: {
@@ -19,8 +17,8 @@ interface FieldProps {
         y: number;
     };
     borderWidth: number;
-    background: Konva.Rect;
-    line: Konva.Line;
+    background: konva.Rect;
+    line: konva.Line;
 }
 
 export const field: Component<FieldProps> = (props, children) => {
