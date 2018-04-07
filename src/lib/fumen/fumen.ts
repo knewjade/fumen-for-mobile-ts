@@ -1,8 +1,8 @@
 import { FieldConstants, isMinoPiece, Operation, Piece, Rotation } from '../enums';
-import { FumenError } from '../errors';
 import { Quiz } from '../quiz';
 import { Field, FieldLine } from './field';
 import { Action, getAction } from './action';
+import { Values } from './values';
 
 export interface Page {
     index: number;
@@ -43,12 +43,6 @@ interface FumenPage {
     isLastPage: boolean;
 }
 
-const ENCODE_TABLE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
-function decodeToValue(v: string): number {
-    return ENCODE_TABLE.indexOf(v);
-}
-
 const COMMENT_TABLE =
     ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
 const MAX_COMMENT_CHAR_VALUE = COMMENT_TABLE.length + 1;
@@ -62,30 +56,6 @@ function decodeToCommentChars(v: number): string[] {
         value = Math.floor(value / MAX_COMMENT_CHAR_VALUE);
     }
     return array;
-}
-
-export class Values {
-    private readonly values: number[];
-
-    constructor(data: string) {
-        this.values = data.split('').map(decodeToValue);
-    }
-
-    poll(max: number): number {
-        let value = 0;
-        for (let count = 0; count < max; count += 1) {
-            const v = this.values.shift();
-            if (v === undefined) {
-                throw new FumenError('Unexpected');
-            }
-            value += v * Math.pow(ENCODE_TABLE.length, count);
-        }
-        return value;
-    }
-
-    isEmpty(): boolean {
-        return this.values.length === 0;
-    }
 }
 
 const FIELD_WIDTH = FieldConstants.Width;
@@ -172,9 +142,6 @@ export async function decode(data: string, callback: (page: Page) => void | Prom
             } else {
                 store.quiz = undefined;
             }
-        } else if (store.quiz !== undefined && store.lastCommentPageIndex + 30 <= pageIndex) {
-            comment = store.quiz.format().toString();
-            store.lastCommentPageIndex = pageIndex;
         } else if (pageIndex === 0) {
             comment = '';
         }

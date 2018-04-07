@@ -1,6 +1,6 @@
 import { Action, getAction } from '../action';
 import { Piece, Rotation } from '../../enums';
-import { Values } from '../fumen';
+import { Values } from '../values';
 
 describe('action', () => {
     describe('get', () => {
