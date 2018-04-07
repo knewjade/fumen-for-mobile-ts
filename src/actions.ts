@@ -7,11 +7,14 @@ import { app } from 'hyperapp';
 export type action = (state: Readonly<State>) => Partial<State> | undefined;
 
 export interface Actions {
+    resize: (data: { width: number, height: number }) => action;
     loadFumen: (args: { fumen: string }) => action;
     updatePages: (args: { pages: Page[] }) => action;
+    setMaxPage: (data: { maxPage: number }) => action;
     inputFumenData: (args: { value?: string }) => action;
     startAnimation: () => action;
     pauseAnimation: () => action;
+    setComment: (data: { comment: string }) => action;
 
 
     setPage: (data: {
@@ -22,9 +25,6 @@ export interface Actions {
         hold?: Piece,
         nexts?: Piece[],
     }) => action;
-    setComment: (data: { comment: string }) => action;
-    resize: (data: { width: number, height: number }) => action;
-    reload: () => action;
     openPage: (data: { pageIndex: number }) => action;
     backPage: () => action;
     nextPage: () => action;
@@ -32,6 +32,13 @@ export interface Actions {
 }
 
 export const actions: Readonly<Actions> = {
+    resize: ({ width, height }) => () => {
+        log('action: resize');
+
+        return {
+            display: { width, height },
+        };
+    },
     loadFumen: ({ fumen }) => (state) => {
         log('action: loadFumen = ' + fumen);
 
@@ -43,18 +50,24 @@ export const actions: Readonly<Actions> = {
             router.updatePages({ pages });
         })();
 
-        return undefined;
+        return actions.setComment({ comment: '... Loading ...' })(state);
     },
     updatePages: ({ pages }) => (state) => {
         log('action: updatePages = ' + pages.length);
 
-        return mix(state, [
-            supportActions.setMaxPage({ maxPage: pages.length }),
+        return sequence(state, [
+            actions.setMaxPage({ maxPage: pages.length }),
             () => ({ fumen: { pages } }),
         ]);
     },
+    setMaxPage: ({ maxPage }: { maxPage: number }) => () => {
+        log('action: setMaxPage = ' + maxPage);
+
+        return { maxPage };
+    },
     inputFumenData: ({ value }) => (state) => {
         log('action: inputFumenData');
+
         return {
             fumen: {
                 ...state.fumen,
@@ -65,22 +78,50 @@ export const actions: Readonly<Actions> = {
     },
     startAnimation: () => (state) => {
         log('action: startAnimation');
-        return {
-            play: {
-                ...state.play,
-                status: AnimationState.Play,
-            },
-        };
+
+        return sequence(state, [
+            state.handlers.animation !== undefined ? actions.pauseAnimation() : undefined,
+            () => ({
+                play: {
+                    ...state.play,
+                    status: AnimationState.Play,
+                },
+                handlers: {
+                    animation: setInterval(() => {
+                        actions.nextPage();
+                    }, state.play.intervalTime),
+                },
+            }),
+        ]);
     },
     pauseAnimation: () => (state) => {
         log('action: pauseAnimation');
+
+        if (state.handlers.animation !== undefined) {
+            clearInterval(state.handlers.animation);
+        }
+
         return {
             play: {
                 ...state.play,
                 status: AnimationState.Pause,
             },
+            handlers: {
+                animation: undefined,
+            },
         };
     },
+    setComment: ({ comment }) => (state) => {
+        log('action: setComment');
+
+        return {
+            comment: {
+                isChanged: comment !== undefined && comment !== state.comment.text,
+                text: comment !== undefined ? comment : state.comment.text,
+            },
+        };
+    },
+
 
     setPage: ({ pageIndex, field, blockUp, comment, hold, nexts }) => (state) => {
         log('action: setFieldAndComment');
@@ -100,25 +141,6 @@ export const actions: Readonly<Actions> = {
                 pageIndex,
             },
         };
-    },
-    setComment: ({ comment }) => (state) => {
-        log('action: setComment');
-
-        const isChanged = comment !== undefined && comment !== state.comment.text;
-        return {
-            comment: {
-                isChanged,
-                text: comment !== undefined ? comment : state.comment.text,
-            },
-        };
-    },
-    resize: data => () => {
-        log('action: resize');
-        return { display: data };
-    },
-    reload: () => (state) => {
-        log('action: reload');
-        return undefined;
     },
 
 
@@ -142,27 +164,20 @@ export const actions: Readonly<Actions> = {
     },
 };
 
-interface SupportActions {
-    setMaxPage: (data: { maxPage: number }) => action;
-}
-
-const supportActions: SupportActions = {
-    setMaxPage: ({ maxPage }: { maxPage: number }) => (): Partial<State> => {
-        log('support action: setMaxPage = ' + maxPage);
-        return { maxPage };
-    },
-};
-
 function log(msg: string) {
     console.log(msg);
 }
 
-function mix(
+function sequence(
     state: Readonly<State>,
-    actions: action[],
+    actions: (action | undefined)[],
 ): Partial<Readonly<State>> {
     let merged: Partial<Readonly<State>> = {};
     for (const action of actions) {
+        if (action === undefined) {
+            continue;
+        }
+
         const partial = action(state);
         merged = {
             ...merged,

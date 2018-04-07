@@ -26,7 +26,9 @@ export interface State {
         value?: string;
         errorMessage?: string;
     }>;
-    handlers: Readonly<{}>;
+    handlers: Readonly<{
+        animation?: number;
+    }>;
 }
 
 export interface Block {
@@ -51,7 +53,7 @@ export const initState: Readonly<State> = {
     },
     hold: undefined,
     nexts: undefined,
-    maxPage: 0,
+    maxPage: 1,
     play: {
         status: AnimationState.Pause,
         pageIndex: 0,
@@ -62,5 +64,7 @@ export const initState: Readonly<State> = {
         value: undefined,
         errorMessage: undefined,
     },
-    handlers: {},
+    handlers: {
+        animation: undefined,
+    },
 };
