@@ -1,7 +1,7 @@
 import { FieldConstants, isMinoPiece, Operation, Piece, Rotation } from '../enums';
 import { Quiz } from '../quiz';
 import { Field, FieldLine } from './field';
-import { Action, getAction } from './action';
+import { getAction } from './action';
 import { Values } from './values';
 
 export interface Page {
@@ -32,17 +32,6 @@ export interface Page {
     };
 }
 
-interface FumenPage {
-    index: number;
-    action: Action;
-    comment?: string;
-    commentRef: number;
-    field: Piece[];
-    blockUp: Piece[];
-    quizOperation?: Operation;
-    isLastPage: boolean;
-}
-
 const COMMENT_TABLE =
     ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
 const MAX_COMMENT_CHAR_VALUE = COMMENT_TABLE.length + 1;
@@ -70,11 +59,11 @@ export async function decode(data: string, callback: (page: Page) => void | Prom
 
     const store: {
         repeatCount: number,
-        lastCommentPageIndex: number;
+        lastRefIndex: number;
         quiz?: Quiz,
     } = {
         repeatCount: -1,
-        lastCommentPageIndex: -1,
+        lastRefIndex: -1,
         quiz: undefined,
     };
 
@@ -118,7 +107,10 @@ export async function decode(data: string, callback: (page: Page) => void | Prom
         const action = getAction(actionValue);
 
         // Parse comment
-        let comment: string | undefined = undefined;
+        const comment: {
+            text?: string;
+            ref?: number;
+        } = {};
         if (action.isComment) {
             const commentValues: number[] = [];
             const commentLength = values.poll(2);
@@ -134,43 +126,47 @@ export async function decode(data: string, callback: (page: Page) => void | Prom
                 flatten.push(...chars);
             }
 
-            comment = unescape(flatten.slice(0, commentLength).join(''));
-            store.lastCommentPageIndex = pageIndex;
+            comment.text = unescape(flatten.slice(0, commentLength).join(''));
+            store.lastRefIndex = pageIndex;
 
-            if (Quiz.verify(comment)) {
-                store.quiz = new Quiz(comment);
+            if (Quiz.verify(comment.text)) {
+                store.quiz = new Quiz(comment.text);
             } else {
                 store.quiz = undefined;
             }
-        } else if (pageIndex === 0) {
-            comment = '';
+        } else {
+            comment.ref = store.lastRefIndex;
         }
 
-        const page: FumenPage = {
-            action,
-            comment,
-            index: pageIndex,
-            field: currentField.toArray(),
-            blockUp: blockUp.toArray(),
-            commentRef: store.lastCommentPageIndex,
-            isLastPage: values.isEmpty(),
-        };
+        // Quiz用の操作を取得し、次ページ開始時点のQuizに1手進める
+        let quiz: {
+            operation?: Operation;
+        } | undefined = undefined;
 
-        let quizOperation: Operation | undefined = undefined;
-        if (store.quiz !== undefined && action.isLock && isMinoPiece(action.piece)) {
-            const operation = store.quiz.getOperation(action.piece);
-            store.quiz = store.quiz.operate(operation);
-            quizOperation = operation;
+        if (store.quiz !== undefined) {
+            if (action.isLock && isMinoPiece(action.piece)) {
+                const operation = store.quiz.getOperation(action.piece);
+                quiz = { operation };
+                store.quiz = store.quiz.operate(operation);
+            } else {
+                quiz = {
+                    operation: undefined,
+                };
+            }
         }
 
-        if (quizOperation !== undefined) {
-            page.quizOperation = quizOperation;
-        }
-
-        // 加工
-        let piece2;
+        // データ処理用に加工する
+        let currentPiece: {
+            lock: boolean;
+            type: Piece;
+            rotation: Rotation;
+            coordinate: {
+                x: number,
+                y: number,
+            };
+        } | undefined;
         if (action.piece !== Piece.Empty) {
-            piece2 = {
+            currentPiece = {
                 lock: action.isLock,
                 type: action.piece,
                 rotation: action.rotation,
@@ -178,37 +174,19 @@ export async function decode(data: string, callback: (page: Page) => void | Prom
             };
         }
 
-        const com: {
-            text?: string;
-            ref?: number;
-        } = {};
-
-        if (action.isComment) {
-            com.text = comment;
-        } else {
-            com.ref = store.lastCommentPageIndex;
-        }
-
-        let q;
-        if (store.quiz !== undefined) {
-            q = {
-                operation: quizOperation,
-            };
-        }
-
         await callback({
+            comment,
+            quiz,
             index: pageIndex,
             lastPage: values.isEmpty(),
             field: currentField.copy(),
             sentLine: blockUp.copy(),
-            piece: piece2,
-            comment: com,
+            piece: currentPiece,
             flags: {
                 send: action.isBlockUp,
                 mirrored: action.isMirror,
                 colorize: action.isColor,
             },
-            quiz: q,
         });
 
         pageIndex += 1;

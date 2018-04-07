@@ -49,9 +49,6 @@ export class Quiz {
     private get current(): string {
         const index = this.quiz.indexOf('(') + 1;
         const name = this.quiz[index];
-        if (name === undefined) {
-            return '';
-        }
         if (name === ')') {
             return '';
         }
@@ -61,9 +58,6 @@ export class Quiz {
     private get hold(): string {
         const index = this.quiz.indexOf('[') + 1;
         const name = this.quiz[index];
-        if (name === undefined) {
-            throw new FumenError(`Unexpected value in quiz: ${this.quiz}`);
-        }
         if (name === ']') {
             return '';
         }
@@ -81,11 +75,7 @@ export class Quiz {
 
     private get least(): string {
         const index = this.quiz.indexOf(')') + 2;
-        const names = this.quiz.substr(index);
-        if (names === undefined) {
-            return '';
-        }
-        return names;
+        return this.quiz.substr(index);
     }
 
     direct(): Quiz {

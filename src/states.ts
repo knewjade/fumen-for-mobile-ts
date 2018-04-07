@@ -1,5 +1,4 @@
 import { AnimationState, Piece } from './lib/enums';
-import { Quiz } from './lib/quiz';
 
 export interface State {
     field: Block[];
