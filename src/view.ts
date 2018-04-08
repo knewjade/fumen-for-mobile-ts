@@ -12,8 +12,8 @@ import { modal } from './components/modal';
 import { tools } from './components/tools';
 import { game } from './components/game';
 import { box } from './components/box';
-import { menuIcon } from './components/menu_icon';
-import { settingsIcon } from './components/settings_icon';
+import { icon } from './components/icon';
+import { settings } from './components/settings';
 import konva = require('konva');
 
 declare const M: any;
@@ -282,7 +282,7 @@ export const view: () => View<State, Actions> = () => {
                             actions.openFumenModal();
                         },
                     }, [
-                        menuIcon({
+                        icon({
                             width: 55,
                             height: heights.tools,
                             scale: 0.675,
@@ -311,7 +311,7 @@ export const view: () => View<State, Actions> = () => {
                             }
                         },
                     }, [
-                        menuIcon({
+                        icon({
                             width: 55,
                             height: heights.tools,
                             scale: 0.825,
@@ -328,7 +328,7 @@ export const view: () => View<State, Actions> = () => {
                             actions.openSettingsModal();
                         },
                     }, [
-                        menuIcon({
+                        icon({
                             width: 45,
                             height: heights.tools,
                             scale: 0.625,
@@ -449,17 +449,24 @@ export const view: () => View<State, Actions> = () => {
                         }),
                     }, [` [build ${VERSION}]`]),
                 ]),
-                div({
-                    align: 'left',
-                }, [
+                settings({}, [
                     a({
                         href: './help.html',
                     }, [
-                        settingsIcon({
+                        icon({
                             width: 50,
                             height: 50,
                             scale: 0.625,
+                            display: 'block',
+                            color: '#333',
+                            depth: true,
                         }, 'help_outline'),
+                        div({
+                            style: style({
+                                textAlign: 'center',
+                                color: '#333',
+                            }),
+                        }, 'help'),
                     ]),
                 ]),
             ]),

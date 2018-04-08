@@ -1,5 +1,5 @@
 const path = require('path');
-const version = process.env.TRAVIS_BUILD_NUMBER || 'dev';
+const version = process.env.TRAVIS_BUILD_NUMBER || `dev-${new Date().toISOString()}`;
 
 module.exports = {
     entry: [

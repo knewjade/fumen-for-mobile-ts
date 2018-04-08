@@ -5,15 +5,27 @@ interface IconProps {
     width: number;
     height: number;
     scale: number;
+    display?: 'block';
+    color?: string;
+    depth?: boolean;
 }
 
-export const settingsIcon: Component<IconProps> = (props, children) => {
+export const icon: Component<IconProps> = (props, children) => {
     const margin = 5;
 
+    let className = 'material-icons';
+    if (props.color === undefined) {
+        className += ' teal darken-3';
+    }
+    if (props.depth) {
+        className += ' z-depth-1';
+    }
+
     return i({
-        className: 'material-icons z-depth-1',
+        className,
         style: style({
-            color: '#333',
+            color: props.color,
+            display: props.display,
             fontSize: props.height * props.scale + 'px',
             height: props.height - margin * 2 + 'px',
             lineHeight: props.height - margin * 2 + 'px',
