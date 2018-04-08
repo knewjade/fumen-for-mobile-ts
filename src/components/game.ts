@@ -36,7 +36,7 @@ export const game: Component<GameProps> = (props, children) => {
             props.stage.addStage(stage);
             props.eventBox.setSize(props.canvas);
 
-            props.eventBox.on('tap', (e: any) => {
+            props.eventBox.on('tap click', (e: any) => {
                 const stage = e.currentTarget.getStage() as konva.Stage;
                 const { x } = stage.getPointerPosition();
                 const { width } = stage.getSize();
