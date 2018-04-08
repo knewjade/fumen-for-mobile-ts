@@ -1,4 +1,4 @@
-import { HyperHammer, HyperStage } from '../lib/hyper';
+import { HyperStage } from '../lib/hyper';
 import { Component, style } from '../lib/types';
 import { main } from '@hyperapp/html';
 import konva = require('konva');
@@ -10,19 +10,12 @@ interface GameProps {
         height: number;
     };
     stage: HyperStage;
-    hammer: HyperHammer;
+    eventBox: konva.Rect;
     backPage: () => void;
     nextPage: () => void;
 }
 
 export const game: Component<GameProps> = (props, children) => {
-    const onTap = (event: HammerInput) => {
-        if (event.center.x < props.canvas.width / 2) {
-            props.backPage();
-        } else {
-            props.nextPage();
-        }
-    };
     return main({
         id: 'container',
         key: props.key,
@@ -41,21 +34,25 @@ export const game: Component<GameProps> = (props, children) => {
             });
 
             props.stage.addStage(stage);
+            props.eventBox.setSize(props.canvas);
 
-            const hammer = new Hammer(element);
-            // hammer.get('pinch').set({ enable: true });
-
-            const hyperHammer = props.hammer;
-            hyperHammer.register(hammer);
-            hyperHammer.tap = onTap;
-            hammer.on('tap', hyperHammer.tap);
+            props.eventBox.on('tap', (e: any) => {
+                const stage = e.currentTarget.getStage() as konva.Stage;
+                const { x } = stage.getPointerPosition();
+                const { width } = stage.getSize();
+                const touchX = x / width;
+                if (touchX < 0.5) {
+                    props.backPage();
+                } else {
+                    props.nextPage();
+                }
+            });
         },
         onupdate: (element: any, attr: any) => {
             if (attr.canvas.width !== props.canvas.width || attr.canvas.height !== props.canvas.height) {
                 props.stage.resize(props.canvas);
+                props.eventBox.setSize(props.canvas);
             }
-            const hyperHammer = props.hammer;
-            hyperHammer.tap = onTap;
         },
     }, children);
 };

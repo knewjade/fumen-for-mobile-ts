@@ -10,7 +10,6 @@
   },
   "devDependencies": {
     "@hyperapp/html": "^1.0.1",
-    "@types/hammerjs": "^2.0.35",
     "@types/jest": "^22.2.0",
     "jest": "^22.4.2",
     "konva": "^2.0.2",

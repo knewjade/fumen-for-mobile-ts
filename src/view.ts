@@ -2,7 +2,7 @@ import { View } from 'hyperapp';
 import { a, div, h4, span, textarea } from '@hyperapp/html';
 import { Actions } from './actions';
 import { State } from './states';
-import { HyperHammer, HyperStage } from './lib/hyper';
+import { HyperStage } from './lib/hyper';
 import { AnimationState } from './lib/enums';
 import { ModalInstance, style } from './lib/types';
 import { field } from './components/field';
@@ -23,9 +23,33 @@ const VERSION = '###VERSION###';  // Replace build number of CI when run `webpac
 export const view: () => View<State, Actions> = () => {
     // 初期化
     const hyperStage = new HyperStage();
-    const hyperHammer = new HyperHammer();
 
-    // ブロック
+    // Canvasの要素
+    // 背景
+    const background: konva.Rect = new konva.Rect({
+        fill: '#333',
+        strokeWidth: 0,
+        opacity: 1,
+    });
+
+    const line = new konva.Line({
+        points: [],
+        stroke: '#d8d8d8',
+    });
+
+    {
+        const backgroundLayer = new konva.Layer({
+            name: 'background',
+        });
+
+        backgroundLayer.add(background);
+        backgroundLayer.add(line);
+
+        hyperStage.addLayer(backgroundLayer);
+    }
+
+    // 描画
+    // フィールドブロック
     const blocks = Array.from({ length: 23 * 10 }).map((ignore, index) => {
         const [ix, iy] = [index % 10, Math.floor(index / 10)];
         const py = 22 - iy;
@@ -41,6 +65,7 @@ export const view: () => View<State, Actions> = () => {
         };
     });
 
+    // せり上がりブロック
     const bottomBlocks = Array.from({ length: 10 }).map((ignore, index) => {
         const [ix, iy] = [index % 10, Math.floor(index / 10)];
         const box: konva.Rect = new konva.Rect({
@@ -55,35 +80,7 @@ export const view: () => View<State, Actions> = () => {
         };
     });
 
-    {
-        const layer = new konva.Layer();
-        for (const block of blocks) {
-            layer.add(block.box);
-        }
-        for (const block of bottomBlocks) {
-            layer.add(block.box);
-        }
-        hyperStage.addLayer(layer);
-    }
-
-    // 背景
-    const background: konva.Rect = new konva.Rect({
-        fill: '#333',
-        strokeWidth: 0,
-        opacity: 1,
-    });
-    const line = new konva.Line({
-        points: [],
-        stroke: '#d8d8d8',
-    });
-    {
-        const layer = new konva.Layer();
-        layer.add(background);
-        layer.add(line);
-        hyperStage.addLayer(layer);
-    }
-
-    const box2: () => konva.Rect = () => {
+    const boxFunc: () => konva.Rect = () => {
         return new konva.Rect({
             fill: '#333',
             strokeWidth: 2,
@@ -92,7 +89,7 @@ export const view: () => View<State, Actions> = () => {
         });
     };
 
-    const parts: () => konva.Rect[] = () => {
+    const partsFunc: () => konva.Rect[] = () => {
         return Array.from({ length: 4 }).map(() => {
             return new konva.Rect({
                 strokeWidth: 0,
@@ -103,25 +100,57 @@ export const view: () => View<State, Actions> = () => {
 
     // Hold
     const hold = {
-        box: box2(),
-        parts: parts(),
+        box: boxFunc(),
+        parts: partsFunc(),
     };
+
+    // Next
     const nexts = Array.from({ length: 5 }).map((ignore, index) => {
         return {
             index,
-            box: box2(),
-            parts: parts(),
+            box: boxFunc(),
+            parts: partsFunc(),
         };
     });
     {
-        const layer = new konva.Layer();
+        const canvasLayer = new konva.Layer({
+            name: 'field',
+        });
+
+        // フィールドブロック
+        for (const block of blocks) {
+            canvasLayer.add(block.box);
+        }
+
+        // せり上がりブロック
+        for (const block of bottomBlocks) {
+            canvasLayer.add(block.box);
+        }
+
+        // Hold & Next
         for (const obj of [hold].concat(nexts as typeof hold[])) {
-            layer.add(obj.box);
+            canvasLayer.add(obj.box);
+
             for (const part of obj.parts) {
-                layer.add(part);
+                canvasLayer.add(part);
             }
         }
-        hyperStage.addLayer(layer);
+
+        hyperStage.addLayer(canvasLayer);
+    }
+
+    // Overlay
+    // Event Layer
+    const eventBox = new konva.Rect({
+        fill: '#333',
+        opacity: 0.0,  // 0 ほど透過
+        strokeEnabled: false,
+        listening: true,
+    });
+    {
+        const overlayLayer = new konva.Layer();
+        overlayLayer.add(eventBox);
+        hyperStage.addLayer(overlayLayer);
     }
 
     const heights = {
@@ -173,15 +202,11 @@ export const view: () => View<State, Actions> = () => {
         }, [
             game({  // canvas空間のみ
                 canvas,
+                eventBox,
                 key: 'game-top',
                 stage: hyperStage,
-                hammer: hyperHammer,
-                backPage: () => {
-                    actions.backPage();
-                },
-                nextPage: () => {
-                    actions.nextPage();
-                },
+                backPage: actions.backPage,
+                nextPage: actions.nextPage,
             }),
             div({
                 key: 'field-top',

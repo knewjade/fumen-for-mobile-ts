@@ -6,8 +6,10 @@ export class HyperStage {
 
     addStage(stage: konva.Stage) {
         this.stageObj = stage;
+
         while (0 < this.layerBuffer.length) {
-            this.stageObj.add(this.layerBuffer.pop()!);
+            const layer = this.layerBuffer.shift()!;
+            this.stageObj.add(layer);
         }
     }
 
@@ -19,10 +21,9 @@ export class HyperStage {
         }
     }
 
-    resize({ width, height }: { width: number; height: number }) {
+    resize(size: { width: number; height: number }) {
         if (this.stageObj !== undefined) {
-            this.stageObj.setWidth(width);
-            this.stageObj.setHeight(height);
+            this.stageObj.setSize(size);
         }
     }
 
@@ -30,31 +31,5 @@ export class HyperStage {
         if (this.stageObj !== undefined) {
             this.stageObj.batchDraw();
         }
-    }
-}
-
-interface HammerCallbacks {
-    tap: (event: HammerInput) => void;
-}
-
-export class HyperHammer {
-    private hammerObj: HammerManager | undefined = undefined;
-    private readonly callbacks: HammerCallbacks = {
-        tap: () => {
-        },
-    };
-
-    register(obj: HammerManager) {
-        this.hammerObj = obj;
-    }
-
-    get tap(): (event: HammerInput) => void {
-        return (event) => {
-            this.callbacks.tap(event);
-        };
-    }
-
-    set tap(callback: (event: HammerInput) => void) {
-        this.callbacks.tap = callback;
     }
 }
