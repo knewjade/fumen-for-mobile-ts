@@ -17,6 +17,9 @@ import konva = require('konva');
 
 declare const M: any;
 
+const VERSION = '###VERSION###';  // Replace build number of CI when run `webpack:prod`
+console.log(VERSION);
+
 export const view: () => View<State, Actions> = () => {
     // 初期化
     const hyperStage = new HyperStage();
