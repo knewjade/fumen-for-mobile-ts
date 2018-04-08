@@ -240,7 +240,7 @@ export const actions: Readonly<Actions> = {
         });
 
         return sequence(state, [
-            actions.startAnimation(),
+            state.play.status === AnimationState.Play ? actions.startAnimation() : undefined,
             actions.setComment({ comment }),
             actions.setField({ field }),
             actions.setSentLine({ sentLine }),
@@ -322,7 +322,7 @@ export const actions: Readonly<Actions> = {
 };
 
 function log(msg: string) {
-    // console.log(msg);
+    console.log(msg);
 }
 
 function sequence(

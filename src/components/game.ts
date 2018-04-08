@@ -4,6 +4,7 @@ import { main } from '@hyperapp/html';
 import konva = require('konva');
 
 interface GameProps {
+    key: string;
     canvas: {
         width: number;
         height: number;
@@ -24,6 +25,7 @@ export const game: Component<GameProps> = (props, children) => {
     };
     return main({
         id: 'container',
+        key: props.key,
         style: style({
             width: props.canvas.width,
             height: props.canvas.height + 'px',

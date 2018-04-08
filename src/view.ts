@@ -13,8 +13,8 @@ import { tools } from './components/tools';
 import { game } from './components/game';
 import { box } from './components/box';
 import { menuIcon } from './components/menu_icon';
-import konva = require('konva');
 import { settingsIcon } from './components/settings_icon';
+import konva = require('konva');
 
 declare const M: any;
 
@@ -173,6 +173,7 @@ export const view: () => View<State, Actions> = () => {
         }, [
             game({  // canvas空間のみ
                 canvas,
+                key: 'game-top',
                 stage: hyperStage,
                 hammer: hyperHammer,
                 backPage: () => {
@@ -182,7 +183,9 @@ export const view: () => View<State, Actions> = () => {
                     actions.nextPage();
                 },
             }),
-            div([   // canvas:Field とのマッピング用仮想DOM
+            div({
+                key: 'field-top',
+            }, [   // canvas:Field とのマッピング用仮想DOM
                 field({
                     background,
                     line,
@@ -232,6 +235,7 @@ export const view: () => View<State, Actions> = () => {
                     }),
                 )),
                 box({
+                    key: 'hold',
                     position: {
                         x: top.x - (boxSize + boxMargin / 2),
                         y: top.y,
@@ -245,8 +249,8 @@ export const view: () => View<State, Actions> = () => {
                         margin: 1,
                     },
                 }),
-                nexts.map(value => box({
-                    // key: `next-${value.index}`,
+                ...nexts.map(value => box({
+                    key: `next-${value.index}`,
                     position: {
                         x: top.x + fieldSize.width + boxMargin / 2,
                         y: top.y + value.index * (boxSize + boxMargin),
@@ -261,7 +265,9 @@ export const view: () => View<State, Actions> = () => {
                     },
                 })),
             ]),
-            div([
+            div({
+                key: 'menu-top',
+            }, [
                 comment({
                     isChanged: state.comment.isChanged,
                     height: heights.comment,
@@ -332,7 +338,8 @@ export const view: () => View<State, Actions> = () => {
             ]),
             modal({
                 id: 'fumen-modal',
-                enable: state.modal.fumen,
+                key: 'fumen-modal-top',
+                isOpened: state.modal.fumen,
                 bottomSheet: false,
                 oncreate: (element: HTMLDivElement) => {
                     const instance = M.Modal.init(element, {
@@ -356,7 +363,7 @@ export const view: () => View<State, Actions> = () => {
                     modalInstances.fumen = instance;
                 },
                 onupdate: (ignore, attr) => {
-                    if (state.modal.fumen !== attr.enable && modalInstances.fumen !== undefined) {
+                    if (state.modal.fumen !== attr.isOpened && modalInstances.fumen !== undefined) {
                         if (state.modal.fumen) {
                             modalInstances.fumen.open();
                         } else {
@@ -405,7 +412,8 @@ export const view: () => View<State, Actions> = () => {
             ]),
             modal({
                 id: 'settings-modal',
-                enable: state.modal.settings,
+                key: 'settings-modal-top',
+                isOpened: state.modal.settings,
                 bottomSheet: true,
                 oncreate: (element: HTMLDivElement) => {
                     const instance = M.Modal.init(element, {
@@ -423,7 +431,7 @@ export const view: () => View<State, Actions> = () => {
                     modalInstances.settings = instance;
                 },
                 onupdate: (ignore, attr) => {
-                    if (state.modal.settings !== attr.enable && modalInstances.settings !== undefined) {
+                    if (state.modal.settings !== attr.isOpened && modalInstances.settings !== undefined) {
                         if (state.modal.settings) {
                             modalInstances.settings.open();
                         } else {
@@ -454,7 +462,7 @@ export const view: () => View<State, Actions> = () => {
                         }, 'help_outline'),
                     ]),
                 ]),
-            ], []),
+            ]),
         ]);
     };
 };

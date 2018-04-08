@@ -23,6 +23,7 @@ interface FieldProps {
 
 export const field: Component<FieldProps> = (props, children) => {
     return param({
+        key: 'field',
         position: props.position,
         size: props.size,
         borderPosition: props.borderPosition,

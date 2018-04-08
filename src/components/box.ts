@@ -5,6 +5,7 @@ import { Component } from '../lib/types';
 import konva = require('konva');
 
 interface BoxProps {
+    key: string;
     position: {
         x: number;
         y: number;
@@ -77,6 +78,7 @@ export const box: Component<BoxProps> = (props, children) => {
     }
 
     return param({
+        key: props.key,
         position: props.position,
         size: props.size,
         piece: props.piece,
