@@ -17,7 +17,7 @@ describe('fumen', () => {
                 lastPage: true,
                 piece: undefined,
                 comment: {
-                    ref: -1,
+                    text: '',
                 },
                 quiz: undefined,
                 flags: {
@@ -133,7 +133,7 @@ describe('fumen', () => {
                     },
                 },
                 comment: {
-                    ref: -1,
+                    text: '',
                 },
                 quiz: undefined,
                 flags: {

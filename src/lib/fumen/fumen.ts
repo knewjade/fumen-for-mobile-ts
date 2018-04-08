@@ -90,7 +90,7 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
         quiz?: Quiz,
     } = {
         repeatCount: -1,
-        lastRefIndex: -1,
+        lastRefIndex: 0,
         quiz: undefined,
     };
 
@@ -161,6 +161,8 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
             } else {
                 store.quiz = undefined;
             }
+        } else if (pageIndex === 0) {
+            comment.text = '';
         } else {
             comment.ref = store.lastRefIndex;
         }
