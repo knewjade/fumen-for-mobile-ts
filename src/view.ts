@@ -328,7 +328,6 @@ export const view: () => View<State, Actions> = () => {
                 id: 'open-modal',
                 enable: state.modal.open,
                 oncreate: (element: HTMLDivElement) => {
-                    console.log('create modal');
                     const instance = M.Modal.init(element, {
                         onOpenEnd: () => {
                             const element = document.getElementById('open-textarea');

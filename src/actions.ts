@@ -114,7 +114,7 @@ export const actions: Readonly<Actions> = {
                 },
                 handlers: {
                     animation: setInterval(() => {
-                        actions.nextPage();
+                        router.nextPage();
                     }, state.play.intervalTime),
                 },
             }),
@@ -201,9 +201,13 @@ export const actions: Readonly<Actions> = {
             comment = quiz.format().toString();
             const operatedQuiz = page.quiz.operation !== undefined ? quiz.operate(page.quiz.operation) : quiz;
             hold = operatedQuiz.getHoldPiece();
-            next = operatedQuiz.getNextPieces(5);
+            next = operatedQuiz.getNextPieces(5).filter(piece => piece !== Piece.Empty);
         } else {
             comment = openDescription(pages, index);
+            next = pages.slice(index + 1)
+                .filter(page => page.piece !== undefined && page.piece.lock)
+                .map(page => page.piece!.type)
+                .slice(0, 5);
         }
 
         // Field
@@ -233,6 +237,7 @@ export const actions: Readonly<Actions> = {
         });
 
         return sequence(state, [
+            actions.startAnimation(),
             actions.setComment({ comment }),
             actions.setField({ field }),
             actions.setSentLine({ sentLine }),
@@ -294,7 +299,7 @@ export const actions: Readonly<Actions> = {
 };
 
 function log(msg: string) {
-    console.log(msg);
+    // console.log(msg);
 }
 
 function sequence(
