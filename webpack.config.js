@@ -1,4 +1,5 @@
 const path = require('path');
+const version = process.env.TRAVIS_BUILD_NUMBER || 'dev';
 
 module.exports = {
     entry: [
@@ -11,9 +12,17 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /view\.ts$/,
+                loader: 'string-replace-loader',
+                options: {
+                    search: '###VERSION###',
+                    replace: version,
+                }
+            },
+            {
                 test: /\.tsx?$/,
                 use: 'ts-loader'
-            }
+            },
         ]
     },
     resolve: {
