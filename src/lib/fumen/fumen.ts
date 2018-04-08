@@ -50,7 +50,7 @@ function decodeToCommentChars(v: number): string[] {
 
 const FIELD_WIDTH = FieldConstants.Width;
 const FIELD_TOP = FieldConstants.Height;
-const FIELD_BLOCKS = (FIELD_TOP + FieldConstants.Garbage) * FIELD_WIDTH;
+const FIELD_BLOCKS = (FIELD_TOP + FieldConstants.SentLine) * FIELD_WIDTH;
 
 export function extract(str: string): string {
     let data = str;

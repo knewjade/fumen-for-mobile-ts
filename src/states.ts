@@ -14,17 +14,20 @@ export interface State {
         height: number;
     }>;
     hold?: Piece;
-    nexts?: ReadonlyArray<Piece>;
-    maxPage: number;
+    next?: ReadonlyArray<Piece>;
     play: Readonly<{
         status: AnimationState;
-        pageIndex: number;
         intervalTime: number;
     }>;
     fumen: Readonly<{
+        currentIndex: number;
+        maxPage: number;
         pages: ReadonlyArray<Readonly<Page>>;
         value?: string;
         errorMessage?: string;
+    }>;
+    modal: Readonly<{
+        open: boolean;
     }>;
     handlers: Readonly<{
         animation?: number;
@@ -52,17 +55,20 @@ export const initState: Readonly<State> = {
         height: window.document.body.clientHeight,
     },
     hold: undefined,
-    nexts: undefined,
-    maxPage: 1,
+    next: undefined,
     play: {
         status: AnimationState.Pause,
-        pageIndex: 0,
         intervalTime: 1500,
     },
     fumen: {
+        currentIndex: 0,
+        maxPage: 1,
         pages: [],
         value: undefined,
         errorMessage: undefined,
+    },
+    modal: {
+        open: false,
     },
     handlers: {
         animation: undefined,

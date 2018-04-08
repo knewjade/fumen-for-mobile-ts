@@ -4,7 +4,9 @@ import { Children } from '../lib/types';
 
 interface ModalProps {
     id: string;
-    oncreate: (element: HTMLDivElement) => void;
+    enable: boolean;
+    oncreate: (element: HTMLDivElement, attr: ModalProps) => void;
+    onupdate: (element: HTMLDivElement, attr: ModalProps) => void;
 }
 
 type ModalFunc = (props: ModalProps, content: Children, footer: Children) => VNode<any>;

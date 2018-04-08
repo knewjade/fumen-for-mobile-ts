@@ -33,7 +33,7 @@ export enum Operation {
 export enum FieldConstants {
     Width = 10,
     Height = 23,
-    Garbage = 1,
+    SentLine = 1,
 }
 
 export function parsePieceName(piece: Piece) {

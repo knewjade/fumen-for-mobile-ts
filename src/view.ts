@@ -139,11 +139,6 @@ export const view: () => View<State, Actions> = () => {
             (canvas.width / 16),
         );
 
-        const isHighlights = Array.from({ length: 24 }).map((ignore, lineIndex) => {
-            return blocks.filter(value => value.iy === lineIndex)
-                .every(value => state.field[value.ix + value.iy * 10].piece !== Piece.Empty);
-        });
-
         const bottomBorderWidth = 2.4;
         const fieldSize = {
             width: (size + 1) * 10 + 1,
@@ -207,7 +202,7 @@ export const view: () => View<State, Actions> = () => {
                         piece: blockValue.piece,
                         key: `block-${value.ix}-${value.iy}`,
                         rect: value.box,
-                        highlight: blockValue.highlight || isHighlights[value.iy],
+                        highlight: blockValue.highlight || false,
                         background: value.iy < 20 ? '#000' : '#333',
                     });
                 }).concat(
@@ -225,7 +220,7 @@ export const view: () => View<State, Actions> = () => {
                             piece: blockValue.piece,
                             key: `block-up-${value.ix}-${value.iy}`,
                             rect: value.box,
-                            highlight: blockValue.highlight || isHighlights[value.iy],
+                            highlight: blockValue.highlight || false,
                             background: '#000',
                         });
                     }),
@@ -254,7 +249,7 @@ export const view: () => View<State, Actions> = () => {
                     rect: value,
                     visible: true,
                     piece: {
-                        value: state.nexts !== undefined ? state.nexts[value.index] : undefined,
+                        value: state.next !== undefined ? state.next[value.index] : undefined,
                         size: boxSize / 4 - 1,
                         margin: 1,
                     },
@@ -270,8 +265,10 @@ export const view: () => View<State, Actions> = () => {
                     height: heights.tools,
                 }, [
                     a({
-                        className: 'modal-trigger',
-                        href: '#open-modal',
+                        href: '#',
+                        onclick: () => {
+                            actions.openModal();
+                        },
                     }, [
                         icon({
                             width: 55,
@@ -288,7 +285,7 @@ export const view: () => View<State, Actions> = () => {
                             textAlign: 'center',
                             whiteSpace: 'nowrap',
                         }),
-                    }, state.play.pageIndex + 1 + ' / ' + state.maxPage),
+                    }, state.fumen.currentIndex + 1 + ' / ' + state.fumen.maxPage),
                     a({
                         href: '#',
                         onclick: () => {
@@ -326,8 +323,10 @@ export const view: () => View<State, Actions> = () => {
             ]),
             modal({
                 id: 'open-modal',
+                enable: state.modal.open,
                 oncreate: (element: HTMLDivElement) => {
-                    openModalInstance = M.Modal.init(element, {
+                    console.log('create modal');
+                    const instance = M.Modal.init(element, {
                         onOpenEnd: () => {
                             const element = document.getElementById('open-textarea');
                             if (element !== null) {
@@ -335,6 +334,23 @@ export const view: () => View<State, Actions> = () => {
                             }
                         },
                     });
+
+                    if (state.modal.open) {
+                        instance.open();
+                    } else {
+                        instance.close();
+                    }
+
+                    openModalInstance = instance;
+                },
+                onupdate: (ignore, attr) => {
+                    if (state.modal.open !== attr.enable && openModalInstance !== undefined) {
+                        if (state.modal.open) {
+                            openModalInstance.open();
+                        } else {
+                            openModalInstance.close();
+                        }
+                    }
                 },
             }, [
                 h4('テト譜を開く'),
@@ -360,9 +376,10 @@ export const view: () => View<State, Actions> = () => {
                 }, state.fumen.errorMessage),
             ], [
                 a({
-                    class: 'modal-action modal-close waves-effect waves-teal btn-flat',
+                    class: 'waves-effect waves-teal btn-flat',
                     onclick: () => {
-                        actions.inputFumenData({ value: undefined });
+                        actions.closeModal();
+                        actions.clearFumenData();
                     },
                 }, 'Cancel'),
                 a({
@@ -370,7 +387,7 @@ export const view: () => View<State, Actions> = () => {
                         state.fumen.value === undefined || state.fumen.errorMessage !== undefined ? ' disabled' : ''
                     ),
                     onclick: () => {
-                        // TODO: open fumen
+                        actions.loadFumen({ fumen: state.fumen.value });
                     },
                 }, 'Open'),
             ]),

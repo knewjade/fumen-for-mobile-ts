@@ -3,7 +3,7 @@ import { FumenError } from '../errors';
 
 const FIELD_WIDTH = FieldConstants.Width;
 const FIELD_TOP = FieldConstants.Height;
-const FIELD_BLOCKS = (FIELD_TOP + FieldConstants.Garbage) * FIELD_WIDTH;
+const FIELD_BLOCKS = (FIELD_TOP + FieldConstants.SentLine) * FIELD_WIDTH;
 
 export class Field {
     static load(...lines: string[]): Field {
