@@ -3,7 +3,7 @@ import { a, div, h4, span, textarea } from '@hyperapp/html';
 import { Actions } from './actions';
 import { State } from './states';
 import { HyperHammer, HyperStage } from './lib/hyper';
-import { AnimationState, Piece } from './lib/enums';
+import { AnimationState } from './lib/enums';
 import { ModalInstance, style } from './lib/types';
 import { field } from './components/field';
 import { block } from './components/block';
@@ -12,13 +12,13 @@ import { modal } from './components/modal';
 import { tools } from './components/tools';
 import { game } from './components/game';
 import { box } from './components/box';
-import { icon } from './components/icon';
+import { menuIcon } from './components/menu_icon';
 import konva = require('konva');
+import { settingsIcon } from './components/settings_icon';
 
 declare const M: any;
 
 const VERSION = '###VERSION###';  // Replace build number of CI when run `webpack:prod`
-console.log(VERSION);
 
 export const view: () => View<State, Actions> = () => {
     // 初期化
@@ -129,7 +129,10 @@ export const view: () => View<State, Actions> = () => {
         tools: 50,
     };
 
-    let openModalInstance: ModalInstance | undefined = undefined;
+    const modalInstances: {
+        fumen?: ModalInstance;
+        settings?: ModalInstance;
+    } = {};
 
     // 全体の構成を1関数にまとめる
     return (state, actions) => {
@@ -270,10 +273,10 @@ export const view: () => View<State, Actions> = () => {
                     a({
                         href: '#',
                         onclick: () => {
-                            actions.openModal();
+                            actions.openFumenModal();
                         },
                     }, [
-                        icon({
+                        menuIcon({
                             width: 55,
                             height: heights.tools,
                             scale: 0.675,
@@ -302,62 +305,69 @@ export const view: () => View<State, Actions> = () => {
                             }
                         },
                     }, [
-                        icon({
+                        menuIcon({
                             width: 55,
                             height: heights.tools,
                             scale: 0.825,
                         }, state.play.status !== 'pause' ? 'pause' : 'play_arrow'),
                     ]),
                     a({
-                        href: './help.html',
+                        href: '#',
                         style: style({
                             marginLeft: 'auto',
                             position: 'absolute',
                             right: '10px',
                         }),
+                        onclick: () => {
+                            actions.openSettingsModal();
+                        },
                     }, [
-                        icon({
+                        menuIcon({
                             width: 45,
                             height: heights.tools,
                             scale: 0.625,
-                        }, 'help_outline'),
+                        }, 'settings'),
                     ]),
                 ]),
             ]),
             modal({
-                id: 'open-modal',
-                enable: state.modal.open,
+                id: 'fumen-modal',
+                enable: state.modal.fumen,
+                bottomSheet: false,
                 oncreate: (element: HTMLDivElement) => {
                     const instance = M.Modal.init(element, {
                         onOpenEnd: () => {
-                            const element = document.getElementById('open-textarea');
+                            const element = document.getElementById('fumen-textarea');
                             if (element !== null) {
                                 element.focus();
                             }
                         },
+                        onCloseStart: () => {
+                            actions.closeFumenModal();
+                        },
                     });
 
-                    if (state.modal.open) {
+                    if (state.modal.fumen) {
                         instance.open();
                     } else {
                         instance.close();
                     }
 
-                    openModalInstance = instance;
+                    modalInstances.fumen = instance;
                 },
                 onupdate: (ignore, attr) => {
-                    if (state.modal.open !== attr.enable && openModalInstance !== undefined) {
-                        if (state.modal.open) {
-                            openModalInstance.open();
+                    if (state.modal.fumen !== attr.enable && modalInstances.fumen !== undefined) {
+                        if (state.modal.fumen) {
+                            modalInstances.fumen.open();
                         } else {
-                            openModalInstance.close();
+                            modalInstances.fumen.close();
                         }
                     }
                 },
             }, [
                 h4('テト譜を開く'),
                 textarea({
-                    id: 'open-textarea',
+                    id: 'fumen-textarea',
                     rows: 3,
                     style: style({
                         width: '100%',
@@ -380,7 +390,7 @@ export const view: () => View<State, Actions> = () => {
                 a({
                     class: 'waves-effect waves-teal btn-flat',
                     onclick: () => {
-                        actions.closeModal();
+                        actions.closeFumenModal();
                         actions.clearFumenData();
                     },
                 }, 'Cancel'),
@@ -393,6 +403,58 @@ export const view: () => View<State, Actions> = () => {
                     },
                 }, 'Open'),
             ]),
+            modal({
+                id: 'settings-modal',
+                enable: state.modal.settings,
+                bottomSheet: true,
+                oncreate: (element: HTMLDivElement) => {
+                    const instance = M.Modal.init(element, {
+                        onCloseStart: () => {
+                            actions.closeSettingsModal();
+                        },
+                    });
+
+                    if (state.modal.fumen) {
+                        instance.open();
+                    } else {
+                        instance.close();
+                    }
+
+                    modalInstances.settings = instance;
+                },
+                onupdate: (ignore, attr) => {
+                    if (state.modal.settings !== attr.enable && modalInstances.settings !== undefined) {
+                        if (state.modal.settings) {
+                            modalInstances.settings.open();
+                        } else {
+                            modalInstances.settings.close();
+                        }
+                    }
+                },
+            }, [
+                h4([
+                    'Settings ',
+                    span({
+                        style: style({
+                            color: '#999',
+                            fontSize: '50%',
+                        }),
+                    }, [` [build ${VERSION}]`]),
+                ]),
+                div({
+                    align: 'left',
+                }, [
+                    a({
+                        href: './help.html',
+                    }, [
+                        settingsIcon({
+                            width: 50,
+                            height: 50,
+                            scale: 0.625,
+                        }, 'help_outline'),
+                    ]),
+                ]),
+            ], []),
         ]);
     };
 };

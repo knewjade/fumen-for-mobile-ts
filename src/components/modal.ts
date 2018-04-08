@@ -5,6 +5,7 @@ import { Children } from '../lib/types';
 interface ModalProps {
     id: string;
     enable: boolean;
+    bottomSheet: boolean;
     oncreate: (element: HTMLDivElement, attr: ModalProps) => void;
     onupdate: (element: HTMLDivElement, attr: ModalProps) => void;
 }
@@ -14,7 +15,7 @@ type ModalFunc = (props: ModalProps, content: Children, footer: Children) => VNo
 export const modal: ModalFunc = (props, content, footer) => {
     return div({
         ...props,
-        className: 'modal',
+        className: 'modal' + (props.bottomSheet ? ' bottom-sheet' : ''),
     }, [
         div({
             className: 'modal-content',

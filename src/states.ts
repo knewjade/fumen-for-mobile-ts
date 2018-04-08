@@ -27,7 +27,8 @@ export interface State {
         errorMessage?: string;
     }>;
     modal: Readonly<{
-        open: boolean;
+        fumen: boolean;
+        settings: boolean;
     }>;
     handlers: Readonly<{
         animation?: number;
@@ -68,7 +69,8 @@ export const initState: Readonly<State> = {
         errorMessage: undefined,
     },
     modal: {
-        open: false,
+        fumen: false,
+        settings: false,
     },
     handlers: {
         animation: undefined,

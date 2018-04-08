@@ -6,7 +6,8 @@ import { app } from 'hyperapp';
 import { openDescription, openQuiz } from './lib/helper';
 import { ViewError } from './lib/errors';
 
-export type action = (state: Readonly<State>) => Partial<State> | undefined;
+type NextState = Partial<State> | undefined;
+export type action = (state: Readonly<State>) => NextState;
 
 export interface Actions {
     resize: (data: { width: number, height: number }) => action;
@@ -25,19 +26,21 @@ export interface Actions {
     backPage: () => action;
     nextPage: () => action;
     showOpenErrorMessage: (data: { message: string }) => action;
-    openModal: () => action;
-    closeModal: () => action;
+    openFumenModal: () => action;
+    openSettingsModal: () => action;
+    closeFumenModal: () => action;
+    closeSettingsModal: () => action;
 }
 
 export const actions: Readonly<Actions> = {
-    resize: ({ width, height }) => () => {
+    resize: ({ width, height }) => (): NextState => {
         log('action: resize');
 
         return {
             display: { width, height },
         };
     },
-    loadFumen: ({ fumen }) => () => {
+    loadFumen: ({ fumen }) => (): NextState => {
         log('action: loadFumen = ' + fumen);
 
         router.pauseAnimation();
@@ -54,7 +57,7 @@ export const actions: Readonly<Actions> = {
                     pages[page.index] = page;
                 });
                 router.setPages({ pages });
-                router.closeModal();
+                router.closeFumenModal();
                 router.clearFumenData();
             } catch (e) {
                 if (e instanceof ViewError) {
@@ -67,7 +70,7 @@ export const actions: Readonly<Actions> = {
 
         return undefined;
     },
-    setPages: ({ pages }) => (state) => {
+    setPages: ({ pages }) => (state): NextState => {
         log('action: setPages = ' + pages.length);
 
         if (pages.length < 1) {
@@ -86,7 +89,7 @@ export const actions: Readonly<Actions> = {
             },
         };
     },
-    inputFumenData: ({ value }) => (state) => {
+    inputFumenData: ({ value }) => (state): NextState => {
         log('action: inputFumenData');
 
         return {
@@ -97,12 +100,12 @@ export const actions: Readonly<Actions> = {
             },
         };
     },
-    clearFumenData: () => (state) => {
+    clearFumenData: () => (state): NextState => {
         log('action: clearFumenData');
 
         return actions.inputFumenData({ value: undefined })(state);
     },
-    startAnimation: () => (state) => {
+    startAnimation: () => (state): NextState => {
         log('action: startAnimation');
 
         return sequence(state, [
@@ -120,7 +123,7 @@ export const actions: Readonly<Actions> = {
             }),
         ]);
     },
-    pauseAnimation: () => (state) => {
+    pauseAnimation: () => (state): NextState => {
         log('action: pauseAnimation');
 
         if (state.handlers.animation !== undefined) {
@@ -137,7 +140,7 @@ export const actions: Readonly<Actions> = {
             },
         };
     },
-    setComment: ({ comment }) => (state) => {
+    setComment: ({ comment }) => (state): NextState => {
         log('action: setComment');
 
         return {
@@ -147,7 +150,7 @@ export const actions: Readonly<Actions> = {
             },
         };
     },
-    setField: ({ field }) => () => {
+    setField: ({ field }) => (): NextState => {
         log('action: setField');
 
         const drawnField: Block[] = [];
@@ -171,22 +174,22 @@ export const actions: Readonly<Actions> = {
 
         return { field: drawnField };
     },
-    setSentLine: ({ sentLine }) => () => {
+    setSentLine: ({ sentLine }) => (): NextState => {
         log('action: setSentLine');
 
         return { sentLine };
     },
-    setHold: ({ hold }) => () => {
+    setHold: ({ hold }) => (): NextState => {
         log('action: setHold');
 
         return { hold };
     },
-    setNext: ({ next }) => () => {
+    setNext: ({ next }) => (): NextState => {
         log('action: setNext');
 
         return { next };
     },
-    openPage: ({ index }) => (state) => {
+    openPage: ({ index }) => (state): NextState => {
         log('action: openPage = ' + index);
 
         const pages = state.fumen.pages;
@@ -251,23 +254,23 @@ export const actions: Readonly<Actions> = {
             }),
         ]);
     },
-    backPage: () => (state) => {
+    backPage: () => (state): NextState => {
         log('action: backPage');
 
         const index = (state.fumen.currentIndex - 1 + state.fumen.maxPage) % state.fumen.maxPage;
         return actions.openPage({ index })(state);
     },
-    nextPage: () => (state) => {
+    nextPage: () => (state): NextState => {
         log('action: nextPage');
 
         const index = (state.fumen.currentIndex + 1) % state.fumen.maxPage;
         return actions.openPage({ index })(state);
     },
-    showOpenErrorMessage: ({ message }) => (state) => {
+    showOpenErrorMessage: ({ message }) => (state): NextState => {
         log('action: showOpenErrorMessage: ' + message);
 
         return sequence(state, [
-            actions.openModal(),
+            actions.openFumenModal(),
             () => ({
                 fumen: {
                     ...state.fumen,
@@ -276,23 +279,43 @@ export const actions: Readonly<Actions> = {
             }),
         ]);
     },
-    openModal: () => (state) => {
-        log('action: openModal');
+    openFumenModal: () => (state): NextState => {
+        log('action: openFumenModal');
 
         return {
             modal: {
                 ...state.modal,
-                open: true,
+                fumen: true,
             },
         };
     },
-    closeModal: () => (state) => {
-        log('action: closeModal');
+    openSettingsModal: () => (state): NextState => {
+        log('action: openSettingsModal');
 
         return {
             modal: {
                 ...state.modal,
-                open: false,
+                settings: true,
+            },
+        };
+    },
+    closeFumenModal: () => (state): NextState => {
+        log('action: closeFumenModal');
+
+        return {
+            modal: {
+                ...state.modal,
+                fumen: false,
+            },
+        };
+    },
+    closeSettingsModal: () => (state): NextState => {
+        log('action: closeSettingsModal');
+
+        return {
+            modal: {
+                ...state.modal,
+                settings: false,
             },
         };
     },
