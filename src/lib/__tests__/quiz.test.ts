@@ -32,8 +32,8 @@ describe('quiz', () => {
 
         it('getPiece', () => {
             expect(quiz.getHoldPiece()).toEqual(Piece.T);
-            expect(quiz.getNextPieces(1)).toEqual([Piece.S]);
-            expect(quiz.getNextPieces(5)).toEqual([Piece.S, Piece.Z, Piece.O, Piece.J, Piece.L]);
+            expect(quiz.getNextPieces(1)).toEqual([Piece.I]);
+            expect(quiz.getNextPieces(5)).toEqual([Piece.I, Piece.S, Piece.Z, Piece.O, Piece.J]);
         });
 
         it('getOperation', () => {
@@ -99,11 +99,6 @@ describe('quiz', () => {
     describe('current only', () => {
         const quiz = new Quiz('#Q=[](S)OLJZ');
 
-        it('getPiece', () => {
-            expect(quiz.getHoldPiece()).toEqual(Piece.Empty);
-            expect(quiz.getNextPieces(3)).toEqual([Piece.S, Piece.O, Piece.L]);
-        });
-
         it('getOperation', () => {
             expect(quiz.getOperation(Piece.S)).toEqual(Operation.Direct);
             expect(quiz.getOperation(Piece.O)).toEqual(Operation.Stock);
@@ -112,7 +107,7 @@ describe('quiz', () => {
 
         it('getPiece', () => {
             expect(quiz.getHoldPiece()).toEqual(Piece.Empty);
-            expect(quiz.getNextPieces()).toEqual([Piece.O, Piece.L, Piece.J, Piece.Z]);
+            expect(quiz.getNextPieces(3)).toEqual([Piece.S, Piece.O, Piece.L]);
         });
 
         it('direct', () => {
