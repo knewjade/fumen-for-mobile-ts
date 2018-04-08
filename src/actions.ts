@@ -322,7 +322,7 @@ export const actions: Readonly<Actions> = {
 };
 
 function log(msg: string) {
-    console.log(msg);
+    // console.log(msg);
 }
 
 function sequence(
