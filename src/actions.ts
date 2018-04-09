@@ -214,15 +214,31 @@ export const actions: Readonly<Actions> = {
         } else {
             comment = openDescription(pages, index);
 
-            const pieces = pages.slice(index + 1)
-                .filter(page => page.piece !== undefined && page.piece.lock)
-                .map(page => page.piece!.type);
+            const pieces: Piece[] = [];
+            let currentPiece = page.piece !== undefined ? page.piece.type : Piece.Empty;
+            for (const nextPage of pages.slice(index)) {
+                // ミノが変わったときは記録する
+                if (nextPage.piece !== undefined && currentPiece !== nextPage.piece.type) {
+                    const pieceType = nextPage.piece.type;
+                    if (isMinoPiece(pieceType)) {
+                        pieces.push(pieceType);
+                    }
 
-            if (0 < pieces.length && page.piece !== undefined && !page.piece.lock && pieces[0] === page.piece.type) {
-                pieces.shift();
+                    currentPiece = pieceType;
+                }
+
+                // 必要な数が溜まったら終了する
+                if (5 <= pieces.length) {
+                    break;
+                }
+
+                // ミノを接着したときは現在の使用ミノをEmptyに置き換える
+                if (nextPage.piece === undefined || nextPage.piece.lock) {
+                    currentPiece = Piece.Empty;
+                }
             }
 
-            next = pieces.slice(0, 5);
+            next = pieces;
         }
 
         // Field
