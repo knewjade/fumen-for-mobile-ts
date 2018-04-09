@@ -218,7 +218,7 @@ export const actions: Readonly<Actions> = {
                 .filter(page => page.piece !== undefined && page.piece.lock)
                 .map(page => page.piece!.type);
 
-            if (0 < pieces.length && page.piece !== undefined && pieces[0] === page.piece.type) {
+            if (0 < pieces.length && page.piece !== undefined && !page.piece.lock && pieces[0] === page.piece.type) {
                 pieces.shift();
             }
 
