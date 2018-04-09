@@ -32,8 +32,8 @@ describe('quiz', () => {
 
         it('getPiece', () => {
             expect(quiz.getHoldPiece()).toEqual(Piece.T);
-            expect(quiz.getNextPieces(1)).toEqual([Piece.S]);
-            expect(quiz.getNextPieces(5)).toEqual([Piece.S, Piece.Z, Piece.O, Piece.J, Piece.L]);
+            expect(quiz.getNextPieces(1)).toEqual([Piece.I]);
+            expect(quiz.getNextPieces(5)).toEqual([Piece.I, Piece.S, Piece.Z, Piece.O, Piece.J]);
         });
 
         it('getOperation', () => {
@@ -73,7 +73,7 @@ describe('quiz', () => {
         it('getPiece', () => {
             expect(quiz.getHoldPiece()).toEqual(Piece.T);
             expect(quiz.getNextPieces(0)).toEqual([]);
-            expect(quiz.getNextPieces(3)).toEqual([Piece.Empty, Piece.Empty, Piece.Empty]);
+            expect(quiz.getNextPieces(3)).toEqual([Piece.I, Piece.Empty, Piece.Empty]);
         });
 
         it('direct', () => {
@@ -107,7 +107,7 @@ describe('quiz', () => {
 
         it('getPiece', () => {
             expect(quiz.getHoldPiece()).toEqual(Piece.Empty);
-            expect(quiz.getNextPieces(3)).toEqual([Piece.O, Piece.L, Piece.J]);
+            expect(quiz.getNextPieces(3)).toEqual([Piece.S, Piece.O, Piece.L]);
         });
 
         it('direct', () => {
@@ -135,7 +135,7 @@ describe('quiz', () => {
 
         it('getPiece', () => {
             expect(quiz.getHoldPiece()).toEqual(Piece.Empty);
-            expect(quiz.getNextPieces()).toEqual([]);
+            expect(quiz.getNextPieces()).toEqual([Piece.S]);
         });
 
         it('direct', () => {
@@ -162,8 +162,8 @@ describe('quiz', () => {
 
         it('getPiece', () => {
             expect(quiz.getHoldPiece()).toEqual(Piece.Empty);
-            expect(quiz.getNextPieces(1)).toEqual([Piece.L]);
-            expect(quiz.getNextPieces(2)).toEqual([Piece.L, Piece.Empty]);
+            expect(quiz.getNextPieces(2)).toEqual([Piece.I, Piece.L]);
+            expect(quiz.getNextPieces(3)).toEqual([Piece.I, Piece.L, Piece.Empty]);
         });
 
         it('stock', () => {
