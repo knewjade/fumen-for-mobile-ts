@@ -287,6 +287,68 @@ describe('fumen', () => {
                 },
             } as Page);
         });
+
+        test('Lock after quiz', async () => {
+            const pages: Page[] = [];
+            await decode('vhCWSYVAFLDmClcJSAVDEHBEooRBKoAVB6AAAAUoBT?pB', (page) => {
+                pages[page.index] = page;
+            });
+
+            expect(pages).toHaveLength(3);
+            expect(pages[0]).toMatchObject({
+                comment: {
+                    text: '#Q=[](J)Z',
+                },
+                piece: {
+                    lock: true,
+                    type: Piece.J,
+                    rotation: Rotation.Spawn,
+                    coordinate: {
+                        x: 8,
+                        y: 0,
+                    },
+                },
+                quiz: {
+                    operation: Operation.Direct,
+                },
+            } as Page);
+
+            expect(pages[1]).toMatchObject({
+                comment: {
+                    ref: 0,
+                },
+                piece: {
+                    lock: true,
+                    type: Piece.Z,
+                    rotation: Rotation.Spawn,
+                    coordinate: {
+                        x: 8,
+                        y: 1,
+                    },
+                },
+                quiz: {
+                    operation: Operation.Direct,
+                },
+            } as Page);
+
+            expect(pages[2]).toMatchObject({
+                comment: {
+                    ref: 0,
+                },
+                piece: {
+                    lock: true,
+                    type: Piece.O,
+                    rotation: Rotation.Spawn,
+                    coordinate: {
+                        x: 0,
+                        y: 0,
+                    },
+                },
+                quiz: {
+                    operation: undefined,
+                },
+            } as Page);
+        });
     });
 
     test('illegal short fumen', async () => {

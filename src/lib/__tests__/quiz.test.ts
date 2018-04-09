@@ -212,6 +212,11 @@ describe('quiz', () => {
             const format = quiz.format();
             expect(format).toEqual(new Quiz('#Q=[](Z)'));
         });
+
+        it('toString', () => {
+            const str = quiz.toString();
+            expect(str).toEqual('#Q=[Z]()');
+        });
     });
 
     describe('empty', () => {

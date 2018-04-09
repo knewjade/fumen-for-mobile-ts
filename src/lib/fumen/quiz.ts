@@ -151,9 +151,10 @@ export class Quiz {
     }
 
     toString(): string {
-        if (this.quiz === '#Q=[]()') {
-            return '';
-        }
-        return this.quiz;
+        return this.canOperate() ? this.quiz : '';
+    }
+
+    canOperate(): boolean {
+        return this.quiz !== '#Q=[]()';
     }
 }

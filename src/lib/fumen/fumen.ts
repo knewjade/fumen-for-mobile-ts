@@ -173,7 +173,7 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
         } | undefined = undefined;
 
         if (store.quiz !== undefined) {
-            if (action.isLock && isMinoPiece(action.piece)) {
+            if (action.isLock && isMinoPiece(action.piece) && store.quiz.canOperate()) {
                 const operation = store.quiz.getOperation(action.piece);
                 quiz = { operation };
                 store.quiz = store.quiz.operate(operation);

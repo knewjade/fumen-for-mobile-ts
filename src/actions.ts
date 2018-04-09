@@ -60,6 +60,7 @@ export const actions: Readonly<Actions> = {
                 router.closeFumenModal();
                 router.clearFumenData();
             } catch (e) {
+                console.error(e);
                 if (e instanceof ViewError) {
                     router.showOpenErrorMessage({ message: e.message });
                 } else {
@@ -209,8 +210,10 @@ export const actions: Readonly<Actions> = {
             }
 
             const operatedQuiz = page.quiz.operation !== undefined ? quiz.operate(page.quiz.operation) : quiz;
-            hold = operatedQuiz.getHoldPiece();
-            next = operatedQuiz.getNextPieces(5).filter(piece => piece !== Piece.Empty);
+            if (quiz.canOperate()) {
+                hold = operatedQuiz.getHoldPiece();
+                next = operatedQuiz.getNextPieces(5).filter(piece => piece !== Piece.Empty);
+            }
         } else {
             comment = openDescription(pages, index);
 
