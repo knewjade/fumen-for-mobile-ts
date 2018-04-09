@@ -201,7 +201,13 @@ export const actions: Readonly<Actions> = {
         let next = undefined;
         if (page.quiz !== undefined) {
             const quiz = openQuiz(pages, index);
-            comment = quiz.format().toString();
+
+            if (page.comment.text !== undefined) {
+                comment = page.comment.text;
+            } else {
+                comment = quiz.format().toString();
+            }
+
             const operatedQuiz = page.quiz.operation !== undefined ? quiz.operate(page.quiz.operation) : quiz;
             hold = operatedQuiz.getHoldPiece();
             next = operatedQuiz.getNextPieces(5).filter(piece => piece !== Piece.Empty);
