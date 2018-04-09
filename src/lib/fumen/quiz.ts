@@ -137,7 +137,7 @@ export class Quiz {
     }
 
     getNextPieces(max?: number): Piece[] {
-        let names = (this.current + this.next + this.least).substr(0, max);
+        let names = (this.next + this.least).substr(0, max);
         if (max !== undefined && names.length < max) {
             names += ' '.repeat(max - names.length);
         }
