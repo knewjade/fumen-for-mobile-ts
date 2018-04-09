@@ -20,8 +20,8 @@ export interface Actions {
     setComment: (data: { comment: string }) => action;
     setField: (data: { field: Block[] }) => action;
     setSentLine: (data: { sentLine: Block[] }) => action;
-    setHold: (data: { hold: Piece }) => action;
-    setNext: (data: { next: Piece[] }) => action;
+    setHold: (data: { hold?: Piece }) => action;
+    setNext: (data: { next?: Piece[] }) => action;
     openPage: (data: { index: number }) => action;
     backPage: () => action;
     nextPage: () => action;
@@ -213,10 +213,16 @@ export const actions: Readonly<Actions> = {
             next = operatedQuiz.getNextPieces(5).filter(piece => piece !== Piece.Empty);
         } else {
             comment = openDescription(pages, index);
-            next = pages.slice(index + 1)
+
+            const pieces = pages.slice(index + 1)
                 .filter(page => page.piece !== undefined && page.piece.lock)
-                .map(page => page.piece!.type)
-                .slice(0, 5);
+                .map(page => page.piece!.type);
+
+            if (0 < pieces.length && page.piece !== undefined && pieces[0] === page.piece.type) {
+                pieces.shift();
+            }
+
+            next = pieces.slice(0, 5);
         }
 
         // Field
@@ -250,8 +256,8 @@ export const actions: Readonly<Actions> = {
             actions.setComment({ comment }),
             actions.setField({ field }),
             actions.setSentLine({ sentLine }),
-            hold !== undefined ? actions.setHold({ hold }) : undefined,
-            next !== undefined ? actions.setNext({ next }) : undefined,
+            actions.setHold({ hold }),
+            actions.setNext({ next }),
             () => ({
                 fumen: {
                     ...state.fumen,
