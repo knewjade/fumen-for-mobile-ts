@@ -220,7 +220,7 @@ export const actions: Readonly<Actions> = {
             };
         });
         const move = page.piece;
-        if (move !== undefined && move.lock && isMinoPiece(move.type)) {
+        if (move !== undefined && isMinoPiece(move.type)) {
             const coordinate = move.coordinate;
             const blocks = getBlocks(move.type, move.rotation);
             for (const block of blocks) {
