@@ -1,160 +1,98 @@
-import { Block, State } from './states';
-import { AnimationState, getBlocks, isMinoPiece, Piece } from './lib/enums';
-import { ViewError } from './lib/error';
-import { resources } from './index';
-import { Quiz } from './lib/quiz';
+import { Block, initState, State } from './states';
+import { AnimationState, FieldConstants, getBlocks, isMinoPiece, Piece } from './lib/enums';
+import { decode, Page } from './lib/fumen/fumen';
+import { view } from './view';
+import { app } from 'hyperapp';
+import { openDescription, openQuiz } from './lib/helper';
+import { ViewError } from './lib/errors';
 
-export type action = (state: State) => Partial<State>;
+type NextState = Partial<State> | undefined;
+export type action = (state: Readonly<State>) => NextState;
 
 export interface Actions {
-    setPage: (data: {
-        pageIndex: number,
-        field: Block[],
-        blockUp?: Block[],
-        comment?: string,
-        hold?: Piece,
-        nexts?: Piece[],
-    }) => action;
-    setComment: (data: { comment: string }) => action;
     resize: (data: { width: number, height: number }) => action;
-    reload: () => action;
-    pause: () => action;
-    start: () => action;
-    setMaxPage: (data: { maxPage: number }) => action;
-    openPage: (data: { pageIndex: number }) => action;
+    loadFumen: (args: { fumen: string | undefined }) => action;
+    setPages: (args: { pages: Page[] }) => action;
+    inputFumenData: (args: { value?: string }) => action;
+    clearFumenData: () => action;
+    startAnimation: () => action;
+    pauseAnimation: () => action;
+    setComment: (data: { comment: string }) => action;
+    setField: (data: { field: Block[] }) => action;
+    setSentLine: (data: { sentLine: Block[] }) => action;
+    setHold: (data: { hold?: Piece }) => action;
+    setNext: (data: { next?: Piece[] }) => action;
+    openPage: (data: { index: number }) => action;
     backPage: () => action;
     nextPage: () => action;
-    inputFumenData: (data: { value?: string }) => action;
     showOpenErrorMessage: (data: { message: string }) => action;
+    openFumenModal: () => action;
+    openSettingsModal: () => action;
+    closeFumenModal: () => action;
+    closeSettingsModal: () => action;
 }
 
-function log(msg: string) {
-    // console.log(msg);
-}
-
-export const actions: Actions = {
-    setPage: ({ pageIndex, field, blockUp, comment, hold, nexts }) => (state) => {
-        log('action: setFieldAndComment');
-
-        const isChanged = comment !== undefined && comment !== state.comment.text;
-        return {
-            field,
-            hold,
-            nexts,
-            blockUp: blockUp !== undefined ? blockUp : state.blockUp,
-            comment: {
-                isChanged,
-                text: comment !== undefined ? comment : state.comment.text,
-            },
-            play: {
-                ...state.play,
-                pageIndex,
-            },
-        };
-    },
-    setComment: ({ comment }) => (state) => {
-        log('action: setComment');
-
-        const isChanged = comment !== undefined && comment !== state.comment.text;
-        return {
-            comment: {
-                isChanged,
-                text: comment !== undefined ? comment : state.comment.text,
-            },
-        };
-    },
-    resize: data => () => {
+export const actions: Readonly<Actions> = {
+    resize: ({ width, height }) => (): NextState => {
         log('action: resize');
-        return { display: data };
-    },
-    reload: () => (state) => {
-        log('action: reload');
-        const index = state.play.pageIndex;
-        const page = resources.pages[index];
-
-        if (page === undefined) {
-            throw new ViewError('Cannot open page');
-        }
-
-        const comment = resources.pages[page.commentRef].comment;
-        let hold;
-        let nexts: Piece[] = [];
-        if (comment !== undefined && comment.startsWith('#Q=')) {
-            let quiz = new Quiz(comment);
-
-            for (let i = page.commentRef; i < index; i += 1) {
-                const operation = resources.pages[i].quizOperation;
-                if (operation !== undefined) {
-                    quiz = quiz.operate(operation);
-                }
-            }
-
-            const operation = resources.pages[index].quizOperation;
-            if (operation !== undefined) {
-                quiz = quiz.operate(operation);
-            }
-
-            hold = quiz.getHold();
-            nexts = quiz.getNexts(5);
-        } else {
-            for (const page of resources.pages.slice(index + 1)) {
-                const piece = page.move.piece;
-                if (page.isLock && isMinoPiece(piece)) {
-                    nexts.push(piece);
-                }
-
-                if (5 <= nexts.length) {
-                    break;
-                }
-            }
-        }
 
         return {
-            hold,
-            nexts,
+            display: { width, height },
         };
     },
-    start: () => (state) => {
-        log('action: start');
+    loadFumen: ({ fumen }) => (): NextState => {
+        log('action: loadFumen = ' + fumen);
+
+        router.pauseAnimation();
+
+        if (fumen === undefined) {
+            router.showOpenErrorMessage({ message: 'データを入力してください' });
+            return undefined;
+        }
+
+        (async () => {
+            try {
+                const pages: Page[] = [];
+                await decode(fumen, (page) => {
+                    pages[page.index] = page;
+                });
+                router.setPages({ pages });
+                router.closeFumenModal();
+                router.clearFumenData();
+            } catch (e) {
+                console.error(e);
+                if (e instanceof ViewError) {
+                    router.showOpenErrorMessage({ message: e.message });
+                } else {
+                    router.showOpenErrorMessage({ message: 'テト譜を読み込めませんでした' });
+                }
+            }
+        })();
+
+        return undefined;
+    },
+    setPages: ({ pages }) => (state): NextState => {
+        log('action: setPages = ' + pages.length);
+
+        if (pages.length < 1) {
+            return undefined;
+        }
+
+        setImmediate(() => {
+            router.openPage({ index: 0 });
+        });
+
         return {
-            play: {
-                ...state.play,
-                status: AnimationState.Play,
+            fumen: {
+                ...state.fumen,
+                pages,
+                maxPage: pages.length,
             },
         };
     },
-    pause: () => (state) => {
-        log('action: pause');
-        return {
-            play: {
-                ...state.play,
-                status: AnimationState.Pause,
-            },
-        };
-    },
-    setMaxPage: data => () => {
-        log('action: setMaxPage');
-        return data;
-    },
-    openPage: ({ pageIndex }) => (state) => {
-        log('action: openPage');
-        const action = openPage(pageIndex);
-        return action(state);
-    },
-    backPage: () => (state) => {
-        log('action: backPage');
-        const maxPage = state.maxPage;
-        const action = openPage((state.play.pageIndex - 1 + maxPage) % maxPage);
-        return action(state);
-    },
-    nextPage: () => (state) => {
-        log('action: nextPage');
-        const maxPage = state.maxPage;
-        const action = openPage((state.play.pageIndex + 1) % maxPage);
-        return action(state);
-    },
-    inputFumenData: ({ value }) => (state) => {
+    inputFumenData: ({ value }) => (state): NextState => {
         log('action: inputFumenData');
+
         return {
             fumen: {
                 ...state.fumen,
@@ -163,89 +101,293 @@ export const actions: Actions = {
             },
         };
     },
-    showOpenErrorMessage: ({ message }) => (state) => {
-        log('action: showOpenErrorMessage');
+    clearFumenData: () => (state): NextState => {
+        log('action: clearFumenData');
+
+        return actions.inputFumenData({ value: undefined })(state);
+    },
+    startAnimation: () => (state): NextState => {
+        log('action: startAnimation');
+
+        return sequence(state, [
+            state.handlers.animation !== undefined ? actions.pauseAnimation() : undefined,
+            () => ({
+                play: {
+                    ...state.play,
+                    status: AnimationState.Play,
+                },
+                handlers: {
+                    animation: setInterval(() => {
+                        router.nextPage();
+                    }, state.play.intervalTime),
+                },
+            }),
+        ]);
+    },
+    pauseAnimation: () => (state): NextState => {
+        log('action: pauseAnimation');
+
+        if (state.handlers.animation !== undefined) {
+            clearInterval(state.handlers.animation);
+        }
+
         return {
-            fumen: {
-                ...state.fumen,
-                errorMessage: message,
+            play: {
+                ...state.play,
+                status: AnimationState.Pause,
+            },
+            handlers: {
+                animation: undefined,
+            },
+        };
+    },
+    setComment: ({ comment }) => (state): NextState => {
+        log('action: setComment');
+
+        return {
+            comment: {
+                isChanged: comment !== undefined && comment !== state.comment.text,
+                text: comment !== undefined ? comment : state.comment.text,
+            },
+        };
+    },
+    setField: ({ field }) => (): NextState => {
+        log('action: setField');
+
+        const drawnField: Block[] = [];
+        for (let y = 0; y < FieldConstants.Height + FieldConstants.SentLine; y += 1) {
+            const [start, end] = [y * FieldConstants.Width, (y + 1) * FieldConstants.Width];
+            const line = field.slice(start, end);
+            const filled = line.every(block => block.piece !== Piece.Empty);
+            if (filled) {
+                for (let index = start; index < end; index += 1) {
+                    drawnField[index] = {
+                        ...field[index],
+                        highlight: true,
+                    };
+                }
+            } else {
+                for (let index = start; index < end; index += 1) {
+                    drawnField[index] = field[index];
+                }
+            }
+        }
+
+        return { field: drawnField };
+    },
+    setSentLine: ({ sentLine }) => (): NextState => {
+        log('action: setSentLine');
+
+        return { sentLine };
+    },
+    setHold: ({ hold }) => (): NextState => {
+        log('action: setHold');
+
+        return { hold };
+    },
+    setNext: ({ next }) => (): NextState => {
+        log('action: setNext');
+
+        return { next };
+    },
+    openPage: ({ index }) => (state): NextState => {
+        log('action: openPage = ' + index);
+
+        const pages = state.fumen.pages;
+        const page = pages[index];
+
+        // Comment
+        let comment: string;
+        let hold = undefined;
+        let next = undefined;
+        if (page.quiz !== undefined) {
+            const quiz = openQuiz(pages, index);
+
+            if (page.comment.text !== undefined) {
+                comment = page.comment.text;
+            } else {
+                comment = quiz.format().toString();
+            }
+
+            const operatedQuiz = page.quiz.operation !== undefined ? quiz.operate(page.quiz.operation) : quiz;
+            if (quiz.canOperate()) {
+                hold = operatedQuiz.getHoldPiece();
+                next = operatedQuiz.getNextPieces(5).filter(piece => piece !== Piece.Empty);
+            }
+        } else {
+            comment = openDescription(pages, index);
+
+            const pieces: Piece[] = [];
+            let currentPiece = page.piece !== undefined ? page.piece.type : Piece.Empty;
+            for (const nextPage of pages.slice(index)) {
+                // ミノが変わったときは記録する
+                if (nextPage.piece !== undefined && currentPiece !== nextPage.piece.type) {
+                    const pieceType = nextPage.piece.type;
+                    if (isMinoPiece(pieceType)) {
+                        pieces.push(pieceType);
+                    }
+
+                    currentPiece = pieceType;
+                }
+
+                // 必要な数が溜まったら終了する
+                if (5 <= pieces.length) {
+                    break;
+                }
+
+                // ミノを接着したときは現在の使用ミノをEmptyに置き換える
+                if (nextPage.piece === undefined || nextPage.piece.lock) {
+                    currentPiece = Piece.Empty;
+                }
+            }
+
+            next = pieces;
+        }
+
+        // Field
+        const field: Block[] = page.field.toArray().map((value) => {
+            return {
+                piece: value,
+            };
+        });
+        const move = page.piece;
+        if (move !== undefined && isMinoPiece(move.type)) {
+            const coordinate = move.coordinate;
+            const blocks = getBlocks(move.type, move.rotation);
+            for (const block of blocks) {
+                const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
+                field[x + y * 10] = {
+                    piece: move.type,
+                    highlight: true,
+                };
+            }
+        }
+
+        // SentLine
+        const sentLine: Block[] = page.sentLine.toArray().map((value) => {
+            return {
+                piece: value,
+            };
+        });
+
+        return sequence(state, [
+            state.play.status === AnimationState.Play ? actions.startAnimation() : undefined,
+            actions.setComment({ comment }),
+            actions.setField({ field }),
+            actions.setSentLine({ sentLine }),
+            actions.setHold({ hold }),
+            actions.setNext({ next }),
+            () => ({
+                fumen: {
+                    ...state.fumen,
+                    currentIndex: index,
+                },
+            }),
+        ]);
+    },
+    backPage: () => (state): NextState => {
+        log('action: backPage');
+
+        const index = (state.fumen.currentIndex - 1 + state.fumen.maxPage) % state.fumen.maxPage;
+        return actions.openPage({ index })(state);
+    },
+    nextPage: () => (state): NextState => {
+        log('action: nextPage');
+
+        const index = (state.fumen.currentIndex + 1) % state.fumen.maxPage;
+        return actions.openPage({ index })(state);
+    },
+    showOpenErrorMessage: ({ message }) => (state): NextState => {
+        log('action: showOpenErrorMessage: ' + message);
+
+        return sequence(state, [
+            actions.openFumenModal(),
+            () => ({
+                fumen: {
+                    ...state.fumen,
+                    errorMessage: message,
+                },
+            }),
+        ]);
+    },
+    openFumenModal: () => (state): NextState => {
+        log('action: openFumenModal');
+
+        return {
+            modal: {
+                ...state.modal,
+                fumen: true,
+            },
+        };
+    },
+    openSettingsModal: () => (state): NextState => {
+        log('action: openSettingsModal');
+
+        return {
+            modal: {
+                ...state.modal,
+                settings: true,
+            },
+        };
+    },
+    closeFumenModal: () => (state): NextState => {
+        log('action: closeFumenModal');
+
+        return {
+            modal: {
+                ...state.modal,
+                fumen: false,
+            },
+        };
+    },
+    closeSettingsModal: () => (state): NextState => {
+        log('action: closeSettingsModal');
+
+        return {
+            modal: {
+                ...state.modal,
+                settings: false,
             },
         };
     },
 };
 
-function openPage(index: number): action {
-    const page = resources.pages[index];
-
-    if (page === undefined) {
-        throw new ViewError('Cannot open page');
-    }
-
-    const field: Block[] = page.field.map((value) => {
-        return {
-            piece: value,
-        };
-    });
-    const move = page.move;
-    if (isMinoPiece(move.piece)) {
-        const coordinate = move.coordinate;
-        const blocks = getBlocks(move.piece, move.rotation);
-        for (const block of blocks) {
-            const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
-            field[x + y * 10] = {
-                piece: move.piece,
-                highlight: true,
-            };
-        }
-    }
-
-    const blockUp = page.blockUp.map((value) => {
-        return {
-            piece: value,
-        };
-    });
-
-    let comment = resources.pages[page.commentRef].comment;
-    let hold;
-    let nexts: Piece[] = [];
-    if (comment !== undefined && comment.startsWith('#Q=')) {
-        let quiz = new Quiz(comment);
-
-        for (let i = page.commentRef; i < index; i += 1) {
-            const operation = resources.pages[i].quizOperation;
-            if (operation !== undefined) {
-                quiz = quiz.operate(operation);
-            }
-        }
-
-        comment = quiz.toStr();
-
-        const operation = resources.pages[index].quizOperation;
-        if (operation !== undefined) {
-            quiz = quiz.operate(operation);
-        }
-
-        hold = quiz.getHold();
-        nexts = quiz.getNexts(5);
-    } else {
-        for (const page of resources.pages.slice(index + 1)) {
-            const piece = page.move.piece;
-            if (page.isLock && isMinoPiece(piece)) {
-                nexts.push(piece);
-            }
-
-            if (5 <= nexts.length) {
-                break;
-            }
-        }
-    }
-
-    return actions.setPage({
-        field,
-        hold,
-        nexts,
-        blockUp,
-        comment,
-        pageIndex: index,
-    });
+function log(msg: string) {
+    // console.log(msg);
 }
+
+function sequence(
+    state: Readonly<State>,
+    actions: (action | undefined)[],
+): Partial<Readonly<State>> {
+    let merged: Partial<Readonly<State>> = {};
+    for (const action of actions) {
+        if (action === undefined) {
+            continue;
+        }
+
+        const partial = action(state);
+        merged = {
+            ...merged,
+            ...partial,
+        };
+    }
+    return merged;
+}
+
+export const router = app(initState, actions, view(), document.body);
+
+window.onresize = () => {
+    router.resize({
+        width: window.document.body.clientWidth,
+        height: window.document.body.clientHeight,
+    });
+};
+
+function extractFumenFromURL() {
+    const url = decodeURIComponent(location.search);
+    const paramQuery = url.substr(1).split('&').find(value => value.startsWith('d='));
+    return paramQuery !== undefined ? paramQuery.substr(2) : 'v115@vhAAgH';
+}
+
+router.loadFumen({ fumen: extractFumenFromURL() });

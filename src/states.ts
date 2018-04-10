@@ -1,29 +1,38 @@
 import { AnimationState, Piece } from './lib/enums';
-import { Quiz } from './lib/quiz';
+import { Page } from './lib/fumen/fumen';
 
+// Immutableにする
 export interface State {
-    field: Block[];
-    blockUp: Block[];
-    comment: {
-        text: string;
-        isChanged: boolean;
-    };
-    display: {
+    field: ReadonlyArray<Readonly<Block>>;
+    sentLine: ReadonlyArray<Readonly<Block>>;
+    comment: Readonly<{
+        readonly text: string;
+        readonly isChanged: boolean;
+    }>;
+    display: Readonly<{
         width: number;
         height: number;
-    };
+    }>;
     hold?: Piece;
-    nexts?: Piece[];
-    maxPage: number;
-    play: {
+    next?: ReadonlyArray<Piece>;
+    play: Readonly<{
         status: AnimationState;
-        pageIndex: number;
         intervalTime: number;
-    };
-    fumen: {
+    }>;
+    fumen: Readonly<{
+        currentIndex: number;
+        maxPage: number;
+        pages: ReadonlyArray<Readonly<Page>>;
         value?: string;
         errorMessage?: string;
-    };
+    }>;
+    modal: Readonly<{
+        fumen: boolean;
+        settings: boolean;
+    }>;
+    handlers: Readonly<{
+        animation?: number;
+    }>;
 }
 
 export interface Block {
@@ -31,11 +40,11 @@ export interface Block {
     highlight?: boolean;
 }
 
-export const initState: State = {
+export const initState: Readonly<State> = {
     field: Array.from({ length: 230 }).map((ignore) => {
         return { piece: Piece.Empty };
     }),
-    blockUp: Array.from({ length: 10 }).map((ignore) => {
+    sentLine: Array.from({ length: 10 }).map((ignore) => {
         return { piece: Piece.Empty };
     }),
     comment: {
@@ -47,15 +56,23 @@ export const initState: State = {
         height: window.document.body.clientHeight,
     },
     hold: undefined,
-    nexts: undefined,
-    maxPage: 0,
+    next: undefined,
     play: {
         status: AnimationState.Pause,
-        pageIndex: 0,
         intervalTime: 1500,
     },
     fumen: {
+        currentIndex: 0,
+        maxPage: 1,
+        pages: [],
         value: undefined,
         errorMessage: undefined,
+    },
+    modal: {
+        fumen: false,
+        settings: false,
+    },
+    handlers: {
+        animation: undefined,
     },
 };

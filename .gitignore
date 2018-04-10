@@ -5,3 +5,4 @@ yarn-*.log
 src/**/*.js
 src/**/*.js.map
 public/bundle.js
+coverage/

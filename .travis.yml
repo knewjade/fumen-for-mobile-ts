@@ -1,7 +1,8 @@
 language: node_js
 node_js:
-  - 7
+  - 8
 script:
+  - yarn test
   - yarn webpack:prod
 before_deploy:
   - touch public/.nojekyll

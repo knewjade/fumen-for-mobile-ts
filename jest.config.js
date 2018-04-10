@@ -11,5 +11,7 @@ module.exports = {
         "json",
         "node"
     ],
-    roots: ["<rootDir>/src/"]
+    roots: ["<rootDir>/src/"],
+    collectCoverage: true,
+    coverageReporters: ['html'],
 };

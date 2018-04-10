@@ -1,4 +1,4 @@
-import * as index from '../index';
+import * as index from '../view';
 
 describe('index', () => {
     test('Array.from()', () => {
@@ -19,5 +19,16 @@ describe('index', () => {
 
     test('substring', () => {
         expect('abc'.substring(10)).toEqual('');
+    });
+
+    test('undefined', () => {
+        const func: () => { b: number } | undefined = () => undefined;
+        const res = func();
+        expect({
+            a: 1,
+            ...res,
+        }).toEqual({
+            a: 1,
+        });
     });
 });

@@ -2,9 +2,7 @@ import { Piece } from '../lib/enums';
 import { param } from '@hyperapp/html';
 import { getHighlightColor, getNormalColor } from '../lib/colors';
 import { Component } from '../lib/types';
-// Konvaは最後に読み込むこと！
-// エラー対策：Uncaught ReferenceError: __importDefault is not define
-import * as Konva from 'konva';
+import konva = require('konva');
 
 interface BlockProps {
     position: {
@@ -17,13 +15,13 @@ interface BlockProps {
         height: number,
     };
     piece: Piece;
-    rect: Konva.Rect;
+    rect: konva.Rect;
     highlight: boolean;
     background: string;
 }
 
 export const block: Component<BlockProps> = (props) => {
-    function fill(block: Konva.Rect) {
+    function fill(block: konva.Rect) {
         if (props.piece === Piece.Empty) {
             block.fill(props.background);
         } else if (props.highlight) {
@@ -33,11 +31,11 @@ export const block: Component<BlockProps> = (props) => {
         }
     }
 
-    function resize(block: Konva.Rect) {
+    function resize(block: konva.Rect) {
         block.setSize(props.size);
     }
 
-    function move(block: Konva.Rect) {
+    function move(block: konva.Rect) {
         block.setAbsolutePosition(props.position);
     }
 

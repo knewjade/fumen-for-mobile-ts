@@ -1,4 +1,4 @@
-import { FumenError } from './error';
+import { FumenError } from './errors';
 
 export enum Piece {
     Empty = 0,
@@ -24,9 +24,19 @@ export enum AnimationState {
     Play = 'play',
 }
 
-export function parsePieceName(piece: Piece) {
-    // console.log(`piece: ${n}`);
+export enum Operation {
+    Direct = 'direct',
+    Swap = 'swap',
+    Stock = 'stock',
+}
 
+export enum FieldConstants {
+    Width = 10,
+    Height = 23,
+    SentLine = 1,
+}
+
+export function parsePieceName(piece: Piece) {
     switch (piece) {
     case Piece.I:
         return 'I';
@@ -47,9 +57,7 @@ export function parsePieceName(piece: Piece) {
 }
 
 export function parsePiece(piece: string) {
-    // console.log(`piece: ${n}`);
-
-    switch (piece) {
+    switch (piece.toUpperCase()) {
     case 'I':
         return Piece.I;
     case 'L':
@@ -64,6 +72,11 @@ export function parsePiece(piece: string) {
         return Piece.J;
     case 'S':
         return Piece.S;
+    case 'X':
+        return Piece.Gray;
+    case ' ':
+    case '_':
+        return Piece.Empty;
     }
     throw new FumenError('Unexpected piece: ' + piece);
 }

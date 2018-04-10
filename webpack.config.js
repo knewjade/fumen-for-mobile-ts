@@ -1,8 +1,9 @@
 const path = require('path');
+const version = process.env.TRAVIS_BUILD_NUMBER || `dev-${new Date().toISOString()}`;
 
 module.exports = {
     entry: [
-        './src/index.ts'
+        './src/actions.ts'
     ],
     output: {
         filename: 'bundle.js',
@@ -11,9 +12,17 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /view\.ts$/,
+                loader: 'string-replace-loader',
+                options: {
+                    search: '###VERSION###',
+                    replace: version,
+                }
+            },
+            {
                 test: /\.tsx?$/,
                 use: 'ts-loader'
-            }
+            },
         ]
     },
     resolve: {

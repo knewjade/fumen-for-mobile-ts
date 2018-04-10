@@ -1,16 +1,30 @@
-import { FumenError } from './error';
-import { parsePiece, parsePieceName, Piece } from './enums';
-import { Operation } from './fumen';
+import { FumenError } from '../errors';
+import { Operation, parsePiece, parsePieceName, Piece } from '../enums';
 
 export class Quiz {
-    private readonly quiz: string;
+    static verify(quiz: string): boolean {
+        const replaced = this.trim(quiz);
 
-    constructor(quiz: string) {
-        this.quiz = Quiz.trim(quiz);
+        if (!replaced.match(/^#Q=\[[TIOSZJL]{0,1}]\([TIOSZJL]{0,1}\)[TIOSZJL]*$/i)) {
+            return false;
+        }
+
+        const index = replaced.indexOf(')');
+        return !(replaced[index - 1] === '(' && replaced[index + 1] !== undefined);
     }
 
     private static trim(quiz: string) {
         return quiz.trim().replace(/\s+/g, '');
+    }
+
+    private readonly quiz: string;
+
+    constructor(quiz: string) {
+        if (!Quiz.verify(quiz)) {
+            throw new FumenError(`Current piece doesn't exist, however next pieces exist: ${quiz}`);
+        }
+
+        this.quiz = Quiz.trim(quiz);
     }
 
     getOperation(used: Piece): Operation {
@@ -29,15 +43,12 @@ export class Quiz {
             return Operation.Swap;
         }
 
-        throw new FumenError('Unexpected hold piece in quiz');
+        throw new FumenError(`Unexpected hold piece in quiz: ${this.quiz}`);
     }
 
     private get current(): string {
         const index = this.quiz.indexOf('(') + 1;
         const name = this.quiz[index];
-        if (name === undefined) {
-            return '';
-        }
         if (name === ')') {
             return '';
         }
@@ -47,9 +58,6 @@ export class Quiz {
     private get hold(): string {
         const index = this.quiz.indexOf('[') + 1;
         const name = this.quiz[index];
-        if (name === undefined) {
-            throw new FumenError('Unexpected value in quiz');
-        }
         if (name === ']') {
             return '';
         }
@@ -67,43 +75,37 @@ export class Quiz {
 
     private get least(): string {
         const index = this.quiz.indexOf(')') + 2;
-        const names = this.quiz.substr(index);
-        if (names === undefined) {
-            return '';
-        }
-        return names;
+        return this.quiz.substr(index);
     }
 
     direct(): Quiz {
-        const next = this.next;
-        // TODO: 実際の動作と異なる　
-        // if (next === '') {
-        //     return new Quiz(`#Q=[](${this.hold})${this.least}`);
-        // }
-        return new Quiz(`#Q=[${this.hold}](${next})${this.least}`);
+        if (this.current === '') {
+            throw new FumenError(`Cannot find next piece: ${this.quiz}`);
+        }
+        return new Quiz(`#Q=[${this.hold}](${this.next})${this.least}`);
     }
 
     swap(): Quiz {
+        if (this.hold === '') {
+            throw new FumenError(`Cannot find hold piece: ${this.quiz}`);
+        }
         const next = this.next;
-        // TODO: 実際の動作と異なる　
-        // if (next === '') {
-        //     return new Quiz(`#Q=[](${this.current})${this.least}`);
-        // }
         return new Quiz(`#Q=[${this.current}](${next})${this.least}`);
     }
 
     stock(): Quiz {
+        if (this.hold !== '' || this.next === '') {
+            throw new FumenError(`Cannot stock: ${this.quiz}`);
+        }
+
         const least = this.least;
+        const head = least[0] !== undefined ? least[0] : '';
 
         if (1 < least.length) {
-            return new Quiz(`#Q=[${this.current}](${least[0]})${least.substr(1)}`);
+            return new Quiz(`#Q=[${this.current}](${head})${least.substr(1)}`);
         }
 
-        if (least.length === 1) {
-            return new Quiz(`#Q=[${this.current}](${least[0]})`);
-        }
-
-        return new Quiz(`#Q=[${this.current}]()`);  // TODO: 実際の動作と異なる　
+        return new Quiz(`#Q=[${this.current}](${head})`);
     }
 
     operate(operation: Operation): Quiz {
@@ -118,11 +120,15 @@ export class Quiz {
         throw new FumenError('Unexpected operation');
     }
 
-    toStr(): string {
-        return this.quiz;
+    format(): Quiz {
+        const hold = this.hold;
+        if (this.current === '' && hold !== '') {
+            return new Quiz(`#Q=[](${hold})`);
+        }
+        return new Quiz(this.quiz);
     }
 
-    getHold(): Piece {
+    getHoldPiece(): Piece {
         const name = this.hold;
         if (name === undefined || name === '') {
             return Piece.Empty;
@@ -130,13 +136,25 @@ export class Quiz {
         return parsePiece(name);
     }
 
-    getNexts(max: number): Piece[] {
-        const names = (this.current + this.next + this.least).substr(0, max);
+    getNextPieces(max?: number): Piece[] {
+        let names = (this.current + this.next + this.least).substr(0, max);
+        if (max !== undefined && names.length < max) {
+            names += ' '.repeat(max - names.length);
+        }
+
         return names.split('').map((name) => {
-            if (name === undefined || name === '') {
+            if (name === undefined || name === ' ') {
                 return Piece.Empty;
             }
             return parsePiece(name);
         });
+    }
+
+    toString(): string {
+        return this.canOperate() ? this.quiz : '';
+    }
+
+    canOperate(): boolean {
+        return this.quiz !== '#Q=[]()';
     }
 }
