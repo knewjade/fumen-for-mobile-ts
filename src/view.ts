@@ -302,6 +302,7 @@ export const view: () => View<State, Actions> = () => {
                     height: heights.tools,
                 }, [
                     a({
+                        id: 'btn-open-fumen',
                         href: '#',
                         onclick: () => {
                             actions.openFumenModal();
@@ -314,6 +315,7 @@ export const view: () => View<State, Actions> = () => {
                         }, 'open_in_new'),
                     ]),
                     span({
+                        id: 'text-pages',
                         style: style({
                             lineHeight: heights.tools + 'px',
                             fontSize: '18px',
@@ -369,7 +371,7 @@ export const view: () => View<State, Actions> = () => {
                 oncreate: (element: HTMLDivElement) => {
                     const instance = M.Modal.init(element, {
                         onOpenEnd: () => {
-                            const element = document.getElementById('fumen-textarea');
+                            const element = document.getElementById('textarea-fumen');
                             if (element !== null) {
                                 element.focus();
                             }
@@ -399,7 +401,7 @@ export const view: () => View<State, Actions> = () => {
             }, [
                 h4('テト譜を開く'),
                 textarea({
-                    id: 'fumen-textarea',
+                    id: 'textarea-fumen-modal',
                     rows: 3,
                     style: style({
                         width: '100%',
@@ -413,6 +415,7 @@ export const view: () => View<State, Actions> = () => {
                     placeholder: 'URL or v115@~ / Support v115 only',
                 }),
                 span({
+                    id: 'text-fumen-modal-error',
                     className: 'red-text text-accent-2',
                     style: style({
                         display: state.fumen.errorMessage !== undefined ? undefined : 'none',
@@ -427,6 +430,7 @@ export const view: () => View<State, Actions> = () => {
                     },
                 }, 'Cancel'),
                 a({
+                    id: 'btn-fumen-modal-open',
                     class: 'waves-effect waves-teal btn-flat' + (
                         state.fumen.value === undefined || state.fumen.errorMessage !== undefined ? ' disabled' : ''
                     ),
