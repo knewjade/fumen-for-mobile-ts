@@ -7,8 +7,11 @@
     "webpack:prod": "webpack --mode production",
     "lint": "tslint --project tsconfig.json --config tslint.json",
     "test": "jest",
-    "run": "cypress run",
-    "open": "cypress open"
+    "cypress": "cypress run",
+    "open": "cypress open",
+
+    "test-ci": "yarn test",
+    "cypress-ci": "yarn cypress"
   },
   "devDependencies": {
     "@hyperapp/html": "^1.0.1",
