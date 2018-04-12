@@ -1,8 +1,8 @@
 stages:
   - test
-  - name: deploydev
+  - name: deploy-dev
     if: branch != master
-  - name: deployprod
+  - name: deploy-prod
     if: branch = master
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
       - yarn test-ci
       - yarn cypress-ci
 
-  - stage: deploydev
+  - stage: deploy-dev
     language: node_js
     node_js: 8
     cache:
@@ -38,7 +38,7 @@ jobs:
         local-dir: public/
         target-branch: master
 
-  - stage: deployprod
+  - stage: deploy-prod
     language: node_js
     node_js: 8
     cache:
@@ -50,12 +50,12 @@ jobs:
     before_deploy:
       - touch public/.nojekyll
     deploy:
-    - provider: pages
-      skip-cleanup: true
-      github-token: ${GITHUB_TOKEN}
-      keep-history: true
-      repo: knewjade/fumen-for-mobile
-      local-dir: public/
-      target-branch: master
-      on:
-        branch: master
+      - provider: pages
+        skip-cleanup: true
+        github-token: ${GITHUB_TOKEN}
+        keep-history: true
+        repo: knewjade/fumen-for-mobile
+        local-dir: public/
+        target-branch: master
+        on:
+          branch: master
