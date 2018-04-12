@@ -16,6 +16,7 @@ jobs:
         - node_modules
     script:
       - yarn test-ci
+      - yarn webpack:prod
       - yarn cypress-ci
 
   - stage: deploy-dev
