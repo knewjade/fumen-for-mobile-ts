@@ -299,6 +299,7 @@ export const view: () => View<State, Actions> = () => {
                     text: state.comment.text,
                 }),
                 tools({
+                    dataTest: 'tools',
                     height: heights.tools,
                 }, [
                     a({
@@ -315,6 +316,7 @@ export const view: () => View<State, Actions> = () => {
                         }, 'open_in_new'),
                     ]),
                     span({
+                        dataTest: 'text-pages',
                         id: 'text-pages',
                         style: style({
                             lineHeight: heights.tools + 'px',
@@ -401,7 +403,7 @@ export const view: () => View<State, Actions> = () => {
             }, [
                 h4('テト譜を開く'),
                 textarea({
-                    dataTest: 'ta-fumen',
+                    dataTest: 'input-fumen',
                     rows: 3,
                     style: style({
                         width: '100%',
@@ -415,6 +417,7 @@ export const view: () => View<State, Actions> = () => {
                     placeholder: 'URL or v115@~ / Support v115 only',
                 }),
                 span({
+                    dataTest: 'text-message',
                     id: 'text-fumen-modal-error',
                     className: 'red-text text-accent-2',
                     style: style({
@@ -423,6 +426,7 @@ export const view: () => View<State, Actions> = () => {
                 }, state.fumen.errorMessage),
             ], [
                 a({
+                    dataTest: 'btn-cancel',
                     class: 'waves-effect waves-teal btn-flat',
                     onclick: () => {
                         actions.closeFumenModal();
@@ -430,7 +434,7 @@ export const view: () => View<State, Actions> = () => {
                     },
                 }, 'Cancel'),
                 a({
-                    dataTest: 'btn-fumen-mdl-open',
+                    dataTest: 'btn-open',
                     id: 'btn-fumen-modal-open',
                     class: 'waves-effect waves-teal btn-flat' + (
                         state.fumen.value === undefined || state.fumen.errorMessage !== undefined ? ' disabled' : ''
