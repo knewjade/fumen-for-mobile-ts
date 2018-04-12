@@ -1,5 +1,5 @@
 import { Component, style } from '../lib/types';
-import { div, nav, ul } from '@hyperapp/html';
+import { div, nav } from '@hyperapp/html';
 
 interface ToolsProps {
     height: number;
@@ -7,7 +7,7 @@ interface ToolsProps {
 
 export const tools: Component<ToolsProps> = (props, children) => {
     return nav({
-        className: 'teal page-footer',
+        className: 'teal page-footer tools',
         style: style({
             width: '100%',
             height: props.height + 'px',

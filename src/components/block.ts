@@ -41,6 +41,7 @@ export const block: Component<BlockProps> = (props) => {
 
     return param({
         key: props.key,
+        id: props.key,
         size: props.size,
         value: props.piece,
         highlight: props.highlight,

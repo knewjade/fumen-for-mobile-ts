@@ -17,7 +17,7 @@ interface GameProps {
 
 export const game: Component<GameProps> = (props, children) => {
     return main({
-        id: 'container',
+        id: 'canvas-container',
         key: props.key,
         style: style({
             width: props.canvas.width,

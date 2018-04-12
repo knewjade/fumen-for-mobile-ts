@@ -243,6 +243,7 @@ export const view: () => View<State, Actions> = () => {
                     bottomBlocks.map((value) => {
                         const blockValue = state.sentLine[value.ix + value.iy * 10];
                         return block({
+                            key: `ce-block-${value.ix}-${value.iy}`,
                             size: {
                                 width: size,
                                 height: size,
@@ -252,7 +253,6 @@ export const view: () => View<State, Actions> = () => {
                                 y: top2.y + value.py * size + value.py + 1,
                             },
                             piece: blockValue.piece,
-                            key: `block-up-${value.ix}-${value.iy}`,
                             rect: value.box,
                             highlight: blockValue.highlight || false,
                             background: '#000',
@@ -302,8 +302,8 @@ export const view: () => View<State, Actions> = () => {
                     height: heights.tools,
                 }, [
                     a({
-                        id: 'btn-open-fumen',
                         href: '#',
+                        dataTest: 'btn-open-fumen',
                         onclick: () => {
                             actions.openFumenModal();
                         },
@@ -364,7 +364,7 @@ export const view: () => View<State, Actions> = () => {
                 ]),
             ]),
             modal({
-                id: 'fumen-modal',
+                dataTest: 'mdl-open-fumen',
                 key: 'fumen-modal-top',
                 isOpened: state.modal.fumen,
                 bottomSheet: false,
@@ -401,7 +401,7 @@ export const view: () => View<State, Actions> = () => {
             }, [
                 h4('テト譜を開く'),
                 textarea({
-                    id: 'textarea-fumen-modal',
+                    dataTest: 'ta-fumen',
                     rows: 3,
                     style: style({
                         width: '100%',
@@ -430,6 +430,7 @@ export const view: () => View<State, Actions> = () => {
                     },
                 }, 'Cancel'),
                 a({
+                    dataTest: 'btn-fumen-mdl-open',
                     id: 'btn-fumen-modal-open',
                     class: 'waves-effect waves-teal btn-flat' + (
                         state.fumen.value === undefined || state.fumen.errorMessage !== undefined ? ' disabled' : ''
@@ -440,7 +441,6 @@ export const view: () => View<State, Actions> = () => {
                 }, 'Open'),
             ]),
             modal({
-                id: 'settings-modal',
                 key: 'settings-modal-top',
                 isOpened: state.modal.settings,
                 bottomSheet: true,
