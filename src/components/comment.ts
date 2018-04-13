@@ -2,6 +2,7 @@ import { Component, style } from '../lib/types';
 import { div, input } from '@hyperapp/html';
 
 interface CommentProps {
+    dataTest: string;
     isChanged: boolean;
     height: number;
     text: string;
@@ -30,6 +31,7 @@ export const comment: Component<CommentProps> = (props) => {
         }),
     }, [
         input({
+            dataTest: props.dataTest,
             type: 'text',
             className: props.isChanged ? 'green darken-1' : '',
             style: commentStyle,

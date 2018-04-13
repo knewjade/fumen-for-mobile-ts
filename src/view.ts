@@ -3,7 +3,7 @@ import { a, div, h4, span, textarea } from '@hyperapp/html';
 import { Actions } from './actions';
 import { State } from './states';
 import { HyperStage } from './lib/hyper';
-import { AnimationState, Piece } from './lib/enums';
+import { AnimationState, isMinoPiece, Piece } from './lib/enums';
 import { ModalInstance, style } from './lib/types';
 import { field } from './components/field';
 import { block } from './components/block';
@@ -84,8 +84,8 @@ export const view: () => View<State, Actions> = () => {
     const boxFunc: () => konva.Rect = () => {
         return new konva.Rect({
             fill: '#333',
-            strokeWidth: 2,
-            stroke: '#333',
+            strokeWidth: 1,
+            stroke: '#666',
             opacity: 1,
         });
     };
@@ -102,7 +102,7 @@ export const view: () => View<State, Actions> = () => {
     // Hold
     const hold = {
         box: boxFunc(),
-        parts: partsFunc(),
+        pieces: partsFunc(),
     };
 
     // Next
@@ -110,7 +110,7 @@ export const view: () => View<State, Actions> = () => {
         return {
             index,
             box: boxFunc(),
-            parts: partsFunc(),
+            pieces: partsFunc(),
         };
     });
     {
@@ -132,7 +132,7 @@ export const view: () => View<State, Actions> = () => {
         for (const obj of [hold].concat(nexts as typeof hold[])) {
             canvasLayer.add(obj.box);
 
-            for (const part of obj.parts) {
+            for (const part of obj.pieces) {
                 canvasLayer.add(part);
             }
         }
@@ -196,8 +196,12 @@ export const view: () => View<State, Actions> = () => {
             x: top.x,
             y: top.y + (size + 1) * 22.5 + 1 + bottomBorderWidth,
         };
-        const boxSize = Math.min(fieldSize.width / 5 * 1.1, (canvas.width - fieldSize.width) / 2);
+        const boxSize = Math.min(fieldSize.width / 5 * 1.1, (canvas.width - fieldSize.width) / 2) + 1;
         const boxMargin = boxSize / 4;
+
+        const getPieceColorInBox = (piece?: Piece) => {
+            return piece !== undefined && isMinoPiece(piece) ? decidePieceColor(piece, true) : undefined;
+        };
 
         return div({
             oncreate: () => {
@@ -240,6 +244,8 @@ export const view: () => View<State, Actions> = () => {
 
                     return block({
                         color,
+                        key: `block-${value.ix}-${value.iy}`,
+                        dataTest: `block-${value.ix}-${value.iy}`,
                         size: {
                             width: size,
                             height: value.py !== 0 ? size : size / 2,
@@ -248,7 +254,6 @@ export const view: () => View<State, Actions> = () => {
                             x: top.x + value.ix * size + value.ix + 1,
                             y: top.y + Math.max(0, value.py - 0.5) * size + value.py + 1,
                         },
-                        key: `block-${value.ix}-${value.iy}`,
                         rect: value.box,
                     });
                 }).concat(
@@ -262,6 +267,7 @@ export const view: () => View<State, Actions> = () => {
                         return block({
                             color,
                             key: `send-block-${value.ix}-${value.iy}`,
+                            dataTest: `send-block-${value.ix}-${value.iy}`,
                             size: {
                                 width: size,
                                 height: size,
@@ -280,13 +286,15 @@ export const view: () => View<State, Actions> = () => {
                         x: top.x - (boxSize + boxMargin / 2),
                         y: top.y,
                     },
-                    size: boxSize,
+                    box: {
+                        size: boxSize,
+                        color: state.hold !== undefined ? '#333' : undefined,
+                    },
                     rect: hold,
-                    visible: true,
                     piece: {
                         value: state.hold,
+                        color: getPieceColorInBox(state.hold),
                         size: boxSize / 4 - 1,
-                        margin: 1,
                     },
                 }),
                 ...nexts.map(value => box({
@@ -295,13 +303,15 @@ export const view: () => View<State, Actions> = () => {
                         x: top.x + fieldSize.width + boxMargin / 2,
                         y: top.y + value.index * (boxSize + boxMargin),
                     },
-                    size: boxSize,
+                    box: {
+                        size: boxSize,
+                        color: state.next !== undefined && state.next[value.index] !== undefined ? '#333' : undefined,
+                    },
                     rect: value,
-                    visible: true,
                     piece: {
                         value: state.next !== undefined ? state.next[value.index] : undefined,
+                        color: state.next !== undefined ? getPieceColorInBox(state.next[value.index]) : undefined,
                         size: boxSize / 4 - 1,
-                        margin: 1,
                     },
                 })),
             ]),
@@ -309,6 +319,7 @@ export const view: () => View<State, Actions> = () => {
                 key: 'menu-top',
             }, [
                 comment({
+                    dataTest: `text-comment`,
                     isChanged: state.comment.isChanged,
                     height: heights.comment,
                     text: state.comment.text,

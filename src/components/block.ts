@@ -3,6 +3,7 @@ import { Component } from '../lib/types';
 import konva = require('konva');
 
 interface BlockProps {
+    dataTest: string;
     position: {
         x: number;
         y: number;
@@ -30,7 +31,7 @@ export const block: Component<BlockProps> = (props) => {
     }
 
     return param({
-        dataTest: props.key,
+        dataTest: props.dataTest,
         key: props.key,
         size: props.size,
         color: props.color,
