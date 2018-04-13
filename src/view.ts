@@ -3,7 +3,7 @@ import { a, div, h4, span, textarea } from '@hyperapp/html';
 import { Actions } from './actions';
 import { State } from './states';
 import { HyperStage } from './lib/hyper';
-import { AnimationState } from './lib/enums';
+import { AnimationState, Piece } from './lib/enums';
 import { ModalInstance, style } from './lib/types';
 import { field } from './components/field';
 import { block } from './components/block';
@@ -14,6 +14,7 @@ import { game } from './components/game';
 import { box } from './components/box';
 import { icon } from './components/icon';
 import { settings } from './components/settings';
+import { getHighlightColor, getNormalColor } from './lib/colors';
 import konva = require('konva');
 
 declare const M: any;
@@ -163,6 +164,14 @@ export const view: () => View<State, Actions> = () => {
         settings?: ModalInstance;
     } = {};
 
+    const decidePieceColor = (piece: Piece, highlight: boolean) => {
+        return highlight ? getHighlightColor(piece) : getNormalColor(piece);
+    };
+
+    const decideBackgroundColor = (y: number) => {
+        return y < 20 ? '#000' : '#333';
+    };
+
     // 全体の構成を1関数にまとめる
     return (state, actions) => {
         const canvas = {
@@ -224,7 +233,13 @@ export const view: () => View<State, Actions> = () => {
                     borderWidth: bottomBorderWidth,
                 }, blocks.map((value) => {
                     const blockValue = state.field[value.ix + value.iy * 10];
+
+                    const color = blockValue.piece === Piece.Empty ?
+                        decideBackgroundColor(value.iy) :
+                        decidePieceColor(blockValue.piece, blockValue.highlight || false);
+
                     return block({
+                        color,
                         size: {
                             width: size,
                             height: value.py !== 0 ? size : size / 2,
@@ -233,17 +248,20 @@ export const view: () => View<State, Actions> = () => {
                             x: top.x + value.ix * size + value.ix + 1,
                             y: top.y + Math.max(0, value.py - 0.5) * size + value.py + 1,
                         },
-                        piece: blockValue.piece,
                         key: `block-${value.ix}-${value.iy}`,
                         rect: value.box,
-                        highlight: blockValue.highlight || false,
-                        background: value.iy < 20 ? '#000' : '#333',
                     });
                 }).concat(
                     bottomBlocks.map((value) => {
                         const blockValue = state.sentLine[value.ix + value.iy * 10];
+
+                        const color = blockValue.piece === Piece.Empty ?
+                            '#000' :
+                            decidePieceColor(blockValue.piece, blockValue.highlight || false);
+
                         return block({
-                            key: `ce-block-${value.ix}-${value.iy}`,
+                            color,
+                            key: `send-block-${value.ix}-${value.iy}`,
                             size: {
                                 width: size,
                                 height: size,
@@ -252,10 +270,7 @@ export const view: () => View<State, Actions> = () => {
                                 x: top2.x + value.ix * size + value.ix + 1,
                                 y: top2.y + value.py * size + value.py + 1,
                             },
-                            piece: blockValue.piece,
                             rect: value.box,
-                            highlight: blockValue.highlight || false,
-                            background: '#000',
                         });
                     }),
                 )),
