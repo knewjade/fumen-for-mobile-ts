@@ -1,67 +1,64 @@
-import { DEF_HIGHLIGHT, DEF_NORMAL } from './common.js';
+import {Color, datatest, leftTap, mino, Piece, rightTap, Rotation, pages} from './common.js';
 
-const datatest = value => `[datatest="${value}"]`;
-const block = (x, y) => datatest(`block-${x}-${y}`);
-
+// タップのテスト
 describe('Tap', () => {
-    // タップのテスト
+    const page = pages(3);
+
     it('Next / Prev', () => {
         cy.visit('./public/index.html?d=v115@vhCRQJUmBKpB');
 
-        cy.viewport(375, 667);  // Like iPhone7
-
         // Assertion: ページ番号の確認
-        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 3');
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1));
 
-        // Iブロックの確認
-        [block(3, 0), block(4, 0), block(5, 0), block(6, 0)].forEach((block) => {
-            cy.get(block).should('have.attr', 'color', DEF_HIGHLIGHT.I);
+        // Iミノの確認
+        mino(Piece.I, Rotation.Spawn)(4, 0).forEach((block) => {
+            cy.get(block).should('have.attr', 'color', Color.Highlight.I);
         });
 
-        // 右半分をクリック
-        cy.get('body').click(300, 300);
-        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '2 / 3');
+        rightTap(() => {
+            cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(2));
 
-        // Iブロックの確認
-        [block(3, 0), block(4, 0), block(5, 0), block(6, 0)].forEach((block) => {
-            cy.get(block).should('have.attr', 'color', DEF_NORMAL.I);
+            // Iミノの確認
+            mino(Piece.I, Rotation.Spawn)(4, 0).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Normal.I);
+            });
+
+            // Zミノの確認
+            mino(Piece.Z, Rotation.Spawn)(4, 1).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Highlight.Z);
+            });
         });
 
-        // Zブロックの確認
-        [block(3, 2), block(4, 2), block(4, 1), block(5, 1)].forEach((block) => {
-            cy.get(block).should('have.attr', 'color', DEF_HIGHLIGHT.Z);
+        rightTap(() => {
+            cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(3));
+
+            // Zミノの確認
+            mino(Piece.Z, Rotation.Spawn)(4, 1).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Normal.Z);
+            });
+
+            // Lミノの確認
+            mino(Piece.L, Rotation.Right)(0, 1).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Highlight.L);
+            });
         });
 
-        // 右半分をクリック
-        cy.get('body').click(300, 300);
-        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '3 / 3');
+        leftTap(() => {
+            cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(2));
 
-        // Zブロックの確認
-        [block(3, 2), block(4, 2), block(4, 1), block(5, 1)].forEach((block) => {
-            cy.get(block).should('have.attr', 'color', DEF_NORMAL.Z);
+            // Lミノの確認
+            mino(Piece.L, Rotation.Right)(0, 1).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Empty.Field);
+            });
         });
 
-        // Lブロックの確認
-        [block(0, 2), block(0, 1), block(0, 0), block(1, 0)].forEach((block) => {
-            cy.get(block).should('have.attr', 'color', DEF_HIGHLIGHT.L);
-        });
+        leftTap(() => {
+            cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1));
 
-        // 左半分をクリック
-        cy.get('body').click(100, 300);
-        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '2 / 3');
-
-        // Lブロックの確認
-        [block(0, 2), block(0, 1), block(0, 0), block(1, 0)].forEach((block) => {
-            cy.get(block).should('have.attr', 'color', DEF_NORMAL.EMPTY);
-        });
-
-        // 左半分をクリック
-        cy.get('body').click(100, 300);
-        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 3');
-
-        // Zブロックの確認
-        [block(3, 2), block(4, 2), block(4, 1), block(5, 1)].forEach((block) => {
-            cy.get(block).should('have.attr', 'color', DEF_NORMAL.EMPTY);
+            // Zミノの確認
+            mino(Piece.Z, Rotation.Spawn)(4, 1).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Empty.Field);
+            });
         });
     });
 });

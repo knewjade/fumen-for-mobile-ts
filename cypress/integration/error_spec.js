@@ -1,11 +1,9 @@
 const datatest = value => `[datatest="${value}"]`;
 
-describe('Error', () => {
-    // テト譜を開く
-    it('When open fumen', () => {
+// テト譜を開く
+describe('Open fumen', () => {
+    it('error -> success', () => {
         cy.visit('./public/index.html');
-
-        cy.viewport(375, 667);  // Like iPhone7
 
         // モーダルを開く
         cy.get(datatest('btn-open-fumen')).click();

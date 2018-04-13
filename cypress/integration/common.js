@@ -1,11 +1,113 @@
-export const DEF_NORMAL = {
-    EMPTY: '#000',
-    I: '#009999',
-    Z: '#9B0000',
+export const Color = {
+    Normal: {
+        Empty: '#000',
+        I: '#009999',
+        Z: '#9B0000',
+    },
+    Highlight: {
+        I: '#24CCCD',
+        Z: '#CE312D',
+        L: '#CD9A24',
+        S: '#26CE22',
+    },
+    Empty: {
+        Field: '#000',
+    },
 };
 
-export const DEF_HIGHLIGHT = {
-    I: '#24CCCD',
-    Z: '#CE312D',
-    L: '#CD9A24',
+export const Piece = {
+    I: 'I',
+    J: 'J',
+    L: 'L',
+    S: 'S',
+    Z: 'Z',
+    O: 'O',
+    T: 'T',
+};
+
+export const Rotation = {
+    Spawn: 'Spawn',
+    Reverse: 'Reverse',
+    Left: 'Left',
+    Right: 'Right',
+};
+
+export const datatest = value => `[datatest="${value}"]`;
+
+const block = (x, y) => datatest(`block-${x}-${y}`);
+
+export const mino = (piece, rotation) => {
+    let blocks = getPieces(piece);
+    switch (rotation) {
+        case Rotation.Spawn:
+            break;
+        case Rotation.Reverse:
+            blocks = blocks.map(current => [-current[0], -current[1]]);
+            break;
+        case Rotation.Left:
+            blocks = blocks.map(current => [-current[1], current[0]]);
+            break;
+        case Rotation.Right:
+            blocks = blocks.map(current => [current[1], -current[0]]);
+            break;
+    }
+
+    return (x, y) => {
+        return blocks.map(current => [current[0] + x, current[1] + y]).map(current => block(...current));
+    };
+};
+
+const getPieces = (piece) => {
+    switch (piece) {
+        case Piece.I:
+            return [[0, 0], [-1, 0], [1, 0], [2, 0]];
+        case Piece.T:
+            return [[0, 0], [-1, 0], [1, 0], [0, 1]];
+        case Piece.O:
+            return [[0, 0], [1, 0], [0, 1], [1, 1]];
+        case Piece.L:
+            return [[0, 0], [-1, 0], [1, 0], [1, 1]];
+        case Piece.J:
+            return [[0, 0], [-1, 0], [1, 0], [-1, 1]];
+        case Piece.S:
+            return [[0, 0], [-1, 0], [0, 1], [1, 1]];
+        case Piece.Z:
+            return [[0, 0], [1, 0], [0, 1], [-1, 1]];
+    }
+};
+
+export const rightTap = (first, second) => {
+    let count, callback;
+    if (typeof first === 'number') {
+        count = first;
+        callback = second;
+    } else {
+        count = 1;
+        callback = first;
+    }
+
+    for (let i = 0; i < count; i += 1)
+        cy.get('body').click(300, 300);
+    if (callback) callback();
+};
+
+export const leftTap = (first, second) => {
+    let count, callback;
+    if (typeof first === 'number') {
+        count = first;
+        callback = second;
+    } else {
+        count = 1;
+        callback = first;
+    }
+
+    for (let i = 0; i < count; i += 1)
+        cy.get('body').click(100, 300);
+    if (callback) callback();
+};
+
+export const pages = (max) => {
+    return (page) => {
+        return `${page} / ${max}`;
+    };
 };
