@@ -45,6 +45,7 @@ describe('Tap', () => {
             });
         });
 
+        // 戻る
         leftTap(() => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(2));
 
@@ -55,6 +56,31 @@ describe('Tap', () => {
         });
 
         leftTap(() => {
+            cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1));
+
+            // Zミノの確認
+            mino(Piece.Z, Rotation.Spawn)(4, 1).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Empty.Field);
+            });
+        });
+
+        // 最後にループする
+        leftTap(() => {
+            cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(3));
+
+            // Zミノの確認
+            mino(Piece.Z, Rotation.Spawn)(4, 1).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Normal.Z);
+            });
+
+            // Lミノの確認
+            mino(Piece.L, Rotation.Right)(0, 1).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Highlight.L);
+            });
+        });
+
+        // 先頭にループする
+        rightTap(() => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1));
 
             // Zミノの確認

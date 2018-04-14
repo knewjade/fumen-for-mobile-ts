@@ -280,7 +280,7 @@ export const view: () => View<State, Actions> = () => {
                         });
                     }),
                 )),
-                box({
+                state.hold !== undefined ? box({
                     key: 'hold',
                     dataTest: 'box-hold',
                     position: {
@@ -289,7 +289,7 @@ export const view: () => View<State, Actions> = () => {
                     },
                     box: {
                         size: boxSize,
-                        color: state.hold !== undefined ? '#333' : undefined,
+                        color: '#333',
                     },
                     rect: hold,
                     piece: {
@@ -297,8 +297,8 @@ export const view: () => View<State, Actions> = () => {
                         color: getPieceColorInBox(state.hold),
                         size: boxSize / 4 - 1,
                     },
-                }),
-                ...nexts.map(value => box({
+                }) : undefined,
+                ...nexts.map(value => state.next !== undefined && state.next[value.index] !== undefined ? box({
                     key: `next-${value.index}`,
                     dataTest: `box-next-${value.index}`,
                     position: {
@@ -307,16 +307,16 @@ export const view: () => View<State, Actions> = () => {
                     },
                     box: {
                         size: boxSize,
-                        color: state.next !== undefined && state.next[value.index] !== undefined ? '#333' : undefined,
+                        color: '#333',
                     },
                     rect: value,
                     piece: {
-                        type: state.next !== undefined ? state.next[value.index] : undefined,
-                        color: state.next !== undefined ? getPieceColorInBox(state.next[value.index]) : undefined,
+                        type: state.next[value.index],
+                        color: getPieceColorInBox(state.next[value.index]),
                         size: boxSize / 4 - 1,
                     },
-                })),
-            ]),
+                }) : undefined),
+            ] as any),
             div({
                 key: 'menu-top',
             }, [

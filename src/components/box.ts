@@ -16,7 +16,7 @@ interface BoxProps {
     };
     box: {
         size: number;
-        color?: string;
+        color: string;
     };
     piece: {
         type?: Piece,
@@ -92,25 +92,17 @@ export const box: Component<BoxProps> = (props, children) => {
     };
 
     const setBoxColor = () => {
-        if (props.box.color !== undefined) {
-            props.rect.box.show();
-            props.rect.box.fill(props.box.color);
-        } else {
-            props.rect.box.hide();
-        }
+        props.rect.box.fill(props.box.color);
     };
 
     const setPieceColor = () => {
         if (props.piece.color !== undefined) {
-            props.rect.pieces.forEach(it => it.show());
-
             const color = props.piece.color;
             props.rect.pieces.forEach(it => it.fill(color));
-        } else {
-            props.rect.pieces.forEach(it => it.hide());
         }
     };
 
+    console.log(props.key);
     return param({
         key: props.key,
         dataTest: props.dataTest,
@@ -131,6 +123,7 @@ export const box: Component<BoxProps> = (props, children) => {
             size: props.box.size,
             color: props.box.color,
             oncreate: () => {
+                props.rect.box.show();
                 setBoxSize();
                 setBoxColor();
             },
@@ -143,12 +136,16 @@ export const box: Component<BoxProps> = (props, children) => {
                     setBoxColor();
                 }
             },
+            ondestroy: () => {
+                props.rect.box.hide();
+            },
         }),
-        param({
+        props.piece.color !== undefined ? param({
             key: `${props.key}-piece`,
             size: props.piece.size,
             color: props.piece.color,
             oncreate: () => {
+                props.rect.pieces.forEach(it => it.show());
                 setPieceSize();
                 setPieceColor();
             },
@@ -161,7 +158,10 @@ export const box: Component<BoxProps> = (props, children) => {
                     setPieceColor();
                 }
             },
-        }),
+            ondestroy: () => {
+                props.rect.pieces.forEach(it => it.hide());
+            },
+        }) : undefined,
         param(children),
-    ]);
+    ] as any);
 };
