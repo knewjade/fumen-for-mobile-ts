@@ -16,13 +16,15 @@ export const Color = {
 };
 
 export const Piece = {
-    I: 'I',
-    J: 'J',
-    L: 'L',
-    S: 'S',
-    Z: 'Z',
-    O: 'O',
-    T: 'T',
+    Empty: '0',
+    I: '1',
+    L: '2',
+    O: '3',
+    Z: '4',
+    T: '5',
+    J: '6',
+    S: '7',
+    Gray: '8',
 };
 
 export const Rotation = {
@@ -110,4 +112,12 @@ export const pages = (max) => {
     return (page) => {
         return `${page} / ${max}`;
     };
+};
+
+export const holdBox = () => {
+    return datatest('box-hold');
+};
+
+export const nextBox = (index) => {
+    return datatest(`box-next-${index}`);
 };

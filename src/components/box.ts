@@ -5,6 +5,7 @@ import konva = require('konva');
 
 interface BoxProps {
     key: string;
+    dataTest: string;
     position: {
         x: number;
         y: number;
@@ -18,7 +19,7 @@ interface BoxProps {
         color?: string;
     };
     piece: {
-        value?: Piece,
+        type?: Piece,
         color?: string;
         size: number;
     };
@@ -77,8 +78,8 @@ export const box: Component<BoxProps> = (props, children) => {
 
     const setPosition = () => {
         props.rect.box.setAbsolutePosition(props.position);
-        if (props.piece.value !== undefined && isMinoPiece(props.piece.value)) {
-            setAbsolutePosition(props.rect.pieces, props.piece.value);
+        if (props.piece.type !== undefined && isMinoPiece(props.piece.type)) {
+            setAbsolutePosition(props.rect.pieces, props.piece.type);
         }
     };
 
@@ -112,45 +113,55 @@ export const box: Component<BoxProps> = (props, children) => {
 
     return param({
         key: props.key,
-        position: props.position,
-        box: props.box,
-        piece: props.piece,
+        dataTest: props.dataTest,
+        x: props.position.x,
+        y: props.position.y,
+        type: props.piece.type,
         oncreate: () => {
-            // position
             setPosition();
-
-            // size
-            setBoxSize();
-            setPieceSize();
-
-            // color
-            setBoxColor();
-            setPieceColor();
         },
         onupdate: (ignore: any, attr: any) => {
-            // position
-            if (props.position.x !== attr.position.x
-                || props.position.y === attr.position.y
-                || props.piece.value !== attr.piece.value
-            ) {
+            if (props.position.x !== attr.x || props.position.y === attr.y || props.piece.type !== attr.type) {
                 setPosition();
             }
-
-            // size
-            if (props.box.size !== attr.box.size) {
-                setBoxSize();
-            }
-            if (props.piece.size !== attr.piece.size) {
-                setPieceSize();
-            }
-
-            // color
-            if (props.box.color !== attr.box.color) {
-                setBoxColor();
-            }
-            if (props.piece.color !== attr.piece.color) {
-                setPieceColor();
-            }
         },
-    }, children);
+    }, [
+        param({
+            key: `${props.key}-box`,
+            size: props.box.size,
+            color: props.box.color,
+            oncreate: () => {
+                setBoxSize();
+                setBoxColor();
+            },
+            onupdate: (ignore: any, attr: any) => {
+                if (props.box.size !== attr.size) {
+                    setBoxSize();
+                }
+
+                if (props.box.color !== attr.color) {
+                    setBoxColor();
+                }
+            },
+        }),
+        param({
+            key: `${props.key}-piece`,
+            size: props.piece.size,
+            color: props.piece.color,
+            oncreate: () => {
+                setPieceSize();
+                setPieceColor();
+            },
+            onupdate: (ignore: any, attr: any) => {
+                if (props.piece.size !== attr.size) {
+                    setPieceSize();
+                }
+
+                if (props.piece.color !== attr.color) {
+                    setPieceColor();
+                }
+            },
+        }),
+        param(children),
+    ]);
 };

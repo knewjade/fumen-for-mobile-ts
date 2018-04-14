@@ -282,6 +282,7 @@ export const view: () => View<State, Actions> = () => {
                 )),
                 box({
                     key: 'hold',
+                    dataTest: 'box-hold',
                     position: {
                         x: top.x - (boxSize + boxMargin / 2),
                         y: top.y,
@@ -292,13 +293,14 @@ export const view: () => View<State, Actions> = () => {
                     },
                     rect: hold,
                     piece: {
-                        value: state.hold,
+                        type: state.hold,
                         color: getPieceColorInBox(state.hold),
                         size: boxSize / 4 - 1,
                     },
                 }),
                 ...nexts.map(value => box({
                     key: `next-${value.index}`,
+                    dataTest: `box-next-${value.index}`,
                     position: {
                         x: top.x + fieldSize.width + boxMargin / 2,
                         y: top.y + value.index * (boxSize + boxMargin),
@@ -309,7 +311,7 @@ export const view: () => View<State, Actions> = () => {
                     },
                     rect: value,
                     piece: {
-                        value: state.next !== undefined ? state.next[value.index] : undefined,
+                        type: state.next !== undefined ? state.next[value.index] : undefined,
                         color: state.next !== undefined ? getPieceColorInBox(state.next[value.index]) : undefined,
                         size: boxSize / 4 - 1,
                     },

@@ -1,4 +1,4 @@
-import {Color, datatest, leftTap, mino, Piece, rightTap, Rotation, pages} from './common.js';
+import {Color, datatest, leftTap, mino, pages, Piece, rightTap, Rotation} from './common.js';
 
 // タップのテスト
 describe('Tap', () => {
@@ -7,13 +7,15 @@ describe('Tap', () => {
     it('Next / Prev', () => {
         cy.visit('./public/index.html?d=v115@vhCRQJUmBKpB');
 
-        // Assertion: ページ番号の確認
-        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1));
+        {
+            // Assertion: ページ番号の確認
+            cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1));
 
-        // Iミノの確認
-        mino(Piece.I, Rotation.Spawn)(4, 0).forEach((block) => {
-            cy.get(block).should('have.attr', 'color', Color.Highlight.I);
-        });
+            // Iミノの確認
+            mino(Piece.I, Rotation.Spawn)(4, 0).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Highlight.I);
+            });
+        }
 
         rightTap(() => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(2));

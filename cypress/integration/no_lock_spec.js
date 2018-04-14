@@ -7,13 +7,15 @@ describe('No lock', () => {
     it('S', () => {
         cy.visit('./public/index.html?d=v115@UeB8beB8beB8beB8beB8beB8beB8ke3Jnvhyvpfnpf?/pf3afvafnaf/af3LfvLfnLf/Lf38ev8en8e/8e3tevtent?e/te3eeveenee/ee3PevPenPevPe3Pe/eeneevee3ee/ten?tevte3te/8en8ev8e38e/LfnLfvLf3Lf/afnafvaf3af/pf?npfnpf');
 
-        // Assertion: ページ番号の確認
-        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1));
+        {
+            // Assertion: ページ番号の確認
+            cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1));
 
-        // Sミノの確認
-        mino(Piece.S, Rotation.Spawn)(1, 0).forEach((block) => {
-            cy.get(block).should('have.attr', 'color', Color.Highlight.S);
-        });
+            // Sミノの確認
+            mino(Piece.S, Rotation.Spawn)(1, 0).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+            });
+        }
 
         rightTap(() => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(2));
