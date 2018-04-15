@@ -11,7 +11,6 @@ export interface Page {
     field: Field;
     sentLine: FieldLine;
     piece?: {
-        lock: boolean;
         type: Piece;
         rotation: Rotation;
         coordinate: {
@@ -27,6 +26,7 @@ export interface Page {
         operation?: Operation;
     };
     flags: {
+        lock: boolean;
         send: boolean;
         mirrored: boolean;
         colorize: boolean;
@@ -192,7 +192,6 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
 
         // データ処理用に加工する
         let currentPiece: {
-            lock: boolean;
             type: Piece;
             rotation: Rotation;
             coordinate: {
@@ -202,7 +201,6 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
         } | undefined;
         if (action.piece !== Piece.Empty) {
             currentPiece = {
-                lock: action.isLock,
                 type: action.piece,
                 rotation: action.rotation,
                 coordinate: action.coordinate,
@@ -218,6 +216,7 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
             sentLine: blockUp.copy(),
             piece: currentPiece,
             flags: {
+                lock: action.isLock,
                 send: action.isBlockUp,
                 mirrored: action.isMirror,
                 colorize: action.isColor,

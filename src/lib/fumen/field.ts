@@ -115,7 +115,7 @@ export class FieldLine {
         return new FieldLine({ field });
     }
 
-    private field: Field;
+    private readonly field: Field;
 
     constructor(params: { field?: Field }) {
         this.field = params.field !== undefined ? params.field : new Field({ length: FieldConstants.Width });

@@ -266,8 +266,8 @@ export const view: () => View<State, Actions> = () => {
 
                         return block({
                             color,
-                            key: `send-block-${value.ix}-${value.iy}`,
-                            dataTest: `send-block-${value.ix}-${value.iy}`,
+                            key: `sent-block-${value.ix}-${value.iy}`,
+                            dataTest: `sent-block-${value.ix}-${value.iy}`,
                             size: {
                                 width: size,
                                 height: size,

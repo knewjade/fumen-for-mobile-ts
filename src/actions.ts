@@ -18,7 +18,7 @@ export interface Actions {
     startAnimation: () => action;
     pauseAnimation: () => action;
     setComment: (data: { comment: string }) => action;
-    setField: (data: { field: Block[] }) => action;
+    setField: (data: { field: Block[], filledHighlight: boolean }) => action;
     setSentLine: (data: { sentLine: Block[] }) => action;
     setHold: (data: { hold?: Piece }) => action;
     setNext: (data: { next?: Piece[] }) => action;
@@ -151,8 +151,11 @@ export const actions: Readonly<Actions> = {
             },
         };
     },
-    setField: ({ field }) => (): NextState => {
-        log('action: setField');
+    setField: ({ field, filledHighlight }) => (): NextState => {
+        log('action: setField: filled = ' + filledHighlight);
+        if (!filledHighlight) {
+            return { field };
+        }
 
         const drawnField: Block[] = [];
         for (let y = 0; y < FieldConstants.Height + FieldConstants.SentLine; y += 1) {
@@ -244,7 +247,7 @@ export const actions: Readonly<Actions> = {
                 }
 
                 // ミノを接着したときは現在の使用ミノをEmptyに置き換える
-                if (nextPage.piece === undefined || nextPage.piece.lock) {
+                if (nextPage.piece === undefined || nextPage.flags.lock) {
                     currentPiece = Piece.Empty;
                 }
             }
@@ -281,7 +284,7 @@ export const actions: Readonly<Actions> = {
         return sequence(state, [
             state.play.status === AnimationState.Play ? actions.startAnimation() : undefined,
             actions.setComment({ comment }),
-            actions.setField({ field }),
+            actions.setField({ field, filledHighlight: page.flags.lock }),
             actions.setSentLine({ sentLine }),
             actions.setHold({ hold }),
             actions.setNext({ next }),

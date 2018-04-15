@@ -1,6 +1,6 @@
+// TODO: 構造を色->状態に統一したい
 export const Color = {
     Normal: {
-        Empty: '#000',
         I: '#009999',
         J: '#0000BE',
         L: '#9A6700',
@@ -20,6 +20,10 @@ export const Color = {
     },
     Empty: {
         Field: '#000',
+    },
+    Gray: {
+        Field: '#999999',
+        Highlight: '#CCCCCC',
     },
 };
 
@@ -44,7 +48,8 @@ export const Rotation = {
 
 export const datatest = value => `[datatest="${value}"]`;
 
-const block = (x, y) => datatest(`block-${x}-${y}`);
+export const block = (x, y) => datatest(`block-${x}-${y}`);
+export const sentBlock = (x) => datatest(`sent-block-${x}-0`);
 
 export const mino = (piece, rotation) => {
     let blocks = getPieces(piece);
