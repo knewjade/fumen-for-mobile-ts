@@ -656,5 +656,41 @@ describe('fumen', () => {
         test('v110@', () => {
             expect(() => extract('v110@7eAA4G')).toThrow(FumenError);
         });
+
+        test('Quiz', async () => {
+            const pages: Page[] = [];
+            await decode('vhBSSYaAFLDmClcJSAVDEHBEooRBPoAVBTejWC0/AA?AAAA', (page) => {
+                pages[page.index] = page;
+            });
+
+            expect(pages).toHaveLength(2);
+            expect(pages[0]).toMatchObject({
+                comment: {
+                    text: '#Q=[](O)SIZLTJ',
+                },
+                piece: {
+                    lock: true,
+                    type: Piece.L,
+                    rotation: Rotation.Spawn,
+                    coordinate: {
+                        x: 8,
+                        y: 0,
+                    },
+                },
+                quiz: {
+                    operation: undefined,
+                },
+            } as Page);
+
+            expect(pages[1]).toMatchObject({
+                comment: {
+                    ref: 0,
+                },
+                piece: undefined,
+                quiz: {
+                    operation: undefined,
+                },
+            } as Page);
+        });
     });
 });

@@ -1,4 +1,4 @@
-import {datatest, holdBox, nextBox, pages, Piece, rightTap} from './common.js';
+import {datatest, pages, rightTap} from './common.js';
 
 // Quizのテスト
 describe('Quiz', () => {
@@ -15,13 +15,6 @@ describe('Quiz', () => {
             // Quizの確認
             cy.get(datatest('text-comment')).should('have.value', '#Q=[](I)LOTJSZ');
             cy.get(datatest('text-comment')).should('have.class', changeColor);
-
-            // Hold & Nextの確認
-            cy.get(holdBox()).should('have.attr', 'type', Piece.Empty);
-            [Piece.I, Piece.L, Piece.O, Piece.T, Piece.J].forEach((piece, index) => {
-                cy.get(nextBox(index)).should('have.attr', 'type', piece);
-            });
-            cy.get(nextBox(5)).should('not.exist');
         }
 
         // パフェ1回目

@@ -174,9 +174,15 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
 
         if (store.quiz !== undefined) {
             if (action.isLock && isMinoPiece(action.piece) && store.quiz.canOperate()) {
-                const operation = store.quiz.getOperation(action.piece);
-                quiz = { operation };
-                store.quiz = store.quiz.operate(operation);
+                try {
+                    const operation = store.quiz.getOperation(action.piece);
+                    quiz = { operation };
+                    store.quiz = store.quiz.operate(operation);
+                } catch (e) {
+                    // Not operate
+                    console.error(e.message);
+                    quiz = { operation: undefined };
+                }
             } else {
                 quiz = {
                     operation: undefined,
