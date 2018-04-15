@@ -15,6 +15,110 @@ describe('Box', () => {
         cy.get(nextBox(5)).should('not.exist');
     });
 
+    it('without Quiz', () => {
+        const page = pages(17);
+
+        cy.visit('./public/index.html?d=v115@vhG0fm0Tf0sBvtB39e3qBTpfRhRpHeRpRemkBvhCpm?BNsfGofOhi0Ieg0TeAAevhExkBlcBdrfAAeNsf\n');
+
+        // Assertion: ページ番号の確認
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1));
+
+        {
+            // Hold & Nextの確認
+            cy.get(holdBox()).should('not.exist');
+            [Piece.S, Piece.S, Piece.O, Piece.J, Piece.I].forEach((piece, index) => {
+                cy.get(nextBox(index)).should('have.attr', 'type', piece);
+            });
+            cy.get(nextBox(5)).should('not.exist');
+        }
+
+        rightTap(3, () => {
+            cy.get(holdBox()).should('not.exist');
+            [Piece.S, Piece.O, Piece.J, Piece.I, Piece.T].forEach((piece, index) => {
+                cy.get(nextBox(index)).should('have.attr', 'type', piece);
+            });
+            cy.get(nextBox(5)).should('not.exist');
+        });
+
+        rightTap(() => {
+            cy.get(holdBox()).should('not.exist');
+            // [CHANGE] テト譜では、NextはOJITIとなるが、Jが出力されない理由がわからないため出力する
+            [Piece.O, Piece.J, Piece.I, Piece.T, Piece.J].forEach((piece, index) => {
+                cy.get(nextBox(index)).should('have.attr', 'type', piece);
+            });
+            cy.get(nextBox(5)).should('not.exist');
+        });
+
+        rightTap(2, () => {
+            cy.get(holdBox()).should('not.exist');
+            [Piece.J, Piece.I, Piece.T, Piece.J, Piece.I].forEach((piece, index) => {
+                cy.get(nextBox(index)).should('have.attr', 'type', piece);
+            });
+            cy.get(nextBox(5)).should('not.exist');
+        });
+
+        rightTap(() => {
+            cy.get(holdBox()).should('not.exist');
+            [Piece.I, Piece.T, Piece.J, Piece.I, Piece.T].forEach((piece, index) => {
+                cy.get(nextBox(index)).should('have.attr', 'type', piece);
+            });
+            cy.get(nextBox(5)).should('not.exist');
+        });
+
+        rightTap(() => {
+            cy.get(holdBox()).should('not.exist');
+            [Piece.T, Piece.J, Piece.I, Piece.T, Piece.T].forEach((piece, index) => {
+                cy.get(nextBox(index)).should('have.attr', 'type', piece);
+            });
+            cy.get(nextBox(5)).should('not.exist');
+        });
+
+        rightTap(() => {
+            cy.get(holdBox()).should('not.exist');
+            [Piece.J, Piece.I, Piece.T, Piece.T, Piece.T].forEach((piece, index) => {
+                cy.get(nextBox(index)).should('have.attr', 'type', piece);
+            });
+            cy.get(nextBox(5)).should('not.exist');
+        });
+
+        rightTap(() => {
+            cy.get(holdBox()).should('not.exist');
+            [Piece.I, Piece.T, Piece.T, Piece.T].forEach((piece, index) => {
+                cy.get(nextBox(index)).should('have.attr', 'type', piece);
+            });
+            cy.get(nextBox(4)).should('not.exist');
+        });
+
+        rightTap(2, () => {
+            cy.get(holdBox()).should('not.exist');
+            [Piece.T, Piece.T, Piece.T].forEach((piece, index) => {
+                cy.get(nextBox(index)).should('have.attr', 'type', piece);
+            });
+            cy.get(nextBox(3)).should('not.exist');
+        });
+
+        rightTap(() => {
+            cy.get(holdBox()).should('not.exist');
+            [Piece.T, Piece.T].forEach((piece, index) => {
+                cy.get(nextBox(index)).should('have.attr', 'type', piece);
+            });
+            cy.get(nextBox(2)).should('not.exist');
+        });
+
+        rightTap(() => {
+            cy.get(holdBox()).should('not.exist');
+            [Piece.T].forEach((piece, index) => {
+                cy.get(nextBox(index)).should('have.attr', 'type', piece);
+            });
+            cy.get(nextBox(1)).should('not.exist');
+        });
+
+        rightTap(2, () => {
+            cy.get(holdBox()).should('not.exist');
+            cy.get(nextBox(0)).should('not.exist');
+        });
+    });
+
     it('with Quiz', () => {
         const page = pages(14);
 
@@ -194,7 +298,7 @@ describe('Box', () => {
             cy.get(datatest('text-comment')).should('have.value', '#Q=[](I)OLSJTZ');
 
             // Hold & Nextの確認
-            // [CHANGE] テト譜では、NextにIが表示されない
+            // [CHANGE] テト譜では、NextにIが表示されない（現在のミノはスキップされてしまうため。次のページでは現れる）
             cy.get(holdBox()).should('have.attr', 'type', Piece.Empty);
             [Piece.I, Piece.O, Piece.L, Piece.S, Piece.J].forEach((piece, index) => {
                 cy.get(nextBox(index)).should('have.attr', 'type', piece);

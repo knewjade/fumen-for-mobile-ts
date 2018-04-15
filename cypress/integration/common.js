@@ -2,13 +2,21 @@ export const Color = {
     Normal: {
         Empty: '#000',
         I: '#009999',
+        J: '#0000BE',
+        L: '#9A6700',
         Z: '#9B0000',
+        S: '#009B00',
+        O: '#999900',
+        T: '#9B009B',
     },
     Highlight: {
         I: '#24CCCD',
-        Z: '#CE312D',
+        J: '#3229CF',
         L: '#CD9A24',
+        Z: '#CE312D',
         S: '#26CE22',
+        O: '#CCCE19',
+        T: '#CE27CE',
     },
     Empty: {
         Field: '#000',

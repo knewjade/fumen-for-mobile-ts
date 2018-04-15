@@ -1,11 +1,67 @@
-import {datatest, pages, rightTap} from './common.js';
+import {datatest, pages, rightTap, holdBox, Piece, nextBox, Color, mino, Rotation} from './common';
 
 // Quizのテスト
 describe('Quiz', () => {
-    const page = pages(102);
     const changeColor = 'green darken-1';
 
+    it('after quiz', () => {
+        const page = pages(3);
+
+        cy.visit('./public/index.html?d=v115@vhCWSYVAFLDmClcJSAVDEHBEooRBKoAVB6AAAAUoBT?pB');
+
+        // Assertion: ページ番号の確認
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1));
+
+        {
+            // Quizの確認
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[](J)Z');
+            cy.get(datatest('text-comment')).should('have.class', changeColor);
+
+            // Hold & Nextの確認
+            cy.get(holdBox()).should('have.attr', 'type', Piece.Empty);
+            [Piece.Z].forEach((piece, index) => {
+                cy.get(nextBox(index)).should('have.attr', 'type', piece);
+            });
+            cy.get(nextBox(1)).should('not.exist');
+
+            // Jミノの確認
+            mino(Piece.J, Rotation.Spawn)(8, 0).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Highlight.J);
+            });
+        }
+
+        rightTap(() => {
+            // Quizの確認
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[](Z)');
+
+            // Hold & Nextの確認
+            cy.get(holdBox()).should('have.attr', 'type', Piece.Empty);
+            cy.get(nextBox(0)).should('not.exist');
+
+            // Jミノの確認
+            mino(Piece.Z, Rotation.Spawn)(8, 1).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Highlight.Z);
+            });
+        });
+
+        rightTap(() => {
+            // Quizの確認
+            cy.get(datatest('text-comment')).should('have.value', '');
+
+            // Hold & Nextの確認
+            cy.get(holdBox()).should('not.exist');
+            cy.get(nextBox(0)).should('not.exist');
+
+            // Jミノの確認
+            mino(Piece.O, Rotation.Spawn)(0, 0).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Highlight.O);
+            });
+        });
+    });
+
     it('10 PC', () => {
+        const page = pages(102);
+
         cy.visit('./public/index.html?d=v115@vh/AgWaAFLDmClcJSAVDEHBEooRBJoAVBMHmPCzXBA?AxuBypBTfBetBXsQgAFLDmClcJSAVztSAVG88A4c88AZn88?AQXOMCv/rtCFrB0gB0hBliB5oBetQhAFLDmClcJSAVjiSAV?G88AYP88AZyrSAS4KuCqyCMC0AAAAyvBXsBTpBUlB3iBumB?ifBzgB5oB1xQlAFLDmClcJSAVDEHBEooRBUoAVB0yLMCqHj?SASIKWCpuPFDzAAAAdoBKqBfrBmgB8rBTpBTfBCiB5oBxuQ?iAFLDmClcJSAVDVSAVG88AYe88AZfLuCFbEwCKtbMCMHBAA?etBUrBFsB3iB2pB3hB0fBlgB5oBKpQpAFLDmClcJSAVzbSA?VG88A4W88A5no2AzOUFDKXVSASY9tCqyaFDpAAAAfqBzsBq?qB0rBmfBziBdnBFhB5oB2uQjAFLDmClcJSAVjrSAVG88AYP?88AZyaFDJoo2ApvTWCvuDCA/kBSwBcmBTlBRgB2xB/nBaoB?5oBVwQgAFLDmClcJSAVjiSAVG88AYe88AZn88AQ+KWCzfbM?CUsB1mBvhlTpBTfBftBmiBcqBigB5oBxuQkAFLDmClcJSAV?DEHBEooRBJoAVB0yaPCzn88AQubMCvintCypBTfBetBXsBF?rB0gB0hBliB5oBTpQhAFLDmClcJSAVjiSAVG88AYS88AZvr?SAS4aMCzvKWC0AAAAetBXsByvBUlB3iBumBzgBifB5oB1xQ?oAFLDmClcJSAVDEHBEooRBUoAVBFbUOCJNegCsn88AQyytC?pfjxC2uB/kBdoBzqBalB8rBCiBzgB5oBAAA');
 
         {
