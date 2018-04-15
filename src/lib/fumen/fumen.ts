@@ -11,7 +11,6 @@ export interface Page {
     field: Field;
     sentLine: FieldLine;
     piece?: {
-        lock: boolean;
         type: Piece;
         rotation: Rotation;
         coordinate: {
@@ -27,6 +26,7 @@ export interface Page {
         operation?: Operation;
     };
     flags: {
+        lock: boolean;
         send: boolean;
         mirrored: boolean;
         colorize: boolean;
@@ -174,9 +174,15 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
 
         if (store.quiz !== undefined) {
             if (action.isLock && isMinoPiece(action.piece) && store.quiz.canOperate()) {
-                const operation = store.quiz.getOperation(action.piece);
-                quiz = { operation };
-                store.quiz = store.quiz.operate(operation);
+                try {
+                    const operation = store.quiz.getOperation(action.piece);
+                    quiz = { operation };
+                    store.quiz = store.quiz.operate(operation);
+                } catch (e) {
+                    // Not operate
+                    console.error(e.message);
+                    quiz = { operation: undefined };
+                }
             } else {
                 quiz = {
                     operation: undefined,
@@ -186,7 +192,6 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
 
         // データ処理用に加工する
         let currentPiece: {
-            lock: boolean;
             type: Piece;
             rotation: Rotation;
             coordinate: {
@@ -196,7 +201,6 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
         } | undefined;
         if (action.piece !== Piece.Empty) {
             currentPiece = {
-                lock: action.isLock,
                 type: action.piece,
                 rotation: action.rotation,
                 coordinate: action.coordinate,
@@ -212,6 +216,7 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
             sentLine: blockUp.copy(),
             piece: currentPiece,
             flags: {
+                lock: action.isLock,
                 send: action.isBlockUp,
                 mirrored: action.isMirror,
                 colorize: action.isColor,

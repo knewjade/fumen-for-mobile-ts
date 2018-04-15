@@ -6,3 +6,5 @@ src/**/*.js
 src/**/*.js.map
 public/bundle.js
 coverage/
+cypress/videos/
+cypress/screenshots/

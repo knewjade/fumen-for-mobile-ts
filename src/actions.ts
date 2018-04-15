@@ -18,7 +18,7 @@ export interface Actions {
     startAnimation: () => action;
     pauseAnimation: () => action;
     setComment: (data: { comment: string }) => action;
-    setField: (data: { field: Block[] }) => action;
+    setField: (data: { field: Block[], filledHighlight: boolean }) => action;
     setSentLine: (data: { sentLine: Block[] }) => action;
     setHold: (data: { hold?: Piece }) => action;
     setNext: (data: { next?: Piece[] }) => action;
@@ -151,8 +151,11 @@ export const actions: Readonly<Actions> = {
             },
         };
     },
-    setField: ({ field }) => (): NextState => {
-        log('action: setField');
+    setField: ({ field, filledHighlight }) => (): NextState => {
+        log('action: setField: filled = ' + filledHighlight);
+        if (!filledHighlight) {
+            return { field };
+        }
 
         const drawnField: Block[] = [];
         for (let y = 0; y < FieldConstants.Height + FieldConstants.SentLine; y += 1) {
@@ -200,23 +203,31 @@ export const actions: Readonly<Actions> = {
         let comment: string;
         let hold = undefined;
         let next = undefined;
+
+        let quiz = undefined;
         if (page.quiz !== undefined) {
-            const quiz = openQuiz(pages, index);
+            const currentQuiz = openQuiz(pages, index);
 
             if (page.comment.text !== undefined) {
                 comment = page.comment.text;
             } else {
-                comment = quiz.format().toString();
+                comment = currentQuiz.format().toString();
             }
 
-            const operatedQuiz = page.quiz.operation !== undefined ? quiz.operate(page.quiz.operation) : quiz;
-            if (quiz.canOperate()) {
-                hold = operatedQuiz.getHoldPiece();
-                next = operatedQuiz.getNextPieces(5).filter(piece => piece !== Piece.Empty);
+            if (currentQuiz.canOperate()) {
+                quiz = currentQuiz;
             }
         } else {
             comment = openDescription(pages, index);
+        }
 
+        if (quiz !== undefined) {
+            const operatedQuiz = page.quiz !== undefined && page.quiz.operation !== undefined ?
+                quiz.operate(page.quiz.operation) : quiz;
+
+            hold = operatedQuiz.getHoldPiece();
+            next = operatedQuiz.getNextPieces(5).filter(piece => piece !== Piece.Empty);
+        } else {
             const pieces: Piece[] = [];
             let currentPiece = page.piece !== undefined ? page.piece.type : Piece.Empty;
             for (const nextPage of pages.slice(index)) {
@@ -236,7 +247,7 @@ export const actions: Readonly<Actions> = {
                 }
 
                 // ミノを接着したときは現在の使用ミノをEmptyに置き換える
-                if (nextPage.piece === undefined || nextPage.piece.lock) {
+                if (nextPage.piece === undefined || nextPage.flags.lock) {
                     currentPiece = Piece.Empty;
                 }
             }
@@ -273,7 +284,7 @@ export const actions: Readonly<Actions> = {
         return sequence(state, [
             state.play.status === AnimationState.Play ? actions.startAnimation() : undefined,
             actions.setComment({ comment }),
-            actions.setField({ field }),
+            actions.setField({ field, filledHighlight: page.flags.lock }),
             actions.setSentLine({ sentLine }),
             actions.setHold({ hold }),
             actions.setNext({ next }),

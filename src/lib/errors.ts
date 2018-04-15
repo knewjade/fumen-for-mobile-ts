@@ -1,7 +1,7 @@
 abstract class BaseError implements Error {
     public readonly name: string;
 
-    constructor(public readonly message: string) {
+    protected constructor(public readonly message: string) {
         this.name = this.constructor.name;
         Object.setPrototypeOf(this, this.constructor.prototype);
     }

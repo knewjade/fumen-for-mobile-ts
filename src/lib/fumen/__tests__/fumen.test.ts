@@ -21,6 +21,7 @@ describe('fumen', () => {
                 },
                 quiz: undefined,
                 flags: {
+                    lock: true,
                     send: false,
                     mirrored: false,
                     colorize: true,
@@ -124,7 +125,6 @@ describe('fumen', () => {
                 index: 0,
                 lastPage: true,
                 piece: {
-                    lock: true,
                     type: Piece.I,
                     rotation: Rotation.Spawn,
                     coordinate: {
@@ -137,6 +137,7 @@ describe('fumen', () => {
                 },
                 quiz: undefined,
                 flags: {
+                    lock: true,
                     send: false,
                     mirrored: false,
                     colorize: true,
@@ -190,7 +191,6 @@ describe('fumen', () => {
                     text: '#Q=[](L)TSJ',
                 },
                 piece: {
-                    lock: true,
                     type: Piece.L,
                     rotation: Rotation.Spawn,
                     coordinate: {
@@ -201,6 +201,9 @@ describe('fumen', () => {
                 quiz: {
                     operation: Operation.Direct,
                 },
+                flags: {
+                    lock: true,
+                },
             } as Page);
 
             expect(pages[1]).toMatchObject({
@@ -208,7 +211,6 @@ describe('fumen', () => {
                     ref: 0,
                 },
                 piece: {
-                    lock: true,
                     type: Piece.S,
                     rotation: Rotation.Spawn,
                     coordinate: {
@@ -218,6 +220,9 @@ describe('fumen', () => {
                 },
                 quiz: {
                     operation: Operation.Stock,
+                },
+                flags: {
+                    lock: true,
                 },
             } as Page);
 
@@ -236,7 +241,6 @@ describe('fumen', () => {
                     ref: 0,
                 },
                 piece: {
-                    lock: true,
                     type: Piece.T,
                     rotation: Rotation.Right,
                     coordinate: {
@@ -247,6 +251,9 @@ describe('fumen', () => {
                 quiz: {
                     operation: Operation.Swap,
                 },
+                flags: {
+                    lock: true,
+                },
             } as Page);
 
             expect(pages[4]).toMatchObject({
@@ -254,7 +261,6 @@ describe('fumen', () => {
                     ref: 0,
                 },
                 piece: {
-                    lock: true,
                     type: Piece.J,
                     rotation: Rotation.Reverse,
                     coordinate: {
@@ -264,6 +270,9 @@ describe('fumen', () => {
                 },
                 quiz: {
                     operation: Operation.Swap,
+                },
+                flags: {
+                    lock: true,
                 },
             } as Page);
 
@@ -275,6 +284,9 @@ describe('fumen', () => {
                 quiz: {
                     operation: undefined,
                 },
+                flags: {
+                    lock: true,
+                },
             } as Page);
 
             expect(pages[6]).toMatchObject({
@@ -284,6 +296,23 @@ describe('fumen', () => {
                 piece: undefined,
                 quiz: {
                     operation: undefined,
+                },
+                flags: {
+                    lock: true,
+                },
+            } as Page);
+        });
+
+        test('No lock', async () => {
+            const pages: Page[] = [];
+            await decode('vhAAgl', (page) => {
+                pages[page.index] = page;
+            });
+
+            expect(pages).toHaveLength(1);
+            expect(pages[0]).toMatchObject({
+                flags: {
+                    lock: false,
                 },
             } as Page);
         });
@@ -300,7 +329,6 @@ describe('fumen', () => {
                     text: '#Q=[](J)Z',
                 },
                 piece: {
-                    lock: true,
                     type: Piece.J,
                     rotation: Rotation.Spawn,
                     coordinate: {
@@ -311,6 +339,9 @@ describe('fumen', () => {
                 quiz: {
                     operation: Operation.Direct,
                 },
+                flags: {
+                    lock: true,
+                },
             } as Page);
 
             expect(pages[1]).toMatchObject({
@@ -318,7 +349,6 @@ describe('fumen', () => {
                     ref: 0,
                 },
                 piece: {
-                    lock: true,
                     type: Piece.Z,
                     rotation: Rotation.Spawn,
                     coordinate: {
@@ -329,6 +359,9 @@ describe('fumen', () => {
                 quiz: {
                     operation: Operation.Direct,
                 },
+                flags: {
+                    lock: true,
+                },
             } as Page);
 
             expect(pages[2]).toMatchObject({
@@ -336,7 +369,6 @@ describe('fumen', () => {
                     ref: 0,
                 },
                 piece: {
-                    lock: true,
                     type: Piece.O,
                     rotation: Rotation.Spawn,
                     coordinate: {
@@ -346,6 +378,9 @@ describe('fumen', () => {
                 },
                 quiz: {
                     operation: undefined,
+                },
+                flags: {
+                    lock: true,
                 },
             } as Page);
         });
@@ -484,7 +519,6 @@ describe('fumen', () => {
         expect(pages).toHaveLength(1826);
         expect(pages[0]).toMatchObject({
             piece: {
-                lock: true,
                 type: Piece.I,
                 rotation: Rotation.Spawn,
                 coordinate: {
@@ -504,7 +538,6 @@ describe('fumen', () => {
 
         expect(pages[79]).toMatchObject({
             piece: {
-                lock: true,
                 type: Piece.L,
                 rotation: Rotation.Right,
                 coordinate: {
@@ -535,7 +568,6 @@ describe('fumen', () => {
 
         expect(pages[1824]).toMatchObject({
             piece: {
-                lock: true,
                 type: Piece.L,
                 rotation: Rotation.Spawn,
                 coordinate: {
@@ -655,6 +687,41 @@ describe('fumen', () => {
 
         test('v110@', () => {
             expect(() => extract('v110@7eAA4G')).toThrow(FumenError);
+        });
+
+        test('Quiz', async () => {
+            const pages: Page[] = [];
+            await decode('vhBSSYaAFLDmClcJSAVDEHBEooRBPoAVBTejWC0/AA?AAAA', (page) => {
+                pages[page.index] = page;
+            });
+
+            expect(pages).toHaveLength(2);
+            expect(pages[0]).toMatchObject({
+                comment: {
+                    text: '#Q=[](O)SIZLTJ',
+                },
+                piece: {
+                    type: Piece.L,
+                    rotation: Rotation.Spawn,
+                    coordinate: {
+                        x: 8,
+                        y: 0,
+                    },
+                },
+                quiz: {
+                    operation: undefined,
+                },
+            } as Page);
+
+            expect(pages[1]).toMatchObject({
+                comment: {
+                    ref: 0,
+                },
+                piece: undefined,
+                quiz: {
+                    operation: undefined,
+                },
+            } as Page);
         });
     });
 });

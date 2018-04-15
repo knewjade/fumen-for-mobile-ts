@@ -3,12 +3,12 @@ import { VNode } from 'hyperapp';
 import { Children } from '../lib/types';
 
 interface ModalProps {
-    id: string;
     key: string;
     isOpened: boolean;
     bottomSheet: boolean;
     oncreate: (element: HTMLDivElement, attr: ModalProps) => void;
     onupdate: (element: HTMLDivElement, attr: ModalProps) => void;
+    dataTest?: string;
 }
 
 type ModalFunc = (props: ModalProps, content?: Children, footer?: Children) => VNode<any>;
@@ -23,7 +23,7 @@ export const modal: ModalFunc = (props, content, footer) => {
         key: props.key,
     }, [
         div({
-            id: props.id,
+            dataTest: props.dataTest,
             isOpened: props.isOpened,
             bottomSheet: props.bottomSheet,
             oncreate: props.oncreate,

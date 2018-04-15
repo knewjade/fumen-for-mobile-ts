@@ -1,27 +1,72 @@
-language: node_js
-node_js:
-  - 8
-script:
-  - yarn test
-  - yarn webpack:prod
-before_deploy:
-  - touch public/.nojekyll
-deploy:
-  - provider: pages
-    skip-cleanup: true
-    github-token: ${GITHUB_TOKEN}
-    keep-history: true
-    repo: knewjade/fumen-for-mobile-dev
-    local-dir: public/
-    target-branch: master
-    on:
-      all_branches: true
-  - provider: pages
-    skip-cleanup: true
-    github-token: ${GITHUB_TOKEN}
-    keep-history: true
-    repo: knewjade/fumen-for-mobile
-    local-dir: public/
-    target-branch: master
-    on:
-      branch: master
+stages:
+  - test
+  - name: deploy-dev
+    if: branch != master
+  - name: deploy-prod
+    if: branch = master
+
+jobs:
+  include:
+  - stage: test
+    language: node_js
+    node_js: 8
+    cache:
+      yarn: true
+      directories:
+        - node_modules
+    script:
+      - yarn test-ci
+      - yarn webpack:prod
+      - yarn cypress-ci
+    after_failure:
+      - provider: s3
+        access_key_id: ${AWS_ACCESS_KEY}
+        secret_access_key: ${AWS_SECRET_KEY}
+        bucket: newjade
+        skip_cleanup: true
+        local_dir: cypress
+        upload-dir: fumen-for-mobile-ts/${TRAVIS_JOB_NUMBER}/
+
+  - stage: deploy-dev
+    language: node_js
+    node_js: 8
+    cache:
+      yarn: true
+      directories:
+        - node_modules
+    script:
+      - yarn webpack:prod
+    before_deploy:
+      - touch public/.nojekyll
+    deploy:
+      - provider: pages
+        skip-cleanup: true
+        github-token: ${GITHUB_TOKEN}
+        keep-history: true
+        repo: knewjade/fumen-for-mobile-dev
+        local-dir: public/
+        target-branch: master
+        on:
+          all_branches: true
+
+  - stage: deploy-prod
+    language: node_js
+    node_js: 8
+    cache:
+      yarn: true
+      directories:
+        - node_modules
+    script:
+      - yarn webpack:prod
+    before_deploy:
+      - touch public/.nojekyll
+    deploy:
+      - provider: pages
+        skip-cleanup: true
+        github-token: ${GITHUB_TOKEN}
+        keep-history: true
+        repo: knewjade/fumen-for-mobile
+        local-dir: public/
+        target-branch: master
+        on:
+          branch: master

@@ -3,7 +3,7 @@ import { a, div, h4, span, textarea } from '@hyperapp/html';
 import { Actions } from './actions';
 import { State } from './states';
 import { HyperStage } from './lib/hyper';
-import { AnimationState } from './lib/enums';
+import { AnimationState, isMinoPiece, Piece } from './lib/enums';
 import { ModalInstance, style } from './lib/types';
 import { field } from './components/field';
 import { block } from './components/block';
@@ -14,6 +14,7 @@ import { game } from './components/game';
 import { box } from './components/box';
 import { icon } from './components/icon';
 import { settings } from './components/settings';
+import { getHighlightColor, getNormalColor } from './lib/colors';
 import konva = require('konva');
 
 declare const M: any;
@@ -83,8 +84,8 @@ export const view: () => View<State, Actions> = () => {
     const boxFunc: () => konva.Rect = () => {
         return new konva.Rect({
             fill: '#333',
-            strokeWidth: 2,
-            stroke: '#333',
+            strokeWidth: 1,
+            stroke: '#666',
             opacity: 1,
         });
     };
@@ -101,7 +102,7 @@ export const view: () => View<State, Actions> = () => {
     // Hold
     const hold = {
         box: boxFunc(),
-        parts: partsFunc(),
+        pieces: partsFunc(),
     };
 
     // Next
@@ -109,7 +110,7 @@ export const view: () => View<State, Actions> = () => {
         return {
             index,
             box: boxFunc(),
-            parts: partsFunc(),
+            pieces: partsFunc(),
         };
     });
     {
@@ -131,7 +132,7 @@ export const view: () => View<State, Actions> = () => {
         for (const obj of [hold].concat(nexts as typeof hold[])) {
             canvasLayer.add(obj.box);
 
-            for (const part of obj.parts) {
+            for (const part of obj.pieces) {
                 canvasLayer.add(part);
             }
         }
@@ -163,6 +164,14 @@ export const view: () => View<State, Actions> = () => {
         settings?: ModalInstance;
     } = {};
 
+    const decidePieceColor = (piece: Piece, highlight: boolean) => {
+        return highlight ? getHighlightColor(piece) : getNormalColor(piece);
+    };
+
+    const decideBackgroundColor = (y: number) => {
+        return y < 20 ? '#000' : '#333';
+    };
+
     // 全体の構成を1関数にまとめる
     return (state, actions) => {
         const canvas = {
@@ -187,8 +196,12 @@ export const view: () => View<State, Actions> = () => {
             x: top.x,
             y: top.y + (size + 1) * 22.5 + 1 + bottomBorderWidth,
         };
-        const boxSize = Math.min(fieldSize.width / 5 * 1.1, (canvas.width - fieldSize.width) / 2);
+        const boxSize = Math.min(fieldSize.width / 5 * 1.1, (canvas.width - fieldSize.width) / 2) + 1;
         const boxMargin = boxSize / 4;
+
+        const getPieceColorInBox = (piece?: Piece) => {
+            return piece !== undefined && isMinoPiece(piece) ? decidePieceColor(piece, true) : undefined;
+        };
 
         return div({
             oncreate: () => {
@@ -224,7 +237,15 @@ export const view: () => View<State, Actions> = () => {
                     borderWidth: bottomBorderWidth,
                 }, blocks.map((value) => {
                     const blockValue = state.field[value.ix + value.iy * 10];
+
+                    const color = blockValue.piece === Piece.Empty ?
+                        decideBackgroundColor(value.iy) :
+                        decidePieceColor(blockValue.piece, blockValue.highlight || false);
+
                     return block({
+                        color,
+                        key: `block-${value.ix}-${value.iy}`,
+                        dataTest: `block-${value.ix}-${value.iy}`,
                         size: {
                             width: size,
                             height: value.py !== 0 ? size : size / 2,
@@ -233,16 +254,20 @@ export const view: () => View<State, Actions> = () => {
                             x: top.x + value.ix * size + value.ix + 1,
                             y: top.y + Math.max(0, value.py - 0.5) * size + value.py + 1,
                         },
-                        piece: blockValue.piece,
-                        key: `block-${value.ix}-${value.iy}`,
                         rect: value.box,
-                        highlight: blockValue.highlight || false,
-                        background: value.iy < 20 ? '#000' : '#333',
                     });
                 }).concat(
                     bottomBlocks.map((value) => {
                         const blockValue = state.sentLine[value.ix + value.iy * 10];
+
+                        const color = blockValue.piece === Piece.Empty ?
+                            '#000' :
+                            decidePieceColor(blockValue.piece, blockValue.highlight || false);
+
                         return block({
+                            color,
+                            key: `sent-block-${value.ix}-${value.iy}`,
+                            dataTest: `sent-block-${value.ix}-${value.iy}`,
                             size: {
                                 width: size,
                                 height: size,
@@ -251,58 +276,63 @@ export const view: () => View<State, Actions> = () => {
                                 x: top2.x + value.ix * size + value.ix + 1,
                                 y: top2.y + value.py * size + value.py + 1,
                             },
-                            piece: blockValue.piece,
-                            key: `block-up-${value.ix}-${value.iy}`,
                             rect: value.box,
-                            highlight: blockValue.highlight || false,
-                            background: '#000',
                         });
                     }),
                 )),
-                box({
+                state.hold !== undefined ? box({
                     key: 'hold',
+                    dataTest: 'box-hold',
                     position: {
                         x: top.x - (boxSize + boxMargin / 2),
                         y: top.y,
                     },
-                    size: boxSize,
-                    rect: hold,
-                    visible: true,
-                    piece: {
-                        value: state.hold,
-                        size: boxSize / 4 - 1,
-                        margin: 1,
+                    box: {
+                        size: boxSize,
+                        color: '#333',
                     },
-                }),
-                ...nexts.map(value => box({
+                    rect: hold,
+                    piece: {
+                        type: state.hold,
+                        color: getPieceColorInBox(state.hold),
+                        size: boxSize / 4 - 1,
+                    },
+                }) : undefined,
+                ...nexts.map(value => state.next !== undefined && state.next[value.index] !== undefined ? box({
                     key: `next-${value.index}`,
+                    dataTest: `box-next-${value.index}`,
                     position: {
                         x: top.x + fieldSize.width + boxMargin / 2,
                         y: top.y + value.index * (boxSize + boxMargin),
                     },
-                    size: boxSize,
-                    rect: value,
-                    visible: true,
-                    piece: {
-                        value: state.next !== undefined ? state.next[value.index] : undefined,
-                        size: boxSize / 4 - 1,
-                        margin: 1,
+                    box: {
+                        size: boxSize,
+                        color: '#333',
                     },
-                })),
-            ]),
+                    rect: value,
+                    piece: {
+                        type: state.next[value.index],
+                        color: getPieceColorInBox(state.next[value.index]),
+                        size: boxSize / 4 - 1,
+                    },
+                }) : undefined),
+            ] as any),
             div({
                 key: 'menu-top',
             }, [
                 comment({
+                    dataTest: `text-comment`,
                     isChanged: state.comment.isChanged,
                     height: heights.comment,
                     text: state.comment.text,
                 }),
                 tools({
+                    dataTest: 'tools',
                     height: heights.tools,
                 }, [
                     a({
                         href: '#',
+                        dataTest: 'btn-open-fumen',
                         onclick: () => {
                             actions.openFumenModal();
                         },
@@ -314,6 +344,8 @@ export const view: () => View<State, Actions> = () => {
                         }, 'open_in_new'),
                     ]),
                     span({
+                        dataTest: 'text-pages',
+                        id: 'text-pages',
                         style: style({
                             lineHeight: heights.tools + 'px',
                             fontSize: '18px',
@@ -362,14 +394,14 @@ export const view: () => View<State, Actions> = () => {
                 ]),
             ]),
             modal({
-                id: 'fumen-modal',
+                dataTest: 'mdl-open-fumen',
                 key: 'fumen-modal-top',
                 isOpened: state.modal.fumen,
                 bottomSheet: false,
                 oncreate: (element: HTMLDivElement) => {
                     const instance = M.Modal.init(element, {
                         onOpenEnd: () => {
-                            const element = document.getElementById('fumen-textarea');
+                            const element = document.getElementById('textarea-fumen');
                             if (element !== null) {
                                 element.focus();
                             }
@@ -399,7 +431,7 @@ export const view: () => View<State, Actions> = () => {
             }, [
                 h4('テト譜を開く'),
                 textarea({
-                    id: 'fumen-textarea',
+                    dataTest: 'input-fumen',
                     rows: 3,
                     style: style({
                         width: '100%',
@@ -413,6 +445,8 @@ export const view: () => View<State, Actions> = () => {
                     placeholder: 'URL or v115@~ / Support v115 only',
                 }),
                 span({
+                    dataTest: 'text-message',
+                    id: 'text-fumen-modal-error',
                     className: 'red-text text-accent-2',
                     style: style({
                         display: state.fumen.errorMessage !== undefined ? undefined : 'none',
@@ -420,6 +454,7 @@ export const view: () => View<State, Actions> = () => {
                 }, state.fumen.errorMessage),
             ], [
                 a({
+                    dataTest: 'btn-cancel',
                     class: 'waves-effect waves-teal btn-flat',
                     onclick: () => {
                         actions.closeFumenModal();
@@ -427,6 +462,8 @@ export const view: () => View<State, Actions> = () => {
                     },
                 }, 'Cancel'),
                 a({
+                    dataTest: 'btn-open',
+                    id: 'btn-fumen-modal-open',
                     class: 'waves-effect waves-teal btn-flat' + (
                         state.fumen.value === undefined || state.fumen.errorMessage !== undefined ? ' disabled' : ''
                     ),
@@ -436,7 +473,6 @@ export const view: () => View<State, Actions> = () => {
                 }, 'Open'),
             ]),
             modal({
-                id: 'settings-modal',
                 key: 'settings-modal-top',
                 isOpened: state.modal.settings,
                 bottomSheet: true,

@@ -5,7 +5,7 @@ export class Quiz {
     static verify(quiz: string): boolean {
         const replaced = this.trim(quiz);
 
-        if (!replaced.match(/^#Q=\[[TIOSZJL]{0,1}]\([TIOSZJL]{0,1}\)[TIOSZJL]*$/i)) {
+        if (!replaced.match(/^#Q=\[[TIOSZJL]?]\([TIOSZJL]?\)[TIOSZJL]*$/i)) {
             return false;
         }
 
