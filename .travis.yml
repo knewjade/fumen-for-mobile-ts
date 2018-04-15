@@ -46,6 +46,8 @@ jobs:
         repo: knewjade/fumen-for-mobile-dev
         local-dir: public/
         target-branch: master
+        on:
+          all_branches: true
 
   - stage: deploy-prod
     language: node_js
