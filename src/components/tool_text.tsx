@@ -1,6 +1,5 @@
 import { h } from 'hyperapp';
-import { px, style } from '../../../../Desktop/fumen-for-mobile-ts2/src/lib/helpers';
-import { ComponentWithText } from '../lib/types';
+import { ComponentWithText, px, style } from '../lib/types';
 
 interface Props {
     height: number;
