@@ -15,6 +15,8 @@ import { box } from './components/box';
 import { icon } from './components/icon';
 import { settings } from './components/settings';
 import { getHighlightColor, getNormalColor } from './lib/colors';
+import { ToolButton } from './components/tool_button';
+import { ToolText } from './components/tool_text';
 import konva = require('konva');
 
 declare const M: any;
@@ -330,67 +332,52 @@ export const view: () => View<State, Actions> = () => {
                     dataTest: 'tools',
                     height: heights.tools,
                 }, [
-                    a({
-                        href: '#',
+                    ToolButton({
                         dataTest: 'btn-open-fumen',
-                        onclick: () => {
-                            actions.openFumenModal();
+                        width: 55,
+                        height: heights.tools - 10,
+                        fontSize: 33.75,
+                        iconName: 'open_in_new',
+                        marginRight: 10,
+                        actions: {
+                            onclick: () => actions.openFumenModal(),
                         },
-                    }, [
-                        icon({
-                            width: 55,
-                            height: heights.tools,
-                            scale: 0.675,
-                        }, 'open_in_new'),
-                    ]),
-                    span({
-                        dataTest: 'text-pages',
-                        id: 'text-pages',
-                        style: style({
-                            lineHeight: heights.tools + 'px',
-                            fontSize: '18px',
-                            margin: '0px 10px',
-                            minWidth: '85px',
-                            textAlign: 'center',
-                            whiteSpace: 'nowrap',
-                        }),
+                    }),
+                    ToolText({
+                        height: heights.tools - 10,
+                        minWidth: 85,
+                        fontSize: 18,
+                        marginRight: 10,
                     }, state.fumen.currentIndex + 1 + ' / ' + state.fumen.maxPage),
-                    a({
-                        href: '#',
-                        onclick: () => {
-                            switch (state.play.status) {
-                            case AnimationState.Play:
-                                actions.pauseAnimation();
-                                break;
-                            default:
-                                actions.startAnimation();
-                                break;
-                            }
+                    ToolButton({
+                        width: 50,
+                        height: heights.tools - 10,
+                        fontSize: 45.375,
+                        iconName: state.play.status !== 'pause' ? 'pause' : 'play_arrow',
+                        marginRight: 10,
+                        actions: {
+                            onclick: () => {
+                                switch (state.play.status) {
+                                case AnimationState.Play:
+                                    actions.pauseAnimation();
+                                    break;
+                                default:
+                                    actions.startAnimation();
+                                    break;
+                                }
+                            },
                         },
-                    }, [
-                        icon({
-                            width: 55,
-                            height: heights.tools,
-                            scale: 0.825,
-                        }, state.play.status !== 'pause' ? 'pause' : 'play_arrow'),
-                    ]),
-                    a({
-                        href: '#',
-                        style: style({
-                            marginLeft: 'auto',
-                            position: 'absolute',
-                            right: '10px',
-                        }),
-                        onclick: () => {
-                            actions.openSettingsModal();
+                    }),
+                    ToolButton({
+                        sticky: true,
+                        width: 45,
+                        height: heights.tools - 10,
+                        fontSize: 31.25,
+                        iconName: 'settings',
+                        actions: {
+                            onclick: () => actions.openSettingsModal(),
                         },
-                    }, [
-                        icon({
-                            width: 45,
-                            height: heights.tools,
-                            scale: 0.625,
-                        }, 'settings'),
-                    ]),
+                    }),
                 ]),
             ]),
             modal({

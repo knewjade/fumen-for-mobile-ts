@@ -11,6 +11,14 @@ export const style: (properties: CSSProperties) => CSSProperties = properties =>
 
 export type Children = string | number | (string | number | VNode<{}>)[];
 
-export interface Component<Props = {}> {
-    (props: Props, children?: Children): VNode<object>;
+export interface Component<Attributes = {}, State = {}, Actions = {}> {
+    (attributes: Attributes, children?: string | (VNode | string)[]): VNode<object>;
+}
+
+export interface ComponentWithText<Attributes = {}, State = {}, Actions = {}> {
+    (attributes: Attributes, children: string): VNode<object>;
+}
+
+export function px(value: number) {
+    return value + 'px';
 }
