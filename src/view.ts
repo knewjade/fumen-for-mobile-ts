@@ -12,11 +12,8 @@ import { game } from './components/game';
 import { box } from './components/box';
 import { getHighlightColor, getNormalColor } from './lib/colors';
 import { Tools } from './components/tools';
-import { OpenFumenModal } from './components/modals';
+import { OpenFumenModal, SettingsModal } from './components/modals';
 import konva = require('konva');
-
-
-const VERSION = '###VERSION###';  // Replace build number of CI when run `webpack:prod`
 
 export const view: () => View<State, Actions> = () => {
     // 初期化
@@ -334,6 +331,10 @@ export const view: () => View<State, Actions> = () => {
                 actions,
                 errorMessage: state.fumen.errorMessage,
                 textAreaValue: state.fumen.value,
+            }) : div(),
+            state.modal.settings ? SettingsModal({
+                actions,
+                version: state.version,
             }) : div(),
         ]);
     };

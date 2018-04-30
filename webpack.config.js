@@ -12,7 +12,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /view\.ts$/,
+                test: /states\.ts$/,
                 loader: 'string-replace-loader',
                 options: {
                     search: '###VERSION###',

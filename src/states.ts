@@ -1,6 +1,8 @@
 import { AnimationState, Piece } from './lib/enums';
 import { Page } from './lib/fumen/fumen';
 
+export const VERSION = '###VERSION###';  // Replace build number of CI when run `webpack:prod`
+
 // Immutableにする
 export interface State {
     field: ReadonlyArray<Readonly<Block>>;
@@ -33,6 +35,7 @@ export interface State {
     handlers: Readonly<{
         animation?: number;
     }>;
+    version: string;
 }
 
 export interface Block {
@@ -75,6 +78,7 @@ export const initState: Readonly<State> = {
     handlers: {
         animation: undefined,
     },
+    version: VERSION,
 };
 
 export const resources = {
