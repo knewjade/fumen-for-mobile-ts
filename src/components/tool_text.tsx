@@ -2,13 +2,16 @@ import { h } from 'hyperapp';
 import { ComponentWithText, px, style } from '../lib/types';
 
 interface Props {
+    dataTest?: string;
     height: number;
     minWidth: number;
     fontSize: number;
     marginRight?: number;
 }
 
-export const ToolText: ComponentWithText<Props> = ({ height, fontSize, minWidth, marginRight = 0 }, children) => {
+export const ToolText: ComponentWithText<Props> = (
+    { dataTest, height, fontSize, minWidth, marginRight = 0 }, children,
+) => {
     const properties = style({
         lineHeight: px(height),
         fontSize: px(fontSize),
@@ -18,5 +21,5 @@ export const ToolText: ComponentWithText<Props> = ({ height, fontSize, minWidth,
         marginRight: px(marginRight),
     });
 
-    return <span style={ properties }>{ children }</span>;
+    return <span datatest={ dataTest } style={ properties }>{ children }</span>;
 };

@@ -344,6 +344,7 @@ export const view: () => View<State, Actions> = () => {
                         },
                     }),
                     ToolText({
+                        dataTest: 'text-pages',
                         height: heights.tools - 10,
                         minWidth: 85,
                         fontSize: 18,
