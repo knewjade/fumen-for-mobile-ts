@@ -7,6 +7,7 @@ import { AnimationState } from '../lib/enums';
 interface Props {
     height: number;
     animationState: AnimationState;
+    pages: string;
     actions: {
         openFumenModal: () => void;
         openSettingsModal: () => void;
@@ -15,7 +16,7 @@ interface Props {
     };
 }
 
-export const Tools: Component<Props> = ({ height, animationState, actions }) => {
+export const Tools: Component<Props> = ({ height, animationState, pages, actions }) => {
     const navProperties = style({
         width: '100%',
         height: px(height),
@@ -44,7 +45,7 @@ export const Tools: Component<Props> = ({ height, animationState, actions }) => 
 
                 <ToolText datatest="text-pages" height={ height - 10 }
                           minWidth={ 85 } fontSize={ 18 } marginRight={ 10 }>
-                    state.fumen.currentIndex + 1 + ' / ' + state.fumen.maxPage)
+                    { pages }
                 </ToolText>
 
                 <ToolButton iconName={ animationState !== 'pause' ? 'pause' : 'play_arrow' } datatest="btn-open-fumen"
@@ -65,6 +66,7 @@ export const Tools: Component<Props> = ({ height, animationState, actions }) => 
                 <ToolButton iconName="settings" datatest="btn-open-fumen" sticky={ true }
                             width={ 45 } height={ height - 10 } fontSize={ 31.25 }
                             actions={ { onclick: () => actions.openSettingsModal() } }/>
+
             </div>
         </nav>
     );

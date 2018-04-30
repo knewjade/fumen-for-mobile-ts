@@ -1,23 +1,20 @@
 import { View } from 'hyperapp';
-import { a, div, h4, span, textarea } from '@hyperapp/html';
+import { div } from '@hyperapp/html';
 import { Actions } from './actions';
 import { State } from './states';
 import { HyperStage } from './lib/hyper';
 import { isMinoPiece, Piece } from './lib/enums';
-import { ModalInstance, style } from './lib/types';
+import { ModalInstance } from './lib/types';
 import { field } from './components/field';
 import { block } from './components/block';
 import { comment } from './components/comment';
-import { modal } from './components/modal';
 import { game } from './components/game';
 import { box } from './components/box';
-import { icon } from './components/icon';
-import { settings } from './components/settings';
 import { getHighlightColor, getNormalColor } from './lib/colors';
 import { Tools } from './components/tools';
+import { OpenFumenModal } from './components/modals';
 import konva = require('konva');
 
-declare const M: any;
 
 const VERSION = '###VERSION###';  // Replace build number of CI when run `webpack:prod`
 
@@ -330,146 +327,14 @@ export const view: () => View<State, Actions> = () => {
                     actions,
                     height: heights.tools,
                     animationState: state.play.status,
+                    pages: state.fumen.currentIndex + 1 + ' / ' + state.fumen.maxPage,
                 }),
             ]),
-            modal({
-                dataTest: 'mdl-open-fumen',
-                key: 'fumen-modal-top',
-                isOpened: state.modal.fumen,
-                bottomSheet: false,
-                oncreate: (element: HTMLDivElement) => {
-                    const instance = M.Modal.init(element, {
-                        onOpenEnd: () => {
-                            const element = document.getElementById('textarea-fumen');
-                            if (element !== null) {
-                                element.focus();
-                            }
-                        },
-                        onCloseStart: () => {
-                            actions.closeFumenModal();
-                        },
-                    });
-
-                    if (state.modal.fumen) {
-                        instance.open();
-                    } else {
-                        instance.close();
-                    }
-
-                    modalInstances.fumen = instance;
-                },
-                onupdate: (ignore, attr) => {
-                    if (state.modal.fumen !== attr.isOpened && modalInstances.fumen !== undefined) {
-                        if (state.modal.fumen) {
-                            modalInstances.fumen.open();
-                        } else {
-                            modalInstances.fumen.close();
-                        }
-                    }
-                },
-            }, [
-                h4('テト譜を開く'),
-                textarea({
-                    dataTest: 'input-fumen',
-                    rows: 3,
-                    style: style({
-                        width: '100%',
-                        border: state.fumen.errorMessage !== undefined ? 'solid 1px #ff5252' : undefined,
-                    }),
-                    oninput: (e: any) => {
-                        const value = e.target.value !== '' ? e.target.value : undefined;
-                        actions.inputFumenData({ value });
-                    },
-                    value: state.fumen.value,
-                    placeholder: 'URL or v115@~ / Support v115 only',
-                }),
-                span({
-                    dataTest: 'text-message',
-                    id: 'text-fumen-modal-error',
-                    className: 'red-text text-accent-2',
-                    style: style({
-                        display: state.fumen.errorMessage !== undefined ? undefined : 'none',
-                    }),
-                }, state.fumen.errorMessage),
-            ], [
-                a({
-                    dataTest: 'btn-cancel',
-                    class: 'waves-effect waves-teal btn-flat',
-                    onclick: () => {
-                        actions.closeFumenModal();
-                        actions.clearFumenData();
-                    },
-                }, 'Cancel'),
-                a({
-                    dataTest: 'btn-open',
-                    id: 'btn-fumen-modal-open',
-                    class: 'waves-effect waves-teal btn-flat' + (
-                        state.fumen.value === undefined || state.fumen.errorMessage !== undefined ? ' disabled' : ''
-                    ),
-                    onclick: () => {
-                        actions.loadFumen({ fumen: state.fumen.value });
-                    },
-                }, 'Open'),
-            ]),
-            modal({
-                key: 'settings-modal-top',
-                isOpened: state.modal.settings,
-                bottomSheet: true,
-                oncreate: (element: HTMLDivElement) => {
-                    const instance = M.Modal.init(element, {
-                        onCloseStart: () => {
-                            actions.closeSettingsModal();
-                        },
-                    });
-
-                    if (state.modal.fumen) {
-                        instance.open();
-                    } else {
-                        instance.close();
-                    }
-
-                    modalInstances.settings = instance;
-                },
-                onupdate: (ignore, attr) => {
-                    if (state.modal.settings !== attr.isOpened && modalInstances.settings !== undefined) {
-                        if (state.modal.settings) {
-                            modalInstances.settings.open();
-                        } else {
-                            modalInstances.settings.close();
-                        }
-                    }
-                },
-            }, [
-                h4([
-                    'Settings ',
-                    span({
-                        style: style({
-                            color: '#999',
-                            fontSize: '50%',
-                        }),
-                    }, [` [build ${VERSION}]`]),
-                ]),
-                settings({}, [
-                    a({
-                        href: './help.html',
-                    }, [
-                        icon({
-                            width: 50,
-                            height: 50,
-                            scale: 0.625,
-                            display: 'block',
-                            color: '#333',
-                            depth: true,
-                        }, 'help_outline'),
-                        div({
-                            style: style({
-                                textAlign: 'center',
-                                color: '#333',
-                            }),
-                        }, 'help'),
-                    ]),
-                ]),
-            ]),
+            state.modal.fumen ? OpenFumenModal({
+                actions,
+                errorMessage: state.fumen.errorMessage,
+                textAreaValue: state.fumen.value,
+            }) : div(),
         ]);
     };
 };

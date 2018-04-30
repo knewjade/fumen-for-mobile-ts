@@ -76,3 +76,7 @@ export const initState: Readonly<State> = {
         animation: undefined,
     },
 };
+
+export const resources = {
+    modals: {} as any,
+};

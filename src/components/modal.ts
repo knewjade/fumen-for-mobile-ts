@@ -4,7 +4,6 @@ import { Children } from '../lib/types';
 
 interface ModalProps {
     key: string;
-    isOpened: boolean;
     bottomSheet: boolean;
     oncreate: (element: HTMLDivElement, attr: ModalProps) => void;
     onupdate: (element: HTMLDivElement, attr: ModalProps) => void;
@@ -24,7 +23,6 @@ export const modal: ModalFunc = (props, content, footer) => {
     }, [
         div({
             dataTest: props.dataTest,
-            isOpened: props.isOpened,
             bottomSheet: props.bottomSheet,
             oncreate: props.oncreate,
             onupdate: props.onupdate,

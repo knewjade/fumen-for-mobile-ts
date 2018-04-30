@@ -2,11 +2,13 @@
   "compilerOptions": {
     "lib": [
       "dom",
-//      "es5",
       "es2015"
-//      "es2015.promise",
-//      "es2016"
     ],
+    "baseUrl": ".",
+    "paths": {
+      "*": ["*"],
+      "@hyperapp/*": ["node_modules/*", "mytypes/@hyperapp/*"]
+    },
     "moduleResolution": "node",
     "jsx": "react",
     "jsxFactory": "h",

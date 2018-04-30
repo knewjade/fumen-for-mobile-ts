@@ -5,6 +5,7 @@ import { view } from './view';
 import { app } from 'hyperapp';
 import { openDescription, openQuiz } from './lib/helper';
 import { ViewError } from './lib/errors';
+import { withLogger } from '@hyperapp/logger';
 
 type NextState = Partial<State> | undefined;
 export type action = (state: Readonly<State>) => NextState;
@@ -43,10 +44,10 @@ export const actions: Readonly<Actions> = {
     loadFumen: ({ fumen }) => (): NextState => {
         log('action: loadFumen = ' + fumen);
 
-        router.pauseAnimation();
+        main.pauseAnimation();
 
         if (fumen === undefined) {
-            router.showOpenErrorMessage({ message: 'データを入力してください' });
+            main.showOpenErrorMessage({ message: 'データを入力してください' });
             return undefined;
         }
 
@@ -56,15 +57,15 @@ export const actions: Readonly<Actions> = {
                 await decode(fumen, (page) => {
                     pages[page.index] = page;
                 });
-                router.setPages({ pages });
-                router.closeFumenModal();
-                router.clearFumenData();
+                main.setPages({ pages });
+                main.closeFumenModal();
+                main.clearFumenData();
             } catch (e) {
                 console.error(e);
                 if (e instanceof ViewError) {
-                    router.showOpenErrorMessage({ message: e.message });
+                    main.showOpenErrorMessage({ message: e.message });
                 } else {
-                    router.showOpenErrorMessage({ message: 'テト譜を読み込めませんでした' });
+                    main.showOpenErrorMessage({ message: 'テト譜を読み込めませんでした' });
                 }
             }
         })();
@@ -79,7 +80,7 @@ export const actions: Readonly<Actions> = {
         }
 
         setImmediate(() => {
-            router.openPage({ index: 0 });
+            main.openPage({ index: 0 });
         });
 
         return {
@@ -118,7 +119,7 @@ export const actions: Readonly<Actions> = {
                 },
                 handlers: {
                     animation: setInterval(() => {
-                        router.nextPage();
+                        main.nextPage();
                     }, state.play.intervalTime),
                 },
             }),
@@ -386,10 +387,17 @@ function sequence(
     return merged;
 }
 
-export const router = app(initState, actions, view(), document.body);
+// Mounting
+const mount = (isDebug: boolean = false): Actions => {
+    if (isDebug) {
+        return withLogger(app)(initState, actions, view(), document.body);
+    }
+    return app<State, Actions>(initState, actions, view(), document.body);
+};
+const main = mount(true);
 
 window.onresize = () => {
-    router.resize({
+    main.resize({
         width: window.document.body.clientWidth,
         height: window.document.body.clientHeight,
     });
@@ -401,4 +409,4 @@ function extractFumenFromURL() {
     return paramQuery !== undefined ? paramQuery.substr(2) : 'v115@vhAAgH';
 }
 
-router.loadFumen({ fumen: extractFumenFromURL() });
+main.loadFumen({ fumen: extractFumenFromURL() });
