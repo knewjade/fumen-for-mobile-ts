@@ -3,20 +3,18 @@ import { a, div, h4, span, textarea } from '@hyperapp/html';
 import { Actions } from './actions';
 import { State } from './states';
 import { HyperStage } from './lib/hyper';
-import { AnimationState, isMinoPiece, Piece } from './lib/enums';
+import { isMinoPiece, Piece } from './lib/enums';
 import { ModalInstance, style } from './lib/types';
 import { field } from './components/field';
 import { block } from './components/block';
 import { comment } from './components/comment';
 import { modal } from './components/modal';
-import { tools } from './components/tools';
 import { game } from './components/game';
 import { box } from './components/box';
 import { icon } from './components/icon';
 import { settings } from './components/settings';
 import { getHighlightColor, getNormalColor } from './lib/colors';
-import { ToolButton } from './components/tool_button';
-import { ToolText } from './components/tool_text';
+import { Tools } from './components/tools';
 import konva = require('konva');
 
 declare const M: any;
@@ -328,58 +326,11 @@ export const view: () => View<State, Actions> = () => {
                     height: heights.comment,
                     text: state.comment.text,
                 }),
-                tools({
-                    dataTest: 'tools',
+                Tools({
+                    actions,
                     height: heights.tools,
-                }, [
-                    ToolButton({
-                        dataTest: 'btn-open-fumen',
-                        width: 55,
-                        height: heights.tools - 10,
-                        fontSize: 33.75,
-                        iconName: 'open_in_new',
-                        marginRight: 10,
-                        actions: {
-                            onclick: () => actions.openFumenModal(),
-                        },
-                    }),
-                    ToolText({
-                        dataTest: 'text-pages',
-                        height: heights.tools - 10,
-                        minWidth: 85,
-                        fontSize: 18,
-                        marginRight: 10,
-                    }, state.fumen.currentIndex + 1 + ' / ' + state.fumen.maxPage),
-                    ToolButton({
-                        width: 50,
-                        height: heights.tools - 10,
-                        fontSize: 45.375,
-                        iconName: state.play.status !== 'pause' ? 'pause' : 'play_arrow',
-                        marginRight: 10,
-                        actions: {
-                            onclick: () => {
-                                switch (state.play.status) {
-                                case AnimationState.Play:
-                                    actions.pauseAnimation();
-                                    break;
-                                default:
-                                    actions.startAnimation();
-                                    break;
-                                }
-                            },
-                        },
-                    }),
-                    ToolButton({
-                        sticky: true,
-                        width: 45,
-                        height: heights.tools - 10,
-                        fontSize: 31.25,
-                        iconName: 'settings',
-                        actions: {
-                            onclick: () => actions.openSettingsModal(),
-                        },
-                    }),
-                ]),
+                    animationState: state.play.status,
+                }),
             ]),
             modal({
                 dataTest: 'mdl-open-fumen',

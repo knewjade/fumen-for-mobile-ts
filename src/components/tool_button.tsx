@@ -7,7 +7,7 @@ interface Props {
     iconName: string;
     sticky?: boolean;
     marginRight?: number;
-    dataTest?: string;
+    datatest?: string;
     actions: {
         onclick(): void;
     };
@@ -19,7 +19,7 @@ interface IconProps {
 }
 
 export const ToolButton: Component<Props & IconProps> = (
-    { height, width, fontSize, iconName, sticky = false, marginRight = 0, dataTest, actions },
+    { height, width, fontSize, iconName, sticky = false, marginRight = 0, datatest, actions },
 ) => {
     const aProperties = style({
         height: px(height),
@@ -33,7 +33,7 @@ export const ToolButton: Component<Props & IconProps> = (
 
     return (
         <a href="#"
-           datatest={ dataTest }
+           datatest={ datatest }
            style={ aProperties }
            onclick={ () => actions.onclick() }>
             <Icon height={ height } fontSize={ fontSize }>{ iconName }</Icon>
