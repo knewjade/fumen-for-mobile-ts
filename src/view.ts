@@ -13,6 +13,7 @@ import { box } from './components/box';
 import { getHighlightColor, getNormalColor } from './lib/colors';
 import { Tools } from './components/tools';
 import { OpenFumenModal, SettingsModal } from './components/modals';
+import { Field } from './components/field';
 import konva = require('konva');
 
 // レイアウトを決める部分を外に出す
@@ -171,10 +172,10 @@ export const view: () => View<State, Actions> = () => {
                 nextPage: actions.nextPage,
             }),
 
-
             div({
                 key: 'field-top',
             }, [   // canvas:Field とのマッピング用仮想DOM
+                Field({ topLeft: top, blockSize: size, field: state.field }),
                 field2({
                     background: resources.konva.background,
                     line: resources.konva.fieldMarginLine,
@@ -186,51 +187,28 @@ export const view: () => View<State, Actions> = () => {
                         y: top2.y - bottomBorderWidth / 2,
                     },
                     borderWidth: bottomBorderWidth,
-                }, resources.konva.fieldBlocks.map((value, index) => {
-                    const blockValue = state.field[value.ix + value.iy * 10];
+                }, bottomBlocks.map((value) => {
+                    const blockValue = state.sentLine[value.ix + value.iy * 10];
 
                     const color = blockValue.piece === Piece.Empty ?
-                        decideBackgroundColor(value.iy) :
+                        '#000' :
                         decidePieceColor(blockValue.piece, blockValue.highlight || false);
 
                     return block2({
                         color,
-                        key: `block-${value.ix}-${value.iy}`,
-                        dataTest: `block-${value.ix}-${value.iy}`,
+                        key: `sent-block-${value.ix}-${value.iy}`,
+                        dataTest: `sent-block-${value.ix}-${value.iy}`,
                         size: {
                             width: size,
-                            height: value.py !== 0 ? size : size / 2,
+                            height: size,
                         },
                         position: {
-                            x: top.x + value.ix * size + value.ix + 1,
-                            y: top.y + Math.max(0, value.py - 0.5) * size + value.py + 1,
+                            x: top2.x + value.ix * size + value.ix + 1,
+                            y: top2.y + value.py * size + value.py + 1,
                         },
                         rect: value.box,
                     });
-                }).concat(
-                    bottomBlocks.map((value) => {
-                        const blockValue = state.sentLine[value.ix + value.iy * 10];
-
-                        const color = blockValue.piece === Piece.Empty ?
-                            '#000' :
-                            decidePieceColor(blockValue.piece, blockValue.highlight || false);
-
-                        return block2({
-                            color,
-                            key: `sent-block-${value.ix}-${value.iy}`,
-                            dataTest: `sent-block-${value.ix}-${value.iy}`,
-                            size: {
-                                width: size,
-                                height: size,
-                            },
-                            position: {
-                                x: top2.x + value.ix * size + value.ix + 1,
-                                y: top2.y + value.py * size + value.py + 1,
-                            },
-                            rect: value.box,
-                        });
-                    }),
-                )),
+                })),
                 state.hold !== undefined ? box({
                     key: 'hold',
                     dataTest: 'box-hold',

@@ -48,7 +48,7 @@ export const Tools: Component<Props> = ({ height, animationState, pages, actions
                     { pages }
                 </ToolText>
 
-                <ToolButton iconName={ animationState !== 'pause' ? 'pause' : 'play_arrow' } datatest="btn-open-fumen"
+                <ToolButton iconName={ animationState !== 'pause' ? 'pause' : 'play_arrow' } datatest="btn-play-anime"
                             width={ 50 } height={ height - 10 } fontSize={ 45.375 } marginRight={ 10 }
                             actions={ {
                                 onclick: () => {
@@ -63,7 +63,7 @@ export const Tools: Component<Props> = ({ height, animationState, pages, actions
                                 },
                             } }/>
 
-                <ToolButton iconName="settings" datatest="btn-open-fumen" sticky={ true }
+                <ToolButton iconName="settings" datatest="btn-open-settings" sticky={ true }
                             width={ 45 } height={ height - 10 } fontSize={ 31.25 }
                             actions={ { onclick: () => actions.openSettingsModal() } }/>
 

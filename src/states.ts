@@ -6,7 +6,7 @@ export const VERSION = '###VERSION###';  // Replace build number of CI when run 
 
 // Immutableにする
 export interface State {
-    field: ReadonlyArray<Readonly<Block>>;
+    field: Block[];
     sentLine: ReadonlyArray<Readonly<Block>>;
     comment: Readonly<{
         readonly text: string;
