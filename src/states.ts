@@ -1,5 +1,6 @@
 import { AnimationState, Piece } from './lib/enums';
 import { Page } from './lib/fumen/fumen';
+import { HyperStage } from './lib/hyper';
 import konva = require('konva');
 
 export const VERSION = '###VERSION###';  // Replace build number of CI when run `webpack:prod`
@@ -94,6 +95,8 @@ export const resources = {
 // 作成コストはやや大きめなので、必要なものは初めに作成する
 function createKonvaObjects() {
     const obj = {
+        hyperStage: new HyperStage(),
+        event: undefined as any,
         background: undefined as any,
         fieldMarginLine: undefined as any,
         fieldBlocks: [] as konva.Rect[],
@@ -104,6 +107,7 @@ function createKonvaObjects() {
             background: new konva.Layer({ name: 'background' }),
             field: new konva.Layer({ name: 'field' }),
             boxes: new konva.Layer({ name: 'boxes' }),
+            overlay: new konva.Layer({ name: 'overlay' }),
         },
     };
     const layers = obj.layers;
@@ -195,6 +199,30 @@ function createKonvaObjects() {
                 layers.boxes.add(rect);
             }
         }
+    }
+
+    // Overlay
+    // Event Layer
+    {
+        const rect = new konva.Rect({
+            fill: '#333',
+            opacity: 0.0,  // 0 ほど透過
+            strokeEnabled: false,
+            listening: true,
+        });
+
+        obj.event = rect;
+        layers.overlay.add(rect);
+    }
+
+    // HyperStage
+    {
+        const hyperStage = obj.hyperStage;
+
+        hyperStage.addLayer(layers.background);
+        hyperStage.addLayer(layers.field);
+        hyperStage.addLayer(layers.boxes);
+        hyperStage.addLayer(layers.overlay);
     }
 
     return obj;

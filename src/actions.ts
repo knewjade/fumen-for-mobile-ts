@@ -390,9 +390,9 @@ function sequence(
 // Mounting
 const mount = (isDebug: boolean = false): Actions => {
     if (isDebug) {
-        return withLogger(app)(initState, actions, view(), document.body);
+        return withLogger(app)(initState, actions, view, document.body);
     }
-    return app<State, Actions>(initState, actions, view(), document.body);
+    return app<State, Actions>(initState, actions, view, document.body);
 };
 const main = mount(true);
 
