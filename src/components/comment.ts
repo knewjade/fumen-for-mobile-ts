@@ -3,7 +3,7 @@ import { div, input } from '@hyperapp/html';
 
 interface CommentProps {
     dataTest: string;
-    isChanged: boolean;
+    highlight: boolean;
     height: number;
     text: string;
 }
@@ -19,7 +19,7 @@ export const comment: Component<CommentProps> = (props) => {
         border: 'none',
     });
 
-    if (props.isChanged) {
+    if (props.highlight) {
         commentStyle.color = '#fff';
     }
 
@@ -33,7 +33,7 @@ export const comment: Component<CommentProps> = (props) => {
         input({
             dataTest: props.dataTest,
             type: 'text',
-            className: props.isChanged ? 'green darken-1' : '',
+            className: props.highlight ? 'green darken-1' : '',
             style: commentStyle,
             value: props.text,
             readonly: 'readonly',

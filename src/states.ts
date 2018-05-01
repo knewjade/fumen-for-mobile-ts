@@ -1,5 +1,6 @@
 import { AnimationState, Piece } from './lib/enums';
 import { Page } from './lib/fumen/fumen';
+import konva = require('konva');
 
 export const VERSION = '###VERSION###';  // Replace build number of CI when run `webpack:prod`
 
@@ -82,5 +83,64 @@ export const initState: Readonly<State> = {
 };
 
 export const resources = {
-    modals: {} as any,
+    modals: {
+        settings: undefined as any,
+        fumen: undefined as any,
+    },
+    konva: createKonvaObjects(),
 };
+
+// konvaオブジェクトの作成
+// 作成コストはやや大きめなので、必要なものは初めに作成する
+function createKonvaObjects() {
+    const obj = {
+        background: undefined as any,
+        fieldMarginLine: undefined as any,
+        fieldBlocks: [] as konva.Rect[],
+        layers: {
+            background: new konva.Layer({ name: 'background' }),
+            field: new konva.Layer({ name: 'field' }),
+        },
+    };
+    const layers = obj.layers;
+
+    // 背景
+    {
+        const rect = new konva.Rect({
+            fill: '#333',
+            strokeWidth: 0,
+            opacity: 1,
+        });
+
+        obj.background = rect;
+        layers.background.add(rect);
+    }
+
+    // プレイエリアとせり上がりの間
+    {
+        const line = new konva.Line({
+            points: [],
+            stroke: '#d8d8d8',
+        });
+
+        obj.fieldMarginLine = line;
+        layers.background.add(line);
+    }
+
+    // フィールドブロック
+    {
+        const rects = Array.from({ length: 23 * 10 }).map(() => {
+            return new konva.Rect({
+                strokeWidth: 0,
+                opacity: 1,
+            });
+        });
+
+        obj.fieldBlocks = rects;
+        for (const rect of rects) {
+            layers.field.add(rect);
+        }
+    }
+
+    return obj;
+}

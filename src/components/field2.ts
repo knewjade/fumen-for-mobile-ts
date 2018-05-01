@@ -21,9 +21,9 @@ interface FieldProps {
     line: konva.Line;
 }
 
-export const field: Component<FieldProps> = (props, children) => {
+export const field2: Component<FieldProps> = (props, children) => {
     return param({
-        key: 'field',
+        key: 'field2',
         position: props.position,
         size: props.size,
         borderPosition: props.borderPosition,

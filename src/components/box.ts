@@ -102,7 +102,6 @@ export const box: Component<BoxProps> = (props, children) => {
         }
     };
 
-    console.log(props.key);
     return param({
         key: props.key,
         dataTest: props.dataTest,

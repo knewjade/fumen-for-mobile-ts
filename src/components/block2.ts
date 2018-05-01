@@ -17,7 +17,7 @@ interface BlockProps {
     color: string;
 }
 
-export const block: Component<BlockProps> = (props) => {
+export const block2: Component<BlockProps> = (props) => {
     function fill(block: konva.Rect) {
         block.fill(props.color);
     }

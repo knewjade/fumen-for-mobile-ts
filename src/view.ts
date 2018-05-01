@@ -1,12 +1,12 @@
 import { View } from 'hyperapp';
 import { div } from '@hyperapp/html';
 import { Actions } from './actions';
-import { State } from './states';
+import { resources, State } from './states';
 import { HyperStage } from './lib/hyper';
 import { isMinoPiece, Piece } from './lib/enums';
 import { ModalInstance } from './lib/types';
-import { field } from './components/field';
-import { block } from './components/block';
+import { field2 } from './components/field2';
+import { block2 } from './components/block2';
 import { comment } from './components/comment';
 import { game } from './components/game';
 import { box } from './components/box';
@@ -15,50 +15,17 @@ import { Tools } from './components/tools';
 import { OpenFumenModal, SettingsModal } from './components/modals';
 import konva = require('konva');
 
+// レイアウトを決める部分を外に出す
+// konvaのshapeを外にプールする
+
 export const view: () => View<State, Actions> = () => {
     // 初期化
     const hyperStage = new HyperStage();
 
-    // Canvasの要素
-    // 背景
-    const background: konva.Rect = new konva.Rect({
-        fill: '#333',
-        strokeWidth: 0,
-        opacity: 1,
-    });
-
-    const line = new konva.Line({
-        points: [],
-        stroke: '#d8d8d8',
-    });
-
     {
-        const backgroundLayer = new konva.Layer({
-            name: 'background',
-        });
-
-        backgroundLayer.add(background);
-        backgroundLayer.add(line);
-
-        hyperStage.addLayer(backgroundLayer);
+        hyperStage.addLayer(resources.konva.layers.background);
+        hyperStage.addLayer(resources.konva.layers.field);
     }
-
-    // 描画
-    // フィールドブロック
-    const blocks = Array.from({ length: 23 * 10 }).map((ignore, index) => {
-        const [ix, iy] = [index % 10, Math.floor(index / 10)];
-        const py = 22 - iy;
-        const box: konva.Rect = new konva.Rect({
-            strokeWidth: 0,
-            opacity: 1,
-        });
-        return {
-            ix,
-            iy,
-            py,
-            box,
-        };
-    });
 
     // せり上がりブロック
     const bottomBlocks = Array.from({ length: 10 }).map((ignore, index) => {
@@ -111,11 +78,6 @@ export const view: () => View<State, Actions> = () => {
         const canvasLayer = new konva.Layer({
             name: 'field',
         });
-
-        // フィールドブロック
-        for (const block of blocks) {
-            canvasLayer.add(block.box);
-        }
 
         // せり上がりブロック
         for (const block of bottomBlocks) {
@@ -197,16 +159,9 @@ export const view: () => View<State, Actions> = () => {
             return piece !== undefined && isMinoPiece(piece) ? decidePieceColor(piece, true) : undefined;
         };
 
-        return div({
-            oncreate: () => {
-                // Hyperappでは最上位のノードが最後に実行される
-                hyperStage.batchDraw();
-            },
-            onupdate: () => {
-                // Hyperappでは最上位のノードが最後に実行される
-                hyperStage.batchDraw();
-            },
-        }, [
+        const batchDraw = () => hyperStage.batchDraw();
+
+        return div({ oncreate: batchDraw, onupdate: batchDraw }, [ // Hyperappでは最上位のノードが最後に実行される
             game({  // canvas空間のみ
                 canvas,
                 eventBox,
@@ -215,12 +170,14 @@ export const view: () => View<State, Actions> = () => {
                 backPage: actions.backPage,
                 nextPage: actions.nextPage,
             }),
+
+
             div({
                 key: 'field-top',
             }, [   // canvas:Field とのマッピング用仮想DOM
-                field({
-                    background,
-                    line,
+                field2({
+                    background: resources.konva.background,
+                    line: resources.konva.fieldMarginLine,
                     position: top,
                     size: fieldSize,
                     borderPosition: {
@@ -229,14 +186,14 @@ export const view: () => View<State, Actions> = () => {
                         y: top2.y - bottomBorderWidth / 2,
                     },
                     borderWidth: bottomBorderWidth,
-                }, blocks.map((value) => {
+                }, resources.konva.fieldBlocks.map((value, index) => {
                     const blockValue = state.field[value.ix + value.iy * 10];
 
                     const color = blockValue.piece === Piece.Empty ?
                         decideBackgroundColor(value.iy) :
                         decidePieceColor(blockValue.piece, blockValue.highlight || false);
 
-                    return block({
+                    return block2({
                         color,
                         key: `block-${value.ix}-${value.iy}`,
                         dataTest: `block-${value.ix}-${value.iy}`,
@@ -258,7 +215,7 @@ export const view: () => View<State, Actions> = () => {
                             '#000' :
                             decidePieceColor(blockValue.piece, blockValue.highlight || false);
 
-                        return block({
+                        return block2({
                             color,
                             key: `sent-block-${value.ix}-${value.iy}`,
                             dataTest: `sent-block-${value.ix}-${value.iy}`,
@@ -316,7 +273,7 @@ export const view: () => View<State, Actions> = () => {
             }, [
                 comment({
                     dataTest: `text-comment`,
-                    isChanged: state.comment.isChanged,
+                    highlight: state.comment.isChanged,
                     height: heights.comment,
                     text: state.comment.text,
                 }),
