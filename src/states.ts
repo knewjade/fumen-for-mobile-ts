@@ -98,9 +98,11 @@ function createKonvaObjects() {
         fieldMarginLine: undefined as any,
         fieldBlocks: [] as konva.Rect[],
         sentBlocks: [] as konva.Rect[],
+        hold: [[]] as konva.Rect[][],
         layers: {
             background: new konva.Layer({ name: 'background' }),
             field: new konva.Layer({ name: 'field' }),
+            boxes: new konva.Layer({ name: 'boxes' }),
         },
     };
     const layers = obj.layers;
@@ -153,6 +155,23 @@ function createKonvaObjects() {
         obj.sentBlocks = rects;
         for (const rect of rects) {
             layers.field.add(rect);
+        }
+    }
+
+    // Hold
+    {
+        const rects = Array.from({ length: 5 }).map(() => {
+            return new konva.Rect({
+                fill: '#333',
+                strokeWidth: 1,
+                stroke: '#666',
+                opacity: 1,
+            });
+        });
+
+        obj.hold = [rects];
+        for (const rect of rects) {
+            layers.boxes.add(rect);
         }
     }
 

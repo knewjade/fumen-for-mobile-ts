@@ -4,16 +4,13 @@ import { Actions } from './actions';
 import { resources, State } from './states';
 import { HyperStage } from './lib/hyper';
 import { isMinoPiece, Piece } from './lib/enums';
-import { ModalInstance } from './lib/types';
-import { field2 } from './components/field2';
-import { block2 } from './components/block2';
 import { comment } from './components/comment';
 import { game } from './components/game';
-import { box } from './components/box';
 import { getHighlightColor, getNormalColor } from './lib/colors';
 import { Tools } from './components/tools';
 import { OpenFumenModal, SettingsModal } from './components/modals';
 import { Field } from './components/field/field';
+import { Box } from './components/boxes/box';
 import konva = require('konva');
 
 // レイアウトを決める部分を外に出す
@@ -26,6 +23,7 @@ export const view: () => View<State, Actions> = () => {
     {
         hyperStage.addLayer(resources.konva.layers.background);
         hyperStage.addLayer(resources.konva.layers.field);
+        hyperStage.addLayer(resources.konva.layers.boxes);
     }
 
     const boxFunc: () => konva.Rect = () => {
@@ -46,12 +44,6 @@ export const view: () => View<State, Actions> = () => {
         });
     };
 
-    // Hold
-    const hold = {
-        box: boxFunc(),
-        pieces: partsFunc(),
-    };
-
     // Next
     const nexts = Array.from({ length: 5 }).map((ignore, index) => {
         return {
@@ -66,7 +58,7 @@ export const view: () => View<State, Actions> = () => {
         });
 
         // Hold & Next
-        for (const obj of [hold].concat(nexts as typeof hold[])) {
+        for (const obj of nexts) {
             canvasLayer.add(obj.box);
 
             for (const part of obj.pieces) {
@@ -121,11 +113,11 @@ export const view: () => View<State, Actions> = () => {
             y: (canvas.height - fieldSize.height) / 2,
         };
 
-        const boxSize = Math.min(fieldSize.width / 5 * 1.1, (canvas.width - fieldSize.width) / 2) + 1;
+        const boxSize = Math.max(Math.min(fieldSize.width / 5 * 1.15, (canvas.width - fieldSize.width) / 2 - 15), 5);
         const boxMargin = boxSize / 4;
 
         const getPieceColorInBox = (piece?: Piece) => {
-            return piece !== undefined && isMinoPiece(piece) ? decidePieceColor(piece, true) : undefined;
+            return piece !== undefined && isMinoPiece(piece) ? decidePieceColor(piece, true) : '#000';
         };
 
         const batchDraw = () => hyperStage.batchDraw();
@@ -151,42 +143,56 @@ export const view: () => View<State, Actions> = () => {
                     sentLine: state.sentLine,
                 }),
 
-                state.hold !== undefined ? box({
-                    key: 'hold',
-                    dataTest: 'box-hold',
-                    position: {
+                // Hold
+                state.hold !== undefined ? Box({
+                    boxSize,
+                    topLeft: {
                         x: top.x - (boxSize + boxMargin / 2),
                         y: top.y,
                     },
-                    box: {
-                        size: boxSize,
-                        color: '#333',
-                    },
-                    rect: hold,
-                    piece: {
+                    piece: isMinoPiece(state.hold) ? {
                         type: state.hold,
                         color: getPieceColorInBox(state.hold),
                         size: boxSize / 4 - 1,
-                    },
-                }) : undefined,
-                ...nexts.map(value => state.next !== undefined && state.next[value.index] !== undefined ? box({
-                    key: `next-${value.index}`,
-                    dataTest: `box-next-${value.index}`,
-                    position: {
-                        x: top.x + fieldSize.width + boxMargin / 2,
-                        y: top.y + value.index * (boxSize + boxMargin),
-                    },
-                    box: {
-                        size: boxSize,
-                        color: '#333',
-                    },
-                    rect: value,
-                    piece: {
-                        type: state.next[value.index],
-                        color: getPieceColorInBox(state.next[value.index]),
-                        size: boxSize / 4 - 1,
-                    },
-                }) : undefined),
+                    } : undefined,
+                }) : div(),
+
+                // state.hold !== undefined && false ? box({
+                //     key: 'hold',
+                //     dataTest: 'box-hold',
+                //     position: {
+                //         x: top.x - (boxSize + boxMargin / 2),
+                //         y: top.y,
+                //     },
+                //     box: {
+                //         size: boxSize,
+                //         color: '#333',
+                //     },
+                //     rect: hold,
+                //     piece: {
+                //         type: state.hold,
+                //         color: getPieceColorInBox(state.hold),
+                //         size: boxSize / 4 - 1,
+                //     },
+                // }) : undefined,
+                // ...nexts.map(value => state.next !== undefined && state.next[value.index] !== undefined ? box({
+                //     key: `next-${value.index}`,
+                //     dataTest: `box-next-${value.index}`,
+                //     position: {
+                //         x: top.x + fieldSize.width + boxMargin / 2,
+                //         y: top.y + value.index * (boxSize + boxMargin),
+                //     },
+                //     box: {
+                //         size: boxSize,
+                //         color: '#333',
+                //     },
+                //     rect: value,
+                //     piece: {
+                //         type: state.next[value.index],
+                //         color: getPieceColorInBox(state.next[value.index]),
+                //         size: boxSize / 4 - 1,
+                //     },
+                // }) : undefined),
             ] as any),
             div({
                 key: 'menu-top',

@@ -25,7 +25,7 @@ jobs:
         bucket: newjade
         skip_cleanup: true
         local_dir: cypress
-        upload-dir: fumen-for-mobile-ts/${TRAVIS_JOB_NUMBER}/
+        upload-dir: fumen-for-mobile-ts/${TRAVIS_JOB_NUMBER}
 
   - stage: deploy-dev
     language: node_js
