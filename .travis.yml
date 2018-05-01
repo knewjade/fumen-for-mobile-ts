@@ -20,12 +20,11 @@ jobs:
       - yarn cypress-ci
     after_failure:
       - provider: s3
-        access_key_id: ${AWS_ACCESS_KEY}
-        secret_access_key: ${AWS_SECRET_KEY}
+        access_key_id: "${AWS_ACCESS_KEY}"
+        secret_access_key: "${AWS_SECRET_KEY}"
         bucket: newjade
         skip_cleanup: true
         local_dir: cypress
-        upload-dir: ${TRAVIS_JOB_NUMBER}
 
   - stage: deploy-dev
     language: node_js
