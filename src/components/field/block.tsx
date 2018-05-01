@@ -1,4 +1,4 @@
-import { Component } from '../lib/types';
+import { Component } from '../../lib/types';
 import { h } from 'hyperapp';
 import konva = require('konva');
 
@@ -45,7 +45,7 @@ export const Block: Component<Props> = ({ key, dataTest, rect, color, position, 
         rect.hide();
     };
 
-    return <param name="konva" value="rect" key={key} datatest={dataTest}
+    return <param name="konva" value={key} key={key} datatest={dataTest}
                   oncreate={oncreate} onupdate={onupdate} ondestroy={ondestroy}
                   color={color} position={position} size={size}/>;
 };

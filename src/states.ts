@@ -7,35 +7,35 @@ export const VERSION = '###VERSION###';  // Replace build number of CI when run 
 // Immutableにする
 export interface State {
     field: Block[];
-    sentLine: ReadonlyArray<Readonly<Block>>;
-    comment: Readonly<{
-        readonly text: string;
-        readonly isChanged: boolean;
-    }>;
-    display: Readonly<{
+    sentLine: Block[];
+    comment: {
+        text: string;
+        isChanged: boolean;
+    };
+    display: {
         width: number;
         height: number;
-    }>;
+    };
     hold?: Piece;
-    next?: ReadonlyArray<Piece>;
-    play: Readonly<{
+    next?: Piece[];
+    play: {
         status: AnimationState;
         intervalTime: number;
-    }>;
-    fumen: Readonly<{
+    };
+    fumen: {
         currentIndex: number;
         maxPage: number;
-        pages: ReadonlyArray<Readonly<Page>>;
+        pages: Page[];
         value?: string;
         errorMessage?: string;
-    }>;
-    modal: Readonly<{
+    };
+    modal: {
         fumen: boolean;
         settings: boolean;
-    }>;
-    handlers: Readonly<{
+    };
+    handlers: {
         animation?: number;
-    }>;
+    };
     version: string;
 }
 
@@ -97,6 +97,7 @@ function createKonvaObjects() {
         background: undefined as any,
         fieldMarginLine: undefined as any,
         fieldBlocks: [] as konva.Rect[],
+        sentBlocks: [] as konva.Rect[],
         layers: {
             background: new konva.Layer({ name: 'background' }),
             field: new konva.Layer({ name: 'field' }),
@@ -107,7 +108,6 @@ function createKonvaObjects() {
     // 背景
     {
         const rect = new konva.Rect({
-            fill: '#333',
             strokeWidth: 0,
             opacity: 1,
         });
@@ -120,7 +120,6 @@ function createKonvaObjects() {
     {
         const line = new konva.Line({
             points: [],
-            stroke: '#d8d8d8',
         });
 
         obj.fieldMarginLine = line;
@@ -137,6 +136,21 @@ function createKonvaObjects() {
         });
 
         obj.fieldBlocks = rects;
+        for (const rect of rects) {
+            layers.field.add(rect);
+        }
+    }
+
+    // せり上がりブロック
+    {
+        const rects = Array.from({ length: 10 }).map(() => {
+            return new konva.Rect({
+                strokeWidth: 0,
+                opacity: 0.75,
+            });
+        });
+
+        obj.sentBlocks = rects;
         for (const rect of rects) {
             layers.field.add(rect);
         }

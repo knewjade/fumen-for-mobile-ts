@@ -13,7 +13,7 @@ import { box } from './components/box';
 import { getHighlightColor, getNormalColor } from './lib/colors';
 import { Tools } from './components/tools';
 import { OpenFumenModal, SettingsModal } from './components/modals';
-import { Field } from './components/field';
+import { Field } from './components/field/field';
 import konva = require('konva');
 
 // レイアウトを決める部分を外に出す
@@ -27,21 +27,6 @@ export const view: () => View<State, Actions> = () => {
         hyperStage.addLayer(resources.konva.layers.background);
         hyperStage.addLayer(resources.konva.layers.field);
     }
-
-    // せり上がりブロック
-    const bottomBlocks = Array.from({ length: 10 }).map((ignore, index) => {
-        const [ix, iy] = [index % 10, Math.floor(index / 10)];
-        const box: konva.Rect = new konva.Rect({
-            strokeWidth: 0,
-            opacity: 0.75,
-        });
-        return {
-            ix,
-            iy,
-            box,
-            py: 0,
-        };
-    });
 
     const boxFunc: () => konva.Rect = () => {
         return new konva.Rect({
@@ -80,11 +65,6 @@ export const view: () => View<State, Actions> = () => {
             name: 'field',
         });
 
-        // せり上がりブロック
-        for (const block of bottomBlocks) {
-            canvasLayer.add(block.box);
-        }
-
         // Hold & Next
         for (const obj of [hold].concat(nexts as typeof hold[])) {
             canvasLayer.add(obj.box);
@@ -116,17 +96,8 @@ export const view: () => View<State, Actions> = () => {
         tools: 50,
     };
 
-    const modalInstances: {
-        fumen?: ModalInstance;
-        settings?: ModalInstance;
-    } = {};
-
     const decidePieceColor = (piece: Piece, highlight: boolean) => {
         return highlight ? getHighlightColor(piece) : getNormalColor(piece);
-    };
-
-    const decideBackgroundColor = (y: number) => {
-        return y < 20 ? '#000' : '#333';
     };
 
     // 全体の構成を1関数にまとめる
@@ -175,40 +146,13 @@ export const view: () => View<State, Actions> = () => {
             div({
                 key: 'field-top',
             }, [   // canvas:Field とのマッピング用仮想DOM
-                Field({ topLeft: top, blockSize: size, field: state.field }),
-                field2({
-                    background: resources.konva.background,
-                    line: resources.konva.fieldMarginLine,
-                    position: top,
-                    size: fieldSize,
-                    borderPosition: {
-                        startX: top2.x,
-                        endX: top2.x + fieldSize.width,
-                        y: top2.y - bottomBorderWidth / 2,
-                    },
-                    borderWidth: bottomBorderWidth,
-                }, bottomBlocks.map((value) => {
-                    const blockValue = state.sentLine[value.ix + value.iy * 10];
+                Field({
+                    fieldMarginWidth: bottomBorderWidth,
+                    topLeft: top,
+                    blockSize: size,
+                    field: state.field,
+                }),
 
-                    const color = blockValue.piece === Piece.Empty ?
-                        '#000' :
-                        decidePieceColor(blockValue.piece, blockValue.highlight || false);
-
-                    return block2({
-                        color,
-                        key: `sent-block-${value.ix}-${value.iy}`,
-                        dataTest: `sent-block-${value.ix}-${value.iy}`,
-                        size: {
-                            width: size,
-                            height: size,
-                        },
-                        position: {
-                            x: top2.x + value.ix * size + value.ix + 1,
-                            y: top2.y + value.py * size + value.py + 1,
-                        },
-                        rect: value.box,
-                    });
-                })),
                 state.hold !== undefined ? box({
                     key: 'hold',
                     dataTest: 'box-hold',
