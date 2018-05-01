@@ -1,8 +1,8 @@
-import { Component, px, style } from '../lib/types';
+import { Component, px, style } from '../../lib/types';
 import { h } from 'hyperapp';
 import { ToolButton } from './tool_button';
 import { ToolText } from './tool_text';
-import { AnimationState } from '../lib/enums';
+import { AnimationState } from '../../lib/enums';
 
 interface Props {
     height: number;

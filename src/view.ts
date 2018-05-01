@@ -7,7 +7,7 @@ import { isMinoPiece, Piece } from './lib/enums';
 import { comment } from './components/comment';
 import { game } from './components/game';
 import { getHighlightColor, getNormalColor } from './lib/colors';
-import { Tools } from './components/tools';
+import { Tools } from './components/tools/tools';
 import { OpenFumenModal, SettingsModal } from './components/modals';
 import { Field } from './components/field/field';
 import { Box } from './components/boxes/box';

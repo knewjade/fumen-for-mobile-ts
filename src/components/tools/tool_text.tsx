@@ -1,5 +1,5 @@
 import { h } from 'hyperapp';
-import { ComponentWithText, px, style } from '../lib/types';
+import { ComponentWithText, px, style } from '../../lib/types';
 
 interface Props {
     datatest?: string;

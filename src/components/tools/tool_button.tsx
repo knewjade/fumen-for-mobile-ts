@@ -1,6 +1,6 @@
 import { h } from 'hyperapp';
 import { i } from '@hyperapp/html';
-import { Component, px, style } from '../lib/types';
+import { Component, px, style } from '../../lib/types';
 
 interface Props {
     width: number;
