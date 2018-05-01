@@ -12,6 +12,7 @@ interface Props {
         y: number;
     };
     field: Blocks[];
+    sentLine: Blocks[];
     blockSize: number;
     fieldMarginWidth: number;
 }
@@ -24,7 +25,7 @@ const decideBackgroundColor = (yIndex: number) => {
     return yIndex < 20 ? '#000' : '#333';
 };
 
-export const Field: Component<Props> = ({ topLeft, field, blockSize, fieldMarginWidth }) => {
+export const Field: Component<Props> = ({ topLeft, field, sentLine, blockSize, fieldMarginWidth }) => {
     const fieldBottomLeft = topLeft.y + (blockSize + 1) * 22.5 + 1;
 
     // プレイフィールドの描画
@@ -52,14 +53,10 @@ export const Field: Component<Props> = ({ topLeft, field, blockSize, fieldMargin
     // せり上がりの描画
     const sentBlocks = resources.konva.sentBlocks.map((rect, index) => {
         const [xIndex, yIndex] = [index % 10, Math.floor(index / 10)];
-        const yField = 22 - yIndex;
-        const blockValue = field[xIndex + yIndex * 10];
+        const blockValue = sentLine[xIndex + yIndex * 10];
 
-        const key = `block-${xIndex}-${yIndex}`;
-        const size = {
-            width: blockSize,
-            height: yField !== 0 ? blockSize : blockSize / 2,
-        };
+        const key = `sent-block-${xIndex}-${yIndex}`;
+        const size = { width: blockSize, height: blockSize };
         const position = {
             x: topLeft.x + xIndex * blockSize + xIndex + 1,
             y: fieldBottomLeft + fieldMarginWidth,

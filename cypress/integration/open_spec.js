@@ -28,7 +28,7 @@ describe('Open fumen', () => {
             });
 
         // Assertion: モーダルが閉じられている
-        cy.get(datatest('mdl-open-fumen')).should('hidden');
+        cy.get(datatest('mdl-open-fumen')).should('not.exist');
 
         // Assertion: ページ番号の確認
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 6')

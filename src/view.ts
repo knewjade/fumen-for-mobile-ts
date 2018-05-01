@@ -120,10 +120,7 @@ export const view: () => View<State, Actions> = () => {
             x: (canvas.width - fieldSize.width) / 2,
             y: (canvas.height - fieldSize.height) / 2,
         };
-        const top2 = {
-            x: top.x,
-            y: top.y + (size + 1) * 22.5 + 1 + bottomBorderWidth,
-        };
+
         const boxSize = Math.min(fieldSize.width / 5 * 1.1, (canvas.width - fieldSize.width) / 2) + 1;
         const boxMargin = boxSize / 4;
 
@@ -151,6 +148,7 @@ export const view: () => View<State, Actions> = () => {
                     topLeft: top,
                     blockSize: size,
                     field: state.field,
+                    sentLine: state.sentLine,
                 }),
 
                 state.hold !== undefined ? box({
