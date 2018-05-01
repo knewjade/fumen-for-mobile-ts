@@ -19,12 +19,12 @@ jobs:
       - yarn webpack:prod
       - yarn cypress-ci
     after_failure:
-      - provider: s3
-        access_key_id: "${AWS_ACCESS_KEY}"
-        secret_access_key: "${AWS_SECRET_KEY}"
-        bucket: newjade
-        skip_cleanup: true
-        local_dir: cypress
+    - provider: s3
+      access_key_id: ${AWS_ACCESS_KEY}
+      secret_access_key: ${AWS_SECRET_KEY}
+      bucket: newjade
+      skip_cleanup: true
+      local_dir: cypress
 
   - stage: deploy-dev
     language: node_js
