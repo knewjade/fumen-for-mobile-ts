@@ -1,6 +1,7 @@
 import { Component } from '../../lib/types';
 import { h } from 'hyperapp';
 import konva = require('konva');
+import { Piece } from '../../lib/enums';
 
 interface Props {
     rect: konva.Rect;
@@ -17,10 +18,11 @@ interface Props {
     fillColor: string;
     strokeWidth: number;
     strokeColor: string;
+    type?: Piece;
 }
 
 export const BoxRect: Component<Props> = (
-    { key, dataTest, rect, fillColor, position, size, strokeWidth, strokeColor },
+    { key, dataTest, rect, fillColor, position, size, strokeWidth, strokeColor, type },
 ) => {
     const resize = () => rect.setSize(size);
     const move = () => rect.setAbsolutePosition(position);
@@ -66,7 +68,7 @@ export const BoxRect: Component<Props> = (
         rect.hide();
     };
 
-    return <param name="konva" value={key} key={key} datatest={dataTest}
+    return <param name="konva" value={key} key={key} datatest={dataTest} type={type}
                   oncreate={oncreate} onupdate={onupdate} ondestroy={ondestroy}
                   color={fillColor} position={position} size={size}
                   strokeColor={strokeColor} strokeWidth={strokeWidth}/>;

@@ -17,7 +17,7 @@ export interface State {
         height: number;
     };
     hold?: Piece;
-    next?: Piece[];
+    nexts?: Piece[];
     play: {
         status: AnimationState;
         intervalTime: number;
@@ -60,7 +60,7 @@ export const initState: Readonly<State> = {
         height: window.document.body.clientHeight,
     },
     hold: undefined,
-    next: undefined,
+    nexts: undefined,
     play: {
         status: AnimationState.Pause,
         intervalTime: 1500,
@@ -98,7 +98,8 @@ function createKonvaObjects() {
         fieldMarginLine: undefined as any,
         fieldBlocks: [] as konva.Rect[],
         sentBlocks: [] as konva.Rect[],
-        hold: [[]] as konva.Rect[][],
+        hold: [] as konva.Rect[],
+        nexts: [[]] as konva.Rect[][],
         layers: {
             background: new konva.Layer({ name: 'background' }),
             field: new konva.Layer({ name: 'field' }),
@@ -169,9 +170,30 @@ function createKonvaObjects() {
             });
         });
 
-        obj.hold = [rects];
+        obj.hold = rects;
         for (const rect of rects) {
             layers.boxes.add(rect);
+        }
+    }
+
+    // Nexts
+    {
+        const nexts = Array.from({ length: 5 }).map(() => {
+            return Array.from({ length: 5 }).map(() => {
+                return new konva.Rect({
+                    fill: '#333',
+                    strokeWidth: 1,
+                    stroke: '#666',
+                    opacity: 1,
+                });
+            });
+        });
+
+        obj.nexts = nexts;
+        for (const next of nexts) {
+            for (const rect of next) {
+                layers.boxes.add(rect);
+            }
         }
     }
 

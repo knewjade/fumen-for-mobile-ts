@@ -2,9 +2,11 @@ import { h } from 'hyperapp';
 import { BoxRect } from './box_rect';
 import { getPieces, Piece } from '../../lib/enums';
 import { Component } from '../../lib/types';
-import { resources } from '../../states';
+import konva = require('konva');
 
 interface Props {
+    rects: konva.Rect[];
+    key: string;
     boxSize: number;
     topLeft: {
         x: number;
@@ -18,7 +20,7 @@ interface Props {
 }
 
 const getPiecePositions = (
-    boxLeftTop: { x: number, y: number }, piece: Piece, boxSize: number, pieceSize: number, margin: number
+    boxLeftTop: { x: number, y: number }, piece: Piece, boxSize: number, pieceSize: number, margin: number,
 ) => {
     // ブロックの相対位置を取得
     const blocks = getPieces(piece).map(([x, y]) => [x, -y]);
@@ -62,7 +64,7 @@ const getPiecePositions = (
     }));
 };
 
-export const Box: Component<Props> = ({ boxSize, topLeft, piece }) => {
+export const Box: Component<Props> = ({ key, boxSize, topLeft, piece, rects }) => {
     const sizeObj = { width: boxSize, height: boxSize };
 
     let positions: any[] = [];
@@ -71,15 +73,16 @@ export const Box: Component<Props> = ({ boxSize, topLeft, piece }) => {
         const pieceSizeObj = { width: pieceSize, height: pieceSize };
 
         positions = getPiecePositions(topLeft, piece.type, boxSize, pieceSize, 1).map((position, index) => {
-            const key = 'hold-box-' + index;
-            return <BoxRect key={key} dataTest={key} rect={resources.konva.hold[0][index + 1]} size={pieceSizeObj}
+            const positionKey = key + '-' + index;
+            return <BoxRect key={positionKey} dataTest={positionKey} rect={rects[index + 1]} size={pieceSizeObj}
                             fillColor={piece.color} strokeColor="#333" strokeWidth={0} position={position}/>;
         });
     }
 
+    const type = piece !== undefined ? piece.type : Piece.Empty;
     return (
         <div>
-            <BoxRect key="hold-box" dataTest="hold-box" rect={resources.konva.hold[0][0]}
+            <BoxRect key={key} dataTest={key} rect={rects[0]} type={type}
                      size={sizeObj} fillColor="#333" strokeColor="#666" strokeWidth={1} position={topLeft}/>
 
             {...positions}

@@ -146,6 +146,8 @@ export const view: () => View<State, Actions> = () => {
                 // Hold
                 state.hold !== undefined ? Box({
                     boxSize,
+                    key: 'box-hold',
+                    rects: resources.konva.hold,
                     topLeft: {
                         x: top.x - (boxSize + boxMargin / 2),
                         y: top.y,
@@ -157,43 +159,24 @@ export const view: () => View<State, Actions> = () => {
                     } : undefined,
                 }) : div(),
 
-                // state.hold !== undefined && false ? box({
-                //     key: 'hold',
-                //     dataTest: 'box-hold',
-                //     position: {
-                //         x: top.x - (boxSize + boxMargin / 2),
-                //         y: top.y,
-                //     },
-                //     box: {
-                //         size: boxSize,
-                //         color: '#333',
-                //     },
-                //     rect: hold,
-                //     piece: {
-                //         type: state.hold,
-                //         color: getPieceColorInBox(state.hold),
-                //         size: boxSize / 4 - 1,
-                //     },
-                // }) : undefined,
-                // ...nexts.map(value => state.next !== undefined && state.next[value.index] !== undefined ? box({
-                //     key: `next-${value.index}`,
-                //     dataTest: `box-next-${value.index}`,
-                //     position: {
-                //         x: top.x + fieldSize.width + boxMargin / 2,
-                //         y: top.y + value.index * (boxSize + boxMargin),
-                //     },
-                //     box: {
-                //         size: boxSize,
-                //         color: '#333',
-                //     },
-                //     rect: value,
-                //     piece: {
-                //         type: state.next[value.index],
-                //         color: getPieceColorInBox(state.next[value.index]),
-                //         size: boxSize / 4 - 1,
-                //     },
-                // }) : undefined),
-            ] as any),
+                // Nexts
+                ...(state.nexts !== undefined ? state.nexts : []).map((value, index) => {
+                    return Box({
+                        boxSize,
+                        key: 'box-next-' + index,
+                        rects: resources.konva.nexts[index],
+                        topLeft: {
+                            x: top.x + fieldSize.width + boxMargin / 2,
+                            y: top.y + index * (boxSize + boxMargin),
+                        },
+                        piece: isMinoPiece(value) ? {
+                            type: value,
+                            color: getPieceColorInBox(value),
+                            size: boxSize / 4 - 1,
+                        } : undefined,
+                    });
+                }),
+            ]),
             div({
                 key: 'menu-top',
             }, [

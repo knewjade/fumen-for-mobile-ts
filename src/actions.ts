@@ -192,7 +192,7 @@ export const actions: Readonly<Actions> = {
     setNext: ({ next }) => (): NextState => {
         log('action: setNext');
 
-        return { next };
+        return { nexts: next };
     },
     openPage: ({ index }) => (state): NextState => {
         log('action: openPage = ' + index);
