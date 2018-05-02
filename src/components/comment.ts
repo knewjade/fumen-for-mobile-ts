@@ -1,14 +1,14 @@
 import { Component, style } from '../lib/types';
 import { div, input } from '@hyperapp/html';
 
-interface CommentProps {
+interface Props {
     dataTest: string;
-    isChanged: boolean;
+    highlight: boolean;
     height: number;
     text: string;
 }
 
-export const comment: Component<CommentProps> = (props) => {
+export const comment: Component<Props> = (props) => {
     const commentStyle = style({
         width: '100%',
         height: props.height + 'px',
@@ -19,7 +19,7 @@ export const comment: Component<CommentProps> = (props) => {
         border: 'none',
     });
 
-    if (props.isChanged) {
+    if (props.highlight) {
         commentStyle.color = '#fff';
     }
 
@@ -33,7 +33,7 @@ export const comment: Component<CommentProps> = (props) => {
         input({
             dataTest: props.dataTest,
             type: 'text',
-            className: props.isChanged ? 'green darken-1' : '',
+            className: props.highlight ? 'green darken-1' : '',
             style: commentStyle,
             value: props.text,
             readonly: 'readonly',

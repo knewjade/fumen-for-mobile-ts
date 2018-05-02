@@ -1,13 +1,13 @@
 import { h } from 'hyperapp';
 import { i } from '@hyperapp/html';
-import { Component, px, style } from '../lib/types';
+import { Component, px, style } from '../../lib/types';
 
 interface Props {
     width: number;
     iconName: string;
     sticky?: boolean;
     marginRight?: number;
-    dataTest?: string;
+    datatest?: string;
     actions: {
         onclick(): void;
     };
@@ -19,7 +19,7 @@ interface IconProps {
 }
 
 export const ToolButton: Component<Props & IconProps> = (
-    { height, width, fontSize, iconName, sticky = false, marginRight = 0, dataTest, actions },
+    { height, width, fontSize, iconName, sticky = false, marginRight = 0, datatest, actions },
 ) => {
     const aProperties = style({
         height: px(height),
@@ -33,10 +33,10 @@ export const ToolButton: Component<Props & IconProps> = (
 
     return (
         <a href="#"
-           datatest={ dataTest }
-           style={ aProperties }
-           onclick={ () => actions.onclick() }>
-            <Icon height={ height } fontSize={ fontSize }>{ iconName }</Icon>
+           datatest={datatest}
+           style={aProperties}
+           onclick={() => actions.onclick()}>
+            <Icon height={height} fontSize={fontSize}>{iconName}</Icon>
         </a>
     );
 };
@@ -55,5 +55,5 @@ const Icon: Component<IconProps> = ({ height, fontSize }, children) => {
         color: '#fff',
     });
 
-    return <i className="material-icons teal darken-3" style={ properties }>{ children }</i>;
+    return <i className="material-icons teal darken-3" style={properties}>{children}</i>;
 };

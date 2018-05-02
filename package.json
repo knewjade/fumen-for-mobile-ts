@@ -9,7 +9,6 @@
     "test": "jest",
     "cypress": "cypress run",
     "open": "cypress open",
-
     "test-ci": "yarn test",
     "cypress-ci": "yarn cypress"
   },
@@ -30,6 +29,7 @@
     "webpack-cli": "^2.0.11"
   },
   "dependencies": {
+    "@hyperapp/logger": "^0.5.0",
     "hyperapp": "^1.1.2",
     "tslib": "^1.9.0"
   }

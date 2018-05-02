@@ -1,35 +1,35 @@
 import konva = require('konva');
 
 export class HyperStage {
-    private stageObj: konva.Stage | undefined = undefined;
-    private readonly layerBuffer: konva.Layer[] = [];
+    private stage: konva.Stage | undefined;
+
+    constructor() {
+    }
 
     addStage(stage: konva.Stage) {
-        this.stageObj = stage;
+        this.stage = stage;
+    }
 
-        while (0 < this.layerBuffer.length) {
-            const layer = this.layerBuffer.shift()!;
-            this.stageObj.add(layer);
+    removeStage() {
+        if (this.stage !== undefined) {
+            this.stage.removeChildren();
+            this.stage = undefined;
         }
     }
 
-    addLayer(layer: konva.Layer) {
-        if (this.stageObj !== undefined) {
-            this.stageObj.add(layer);
-        } else {
-            this.layerBuffer.push(layer);
-        }
+    get isReady() {
+        return this.stage !== undefined;
     }
 
     resize(size: { width: number; height: number }) {
-        if (this.stageObj !== undefined) {
-            this.stageObj.setSize(size);
+        if (this.stage !== undefined) {
+            this.stage.setSize(size);
         }
     }
 
     batchDraw() {
-        if (this.stageObj !== undefined) {
-            this.stageObj.batchDraw();
+        if (this.stage !== undefined) {
+            this.stage.batchDraw();
         }
     }
 }

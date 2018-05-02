@@ -1,38 +1,43 @@
 import { AnimationState, Piece } from './lib/enums';
 import { Page } from './lib/fumen/fumen';
+import konva = require('konva');
+import { HyperStage } from './lib/hyper';
+
+export const VERSION = '###VERSION###';  // Replace build number of CI when run `webpack:prod`
 
 // Immutableにする
 export interface State {
-    field: ReadonlyArray<Readonly<Block>>;
-    sentLine: ReadonlyArray<Readonly<Block>>;
-    comment: Readonly<{
-        readonly text: string;
-        readonly isChanged: boolean;
-    }>;
-    display: Readonly<{
+    field: Block[];
+    sentLine: Block[];
+    comment: {
+        text: string;
+        isChanged: boolean;
+    };
+    display: {
         width: number;
         height: number;
-    }>;
+    };
     hold?: Piece;
-    next?: ReadonlyArray<Piece>;
-    play: Readonly<{
+    nexts?: Piece[];
+    play: {
         status: AnimationState;
         intervalTime: number;
-    }>;
-    fumen: Readonly<{
+    };
+    fumen: {
         currentIndex: number;
         maxPage: number;
-        pages: ReadonlyArray<Readonly<Page>>;
+        pages: Page[];
         value?: string;
         errorMessage?: string;
-    }>;
-    modal: Readonly<{
+    };
+    modal: {
         fumen: boolean;
         settings: boolean;
-    }>;
-    handlers: Readonly<{
+    };
+    handlers: {
         animation?: number;
-    }>;
+    };
+    version: string;
 }
 
 export interface Block {
@@ -56,7 +61,7 @@ export const initState: Readonly<State> = {
         height: window.document.body.clientHeight,
     },
     hold: undefined,
-    next: undefined,
+    nexts: undefined,
     play: {
         status: AnimationState.Pause,
         intervalTime: 1500,
@@ -75,4 +80,140 @@ export const initState: Readonly<State> = {
     handlers: {
         animation: undefined,
     },
+    version: VERSION,
 };
+
+export const resources = {
+    modals: {
+        settings: undefined as any,
+        fumen: undefined as any,
+    },
+    konva: createKonvaObjects(),
+};
+
+// konvaオブジェクトの作成
+// 作成コストはやや大きめなので、必要なものは初めに作成する
+function createKonvaObjects() {
+    const obj = {
+        stage: new HyperStage(),
+        event: undefined as any,
+        background: undefined as any,
+        fieldMarginLine: undefined as any,
+        fieldBlocks: [] as konva.Rect[],
+        sentBlocks: [] as konva.Rect[],
+        hold: [] as konva.Rect[],
+        nexts: [[]] as konva.Rect[][],
+        layers: {
+            background: new konva.Layer({ name: 'background' }),
+            field: new konva.Layer({ name: 'field' }),
+            boxes: new konva.Layer({ name: 'boxes' }),
+            overlay: new konva.Layer({ name: 'overlay' }),
+        },
+    };
+    const layers = obj.layers;
+
+    // 背景
+    {
+        const rect = new konva.Rect({
+            strokeWidth: 0,
+            opacity: 1,
+        });
+
+        obj.background = rect;
+        layers.background.add(rect);
+    }
+
+    // プレイエリアとせり上がりの間
+    {
+        const line = new konva.Line({
+            points: [],
+        });
+
+        obj.fieldMarginLine = line;
+        layers.background.add(line);
+    }
+
+    // フィールドブロック
+    {
+        const rects = Array.from({ length: 23 * 10 }).map(() => {
+            return new konva.Rect({
+                strokeWidth: 0,
+                opacity: 1,
+            });
+        });
+
+        obj.fieldBlocks = rects;
+        for (const rect of rects) {
+            layers.field.add(rect);
+        }
+    }
+
+    // せり上がりブロック
+    {
+        const rects = Array.from({ length: 10 }).map(() => {
+            return new konva.Rect({
+                strokeWidth: 0,
+                opacity: 0.75,
+            });
+        });
+
+        obj.sentBlocks = rects;
+        for (const rect of rects) {
+            layers.field.add(rect);
+        }
+    }
+
+    // Hold
+    {
+        const rects = Array.from({ length: 5 }).map(() => {
+            return new konva.Rect({
+                fill: '#333',
+                strokeWidth: 1,
+                stroke: '#666',
+                opacity: 1,
+            });
+        });
+
+        obj.hold = rects;
+        for (const rect of rects) {
+            layers.boxes.add(rect);
+        }
+    }
+
+    // Nexts
+    {
+        const nexts = Array.from({ length: 5 }).map(() => {
+            return Array.from({ length: 5 }).map(() => {
+                return new konva.Rect({
+                    fill: '#333',
+                    strokeWidth: 1,
+                    stroke: '#666',
+                    opacity: 1,
+                });
+            });
+        });
+
+        obj.nexts = nexts;
+        for (const next of nexts) {
+            for (const rect of next) {
+                layers.boxes.add(rect);
+            }
+        }
+    }
+
+    // Overlay
+    // Event Layer
+    {
+        const rect = new konva.Rect({
+            fill: '#333',
+            opacity: 0.0,  // 0 ほど透過
+            strokeEnabled: false,
+            listening: true,
+        });
+
+        obj.event = rect;
+        layers.overlay.add(rect);
+    }
+
+    return obj;
+}

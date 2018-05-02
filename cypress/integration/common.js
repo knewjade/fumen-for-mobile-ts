@@ -91,6 +91,11 @@ const getPieces = (piece) => {
     }
 };
 
+export const visit = (fumen, sleepInMill = 500) => {
+    cy.visit('./public/index.html?d=' + fumen);
+    cy.wait(sleepInMill);
+};
+
 export const rightTap = (first, second) => {
     let count, callback;
     if (typeof first === 'number') {
@@ -101,8 +106,11 @@ export const rightTap = (first, second) => {
         callback = first;
     }
 
-    for (let i = 0; i < count; i += 1)
+    for (let i = 0; i < count; i += 1) {
+        if (0 < i) cy.wait(40);
         cy.get('body').click(300, 300);
+    }
+
     if (callback) callback();
 };
 
@@ -116,8 +124,11 @@ export const leftTap = (first, second) => {
         callback = first;
     }
 
-    for (let i = 0; i < count; i += 1)
+    for (let i = 0; i < count; i += 1) {
+        if (0 < i) cy.wait(40);
         cy.get('body').click(100, 300);
+    }
+
     if (callback) callback();
 };
 

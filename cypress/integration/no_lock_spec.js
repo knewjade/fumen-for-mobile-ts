@@ -1,11 +1,11 @@
-import {Color, datatest, mino, pages, Piece, rightTap, Rotation} from './common.js';
+import {Color, datatest, mino, pages, Piece, rightTap, Rotation, visit} from './common.js';
 
 // 接着なしのテスト
 describe('No lock', () => {
     const page = pages(52);
 
     it('S', () => {
-        cy.visit('./public/index.html?d=v115@UeB8beB8beB8beB8beB8beB8beB8ke3Jnvhyvpfnpf?/pf3afvafnaf/af3LfvLfnLf/Lf38ev8en8e/8e3tevtent?e/te3eeveenee/ee3PevPenPevPe3Pe/eeneevee3ee/ten?tevte3te/8en8ev8e38e/LfnLfvLf3Lf/afnafvaf3af/pf?npfnpf');
+        visit('v115@UeB8beB8beB8beB8beB8beB8beB8ke3Jnvhyvpfnpf?/pf3afvafnaf/af3LfvLfnLf/Lf38ev8en8e/8e3tevtent?e/te3eeveenee/ee3PevPenPevPe3Pe/eeneevee3ee/ten?tevte3te/8en8ev8e38e/LfnLfvLf3Lf/afnafvaf3af/pf?npfnpf');
 
         {
             // Assertion: ページ番号の確認

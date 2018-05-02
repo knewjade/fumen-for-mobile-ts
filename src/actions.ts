@@ -5,6 +5,7 @@ import { view } from './view';
 import { app } from 'hyperapp';
 import { openDescription, openQuiz } from './lib/helper';
 import { ViewError } from './lib/errors';
+import { withLogger } from '@hyperapp/logger';
 
 type NextState = Partial<State> | undefined;
 export type action = (state: Readonly<State>) => NextState;
@@ -30,23 +31,20 @@ export interface Actions {
     openSettingsModal: () => action;
     closeFumenModal: () => action;
     closeSettingsModal: () => action;
+    refresh: () => action;
 }
 
 export const actions: Readonly<Actions> = {
     resize: ({ width, height }) => (): NextState => {
-        log('action: resize');
-
         return {
             display: { width, height },
         };
     },
     loadFumen: ({ fumen }) => (): NextState => {
-        log('action: loadFumen = ' + fumen);
-
-        router.pauseAnimation();
+        main.pauseAnimation();
 
         if (fumen === undefined) {
-            router.showOpenErrorMessage({ message: 'データを入力してください' });
+            main.showOpenErrorMessage({ message: 'データを入力してください' });
             return undefined;
         }
 
@@ -56,15 +54,15 @@ export const actions: Readonly<Actions> = {
                 await decode(fumen, (page) => {
                     pages[page.index] = page;
                 });
-                router.setPages({ pages });
-                router.closeFumenModal();
-                router.clearFumenData();
+                main.setPages({ pages });
+                main.closeFumenModal();
+                main.clearFumenData();
             } catch (e) {
                 console.error(e);
                 if (e instanceof ViewError) {
-                    router.showOpenErrorMessage({ message: e.message });
+                    main.showOpenErrorMessage({ message: e.message });
                 } else {
-                    router.showOpenErrorMessage({ message: 'テト譜を読み込めませんでした' });
+                    main.showOpenErrorMessage({ message: 'テト譜を読み込めませんでした' });
                 }
             }
         })();
@@ -72,14 +70,12 @@ export const actions: Readonly<Actions> = {
         return undefined;
     },
     setPages: ({ pages }) => (state): NextState => {
-        log('action: setPages = ' + pages.length);
-
         if (pages.length < 1) {
             return undefined;
         }
 
         setImmediate(() => {
-            router.openPage({ index: 0 });
+            main.openPage({ index: 0 });
         });
 
         return {
@@ -91,8 +87,6 @@ export const actions: Readonly<Actions> = {
         };
     },
     inputFumenData: ({ value }) => (state): NextState => {
-        log('action: inputFumenData');
-
         return {
             fumen: {
                 ...state.fumen,
@@ -102,13 +96,9 @@ export const actions: Readonly<Actions> = {
         };
     },
     clearFumenData: () => (state): NextState => {
-        log('action: clearFumenData');
-
         return actions.inputFumenData({ value: undefined })(state);
     },
     startAnimation: () => (state): NextState => {
-        log('action: startAnimation');
-
         return sequence(state, [
             state.handlers.animation !== undefined ? actions.pauseAnimation() : undefined,
             () => ({
@@ -118,15 +108,13 @@ export const actions: Readonly<Actions> = {
                 },
                 handlers: {
                     animation: setInterval(() => {
-                        router.nextPage();
+                        main.nextPage();
                     }, state.play.intervalTime),
                 },
             }),
         ]);
     },
     pauseAnimation: () => (state): NextState => {
-        log('action: pauseAnimation');
-
         if (state.handlers.animation !== undefined) {
             clearInterval(state.handlers.animation);
         }
@@ -142,8 +130,6 @@ export const actions: Readonly<Actions> = {
         };
     },
     setComment: ({ comment }) => (state): NextState => {
-        log('action: setComment');
-
         return {
             comment: {
                 isChanged: comment !== undefined && comment !== state.comment.text,
@@ -152,7 +138,6 @@ export const actions: Readonly<Actions> = {
         };
     },
     setField: ({ field, filledHighlight }) => (): NextState => {
-        log('action: setField: filled = ' + filledHighlight);
         if (!filledHighlight) {
             return { field };
         }
@@ -179,23 +164,15 @@ export const actions: Readonly<Actions> = {
         return { field: drawnField };
     },
     setSentLine: ({ sentLine }) => (): NextState => {
-        log('action: setSentLine');
-
         return { sentLine };
     },
     setHold: ({ hold }) => (): NextState => {
-        log('action: setHold');
-
         return { hold };
     },
     setNext: ({ next }) => (): NextState => {
-        log('action: setNext');
-
-        return { next };
+        return { nexts: next };
     },
     openPage: ({ index }) => (state): NextState => {
-        log('action: openPage = ' + index);
-
         const pages = state.fumen.pages;
         const page = pages[index];
 
@@ -297,20 +274,14 @@ export const actions: Readonly<Actions> = {
         ]);
     },
     backPage: () => (state): NextState => {
-        log('action: backPage');
-
         const index = (state.fumen.currentIndex - 1 + state.fumen.maxPage) % state.fumen.maxPage;
         return actions.openPage({ index })(state);
     },
     nextPage: () => (state): NextState => {
-        log('action: nextPage');
-
         const index = (state.fumen.currentIndex + 1) % state.fumen.maxPage;
         return actions.openPage({ index })(state);
     },
     showOpenErrorMessage: ({ message }) => (state): NextState => {
-        log('action: showOpenErrorMessage: ' + message);
-
         return sequence(state, [
             actions.openFumenModal(),
             () => ({
@@ -322,8 +293,6 @@ export const actions: Readonly<Actions> = {
         ]);
     },
     openFumenModal: () => (state): NextState => {
-        log('action: openFumenModal');
-
         return {
             modal: {
                 ...state.modal,
@@ -332,8 +301,6 @@ export const actions: Readonly<Actions> = {
         };
     },
     openSettingsModal: () => (state): NextState => {
-        log('action: openSettingsModal');
-
         return {
             modal: {
                 ...state.modal,
@@ -342,8 +309,6 @@ export const actions: Readonly<Actions> = {
         };
     },
     closeFumenModal: () => (state): NextState => {
-        log('action: closeFumenModal');
-
         return {
             modal: {
                 ...state.modal,
@@ -352,8 +317,6 @@ export const actions: Readonly<Actions> = {
         };
     },
     closeSettingsModal: () => (state): NextState => {
-        log('action: closeSettingsModal');
-
         return {
             modal: {
                 ...state.modal,
@@ -361,11 +324,10 @@ export const actions: Readonly<Actions> = {
             },
         };
     },
+    refresh: () => (): NextState => {
+        return {};
+    },
 };
-
-function log(msg: string) {
-    // console.log(msg);
-}
 
 function sequence(
     state: Readonly<State>,
@@ -386,10 +348,17 @@ function sequence(
     return merged;
 }
 
-export const router = app(initState, actions, view(), document.body);
+// Mounting
+const mount = (isDebug: boolean = false): Actions => {
+    if (isDebug) {
+        return withLogger(app)(initState, actions, view, document.body);
+    }
+    return app<State, Actions>(initState, actions, view, document.body);
+};
+const main = mount(true);
 
 window.onresize = () => {
-    router.resize({
+    main.resize({
         width: window.document.body.clientWidth,
         height: window.document.body.clientHeight,
     });
@@ -401,4 +370,4 @@ function extractFumenFromURL() {
     return paramQuery !== undefined ? paramQuery.substr(2) : 'v115@vhAAgH';
 }
 
-router.loadFumen({ fumen: extractFumenFromURL() });
+main.loadFumen({ fumen: extractFumenFromURL() });
