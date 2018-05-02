@@ -123,3 +123,80 @@ function decodeCoordinate(n: number, piece: Piece, rotation: Rotation) {
 function decodeBool(n: number) {
     return n !== 0;
 }
+
+export function encodeAction(action: Action): number {
+    const { isLock, isComment, isColor, isMirror, isBlockUp, piece } = action;
+
+    let value = encodeBool(!isLock);
+    value *= 2;
+    value += encodeBool(isComment);
+    value *= 2;
+    value += (encodeBool(isColor));
+    value *= 2;
+    value += encodeBool(isMirror);
+    value *= 2;
+    value += encodeBool(isBlockUp);
+    value *= FIELD_BLOCKS;
+    value += encodePosition(piece);
+    value *= 4;
+    value += encodeRotation(piece);
+    value *= 8;
+    value += piece.type;
+
+    return value;
+}
+
+function encodeBool(flag: boolean): number {
+    return flag ? 1 : 0;
+}
+
+function encodePosition(
+    { coordinate, type, rotation }: { coordinate: { x: number, y: number }, type: Piece, rotation: Rotation },
+): number {
+    let { x, y } = coordinate;
+
+    if (!isMinoPiece(type)) {
+        x = 0;
+        y = 22;
+    } else if (type === Piece.O && rotation === Rotation.Left) {
+        x -= 1;
+        y -= 1;
+    } else if (type === Piece.O && rotation === Rotation.Reverse) {
+        x -= 1;
+    } else if (type === Piece.O && rotation === Rotation.Spawn) {
+        y += 1;
+    } else if (type === Piece.I && rotation === Rotation.Reverse) {
+        x -= 1;
+    } else if (type === Piece.I && rotation === Rotation.Left) {
+        y += 1;
+    } else if (type === Piece.S && rotation === Rotation.Spawn) {
+        y += 1;
+    } else if (type === Piece.S && rotation === Rotation.Right) {
+        x += 1;
+    } else if (type === Piece.Z && rotation === Rotation.Spawn) {
+        y += 1;
+    } else if (type === Piece.Z && rotation === Rotation.Left) {
+        x -= 1;
+    }
+
+    return (FIELD_TOP - y - 1) * FIELD_WIDTH + x;
+}
+
+function encodeRotation({ type, rotation }: { type: Piece, rotation: Rotation }): number {
+    if (!isMinoPiece(type)) {
+        return 0;
+    }
+
+    switch (rotation) {
+    case Rotation.Reverse:
+        return 0;
+    case Rotation.Right:
+        return 1;
+    case Rotation.Spawn:
+        return 2;
+    case Rotation.Left:
+        return 3;
+    }
+
+    throw new FumenError('No reachable');
+}

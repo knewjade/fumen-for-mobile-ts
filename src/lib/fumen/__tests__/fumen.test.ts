@@ -1,4 +1,4 @@
-import { decode, extract, Page } from '../fumen';
+import { decode, encode, extract, Page } from '../fumen';
 import { Field, FieldLine } from '../field';
 import { Operation, Piece, Rotation } from '../../enums';
 import { FumenError } from '../../errors';
@@ -723,5 +723,14 @@ describe('fumen', () => {
                 },
             } as Page);
         });
+    });
+
+    describe('encode', async () => {
+        const pages: Page[] = [];
+        await decode('vhBAgHAAA', (page) => {
+            pages[page.index] = page;
+        });
+
+        await expect(encode(pages)).resolves.toEqual('vhBAgHAAA');
     });
 });

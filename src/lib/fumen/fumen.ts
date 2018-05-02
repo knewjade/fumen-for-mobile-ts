@@ -1,8 +1,8 @@
 import { FieldConstants, isMinoPiece, Operation, Piece, Rotation } from '../enums';
 import { Quiz } from './quiz';
 import { Field, FieldLine } from './field';
-import { decodeAction } from './action';
-import { Values } from './values';
+import { decodeAction, encodeAction } from './action';
+import { ENCODE_TABLE_LENGTH, Values } from './values';
 import { FumenError } from '../errors';
 
 export interface Page {
@@ -30,6 +30,7 @@ export interface Page {
         send: boolean;
         mirrored: boolean;
         colorize: boolean;
+        blockUp: boolean;
     };
 }
 
@@ -46,6 +47,10 @@ function decodeToCommentChars(v: number): string[] {
         value = Math.floor(value / MAX_COMMENT_CHAR_VALUE);
     }
     return array;
+}
+
+function enodeFromCommentChars(ch: string): number {
+    return COMMENT_TABLE.indexOf(ch);
 }
 
 const FIELD_WIDTH = FieldConstants.Width;
@@ -217,6 +222,7 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
                 send: action.isBlockUp,
                 mirrored: action.isMirror,
                 colorize: action.isColor,
+                blockUp: action.isBlockUp,
             },
         });
 
@@ -241,4 +247,132 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
 
         prevField = currentField;
     }
+}
+
+export async function encode(pages: Page[]): Promise<string> {
+    let lastRepeatIndex = -1;
+    const allValues = new Values();
+
+    const updateField = (prev: Field, current: Field) => {
+        const { changed, values } = encodeField2(prev, current);
+
+        if (changed) {
+            // フィールドを記録して、リピートを終了する
+            allValues.merge(values);
+            lastRepeatIndex = -1;
+        } else if (lastRepeatIndex < 0 || allValues.get(lastRepeatIndex) === ENCODE_TABLE_LENGTH - 1) {
+            // フィールドを記録して、リピートを開始する
+            allValues.merge(values);
+            allValues.push(0);
+            lastRepeatIndex = allValues.length - 1;
+        } else if (allValues.get(lastRepeatIndex) < (ENCODE_TABLE_LENGTH - 1)) {
+            // フィールドは記録せず、リピートを進める
+            const currentRepeatValue = allValues.get(lastRepeatIndex);
+            allValues.set(lastRepeatIndex, currentRepeatValue + 1);
+        }
+    };
+
+    for (let index = 0; index < pages.length; index += 1) {
+        const prevField = 0 < index ? pages[index - 1].sentLine.concat(pages[index - 1].field) : new Field({});
+        const currentPage = pages[index];
+
+        // フィールドの更新
+        updateField(prevField, currentPage.sentLine.concat(currentPage.field));
+
+        // アクションの更新
+        const isComment = currentPage.comment.text !== undefined && (index !== 0 || currentPage.comment.text !== '');
+        const action = {
+            isComment,
+            piece: {
+                type: Piece.Empty,
+                rotation: Rotation.Reverse,
+                coordinate: {
+                    x: 0,
+                    y: 0,
+                },
+            },
+            isBlockUp: currentPage.flags.blockUp,
+            isMirror: currentPage.flags.mirrored,
+            isColor: currentPage.flags.colorize,
+            isLock: currentPage.flags.lock,
+        };
+
+        const actionNumber = encodeAction(action);
+        allValues.push(actionNumber, 3);
+
+        // コメントの更新
+        if (currentPage.comment.text !== undefined && isComment) {
+            const comment = escape(currentPage.comment.text);
+            const commentLength = Math.min(comment.length, 4095);
+
+            allValues.push(commentLength, 2);
+
+            // コメントを符号化
+            for (let index = 0; index < commentLength; index += 4) {
+                let value = 0;
+                for (let count = 0; count < 4; count += 1) {
+                    const newIndex = index + count;
+                    if (commentLength <= newIndex) {
+                        break;
+                    }
+                    const ch = comment.charAt(newIndex);
+                    value += enodeFromCommentChars(ch) * Math.pow(MAX_COMMENT_CHAR_VALUE, count);
+                }
+
+                allValues.push(value, 5);
+            }
+        }
+    }
+
+    return allValues.toString();
+}
+
+// フィールドをエンコードする
+// 前のフィールドがないときは空のフィールドを指定する
+// 入力フィールドの高さは23, 幅は10
+function encodeField2(prev: Field, current: Field) {
+    const values = new Values();
+
+    // 前のフィールドとの差を計算: 0〜16
+    const getDiff = (xIndex: number, yIndex: number) => {
+        const y: number = FIELD_TOP - yIndex - 1;
+
+        if (y < 0) {
+            return 8;
+        }
+
+        return current.get(xIndex, y) - prev.get(xIndex, y) + 8;
+    };
+
+    // データの記録
+    const recordBlockCounts = (diff: number, counter: number) => {
+        const value: number = diff * FIELD_BLOCKS + counter;
+        values.push(value, 2);
+    };
+
+    // フィールド値から連続したブロック数に変換
+    let changed = false;
+    let prev_diff = getDiff(0, 0);
+    let counter = -1;
+    for (let yIndex = 0; yIndex < FIELD_TOP + FIELD_SENT_LINE; yIndex += 1) {
+        for (let xIndex = 0; xIndex < FIELD_WIDTH; xIndex += 1) {
+            const diff = getDiff(xIndex, yIndex);
+            if (diff !== prev_diff) {
+                recordBlockCounts(prev_diff, counter);
+                counter = 0;
+                prev_diff = diff;
+                changed = true;
+            } else {
+                counter += 1;
+            }
+        }
+    }
+
+    // 最後の連続ブロックを処理
+    recordBlockCounts(prev_diff, counter);
+
+    return {
+        values,
+        changed,
+    };
 }

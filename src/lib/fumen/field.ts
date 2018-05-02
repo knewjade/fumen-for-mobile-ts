@@ -107,6 +107,10 @@ export class Field {
     copy(): Field {
         return new Field({ pieces: this.pieces.concat(), length: this.length });
     }
+
+    toShallowArray() {
+        return this.pieces;
+    }
 }
 
 export class FieldLine {
@@ -135,5 +139,10 @@ export class FieldLine {
 
     copy(): FieldLine {
         return new FieldLine({ field: this.field.copy() });
+    }
+
+    concat(other: Field): Field {
+        const pieces = this.field.toShallowArray().concat(other.toShallowArray());
+        return new Field({ pieces, length: pieces.length });
     }
 }
