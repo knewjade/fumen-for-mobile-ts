@@ -1,7 +1,7 @@
 import { FieldConstants, isMinoPiece, Operation, Piece, Rotation } from '../enums';
 import { Quiz } from './quiz';
 import { Field, FieldLine } from './field';
-import { getAction } from './action';
+import { decodeAction } from './action';
 import { Values } from './values';
 import { FumenError } from '../errors';
 
@@ -50,7 +50,8 @@ function decodeToCommentChars(v: number): string[] {
 
 const FIELD_WIDTH = FieldConstants.Width;
 const FIELD_TOP = FieldConstants.Height;
-const FIELD_BLOCKS = (FIELD_TOP + FieldConstants.SentLine) * FIELD_WIDTH;
+const FIELD_SENT_LINE = FieldConstants.SentLine;
+const FIELD_BLOCKS = (FIELD_TOP + FIELD_SENT_LINE) * FIELD_WIDTH;
 
 export function extract(str: string): string {
     let data = str;
@@ -131,7 +132,7 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
 
         // Parse action
         const actionValue = values.poll(3);
-        const action = getAction(actionValue);
+        const action = decodeAction(actionValue);
 
         // Parse comment
         const comment: {
@@ -173,9 +174,9 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
         } | undefined = undefined;
 
         if (store.quiz !== undefined) {
-            if (action.isLock && isMinoPiece(action.piece) && store.quiz.canOperate()) {
+            if (action.isLock && isMinoPiece(action.piece.type) && store.quiz.canOperate()) {
                 try {
-                    const operation = store.quiz.getOperation(action.piece);
+                    const operation = store.quiz.getOperation(action.piece.type);
                     quiz = { operation };
                     store.quiz = store.quiz.operate(operation);
                 } catch (e) {
@@ -199,12 +200,8 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
                 y: number,
             };
         } | undefined;
-        if (action.piece !== Piece.Empty) {
-            currentPiece = {
-                type: action.piece,
-                rotation: action.rotation,
-                coordinate: action.coordinate,
-            };
+        if (action.piece.type !== Piece.Empty) {
+            currentPiece = action.piece;
         }
 
         await callback({
@@ -226,8 +223,8 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
         pageIndex += 1;
 
         if (action.isLock) {
-            if (isMinoPiece(action.piece)) {
-                currentField.put(action.piece, action.rotation, action.coordinate);
+            if (isMinoPiece(action.piece.type)) {
+                currentField.put(action.piece);
             }
 
             currentField.clearLine();

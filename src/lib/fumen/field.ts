@@ -57,11 +57,11 @@ export class Field {
         this.pieces[x + y * FIELD_WIDTH] = piece;
     }
 
-    put(piece: Piece, rotation: Rotation, coordinate: { x: number, y: number }) {
-        const blocks = getBlocks(piece, rotation);
+    put({ type, rotation, coordinate }: { type: Piece, rotation: Rotation, coordinate: { x: number, y: number } }) {
+        const blocks = getBlocks(type, rotation);
         for (const block of blocks) {
             const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
-            this.set(x, y, piece);
+            this.set(x, y, type);
         }
     }
 

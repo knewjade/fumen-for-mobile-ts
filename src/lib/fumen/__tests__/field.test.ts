@@ -63,7 +63,11 @@ describe('field', () => {
     describe('put', () => {
         test('I-Spawn', () => {
             const field = new Field({});
-            field.put(Piece.I, Rotation.Spawn, { x: 1, y: 0 });
+            field.put({
+                type: Piece.I,
+                rotation: Rotation.Spawn,
+                coordinate: { x: 1, y: 0 },
+            });
 
             expect(field.get(0, 0)).toEqual(Piece.I);
             expect(field.get(1, 0)).toEqual(Piece.I);
@@ -73,7 +77,11 @@ describe('field', () => {
 
         test('S-Left', () => {
             const field = new Field({});
-            field.put(Piece.S, Rotation.Left, { x: 3, y: 4 });
+            field.put({
+                type: Piece.S,
+                rotation: Rotation.Left,
+                coordinate: { x: 3, y: 4 },
+            });
 
             expect(field.get(2, 5)).toEqual(Piece.S);
             expect(field.get(2, 4)).toEqual(Piece.S);
@@ -169,7 +177,11 @@ describe('field', () => {
         expect(array.every(value => value === Piece.Empty)).toBeTruthy();
 
         // 配列に変換後、fieldを操作しても変化しない
-        field.put(Piece.I, Rotation.Left, { x: 1, y: 0 });
+        field.put({
+            type: Piece.I,
+            rotation: Rotation.Left,
+            coordinate: { x: 1, y: 0 },
+        });
         expect(array).toHaveLength(240);
         expect(array.every(value => value === Piece.Empty)).toBeTruthy();
     });

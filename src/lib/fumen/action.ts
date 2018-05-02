@@ -1,4 +1,4 @@
-import { FieldConstants, Piece, Rotation } from '../enums';
+import { FieldConstants, isMinoPiece, Piece, Rotation } from '../enums';
 import { FumenError } from '../errors';
 
 const FIELD_WIDTH = FieldConstants.Width;
@@ -6,11 +6,13 @@ const FIELD_TOP = FieldConstants.Height;
 const FIELD_BLOCKS = (FIELD_TOP + FieldConstants.SentLine) * FIELD_WIDTH;
 
 export interface Action {
-    piece: Piece;
-    rotation: Rotation;
-    coordinate: {
-        x: number,
-        y: number,
+    piece: {
+        type: Piece;
+        rotation: Rotation;
+        coordinate: {
+            x: number,
+            y: number,
+        };
     };
     isBlockUp: boolean;
     isMirror: boolean;
@@ -19,37 +21,39 @@ export interface Action {
     isLock: boolean;
 }
 
-export function getAction(v: number): Action {
+export function decodeAction(v: number): Action {
     let value = v;
-    const piece = parsePiece(value % 8);
+    const type = decodePiece(value % 8);
     value = Math.floor(value / 8);
-    const rotation = parseRotation(value % 4);
+    const rotation = decodeRotation(value % 4);
     value = Math.floor(value / 4);
-    const coordinate = parseCoordinate(value % FIELD_BLOCKS, piece, rotation);
+    const coordinate = decodeCoordinate(value % FIELD_BLOCKS, type, rotation);
     value = Math.floor(value / FIELD_BLOCKS);
-    const isBlockUp = parseBool(value % 2);
+    const isBlockUp = decodeBool(value % 2);
     value = Math.floor(value / 2);
-    const isMirror = parseBool(value % 2);
+    const isMirror = decodeBool(value % 2);
     value = Math.floor(value / 2);
-    const isColor = parseBool(value % 2);
+    const isColor = decodeBool(value % 2);
     value = Math.floor(value / 2);
-    const isComment = parseBool(value % 2);
+    const isComment = decodeBool(value % 2);
     value = Math.floor(value / 2);
-    const isLock = !parseBool(value % 2);
+    const isLock = !decodeBool(value % 2);
 
     return {
-        piece,
-        rotation,
-        coordinate,
         isBlockUp,
         isMirror,
         isColor,
         isComment,
         isLock,
+        piece: {
+            type,
+            rotation,
+            coordinate,
+        },
     };
 }
 
-function parsePiece(n: number) {
+function decodePiece(n: number) {
     switch (n) {
     case 0:
         return Piece.Empty;
@@ -73,7 +77,7 @@ function parsePiece(n: number) {
     throw new FumenError('Unexpected piece');
 }
 
-function parseRotation(n: number) {
+function decodeRotation(n: number) {
     switch (n) {
     case 0:
         return Rotation.Reverse;
@@ -87,7 +91,7 @@ function parseRotation(n: number) {
     throw new FumenError('Unexpected rotation');
 }
 
-function parseCoordinate(n: number, piece: Piece, rotation: Rotation) {
+function decodeCoordinate(n: number, piece: Piece, rotation: Rotation) {
     let x = n % FIELD_WIDTH;
     const originY = Math.floor(n / 10);
     let y = FIELD_TOP - originY - 1;
@@ -116,6 +120,6 @@ function parseCoordinate(n: number, piece: Piece, rotation: Rotation) {
     return { x, y };
 }
 
-function parseBool(n: number) {
+function decodeBool(n: number) {
     return n !== 0;
 }
