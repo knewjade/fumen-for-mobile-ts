@@ -355,7 +355,7 @@ const mount = (isDebug: boolean = false): Actions => {
     }
     return app<State, Actions>(initState, actions, view, document.body);
 };
-const main = mount(true);
+const main = mount(JSON.parse('###DEBUG###'));
 
 window.onresize = () => {
     main.resize({
