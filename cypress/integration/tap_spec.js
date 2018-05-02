@@ -1,11 +1,11 @@
-import {Color, datatest, leftTap, mino, pages, Piece, rightTap, Rotation} from './common.js';
+import {Color, datatest, leftTap, mino, pages, Piece, rightTap, Rotation, visit} from './common.js';
 
 // タップのテスト
 describe('Tap', () => {
     const page = pages(3);
 
     it('Next / Prev', () => {
-        cy.visit('./public/index.html?d=v115@vhCRQJUmBKpB');
+       visit('v115@vhCRQJUmBKpB');
 
         {
             // Assertion: ページ番号の確認

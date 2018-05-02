@@ -1,11 +1,11 @@
-import {block, Color, datatest, mino, pages, Piece, rightTap, Rotation, sentBlock} from './common';
+import {block, Color, datatest, mino, pages, Piece, rightTap, Rotation, sentBlock, visit} from './common';
 
 // テト譜を開く
 describe('Sent line', () => {
     it('Highlight pieces', () => {
         const page = pages(23);
 
-        cy.visit('./public/index.html?d=v115@vhMSwQaAFLDmClcJSAVDEHBEooRBMoAVBqHDMCzOBA?AWyBUoBTpBXmBJnBVhBpeQaAFLDmClcJSAVDEHBEooRBJoA?VBvHUxCqCBAAzdB0XBPTBOfB6WBlhA8AeH8AoFvhDliBtnB?elBFdFlhC8Q4g0wwAtQpglwhAAAvhDA4BAAeAAAAAA');
+       visit('v115@vhMSwQaAFLDmClcJSAVDEHBEooRBMoAVBqHDMCzOBA?AWyBUoBTpBXmBJnBVhBpeQaAFLDmClcJSAVDEHBEooRBJoA?VBvHUxCqCBAAzdB0XBPTBOfB6WBlhA8AeH8AoFvhDliBtnB?elBFdFlhC8Q4g0wwAtQpglwhAAAvhDA4BAAeAAAAAA');
 
         {
             // ページ番号の確認
@@ -63,7 +63,7 @@ describe('Sent line', () => {
     it('Sent line', () => {
         const page = pages(23);
 
-        cy.visit('./public/index.html?d=v115@vhMSwQaAFLDmClcJSAVDEHBEooRBMoAVBqHDMCzOBA?AWyBUoBTpBXmBJnBVhBpeQaAFLDmClcJSAVDEHBEooRBJoA?VBvHUxCqCBAAzdB0XBPTBOfB6WBlhA8AeH8AoFvhDliBtnB?elBFdFlhC8Q4g0wwAtQpglwhAAAvhDA4BAAeAAAAAA');
+       visit('v115@vhMSwQaAFLDmClcJSAVDEHBEooRBMoAVBqHDMCzOBA?AWyBUoBTpBXmBJnBVhBpeQaAFLDmClcJSAVDEHBEooRBJoA?VBvHUxCqCBAAzdB0XBPTBOfB6WBlhA8AeH8AoFvhDliBtnB?elBFdFlhC8Q4g0wwAtQpglwhAAAvhDA4BAAeAAAAAA');
 
         {
             // ページ番号の確認
