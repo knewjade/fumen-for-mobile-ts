@@ -1,5 +1,6 @@
 const path = require('path');
 const version = process.env.TRAVIS_BUILD_NUMBER || `dev-${new Date().toISOString()}`;
+const isDebug = (!process.env.TRAVIS_BUILD_NUMBER) + '';
 
 module.exports = {
     entry: [
@@ -17,6 +18,14 @@ module.exports = {
                 options: {
                     search: '###VERSION###',
                     replace: version,
+                }
+            },
+            {
+                test: /actions\.ts$/,
+                loader: 'string-replace-loader',
+                options: {
+                    search: '###DEBUG###',
+                    replace: isDebug,
                 }
             },
             {
