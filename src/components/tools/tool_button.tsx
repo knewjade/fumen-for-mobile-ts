@@ -33,10 +33,10 @@ export const ToolButton: Component<Props & IconProps> = (
 
     return (
         <a href="#"
-           datatest={ datatest }
-           style={ aProperties }
-           onclick={ () => actions.onclick() }>
-            <Icon height={ height } fontSize={ fontSize }>{ iconName }</Icon>
+           datatest={datatest}
+           style={aProperties}
+           onclick={() => actions.onclick()}>
+            <Icon height={height} fontSize={fontSize}>{iconName}</Icon>
         </a>
     );
 };
@@ -55,5 +55,5 @@ const Icon: Component<IconProps> = ({ height, fontSize }, children) => {
         color: '#fff',
     });
 
-    return <i className="material-icons teal darken-3" style={ properties }>{ children }</i>;
+    return <i className="material-icons teal darken-3" style={properties}>{children}</i>;
 };

@@ -31,19 +31,16 @@ export interface Actions {
     openSettingsModal: () => action;
     closeFumenModal: () => action;
     closeSettingsModal: () => action;
+    refresh: () => action;
 }
 
 export const actions: Readonly<Actions> = {
     resize: ({ width, height }) => (): NextState => {
-        log('action: resize');
-
         return {
             display: { width, height },
         };
     },
     loadFumen: ({ fumen }) => (): NextState => {
-        log('action: loadFumen = ' + fumen);
-
         main.pauseAnimation();
 
         if (fumen === undefined) {
@@ -73,8 +70,6 @@ export const actions: Readonly<Actions> = {
         return undefined;
     },
     setPages: ({ pages }) => (state): NextState => {
-        log('action: setPages = ' + pages.length);
-
         if (pages.length < 1) {
             return undefined;
         }
@@ -92,8 +87,6 @@ export const actions: Readonly<Actions> = {
         };
     },
     inputFumenData: ({ value }) => (state): NextState => {
-        log('action: inputFumenData');
-
         return {
             fumen: {
                 ...state.fumen,
@@ -103,13 +96,9 @@ export const actions: Readonly<Actions> = {
         };
     },
     clearFumenData: () => (state): NextState => {
-        log('action: clearFumenData');
-
         return actions.inputFumenData({ value: undefined })(state);
     },
     startAnimation: () => (state): NextState => {
-        log('action: startAnimation');
-
         return sequence(state, [
             state.handlers.animation !== undefined ? actions.pauseAnimation() : undefined,
             () => ({
@@ -126,8 +115,6 @@ export const actions: Readonly<Actions> = {
         ]);
     },
     pauseAnimation: () => (state): NextState => {
-        log('action: pauseAnimation');
-
         if (state.handlers.animation !== undefined) {
             clearInterval(state.handlers.animation);
         }
@@ -143,8 +130,6 @@ export const actions: Readonly<Actions> = {
         };
     },
     setComment: ({ comment }) => (state): NextState => {
-        log('action: setComment');
-
         return {
             comment: {
                 isChanged: comment !== undefined && comment !== state.comment.text,
@@ -153,7 +138,6 @@ export const actions: Readonly<Actions> = {
         };
     },
     setField: ({ field, filledHighlight }) => (): NextState => {
-        log('action: setField: filled = ' + filledHighlight);
         if (!filledHighlight) {
             return { field };
         }
@@ -180,23 +164,15 @@ export const actions: Readonly<Actions> = {
         return { field: drawnField };
     },
     setSentLine: ({ sentLine }) => (): NextState => {
-        log('action: setSentLine');
-
         return { sentLine };
     },
     setHold: ({ hold }) => (): NextState => {
-        log('action: setHold');
-
         return { hold };
     },
     setNext: ({ next }) => (): NextState => {
-        log('action: setNext');
-
         return { nexts: next };
     },
     openPage: ({ index }) => (state): NextState => {
-        log('action: openPage = ' + index);
-
         const pages = state.fumen.pages;
         const page = pages[index];
 
@@ -298,20 +274,14 @@ export const actions: Readonly<Actions> = {
         ]);
     },
     backPage: () => (state): NextState => {
-        log('action: backPage');
-
         const index = (state.fumen.currentIndex - 1 + state.fumen.maxPage) % state.fumen.maxPage;
         return actions.openPage({ index })(state);
     },
     nextPage: () => (state): NextState => {
-        log('action: nextPage');
-
         const index = (state.fumen.currentIndex + 1) % state.fumen.maxPage;
         return actions.openPage({ index })(state);
     },
     showOpenErrorMessage: ({ message }) => (state): NextState => {
-        log('action: showOpenErrorMessage: ' + message);
-
         return sequence(state, [
             actions.openFumenModal(),
             () => ({
@@ -323,8 +293,6 @@ export const actions: Readonly<Actions> = {
         ]);
     },
     openFumenModal: () => (state): NextState => {
-        log('action: openFumenModal');
-
         return {
             modal: {
                 ...state.modal,
@@ -333,8 +301,6 @@ export const actions: Readonly<Actions> = {
         };
     },
     openSettingsModal: () => (state): NextState => {
-        log('action: openSettingsModal');
-
         return {
             modal: {
                 ...state.modal,
@@ -343,8 +309,6 @@ export const actions: Readonly<Actions> = {
         };
     },
     closeFumenModal: () => (state): NextState => {
-        log('action: closeFumenModal');
-
         return {
             modal: {
                 ...state.modal,
@@ -353,8 +317,6 @@ export const actions: Readonly<Actions> = {
         };
     },
     closeSettingsModal: () => (state): NextState => {
-        log('action: closeSettingsModal');
-
         return {
             modal: {
                 ...state.modal,
@@ -362,11 +324,10 @@ export const actions: Readonly<Actions> = {
             },
         };
     },
+    refresh: () => (): NextState => {
+        return {};
+    },
 };
-
-function log(msg: string) {
-    // console.log(msg);
-}
 
 function sequence(
     state: Readonly<State>,

@@ -4,12 +4,13 @@ import { Actions } from './actions';
 import { resources, State } from './states';
 import { isMinoPiece, Piece } from './lib/enums';
 import { comment } from './components/comment';
-import { game } from './components/game';
+import { KonvaCanvas } from './components/konva_canvas';
 import { getHighlightColor, getNormalColor } from './lib/colors';
 import { Tools } from './components/tools/tools';
 import { OpenFumenModal, SettingsModal } from './components/modals';
-import { Field } from './components/field/field';
-import { Box } from './components/boxes/box';
+import { Field } from './components/field';
+import { Box } from './components/box';
+import { EventCanvas } from './components/event_canvas';
 
 const getLayout = (display: { width: number, height: number }) => {
     const commentHeight = 35;
@@ -107,17 +108,20 @@ export const view: View<State, Actions> = (state, actions) => {
         return piece !== undefined && isMinoPiece(piece) ? decidePieceColor(piece, true) : '#000';
     };
 
-    const batchDraw = () => resources.konva.hyperStage.batchDraw();
+    const batchDraw = () => resources.konva.stage.batchDraw();
 
     return div({ oncreate: batchDraw, onupdate: batchDraw }, [ // Hyperappでは最上位のノードが最後に実行される
-        game({  // canvas空間のみ
+        KonvaCanvas({  // canvas空間のみ
+            actions,
             canvas: layout.canvas.size,
-            eventBox: resources.konva.event,
-            key: 'game-top',
-            stage: resources.konva.hyperStage,
-            backPage: actions.backPage,
-            nextPage: actions.nextPage,
+            hyperStage: resources.konva.stage,
         }),
+
+        resources.konva.stage.isReady ? EventCanvas({
+            actions,
+            canvas: layout.canvas.size,
+            rect: resources.konva.event,
+        }) : undefined as any,
 
         div({
             key: 'field-top',
@@ -141,7 +145,7 @@ export const view: View<State, Actions> = (state, actions) => {
                     color: getPieceColorInBox(state.hold),
                     size: layout.hold.boxSize / 4 - 1,
                 } : undefined,
-            }) : div(),
+            }) : undefined as any,
 
             // Nexts
             ...(state.nexts !== undefined ? state.nexts : []).map((value, index) => {
@@ -178,10 +182,10 @@ export const view: View<State, Actions> = (state, actions) => {
             actions,
             errorMessage: state.fumen.errorMessage,
             textAreaValue: state.fumen.value,
-        }) : div(),
+        }) : undefined as any,
         state.modal.settings ? SettingsModal({
             actions,
             version: state.version,
-        }) : div(),
+        }) : undefined as any,
     ]);
 };
