@@ -1,7 +1,7 @@
-import { AnimationState, Piece } from './lib/enums';
+import { AnimationState, Piece, Screens } from './lib/enums';
 import { Page } from './lib/fumen/fumen';
-import konva = require('konva');
 import { HyperStage } from './lib/hyper';
+import konva = require('konva');
 
 export const VERSION = '###VERSION###';  // Replace build number of CI when run `webpack:prod`
 
@@ -38,6 +38,7 @@ export interface State {
         animation?: number;
     };
     version: string;
+    screen: Screens;
 }
 
 export interface Block {
@@ -81,6 +82,7 @@ export const initState: Readonly<State> = {
         animation: undefined,
     },
     version: VERSION,
+    screen: Screens.Reader,
 };
 
 export const resources = {

@@ -176,6 +176,7 @@ export const view: View<State, Actions> = (state, actions) => {
                 height: layout.tools.size.height,
                 animationState: state.play.status,
                 pages: state.fumen.currentIndex + 1 + ' / ' + state.fumen.maxPage,
+                screen: state.screen,
             }),
         ]),
 

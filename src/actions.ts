@@ -1,5 +1,5 @@
 import { Block, initState, State } from './states';
-import { AnimationState, FieldConstants, getBlocks, isMinoPiece, Piece } from './lib/enums';
+import { AnimationState, FieldConstants, getBlocks, isMinoPiece, Piece, Screens } from './lib/enums';
 import { decode, Page } from './lib/fumen/fumen';
 import { view } from './view';
 import { app } from 'hyperapp';
@@ -32,6 +32,7 @@ export interface Actions {
     closeFumenModal: () => action;
     closeSettingsModal: () => action;
     refresh: () => action;
+    changeToScreen: (data: { screen: Screens }) => action;
 }
 
 export const actions: Readonly<Actions> = {
@@ -349,6 +350,9 @@ export const actions: Readonly<Actions> = {
                 settings: false,
             },
         };
+    },
+    changeToScreen: ({ screen }) => (): NextState => {
+        return { screen };
     },
     refresh: () => (): NextState => {
         return {};
