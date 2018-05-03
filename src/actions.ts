@@ -32,6 +32,8 @@ export interface Actions {
     closeFumenModal: () => action;
     closeSettingsModal: () => action;
     refresh: () => action;
+
+    ontapCanvas: (e: any) => action;
 }
 
 export const actions: Readonly<Actions> = {
@@ -352,6 +354,14 @@ export const actions: Readonly<Actions> = {
     },
     refresh: () => (): NextState => {
         return {};
+    },
+    ontapCanvas: (e: any) => (state): NextState => {
+        const stage = e.currentTarget.getStage();
+        const { x } = stage.getPointerPosition();
+        const { width } = stage.getSize();
+        const touchX = x / width;
+        const action = touchX < 0.5 ? actions.backPage() : actions.nextPage();
+        return action(state);
     },
 };
 
