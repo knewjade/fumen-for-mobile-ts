@@ -2,7 +2,7 @@ import { View } from 'hyperapp';
 import { div } from '@hyperapp/html';
 import { Actions } from './actions';
 import { resources, State } from './states';
-import { isMinoPiece, Piece } from './lib/enums';
+import { isMinoPiece, Piece, Screens } from './lib/enums';
 import { comment } from './components/comment';
 import { KonvaCanvas } from './components/konva_canvas';
 import { getHighlightColor, getNormalColor } from './lib/colors';
@@ -11,6 +11,7 @@ import { OpenFumenModal, SettingsModal } from './components/modals';
 import { Field } from './components/field';
 import { Box } from './components/box';
 import { EventCanvas } from './components/event_canvas';
+import { DrawEventCanvas } from './components/draw_event_canvas';
 
 const getLayout = (display: { width: number, height: number }) => {
     const commentHeight = 35;
@@ -117,10 +118,15 @@ export const view: View<State, Actions> = (state, actions) => {
             hyperStage: resources.konva.stage,
         }),
 
-        resources.konva.stage.isReady ? EventCanvas({
+        resources.konva.stage.isReady && state.screen === Screens.Reader ? EventCanvas({
             actions,
             canvas: layout.canvas.size,
             rect: resources.konva.event,
+        }) : undefined as any,
+
+        resources.konva.stage.isReady && state.screen === Screens.Drawer ? DrawEventCanvas({
+            fieldBlocks: resources.konva.fieldBlocks,
+            sentBlocks: resources.konva.sentBlocks,
         }) : undefined as any,
 
         div({

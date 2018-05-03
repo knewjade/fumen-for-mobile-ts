@@ -82,7 +82,7 @@ export const initState: Readonly<State> = {
         animation: undefined,
     },
     version: VERSION,
-    screen: Screens.Reader,
+    screen: Screens.Drawer,
 };
 
 export const resources = {
@@ -91,6 +91,9 @@ export const resources = {
         fumen: undefined as any,
     },
     konva: createKonvaObjects(),
+    events: {
+        touch: 0,
+    },
 };
 
 // konvaオブジェクトの作成
