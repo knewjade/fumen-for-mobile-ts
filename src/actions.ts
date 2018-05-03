@@ -231,7 +231,35 @@ export const actions: Readonly<Actions> = {
         }
 
         // Field
-        const field: Block[] = page.field.toArray().map((value) => {
+        let currentField = page.field.obj;
+        if (currentField === undefined) {
+            const ref = page.field.ref!;
+            const field = pages[ref].field.obj!.copy();
+            for (let i = ref; i < index; i += 1) {
+                const { flags, piece } = pages[i];
+                const { lock, blockUp, mirrored } = flags;
+                if (lock) {
+                    if (piece !== undefined && isMinoPiece(piece.type)) {
+                        field.put(piece);
+                    }
+
+                    field.clearLine();
+                }
+
+                // 公式テト譜では接着フラグがオンでなければ、盛フラグをオンにできない
+                if (blockUp) {
+                    field.up();
+                }
+
+                // 公式テト譜では接着フラグがオンでなければ、鏡フラグをオンにできない
+                if (mirrored) {
+                    field.mirror();
+                }
+            }
+            currentField = field;
+        }
+
+        const field: Block[] = currentField.toPlayFieldPieces().map((value) => {
             return {
                 piece: value,
             };
@@ -250,7 +278,7 @@ export const actions: Readonly<Actions> = {
         }
 
         // SentLine
-        const sentLine: Block[] = page.sentLine.toArray().map((value) => {
+        const sentLine: Block[] = currentField.toSentLintPieces().map((value) => {
             return {
                 piece: value,
             };

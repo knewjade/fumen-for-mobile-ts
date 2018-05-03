@@ -1,6 +1,6 @@
 import { FieldConstants, isMinoPiece, Operation, Piece, Rotation } from '../enums';
 import { Quiz } from './quiz';
-import { Field, FieldLine } from './field';
+import { Field } from './field';
 import { decodeAction, encodeAction } from './action';
 import { ENCODE_TABLE_LENGTH, Values } from './values';
 import { FumenError } from '../errors';
@@ -8,8 +8,10 @@ import { FumenError } from '../errors';
 export interface Page {
     index: number;
     lastPage: boolean;
-    field: Field;
-    sentLine: FieldLine;
+    field: {
+        obj?: Field;
+        ref?: number;
+    };
     piece?: {
         type: Piece;
         rotation: Rotation;
@@ -83,20 +85,53 @@ export function extract(str: string): string {
 }
 
 export async function decode(fumen: string): Promise<Page[]> {
+    const updateField = (prev: Field) => {
+        const result = {
+            changed: false,
+            field: prev,
+        };
+
+        let index = 0;
+        while (index < FIELD_BLOCKS) {
+            const diffBlock = values.poll(2);
+            const diff = Math.floor(diffBlock / FIELD_BLOCKS);
+
+            const numOfBlocks = diffBlock % FIELD_BLOCKS;
+
+            if (numOfBlocks !== FIELD_BLOCKS - 1) {
+                result.changed = true;
+            }
+
+            for (let block = 0; block < numOfBlocks + 1; block += 1) {
+                const x = index % FIELD_WIDTH;
+                const y = FIELD_TOP - Math.floor(index / FIELD_WIDTH) - 1;
+                result.field.add(x, y, diff - 8);
+                index += 1;
+            }
+        }
+
+        return result;
+    };
+
     const data = extract(fumen);
 
     let pageIndex = 0;
     const values = new Values(data);
-    let [prevField, currentField] = [new Field({}), new Field({})];
-    let blockUp = new FieldLine({});
+    let prevField = new Field({});
 
     const store: {
         repeatCount: number,
-        lastRefIndex: number;
+        refIndex: {
+            comment: number,
+            field: number,
+        };
         quiz?: Quiz,
     } = {
         repeatCount: -1,
-        lastRefIndex: 0,
+        refIndex: {
+            comment: 0,
+            field: 0,
+        },
         quiz: undefined,
     };
 
@@ -104,37 +139,20 @@ export async function decode(fumen: string): Promise<Page[]> {
 
     while (!values.isEmpty()) {
         // Parse field
-        if (store.repeatCount <= 0) {
-            let index = 0;
-            let isChange = false;
-            while (index < FIELD_BLOCKS) {
-                const diffBlock = values.poll(2);
-                const diff = Math.floor(diffBlock / FIELD_BLOCKS);
+        let currentFieldObj;
+        if (0 < store.repeatCount) {
+            currentFieldObj = {
+                field: prevField,
+                changed: false,
+            };
 
-                const numOfBlocks = diffBlock % FIELD_BLOCKS;
+            store.repeatCount -= 1;
+        } else {
+            currentFieldObj = updateField(prevField.copy());
 
-                if (numOfBlocks !== FIELD_BLOCKS - 1) {
-                    isChange = true;
-                }
-
-                for (let block = 0; block < numOfBlocks + 1; block += 1) {
-                    const x = index % FIELD_WIDTH;
-                    const y = FIELD_TOP - Math.floor(index / FIELD_WIDTH) - 1;
-                    if (0 <= y) {
-                        currentField.add(x, y, diff - 8);
-                    } else {
-                        blockUp.add(x, diff - 8);
-                    }
-
-                    index += 1;
-                }
-            }
-            if (!isChange) {
+            if (!currentFieldObj.changed) {
                 store.repeatCount = values.poll(1);
             }
-        } else {
-            currentField = prevField;
-            store.repeatCount -= 1;
         }
 
         // Parse action
@@ -142,11 +160,9 @@ export async function decode(fumen: string): Promise<Page[]> {
         const action = decodeAction(actionValue);
 
         // Parse comment
-        const comment: {
-            text?: string;
-            ref?: number;
-        } = {};
+        let comment;
         if (action.isComment) {
+            // コメントに更新があるとき
             const commentValues: number[] = [];
             const commentLength = values.poll(2);
 
@@ -161,8 +177,8 @@ export async function decode(fumen: string): Promise<Page[]> {
                 flatten.push(...chars);
             }
 
-            comment.text = unescape(flatten.slice(0, commentLength).join(''));
-            store.lastRefIndex = pageIndex;
+            comment = { text: unescape(flatten.slice(0, commentLength).join('')) };
+            store.refIndex.comment = pageIndex;
 
             if (Quiz.verify(comment.text)) {
                 store.quiz = new Quiz(comment.text);
@@ -170,9 +186,11 @@ export async function decode(fumen: string): Promise<Page[]> {
                 store.quiz = undefined;
             }
         } else if (pageIndex === 0) {
-            comment.text = '';
+            // コメントに更新がないが、先頭のページのとき
+            comment = { text: '' };
         } else {
-            comment.ref = store.lastRefIndex;
+            // コメントに更新がないとき
+            comment = { ref: store.refIndex.comment };
         }
 
         // Quiz用の操作を取得し、次ページ開始時点のQuizに1手進める
@@ -212,13 +230,23 @@ export async function decode(fumen: string): Promise<Page[]> {
         }
 
         // pageの作成
+        let field;
+        if (currentFieldObj.changed || pageIndex === 0) {
+            // フィールドに変化があったとき
+            // フィールドに変化がなかったが、先頭のページだったとき
+            field = { obj: currentFieldObj.field.copy() };
+            store.refIndex.field = pageIndex;
+        } else {
+            // フィールドに変化がないとき
+            field = { ref: store.refIndex.field };
+        }
+
         const page = {
+            field,
             comment,
             quiz,
             index: pageIndex,
             lastPage: values.isEmpty(),
-            field: currentField.copy(),
-            sentLine: blockUp.copy(),
             piece: currentPiece,
             flags: {
                 lock: action.isLock,
@@ -234,24 +262,23 @@ export async function decode(fumen: string): Promise<Page[]> {
 
         if (action.isLock) {
             if (isMinoPiece(action.piece.type)) {
-                currentField.put(action.piece);
+                currentFieldObj.field.put(action.piece);
             }
 
-            currentField.clearLine();
+            currentFieldObj.field.clearLine();
         }
 
         // 公式テト譜では接着フラグがオンでなければ、盛フラグをオンにできない
         if (action.isBlockUp) {
-            currentField.up(blockUp.toShallowField());
-            blockUp = new FieldLine({});
+            currentFieldObj.field.up();
         }
 
         // 公式テト譜では接着フラグがオンでなければ、鏡フラグをオンにできない
         if (action.isMirror) {
-            currentField.mirror();
+            currentFieldObj.field.mirror();
         }
 
-        prevField = currentField;
+        prevField = currentFieldObj.field;
     }
 
     return pages;
@@ -279,14 +306,14 @@ export async function encode(pages: Page[]): Promise<string> {
 
     let lastRepeatIndex = -1;
     const allValues = new Values();
-    let prevAllBlocks = new FieldLine({}).concat(new Field({}));
+    let prevField = new Field({});
 
     for (let index = 0; index < pages.length; index += 1) {
         const currentPage = pages[index];
 
         // フィールドの更新
-        const currentAllBlocks = currentPage.sentLine.concat(currentPage.field);
-        updateField(prevAllBlocks, currentAllBlocks);
+        const currentField = currentPage.field.obj !== undefined ? currentPage.field.obj.copy() : prevField.copy();
+        updateField(prevField, currentField);
 
         // アクションの更新
         const isComment = currentPage.comment.text !== undefined && (index !== 0 || currentPage.comment.text !== '');
@@ -334,9 +361,6 @@ export async function encode(pages: Page[]): Promise<string> {
         }
 
         // 地形の更新
-        const currentField = currentPage.field.copy();
-        let currentSentLine = currentPage.sentLine.copy();
-
         if (action.isLock) {
             if (isMinoPiece(action.piece.type)) {
                 currentField.put(action.piece);
@@ -347,8 +371,7 @@ export async function encode(pages: Page[]): Promise<string> {
 
         // 公式テト譜では接着フラグがオンでなければ、盛フラグをオンにできない
         if (action.isBlockUp) {
-            currentField.up(currentPage.sentLine.toShallowField());
-            currentSentLine = new FieldLine({});
+            currentField.up();
         }
 
         // 公式テト譜では接着フラグがオンでなければ、鏡フラグをオンにできない
@@ -356,7 +379,7 @@ export async function encode(pages: Page[]): Promise<string> {
             currentField.mirror();
         }
 
-        prevAllBlocks = currentSentLine.concat(currentField);
+        prevField = currentField;
     }
 
     // テト譜が短いときはそのまま出力する

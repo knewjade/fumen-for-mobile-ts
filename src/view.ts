@@ -11,7 +11,6 @@ import { OpenFumenModal, SettingsModal } from './components/modals';
 import { Field } from './components/field';
 import { Box } from './components/box';
 import { EventCanvas } from './components/event_canvas';
-import { Page } from './lib/fumen/fumen';
 
 const getLayout = (display: { width: number, height: number }) => {
     const commentHeight = 35;

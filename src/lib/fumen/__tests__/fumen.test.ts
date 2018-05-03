@@ -1,5 +1,5 @@
 import { decode, encode, extract, Page } from '../fumen';
-import { Field, FieldLine } from '../field';
+import { Field, PlayField } from '../field';
 import { Operation, Piece, Rotation } from '../../enums';
 import { FumenError } from '../../errors';
 
@@ -24,8 +24,9 @@ describe('fumen', () => {
                     colorize: true,
                     blockUp: false,
                 },
-                field: new Field({}),
-                sentLine: new FieldLine({}),
+                field: {
+                    obj: new Field({}),
+                },
             } as Page);
         });
 
@@ -52,24 +53,32 @@ describe('fumen', () => {
                 flags: {
                     mirrored: true,
                 },
-                field: Field.load(
-                    '',
-                    'X_________',
-                    'XX________',
-                ),
-                sentLine: FieldLine.load('XXX_______'),
+                field: {
+                    obj: new Field({
+                        field: PlayField.load(
+                            '',
+                            'X_________',
+                            'XX________',
+                        ),
+                        sentLine: PlayField.loadMinify('XXX_______'),
+                    }),
+                },
             } as Page);
 
             expect(pages[1]).toMatchObject({
                 flags: {
                     mirrored: false,
                 },
-                field: Field.load(
-                    '',
-                    '_________X',
-                    '________XX',
-                ),
-                sentLine: FieldLine.load('XXX_______'),
+                field: {
+                    obj: new Field({
+                        field: PlayField.load(
+                            '',
+                            '_________X',
+                            '________XX',
+                        ),
+                        sentLine: PlayField.loadMinify('XXX_______'),
+                    }),
+                },
             } as Page);
         });
 
@@ -81,25 +90,33 @@ describe('fumen', () => {
                 flags: {
                     send: true,
                 },
-                field: Field.load(
-                    '',
-                    'X_________',
-                    'XX________',
-                ),
-                sentLine: FieldLine.load('XXX_______'),
+                field: {
+                    obj: new Field({
+                        field: PlayField.load(
+                            '',
+                            'X_________',
+                            'XX________',
+                        ),
+                        sentLine: PlayField.loadMinify('XXX_______'),
+                    }),
+                },
             } as Page);
 
             expect(pages[1]).toMatchObject({
                 flags: {
                     send: false,
                 },
-                field: Field.load(
-                    '',
-                    'X_________',
-                    'XX________',
-                    'XXX_______',
-                ),
-                sentLine: new FieldLine({}),
+                field: {
+                    obj: new Field({
+                        field: PlayField.load(
+                            '',
+                            'X_________',
+                            'XX________',
+                            'XXX_______',
+                        ),
+                        sentLine: PlayField.loadMinify('__________'),
+                    }),
+                },
             } as Page);
         });
 
@@ -129,8 +146,9 @@ describe('fumen', () => {
                     colorize: true,
                     blockUp: false,
                 },
-                field: new Field({}),
-                sentLine: new FieldLine({}),
+                field: {
+                    obj: new Field({}),
+                },
             } as Page);
         });
 
@@ -498,8 +516,9 @@ describe('fumen', () => {
             quiz: {
                 operation: Operation.Direct,
             },
-            field: new Field({}),
-            sentLine: new FieldLine({}),
+            field: {
+                obj: new Field({}),
+            },
         } as Page);
 
         expect(pages[79]).toMatchObject({
@@ -517,19 +536,23 @@ describe('fumen', () => {
             quiz: {
                 operation: Operation.Direct,
             },
-            field: Field.load('',
-                'L____J____',
-                'LZZ__J____',
-                'LLZZJJ___Z',
-                'TTTSZZ_JJI',
-                'LTSSZJ_JII',
-                'LLSSJJ_JII',
-                'JJJLZZ_OOI',
-                'LLJJOO_LLL',
-                'LLLSSI_IZZ',
-                'OOZZSI_IZT',
-            ),
-            sentLine: new FieldLine({}),
+            field: {
+                obj: new Field({
+                    field: PlayField.load(
+                        'L____J____',
+                        'LZZ__J____',
+                        'LLZZJJ___Z',
+                        'TTTSZZ_JJI',
+                        'LTSSZJ_JII',
+                        'LLSSJJ_JII',
+                        'JJJLZZ_OOI',
+                        'LLJJOO_LLL',
+                        'LLLSSI_IZZ',
+                        'OOZZSI_IZT',
+                    ),
+                    sentLine: PlayField.loadMinify('__________'),
+                }),
+            },
         } as Page);
 
         expect(pages[1824]).toMatchObject({
@@ -547,31 +570,35 @@ describe('fumen', () => {
             quiz: {
                 operation: Operation.Direct,
             },
-            field: Field.load('',
-                '______I___',
-                'OO____I___',
-                'OOIIIIIOO_',
-                '_JJJ__IOO_',
-                'JJZJTTTTS_',
-                'LLLLZTTTS_',
-                'OOIZZIIII_',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-            ),
-            sentLine: new FieldLine({}),
+            field: {
+                obj: new Field({
+                    field: PlayField.load(
+                        '______I___',
+                        'OO____I___',
+                        'OOIIIIIOO_',
+                        '_JJJ__IOO_',
+                        'JJZJTTTTS_',
+                        'LLLLZTTTS_',
+                        'OOIZZIIII_',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                    ),
+                    sentLine: PlayField.loadMinify('__________'),
+                }),
+            },
         } as Page);
 
         expect(pages[1825]).toMatchObject({
@@ -582,31 +609,35 @@ describe('fumen', () => {
             quiz: {
                 operation: undefined,
             },
-            field: Field.load('',
-                '_____LI___',
-                'OO_LLLI___',
-                'OOIIIIIOO_',
-                '_JJJ__IOO_',
-                'JJZJTTTTS_',
-                'LLLLZTTTS_',
-                'OOIZZIIII_',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-                '__________',
-            ),
-            sentLine: new FieldLine({}),
+            field: {
+                obj: new Field({
+                    field: PlayField.load(
+                        '_____LI___',
+                        'OO_LLLI___',
+                        'OOIIIIIOO_',
+                        '_JJJ__IOO_',
+                        'JJZJTTTTS_',
+                        'LLLLZTTTS_',
+                        'OOIZZIIII_',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                        '__________',
+                    ),
+                    sentLine: PlayField.loadMinify('__________'),
+                }),
+            },
         } as Page);
 
         // Encode
