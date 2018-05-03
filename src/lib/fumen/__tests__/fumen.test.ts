@@ -70,14 +70,7 @@ describe('fumen', () => {
                     mirrored: false,
                 },
                 field: {
-                    obj: new Field({
-                        field: PlayField.load(
-                            '',
-                            '_________X',
-                            '________XX',
-                        ),
-                        sentLine: PlayField.loadMinify('XXX_______'),
-                    }),
+                    ref: 0,
                 },
             } as Page);
         });
@@ -107,15 +100,7 @@ describe('fumen', () => {
                     send: false,
                 },
                 field: {
-                    obj: new Field({
-                        field: PlayField.load(
-                            '',
-                            'X_________',
-                            'XX________',
-                            'XXX_______',
-                        ),
-                        sentLine: PlayField.loadMinify('__________'),
-                    }),
+                    ref: 0,
                 },
             } as Page);
         });
@@ -521,13 +506,13 @@ describe('fumen', () => {
             },
         } as Page);
 
-        expect(pages[79]).toMatchObject({
+        expect(pages[478]).toMatchObject({
             piece: {
-                type: Piece.L,
-                rotation: Rotation.Right,
+                type: Piece.S,
+                rotation: Rotation.Spawn,
                 coordinate: {
-                    x: 7,
-                    y: 8,
+                    x: 3,
+                    y: 11,
                 },
             },
             comment: {
@@ -539,16 +524,19 @@ describe('fumen', () => {
             field: {
                 obj: new Field({
                     field: PlayField.load(
-                        'L____J____',
-                        'LZZ__J____',
-                        'LLZZJJ___Z',
-                        'TTTSZZ_JJI',
-                        'LTSSZJ_JII',
-                        'LLSSJJ_JII',
-                        'JJJLZZ_OOI',
-                        'LLJJOO_LLL',
-                        'LLLSSI_IZZ',
-                        'OOZZSI_IZT',
+                        '_____Z____',
+                        '____ZZ____',
+                        '__LLZZ____',
+                        '_SSLZZ____',
+                        'SSLLZ___OO',
+                        'LLLSST_JOO',
+                        'OOSSTT_JLL',
+                        'JJTTZZ_ZZL',
+                        'JJTLOO_ZSS',
+                        'JJJLOO_SST',
+                        'JJJLLL_ITT',
+                        'IJJLLL_IST',
+                        '__________',
                     ),
                     sentLine: PlayField.loadMinify('__________'),
                 }),
@@ -571,33 +559,7 @@ describe('fumen', () => {
                 operation: Operation.Direct,
             },
             field: {
-                obj: new Field({
-                    field: PlayField.load(
-                        '______I___',
-                        'OO____I___',
-                        'OOIIIIIOO_',
-                        '_JJJ__IOO_',
-                        'JJZJTTTTS_',
-                        'LLLLZTTTS_',
-                        'OOIZZIIII_',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                    ),
-                    sentLine: PlayField.loadMinify('__________'),
-                }),
+                ref: 560,
             },
         } as Page);
 
@@ -610,33 +572,7 @@ describe('fumen', () => {
                 operation: undefined,
             },
             field: {
-                obj: new Field({
-                    field: PlayField.load(
-                        '_____LI___',
-                        'OO_LLLI___',
-                        'OOIIIIIOO_',
-                        '_JJJ__IOO_',
-                        'JJZJTTTTS_',
-                        'LLLLZTTTS_',
-                        'OOIZZIIII_',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                        '__________',
-                    ),
-                    sentLine: PlayField.loadMinify('__________'),
-                }),
+                ref: 560,
             },
         } as Page);
 

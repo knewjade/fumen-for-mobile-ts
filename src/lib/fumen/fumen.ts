@@ -404,7 +404,7 @@ function encodeField(prev: Field, current: Field) {
 
     // 前のフィールドとの差を計算: 0〜16
     const getDiff = (xIndex: number, yIndex: number) => {
-        const y: number = FIELD_MAX_HEIGHT - yIndex - 1;
+        const y: number = FIELD_TOP - yIndex - 1;
         return current.get(xIndex, y) - prev.get(xIndex, y) + 8;
     };
 

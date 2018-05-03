@@ -47,7 +47,7 @@ export class Field {
     }
 
     get(x: number, y: number): Piece {
-        return 0 <= y ? this.playField.get(x, y) : this.sentLine.get(x, 1 - y);
+        return 0 <= y ? this.playField.get(x, y) : this.sentLine.get(x, -(y + 1));
     }
 
     copy(): Field {
