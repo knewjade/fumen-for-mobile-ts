@@ -11,6 +11,7 @@ interface Props {
     actions: {
         backPage: () => void;
         nextPage: () => void;
+        ontapCanvas: (e:any) => void;
     };
 }
 
@@ -20,17 +21,7 @@ export const EventCanvas: Component<Props> = ({ rect, canvas, actions }) => {
     const oncreate = () => {
         resize();
 
-        rect.on('tap click', (e: any) => {
-            const stage = e.currentTarget.getStage() as konva.Stage;
-            const { x } = stage.getPointerPosition();
-            const { width } = stage.getSize();
-            const touchX = x / width;
-            if (touchX < 0.5) {
-                actions.backPage();
-            } else {
-                actions.nextPage();
-            }
-        });
+        rect.on('tap click', actions.ontapCanvas);
     };
 
     const onupdate = (container: any, attr: any) => {
