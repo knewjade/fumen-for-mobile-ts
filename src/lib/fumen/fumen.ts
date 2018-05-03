@@ -322,7 +322,7 @@ export async function encode(pages: Page[]): Promise<string> {
             rotation: Rotation.Reverse,
             coordinate: {
                 x: 0,
-                y: 0,
+                y: 22,
             },
         };
         const action = {
