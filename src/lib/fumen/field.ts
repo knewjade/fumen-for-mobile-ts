@@ -3,26 +3,84 @@ import { FumenError } from '../errors';
 
 const FIELD_WIDTH = FieldConstants.Width;
 const FIELD_TOP = FieldConstants.Height;
-const FIELD_BLOCKS = (FIELD_TOP + FieldConstants.SentLine) * FIELD_WIDTH;
+const PLAY_FIELD_BLOCKS = FIELD_TOP * FIELD_WIDTH;
 
 export class Field {
-    static load(...lines: string[]): Field {
-        const blocks = lines.join('').trim();
-        return Field.loadInner(blocks);
+    private readonly playField: PlayField;
+    private readonly sentLine: PlayField;
+
+    static create(length: number): PlayField {
+        return new PlayField({ length });
     }
 
-    static loadMinify(...lines: string[]): Field {
-        const blocks = lines.join('').trim();
-        return Field.loadInner(blocks, blocks.length);
+    constructor({ field = Field.create(PLAY_FIELD_BLOCKS), sentLine = Field.create(FIELD_WIDTH) }: {
+        field?: PlayField,
+        sentLine?: PlayField,
+    }) {
+        this.playField = field;
+        this.sentLine = sentLine;
     }
 
-    private static loadInner(blocks: string, length?: number): Field {
+    add(x: number, y: number, value: number): void {
+        if (0 <= y) {
+            this.playField.add(x, y, value);
+        } else {
+            this.sentLine.add(x, -(y + 1), value);
+        }
+    }
+
+    put(action: { type: Piece, rotation: Rotation, coordinate: { x: number, y: number } }): void {
+        this.playField.put(action);
+    }
+
+    clearLine(): void {
+        this.playField.clearLine();
+    }
+
+    up(): void {
+        this.playField.up(this.sentLine);
+        this.sentLine.clearAll();
+    }
+
+    mirror(): void {
+        this.playField.mirror();
+    }
+
+    get(x: number, y: number): Piece {
+        return 0 <= y ? this.playField.get(x, y) : this.sentLine.get(x, -(y + 1));
+    }
+
+    copy(): Field {
+        return new Field({ field: this.playField.copy(), sentLine: this.sentLine.copy() });
+    }
+
+    toPlayFieldPieces(): Piece[] {
+        return this.playField.toArray();
+    }
+
+    toSentLintPieces(): Piece[] {
+        return this.sentLine.toArray();
+    }
+}
+
+export class PlayField {
+    static load(...lines: string[]): PlayField {
+        const blocks = lines.join('').trim();
+        return PlayField.loadInner(blocks);
+    }
+
+    static loadMinify(...lines: string[]): PlayField {
+        const blocks = lines.join('').trim();
+        return PlayField.loadInner(blocks, blocks.length);
+    }
+
+    private static loadInner(blocks: string, length?: number): PlayField {
         const len = length !== undefined ? length : blocks.length;
         if (len % 10 !== 0) {
             throw new FumenError('Num of block in field should be mod 10');
         }
 
-        const field = length !== undefined ? new Field({ length }) : new Field({});
+        const field = length !== undefined ? new PlayField({ length }) : new PlayField({});
         for (let index = 0; index < len; index += 1) {
             const block = blocks[index];
             field.set(index % 10, Math.floor((len - index - 1) / 10), parsePiece(block));
@@ -33,7 +91,7 @@ export class Field {
     private readonly length: number;
     private pieces: Piece[];
 
-    constructor({ pieces, length = FIELD_BLOCKS }: {
+    constructor({ pieces, length = PLAY_FIELD_BLOCKS }: {
         pieces?: Piece[],
         length?: number,
     }) {
@@ -80,7 +138,7 @@ export class Field {
         this.pieces = newField;
     }
 
-    up(blockUp: Field) {
+    up(blockUp: PlayField) {
         this.pieces = blockUp.pieces.concat(this.pieces).slice(0, this.length);
     }
 
@@ -104,45 +162,15 @@ export class Field {
         return this.pieces.length;
     }
 
-    copy(): Field {
-        return new Field({ pieces: this.pieces.concat(), length: this.length });
+    copy(): PlayField {
+        return new PlayField({ pieces: this.pieces.concat(), length: this.length });
     }
 
     toShallowArray() {
         return this.pieces;
     }
-}
 
-export class FieldLine {
-    static load(line: string): FieldLine {
-        const field = Field.loadMinify(line);
-        return new FieldLine({ field });
-    }
-
-    private readonly field: Field;
-
-    constructor(params: { field?: Field }) {
-        this.field = params.field !== undefined ? params.field : new Field({ length: FieldConstants.Width });
-    }
-
-    add(x: number, value: number) {
-        this.field.add(x, 0, value);
-    }
-
-    toShallowField() {
-        return this.field;
-    }
-
-    toArray(): Piece[] {
-        return this.field.toArray();
-    }
-
-    copy(): FieldLine {
-        return new FieldLine({ field: this.field.copy() });
-    }
-
-    concat(other: Field): Field {
-        const pieces = this.field.toShallowArray().concat(other.toShallowArray());
-        return new Field({ pieces, length: pieces.length });
+    clearAll() {
+        this.pieces = this.pieces.map(() => Piece.Empty);
     }
 }

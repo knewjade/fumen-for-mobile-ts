@@ -1,11 +1,11 @@
-import { Field } from '../field';
+import { PlayField } from '../field';
 import { Piece, Rotation } from '../../enums';
 import { FumenError } from '../../errors';
 
 describe('field', () => {
     describe('load', () => {
         test('regular case', () => {
-            const field = Field.load(
+            const field = PlayField.load(
                 'XXXXX_____' +
                 'ZZZZZ_____',
                 'IIIII_____',
@@ -27,26 +27,26 @@ describe('field', () => {
         });
 
         test('lower case', () => {
-            const field = Field.load('I_JL_SZ_TX');
-            expect(field).toEqual(Field.load('i_jl_sz_tx'));
-            expect(field).not.toEqual(Field.loadMinify('i_jl_sz_tx'));
-            expect(field.numOfBlocks).toEqual(240);
+            const field = PlayField.load('I_JL_SZ_TX');
+            expect(field).toEqual(PlayField.load('i_jl_sz_tx'));
+            expect(field).not.toEqual(PlayField.loadMinify('i_jl_sz_tx'));
+            expect(field.numOfBlocks).toEqual(230);
         });
 
         test('minify', () => {
-            const field = Field.loadMinify('_XIJLSZTX_');
-            expect(field).toEqual(Field.loadMinify('_xijlsztx_'));
-            expect(field).not.toEqual(Field.load('_XIJLSZTX_'));
+            const field = PlayField.loadMinify('_XIJLSZTX_');
+            expect(field).toEqual(PlayField.loadMinify('_xijlsztx_'));
+            expect(field).not.toEqual(PlayField.load('_XIJLSZTX_'));
             expect(field.numOfBlocks).toEqual(10);
         });
 
         test('9 chars field', () => {
-            expect(() => Field.load('XXXXX___')).toThrow(FumenError);
+            expect(() => PlayField.load('XXXXX___')).toThrow(FumenError);
         });
     });
 
     test('get & add', () => {
-        const field = new Field({});
+        const field = new PlayField({});
         for (let y = 0; y < 23; y += 1) {
             for (let x = 0; x < 10; x += 1) {
                 expect(field.get(x, y)).toEqual(Piece.Empty);
@@ -62,7 +62,7 @@ describe('field', () => {
 
     describe('put', () => {
         test('I-Spawn', () => {
-            const field = new Field({});
+            const field = new PlayField({});
             field.put({
                 type: Piece.I,
                 rotation: Rotation.Spawn,
@@ -76,7 +76,7 @@ describe('field', () => {
         });
 
         test('S-Left', () => {
-            const field = new Field({});
+            const field = new PlayField({});
             field.put({
                 type: Piece.S,
                 rotation: Rotation.Left,
@@ -92,7 +92,7 @@ describe('field', () => {
 
     describe('clearLine', () => {
         test('regular', () => {
-            const field = Field.load(
+            const field = PlayField.load(
                 '_XXXXXXXXX' +
                 'XXXXXXXXXX' +
                 'SLZXOSZTI_',
@@ -101,14 +101,14 @@ describe('field', () => {
 
             field.clearLine();
 
-            expect(field).toEqual(Field.load(
+            expect(field).toEqual(PlayField.load(
                 '_XXXXXXXXX' +
                 'SLZXOSZTI_',
             ));
         });
 
         test('clear no line', () => {
-            const field = Field.load(
+            const field = PlayField.load(
                 'SLZX_OOZLI',
                 '_LZXOOOOI_',
                 '__________',
@@ -121,7 +121,7 @@ describe('field', () => {
         });
 
         test('clear all line', () => {
-            const field = Field.load(
+            const field = PlayField.load(
                 'SLZXSOOZLI',
                 'ZLZXOOOOIX',
                 'OOOOOOZTIO',
@@ -129,24 +129,24 @@ describe('field', () => {
 
             field.clearLine();
 
-            expect(field).toEqual(Field.load(''));
+            expect(field).toEqual(PlayField.load(''));
         });
     });
 
     test('up', () => {
-        const field = Field.load(
+        const field = PlayField.load(
             'III_______',
             'OOOO______',
         );
 
-        const blockUp = Field.loadMinify(
+        const blockUp = PlayField.loadMinify(
             'SSSSS_____',
             'ZZZZZZ____',
         );
 
         field.up(blockUp);
 
-        expect(field).toEqual(Field.load(
+        expect(field).toEqual(PlayField.load(
             'III_______',
             'OOOO______',
             'SSSSS_____',
@@ -155,7 +155,7 @@ describe('field', () => {
     });
 
     test('mirror', () => {
-        const field = Field.load(
+        const field = PlayField.load(
             'III_______',
             'OOOO______',
             'SSSSS_____',
@@ -163,7 +163,7 @@ describe('field', () => {
 
         field.mirror();
 
-        expect(field).toEqual(Field.load(
+        expect(field).toEqual(PlayField.load(
             '_______III',
             '______OOOO',
             '_____SSSSS',
@@ -171,9 +171,9 @@ describe('field', () => {
     });
 
     test('to array', () => {
-        const field = new Field({});
+        const field = new PlayField({});
         const array = field.toArray();
-        expect(array).toHaveLength(240);
+        expect(array).toHaveLength(230);
         expect(array.every(value => value === Piece.Empty)).toBeTruthy();
 
         // 配列に変換後、fieldを操作しても変化しない
@@ -182,7 +182,7 @@ describe('field', () => {
             rotation: Rotation.Left,
             coordinate: { x: 1, y: 0 },
         });
-        expect(array).toHaveLength(240);
+        expect(array).toHaveLength(230);
         expect(array.every(value => value === Piece.Empty)).toBeTruthy();
     });
 });

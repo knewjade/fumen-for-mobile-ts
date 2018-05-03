@@ -160,7 +160,7 @@ function encodePosition(
         y = 22;
     } else if (type === Piece.O && rotation === Rotation.Left) {
         x -= 1;
-        y -= 1;
+        y += 1;
     } else if (type === Piece.O && rotation === Rotation.Reverse) {
         x -= 1;
     } else if (type === Piece.O && rotation === Rotation.Spawn) {
