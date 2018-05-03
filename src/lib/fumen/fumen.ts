@@ -55,8 +55,8 @@ function enodeFromCommentChars(ch: string): number {
 
 const FIELD_WIDTH = FieldConstants.Width;
 const FIELD_TOP = FieldConstants.Height;
-const FIELD_SENT_LINE = FieldConstants.SentLine;
-const FIELD_BLOCKS = (FIELD_TOP + FIELD_SENT_LINE) * FIELD_WIDTH;
+const FIELD_MAX_HEIGHT = FIELD_TOP + FieldConstants.SentLine;
+const FIELD_BLOCKS = FIELD_MAX_HEIGHT * FIELD_WIDTH;
 
 export function extract(str: string): string {
     let data = str;
@@ -82,7 +82,7 @@ export function extract(str: string): string {
     return data.trim().replace(/[?\s]+/g, '');
 }
 
-export async function decode(fumen: string, callback: (page: Page) => void | Promise<void>): Promise<void> {
+export async function decode(fumen: string): Promise<Page[]> {
     const data = extract(fumen);
 
     let pageIndex = 0;
@@ -99,6 +99,8 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
         lastRefIndex: 0,
         quiz: undefined,
     };
+
+    const pages: Page[] = [];
 
     while (!values.isEmpty()) {
         // Parse field
@@ -209,7 +211,8 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
             currentPiece = action.piece;
         }
 
-        await callback({
+        // pageの作成
+        const page = {
             comment,
             quiz,
             index: pageIndex,
@@ -224,7 +227,8 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
                 colorize: action.isColor,
                 blockUp: action.isBlockUp,
             },
-        });
+        };
+        pages.push(page);
 
         pageIndex += 1;
 
@@ -234,27 +238,28 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
             }
 
             currentField.clearLine();
+        }
 
-            if (action.isBlockUp) {
-                currentField.up(blockUp.toShallowField());
-                blockUp = new FieldLine({});
-            }
+        // 公式テト譜では接着フラグがオンでなければ、盛フラグをオンにできない
+        if (action.isBlockUp) {
+            currentField.up(blockUp.toShallowField());
+            blockUp = new FieldLine({});
+        }
 
-            if (action.isMirror) {
-                currentField.mirror();
-            }
+        // 公式テト譜では接着フラグがオンでなければ、鏡フラグをオンにできない
+        if (action.isMirror) {
+            currentField.mirror();
         }
 
         prevField = currentField;
     }
+
+    return pages;
 }
 
 export async function encode(pages: Page[]): Promise<string> {
-    let lastRepeatIndex = -1;
-    const allValues = new Values();
-
     const updateField = (prev: Field, current: Field) => {
-        const { changed, values } = encodeField2(prev, current);
+        const { changed, values } = encodeField(prev, current);
 
         if (changed) {
             // フィールドを記録して、リピートを終了する
@@ -272,25 +277,30 @@ export async function encode(pages: Page[]): Promise<string> {
         }
     };
 
+    let lastRepeatIndex = -1;
+    const allValues = new Values();
+    let prevAllBlocks = new FieldLine({}).concat(new Field({}));
+
     for (let index = 0; index < pages.length; index += 1) {
-        const prevField = 0 < index ? pages[index - 1].sentLine.concat(pages[index - 1].field) : new Field({});
         const currentPage = pages[index];
 
         // フィールドの更新
-        updateField(prevField, currentPage.sentLine.concat(currentPage.field));
+        const currentAllBlocks = currentPage.sentLine.concat(currentPage.field);
+        updateField(prevAllBlocks, currentAllBlocks);
 
         // アクションの更新
         const isComment = currentPage.comment.text !== undefined && (index !== 0 || currentPage.comment.text !== '');
+        const piece = currentPage.piece !== undefined ? currentPage.piece : {
+            type: Piece.Empty,
+            rotation: Rotation.Reverse,
+            coordinate: {
+                x: 0,
+                y: 0,
+            },
+        };
         const action = {
             isComment,
-            piece: {
-                type: Piece.Empty,
-                rotation: Rotation.Reverse,
-                coordinate: {
-                    x: 0,
-                    y: 0,
-                },
-            },
+            piece,
             isBlockUp: currentPage.flags.blockUp,
             isMirror: currentPage.flags.mirrored,
             isColor: currentPage.flags.colorize,
@@ -322,25 +332,56 @@ export async function encode(pages: Page[]): Promise<string> {
                 allValues.push(value, 5);
             }
         }
+
+        // 地形の更新
+        const currentField = currentPage.field.copy();
+        let currentSentLine = currentPage.sentLine.copy();
+
+        if (action.isLock) {
+            if (isMinoPiece(action.piece.type)) {
+                currentField.put(action.piece);
+            }
+
+            currentField.clearLine();
+        }
+
+        // 公式テト譜では接着フラグがオンでなければ、盛フラグをオンにできない
+        if (action.isBlockUp) {
+            currentField.up(currentPage.sentLine.toShallowField());
+            currentSentLine = new FieldLine({});
+        }
+
+        // 公式テト譜では接着フラグがオンでなければ、鏡フラグをオンにできない
+        if (action.isMirror) {
+            currentField.mirror();
+        }
+
+        prevAllBlocks = currentSentLine.concat(currentField);
     }
 
-    return allValues.toString();
+    // テト譜が短いときはそのまま出力する
+    // 47文字ごとに?が挿入されるが、実際は先頭にv115@が入るため、最初の?は42文字後になる
+    const data = allValues.toString();
+    if (data.length < 41) {
+        return data;
+    }
+
+    // ?を挿入する
+    const head = [data.substr(0, 42)];
+    const tails = data.substring(42);
+    const split = tails.match(/[\S]{1,47}/g) || [];
+    return head.concat(split).join('?');
 }
 
 // フィールドをエンコードする
 // 前のフィールドがないときは空のフィールドを指定する
 // 入力フィールドの高さは23, 幅は10
-function encodeField2(prev: Field, current: Field) {
+function encodeField(prev: Field, current: Field) {
     const values = new Values();
 
     // 前のフィールドとの差を計算: 0〜16
     const getDiff = (xIndex: number, yIndex: number) => {
-        const y: number = FIELD_TOP - yIndex - 1;
-
-        if (y < 0) {
-            return 8;
-        }
-
+        const y: number = FIELD_MAX_HEIGHT - yIndex - 1;
         return current.get(xIndex, y) - prev.get(xIndex, y) + 8;
     };
 
@@ -354,7 +395,7 @@ function encodeField2(prev: Field, current: Field) {
     let changed = false;
     let prev_diff = getDiff(0, 0);
     let counter = -1;
-    for (let yIndex = 0; yIndex < FIELD_TOP + FIELD_SENT_LINE; yIndex += 1) {
+    for (let yIndex = 0; yIndex < FIELD_MAX_HEIGHT; yIndex += 1) {
         for (let xIndex = 0; xIndex < FIELD_WIDTH; xIndex += 1) {
             const diff = getDiff(xIndex, yIndex);
             if (diff !== prev_diff) {
