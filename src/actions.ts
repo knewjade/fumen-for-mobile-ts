@@ -50,10 +50,8 @@ export const actions: Readonly<Actions> = {
 
         (async () => {
             try {
-                const pages: Page[] = [];
-                await decode(fumen, (page) => {
-                    pages[page.index] = page;
-                });
+                const pages: Page[] = await decode(fumen);
+
                 main.setPages({ pages });
                 main.closeFumenModal();
                 main.clearFumenData();

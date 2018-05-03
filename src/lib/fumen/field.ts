@@ -57,11 +57,11 @@ export class Field {
         this.pieces[x + y * FIELD_WIDTH] = piece;
     }
 
-    put(piece: Piece, rotation: Rotation, coordinate: { x: number, y: number }) {
-        const blocks = getBlocks(piece, rotation);
+    put({ type, rotation, coordinate }: { type: Piece, rotation: Rotation, coordinate: { x: number, y: number } }) {
+        const blocks = getBlocks(type, rotation);
         for (const block of blocks) {
             const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
-            this.set(x, y, piece);
+            this.set(x, y, type);
         }
     }
 
@@ -107,6 +107,10 @@ export class Field {
     copy(): Field {
         return new Field({ pieces: this.pieces.concat(), length: this.length });
     }
+
+    toShallowArray() {
+        return this.pieces;
+    }
 }
 
 export class FieldLine {
@@ -135,5 +139,10 @@ export class FieldLine {
 
     copy(): FieldLine {
         return new FieldLine({ field: this.field.copy() });
+    }
+
+    concat(other: Field): Field {
+        const pieces = this.field.toShallowArray().concat(other.toShallowArray());
+        return new Field({ pieces, length: pieces.length });
     }
 }

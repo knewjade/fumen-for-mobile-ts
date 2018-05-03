@@ -49,7 +49,7 @@ const getPiecePositions = (
         y: (mmIndex.max.y - mmIndex.min.y + 1) / 2 + mmIndex.min.y,
     };
 
-    const step = (n: number) => n * pieceSize + (0 < n ? Math.floor(n) : Math.ceil(n)) * margin;
+    const step = (n: number) => n * (pieceSize + margin) + 0.5 * margin;
 
     // ボックス中央の座標
     const center = {

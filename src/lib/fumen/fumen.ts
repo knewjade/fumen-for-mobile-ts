@@ -1,8 +1,8 @@
 import { FieldConstants, isMinoPiece, Operation, Piece, Rotation } from '../enums';
 import { Quiz } from './quiz';
 import { Field, FieldLine } from './field';
-import { getAction } from './action';
-import { Values } from './values';
+import { decodeAction, encodeAction } from './action';
+import { ENCODE_TABLE_LENGTH, Values } from './values';
 import { FumenError } from '../errors';
 
 export interface Page {
@@ -30,6 +30,7 @@ export interface Page {
         send: boolean;
         mirrored: boolean;
         colorize: boolean;
+        blockUp: boolean;
     };
 }
 
@@ -48,9 +49,14 @@ function decodeToCommentChars(v: number): string[] {
     return array;
 }
 
+function enodeFromCommentChars(ch: string): number {
+    return COMMENT_TABLE.indexOf(ch);
+}
+
 const FIELD_WIDTH = FieldConstants.Width;
 const FIELD_TOP = FieldConstants.Height;
-const FIELD_BLOCKS = (FIELD_TOP + FieldConstants.SentLine) * FIELD_WIDTH;
+const FIELD_MAX_HEIGHT = FIELD_TOP + FieldConstants.SentLine;
+const FIELD_BLOCKS = FIELD_MAX_HEIGHT * FIELD_WIDTH;
 
 export function extract(str: string): string {
     let data = str;
@@ -76,7 +82,7 @@ export function extract(str: string): string {
     return data.trim().replace(/[?\s]+/g, '');
 }
 
-export async function decode(fumen: string, callback: (page: Page) => void | Promise<void>): Promise<void> {
+export async function decode(fumen: string): Promise<Page[]> {
     const data = extract(fumen);
 
     let pageIndex = 0;
@@ -93,6 +99,8 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
         lastRefIndex: 0,
         quiz: undefined,
     };
+
+    const pages: Page[] = [];
 
     while (!values.isEmpty()) {
         // Parse field
@@ -131,7 +139,7 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
 
         // Parse action
         const actionValue = values.poll(3);
-        const action = getAction(actionValue);
+        const action = decodeAction(actionValue);
 
         // Parse comment
         const comment: {
@@ -173,9 +181,9 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
         } | undefined = undefined;
 
         if (store.quiz !== undefined) {
-            if (action.isLock && isMinoPiece(action.piece) && store.quiz.canOperate()) {
+            if (action.isLock && isMinoPiece(action.piece.type) && store.quiz.canOperate()) {
                 try {
-                    const operation = store.quiz.getOperation(action.piece);
+                    const operation = store.quiz.getOperation(action.piece.type);
                     quiz = { operation };
                     store.quiz = store.quiz.operate(operation);
                 } catch (e) {
@@ -199,15 +207,12 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
                 y: number,
             };
         } | undefined;
-        if (action.piece !== Piece.Empty) {
-            currentPiece = {
-                type: action.piece,
-                rotation: action.rotation,
-                coordinate: action.coordinate,
-            };
+        if (action.piece.type !== Piece.Empty) {
+            currentPiece = action.piece;
         }
 
-        await callback({
+        // pageの作成
+        const page = {
             comment,
             quiz,
             index: pageIndex,
@@ -220,28 +225,195 @@ export async function decode(fumen: string, callback: (page: Page) => void | Pro
                 send: action.isBlockUp,
                 mirrored: action.isMirror,
                 colorize: action.isColor,
+                blockUp: action.isBlockUp,
             },
-        });
+        };
+        pages.push(page);
 
         pageIndex += 1;
 
         if (action.isLock) {
-            if (isMinoPiece(action.piece)) {
-                currentField.put(action.piece, action.rotation, action.coordinate);
+            if (isMinoPiece(action.piece.type)) {
+                currentField.put(action.piece);
             }
 
             currentField.clearLine();
+        }
 
-            if (action.isBlockUp) {
-                currentField.up(blockUp.toShallowField());
-                blockUp = new FieldLine({});
-            }
+        // 公式テト譜では接着フラグがオンでなければ、盛フラグをオンにできない
+        if (action.isBlockUp) {
+            currentField.up(blockUp.toShallowField());
+            blockUp = new FieldLine({});
+        }
 
-            if (action.isMirror) {
-                currentField.mirror();
-            }
+        // 公式テト譜では接着フラグがオンでなければ、鏡フラグをオンにできない
+        if (action.isMirror) {
+            currentField.mirror();
         }
 
         prevField = currentField;
     }
+
+    return pages;
+}
+
+export async function encode(pages: Page[]): Promise<string> {
+    const updateField = (prev: Field, current: Field) => {
+        const { changed, values } = encodeField(prev, current);
+
+        if (changed) {
+            // フィールドを記録して、リピートを終了する
+            allValues.merge(values);
+            lastRepeatIndex = -1;
+        } else if (lastRepeatIndex < 0 || allValues.get(lastRepeatIndex) === ENCODE_TABLE_LENGTH - 1) {
+            // フィールドを記録して、リピートを開始する
+            allValues.merge(values);
+            allValues.push(0);
+            lastRepeatIndex = allValues.length - 1;
+        } else if (allValues.get(lastRepeatIndex) < (ENCODE_TABLE_LENGTH - 1)) {
+            // フィールドは記録せず、リピートを進める
+            const currentRepeatValue = allValues.get(lastRepeatIndex);
+            allValues.set(lastRepeatIndex, currentRepeatValue + 1);
+        }
+    };
+
+    let lastRepeatIndex = -1;
+    const allValues = new Values();
+    let prevAllBlocks = new FieldLine({}).concat(new Field({}));
+
+    for (let index = 0; index < pages.length; index += 1) {
+        const currentPage = pages[index];
+
+        // フィールドの更新
+        const currentAllBlocks = currentPage.sentLine.concat(currentPage.field);
+        updateField(prevAllBlocks, currentAllBlocks);
+
+        // アクションの更新
+        const isComment = currentPage.comment.text !== undefined && (index !== 0 || currentPage.comment.text !== '');
+        const piece = currentPage.piece !== undefined ? currentPage.piece : {
+            type: Piece.Empty,
+            rotation: Rotation.Reverse,
+            coordinate: {
+                x: 0,
+                y: 0,
+            },
+        };
+        const action = {
+            isComment,
+            piece,
+            isBlockUp: currentPage.flags.blockUp,
+            isMirror: currentPage.flags.mirrored,
+            isColor: currentPage.flags.colorize,
+            isLock: currentPage.flags.lock,
+        };
+
+        const actionNumber = encodeAction(action);
+        allValues.push(actionNumber, 3);
+
+        // コメントの更新
+        if (currentPage.comment.text !== undefined && isComment) {
+            const comment = escape(currentPage.comment.text);
+            const commentLength = Math.min(comment.length, 4095);
+
+            allValues.push(commentLength, 2);
+
+            // コメントを符号化
+            for (let index = 0; index < commentLength; index += 4) {
+                let value = 0;
+                for (let count = 0; count < 4; count += 1) {
+                    const newIndex = index + count;
+                    if (commentLength <= newIndex) {
+                        break;
+                    }
+                    const ch = comment.charAt(newIndex);
+                    value += enodeFromCommentChars(ch) * Math.pow(MAX_COMMENT_CHAR_VALUE, count);
+                }
+
+                allValues.push(value, 5);
+            }
+        }
+
+        // 地形の更新
+        const currentField = currentPage.field.copy();
+        let currentSentLine = currentPage.sentLine.copy();
+
+        if (action.isLock) {
+            if (isMinoPiece(action.piece.type)) {
+                currentField.put(action.piece);
+            }
+
+            currentField.clearLine();
+        }
+
+        // 公式テト譜では接着フラグがオンでなければ、盛フラグをオンにできない
+        if (action.isBlockUp) {
+            currentField.up(currentPage.sentLine.toShallowField());
+            currentSentLine = new FieldLine({});
+        }
+
+        // 公式テト譜では接着フラグがオンでなければ、鏡フラグをオンにできない
+        if (action.isMirror) {
+            currentField.mirror();
+        }
+
+        prevAllBlocks = currentSentLine.concat(currentField);
+    }
+
+    // テト譜が短いときはそのまま出力する
+    // 47文字ごとに?が挿入されるが、実際は先頭にv115@が入るため、最初の?は42文字後になる
+    const data = allValues.toString();
+    if (data.length < 41) {
+        return data;
+    }
+
+    // ?を挿入する
+    const head = [data.substr(0, 42)];
+    const tails = data.substring(42);
+    const split = tails.match(/[\S]{1,47}/g) || [];
+    return head.concat(split).join('?');
+}
+
+// フィールドをエンコードする
+// 前のフィールドがないときは空のフィールドを指定する
+// 入力フィールドの高さは23, 幅は10
+function encodeField(prev: Field, current: Field) {
+    const values = new Values();
+
+    // 前のフィールドとの差を計算: 0〜16
+    const getDiff = (xIndex: number, yIndex: number) => {
+        const y: number = FIELD_MAX_HEIGHT - yIndex - 1;
+        return current.get(xIndex, y) - prev.get(xIndex, y) + 8;
+    };
+
+    // データの記録
+    const recordBlockCounts = (diff: number, counter: number) => {
+        const value: number = diff * FIELD_BLOCKS + counter;
+        values.push(value, 2);
+    };
+
+    // フィールド値から連続したブロック数に変換
+    let changed = false;
+    let prev_diff = getDiff(0, 0);
+    let counter = -1;
+    for (let yIndex = 0; yIndex < FIELD_MAX_HEIGHT; yIndex += 1) {
+        for (let xIndex = 0; xIndex < FIELD_WIDTH; xIndex += 1) {
+            const diff = getDiff(xIndex, yIndex);
+            if (diff !== prev_diff) {
+                recordBlockCounts(prev_diff, counter);
+                counter = 0;
+                prev_diff = diff;
+                changed = true;
+            } else {
+                counter += 1;
+            }
+        }
+    }
+
+    // 最後の連続ブロックを処理
+    recordBlockCounts(prev_diff, counter);
+
+    return {
+        values,
+        changed,
+    };
 }

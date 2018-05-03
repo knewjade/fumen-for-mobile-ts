@@ -38,4 +38,45 @@ describe('values', () => {
         values.poll(1);
         expect(values.isEmpty()).toBeTruthy();
     });
+
+    test('push1', () => {
+        const values = new Values();
+
+        values.push(0, 1);
+        values.push(1, 1);
+        values.push(2, 1);
+        values.push(61, 1);
+        values.push(62, 1);
+        values.push(63, 1);
+
+        expect(values.toString()).toEqual('ABC9+/');
+    });
+
+    test('push2', () => {
+        const values = new Values();
+
+        values.push(64, 2);
+        values.push(3906, 2);
+        values.push(4094, 2);
+
+        expect(values.toString()).toEqual('ABC9+/');
+    });
+
+    test('push3', () => {
+        const values = new Values();
+
+        values.push(8256, 3);
+        values.push(262077, 3);
+
+        expect(values.toString()).toEqual('ABC9+/');
+    });
+
+    test('merge', () => {
+        const head = new Values('abc');
+        const tail = new Values('ABC');
+
+        head.merge(tail);
+
+        expect(head.toString()).toEqual('abcABC');
+    });
 });
