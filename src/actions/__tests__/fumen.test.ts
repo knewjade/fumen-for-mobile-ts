@@ -33,7 +33,7 @@ describe('comment', () => {
         quiz: { operation },
     });
 
-    const quizCache = (quiz: Quiz, quizAfterOperation: Quiz) => ({
+    const quizCache = (quiz: string, quizAfterOperation: Quiz) => ({
         comment: {
             ref: -1,
             cache: {
@@ -98,38 +98,12 @@ describe('comment', () => {
     });
 
     test('using quiz cache', () => {
-        const quiz = Quiz.create('LJ');
+        const quizString = Quiz.create('LJ').toString();
         const quizAfterOperation = Quiz.create('J');
-        const pages = new Pages([quizCache(quiz, quizAfterOperation)] as any);
+        const pages = new Pages([quizCache(quizString, quizAfterOperation)] as any);
         expect(pages.getComment(0)).toEqual({
-            quiz,
             quizAfterOperation,
-        });
-    });
-
-    test('last hold', () => {
-        const pages = new Pages([
-            quizText(Quiz.create('O', 'L'), Operation.Direct),
-            quizRef(0),
-            quizRef(0, Operation.Swap),
-            quizRef(0),
-        ] as any);
-
-        expect(pages.getComment(0)).toMatchObject({
-            quiz: Quiz.create('O', 'L').toString(),
-            quizAfterOperation: Quiz.create('O', ''),
-        });
-        expect(pages.getComment(1)).toMatchObject({
-            quiz: '#Q=[](O)',
-            quizAfterOperation: Quiz.create('O', ''),
-        });
-        expect(pages.getComment(2)).toMatchObject({
-            quiz: '#Q=[](O)',
-            quizAfterOperation: Quiz.create(''),
-        });
-        expect(pages.getComment(3)).toMatchObject({
-            text: '',
-            next: [],
+            quiz: quizString,
         });
     });
 
@@ -156,6 +130,71 @@ describe('comment', () => {
             next: [Piece.I, Piece.J, Piece.T, Piece.O, Piece.O],
         });
     });
+
+    test('last hold', () => {
+        const pages = new Pages([
+            quizText(Quiz.create('O', 'L'), Operation.Direct),
+            quizRef(0),
+            quizRef(0, Operation.Swap),
+            quizRef(0),
+            quizRef(0),
+        ] as any);
+
+        expect(pages.getComment(0)).toMatchObject({
+            quiz: Quiz.create('O', 'L').toString(),
+            quizAfterOperation: Quiz.create('O', ''),
+        });
+        expect(pages.getComment(1)).toMatchObject({
+            quiz: '#Q=[](O)',
+            quizAfterOperation: Quiz.create('O', ''),
+        });
+        expect(pages.getComment(2)).toMatchObject({
+            quiz: '#Q=[](O)',
+            quizAfterOperation: Quiz.create(''),
+        });
+        expect(pages.getComment(3)).toMatchObject({
+            text: '',
+            next: [],
+        });
+        expect(pages.getComment(4)).toMatchObject({
+            text: '',
+            next: [],
+        });
+    });
+
+    test('last hold with cache', () => {
+        const pages = new Pages([
+            quizText(Quiz.create('O', 'L'), Operation.Direct),
+            quizRef(0),
+            quizRef(0, Operation.Swap),
+            commentCached('', []),
+            quizRef(0),
+        ] as any);
+
+        expect(pages.getComment(4)).toMatchObject({
+            text: '',
+            next: [],
+        });
+    });
+
+    test('last hold with cache 2', () => {
+        const pages = new Pages([
+            quizText(Quiz.create('O', 'L'), Operation.Direct),
+            quizCache('#Q=[](O)', Quiz.create('O', '')),
+            quizRef(0, Operation.Swap),
+            quizRef(0),
+            quizRef(0),
+        ] as any);
+
+        expect(pages.getComment(2)).toMatchObject({
+            quiz: '#Q=[](O)',
+            quizAfterOperation: Quiz.create(''),
+        });
+        expect(pages.getComment(3)).toMatchObject({
+            text: '',
+            next: [],
+        });
+    });
 });
 
 describe('field', () => {
@@ -179,9 +218,15 @@ describe('field', () => {
         },
     });
 
-    const fieldCache = (obj: Field) => ({
+    const fieldCache = (obj: Field, piece?: Move) => ({
+        piece,
         field: {
             cache: { obj },
+        },
+        flags: {
+            lock: piece !== undefined,
+            blockUp: false,
+            mirrored: false,
         },
     });
 
@@ -213,5 +258,29 @@ describe('field', () => {
 
         const pages = new Pages([fieldCache(field)] as any);
         expect(pages.getField(0)).toEqual(field);
+    });
+
+    test('using cache ref', () => {
+        const field = new Field({});
+        const firstMove = { type: Piece.I, rotation: Rotation.Spawn, coordinate: { x: 1, y: 0 } };
+        const secondMove = { type: Piece.T, rotation: Rotation.Reverse, coordinate: { x: 1, y: 1 } };
+        const thirdMove = { type: Piece.O, rotation: Rotation.Spawn, coordinate: { x: 8, y: 0 } };
+
+        const cache = field.copy();
+        cache.put(firstMove);
+        cache.put(secondMove);
+
+        const pages = new Pages([
+            fieldObj(field, firstMove),
+            fieldCache(cache, secondMove),
+            fieldRef(0, thirdMove),
+        ] as any);
+
+        {
+            const expectedField = field.copy();
+            expectedField.put(firstMove);
+            expectedField.put(secondMove);
+            expect(pages.getField(2)).toEqual(expectedField);
+        }
     });
 });

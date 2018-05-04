@@ -114,7 +114,7 @@ export const rightTap = (first, second) => {
     if (callback) callback();
 };
 
-export const leftTap = (first, second) => {
+export const leftTap = (first, second = undefined) => {
     let count, callback;
     if (typeof first === 'number') {
         count = first;

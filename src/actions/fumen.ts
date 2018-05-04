@@ -38,17 +38,25 @@ export class Pages {
         const currentPage = this.pages[index];
 
         const toCache = (quiz: string, quizAfterOperation: Quiz) => ({ quiz, quizAfterOperation });
+        const isQuiz = (comment: TextCommentResult | QuizCommentResult): comment is QuizCommentResult => {
+            return (<QuizCommentResult>comment).quiz !== undefined;
+        };
 
         const getQuiz = () => {
+            let state: undefined | {
+                comment: string;
+                quiz: Quiz;
+                startIndex: number;
+            } = undefined;
 
             // コメントがあるときはそのまま返却
-            let comment: string;
-            let quiz: Quiz;
-            let startIndex;
             if (currentPage.comment.text !== undefined) {
-                comment = currentPage.comment.text;
-                quiz = new Quiz(comment);
-                startIndex = index;
+                const comment = currentPage.comment.text;
+                state = {
+                    comment,
+                    quiz: new Quiz(comment),
+                    startIndex: index,
+                };
             } else {
                 // 参照先から持ってくる
                 const ref = currentPage.comment.ref;
@@ -56,18 +64,52 @@ export class Pages {
                     throw new ViewError('Cannot open reference for comment');
                 }
 
-                const refPage = this.pages[ref];
-                if (refPage.comment.text === undefined) {
-                    throw new ViewError('Not found quiz');
+                for (let i = index; ref < i; i -= 1) {
+                    const refPage = this.pages[i];
+                    const cache = refPage.comment.cache;
+                    if (cache !== undefined) {
+                        // キャッシュがみつかったとき
+                        if (isQuiz(cache)) {
+                            const quizAfterOperation = cache.quizAfterOperation;
+                            state = {
+                                comment: quizAfterOperation.format().toString(),
+                                quiz: quizAfterOperation,
+                                startIndex: i + 1,
+                            };
+                            break;
+                        } else {
+                            state = {
+                                comment: cache.text,
+                                quiz: new Quiz(''),
+                                startIndex: i + 1,
+                            };
+                        }
+                    }
                 }
 
-                comment = refPage.comment.text;
-                quiz = new Quiz(comment);
-                startIndex = ref;
+                // キャッシュが見つからなかったとき
+                if (state === undefined) {
+                    const refPage = this.pages[ref];
+                    if (refPage.comment.text === undefined) {
+                        throw new ViewError('Not found quiz');
+                    }
+
+                    const comment = refPage.comment.text;
+                    state = {
+                        comment,
+                        quiz: new Quiz(comment),
+                        startIndex: ref,
+                    };
+                }
+            }
+
+            if (state === undefined) {
+                throw new ViewError('Unexpected state');
             }
 
             // 参照ページから現在のページまで操作を再現する
-            for (let i = startIndex; i <= index; i += 1) {
+            let { quiz, comment } = state;
+            for (let i = state.startIndex; i <= index; i += 1) {
                 const quizPage = this.pages[i];
                 if (quizPage.quiz === undefined) {
                     throw new ViewError('Unexpected quiz operation');
@@ -170,7 +212,7 @@ export class Pages {
         return next;
     }
 
-// 指定したページのフィールドを取得する
+    // 指定したページのフィールドを取得する
     getField(index: number) {
         const currentPage = this.pages[index];
 
@@ -184,51 +226,80 @@ export class Pages {
     private restructureField(index: number) {
         const currentPage = this.pages[index];
 
-        // 参照先から持ってくる
-        const ref = currentPage.field.ref;
-        if (ref === undefined) {
-            throw new ViewError('Cannot open reference for comment');
-        }
+        const getField = () => {
+            let state: undefined | {
+                field: Field;
+                startIndex: number;
+            } = undefined;
 
-        const refPage = this.pages[ref];
-        if (refPage.field.obj === undefined) {
-            throw new ViewError('Not found quiz');
-        }
+            // 参照先から持ってくる
+            const ref = currentPage.field.ref;
+            if (ref === undefined) {
+                throw new ViewError('Cannot open reference for comment');
+            }
 
-        // 参照ページから現在のページまで操作を再現する
-        const field = refPage.field.obj.copy();
-        for (let i = ref; i < index; i += 1) {
-            // フィールドをキャッシュする
-            const fieldPage = this.pages[i];
-            fieldPage.field.cache = {
-                obj: field.copy(),
-            };
+            for (let i = index; ref < i; i -= 1) {
+                const refPage = this.pages[i];
+                const cache = refPage.field.cache;
+                if (cache !== undefined) {
+                    // キャッシュがみつかったとき
+                    state = {
+                        field: cache.obj.copy(),
+                        startIndex: i,
+                    };
+                }
+            }
 
-            const { flags, piece } = this.pages[i];
+            // キャッシュが見つからなかったとき
+            if (state === undefined) {
+                const refPage = this.pages[ref];
 
-            if (flags.lock) {
-                if (piece !== undefined && isMinoPiece(piece.type)) {
-                    field.put(piece);
+                if (refPage.field.obj === undefined) {
+                    throw new ViewError('Not found quiz');
                 }
 
-                field.clearLine();
+                state = {
+                    field: refPage.field.obj.copy(),
+                    startIndex: ref,
+                };
             }
 
-            if (flags.blockUp) {
-                field.up();
+            if (state === undefined) {
+                throw new ViewError('Unexpected state');
             }
 
-            if (flags.mirrored) {
-                field.mirror();
-            }
-        }
+            // 参照ページから現在のページまで操作を再現する
+            const { field, startIndex } = state;
+            for (let i = startIndex; i <= index; i += 1) {
+                // フィールドをキャッシュする
+                const fieldPage = this.pages[i];
+                fieldPage.field.cache = {
+                    obj: field.copy(),
+                };
 
-        // フィールドをキャッシュする
-        currentPage.field.cache = {
-            obj: field.copy(),
+                const { flags, piece } = this.pages[i];
+
+                if (flags.lock) {
+                    if (piece !== undefined && isMinoPiece(piece.type)) {
+                        field.put(piece);
+                    }
+
+                    field.clearLine();
+                }
+
+                if (flags.blockUp) {
+                    field.up();
+                }
+
+                if (flags.mirrored) {
+                    field.mirror();
+                }
+            }
+
+            return this.pages[index].field.cache!.obj;
         };
 
-        return field;
+        return getField();
     }
 }
 

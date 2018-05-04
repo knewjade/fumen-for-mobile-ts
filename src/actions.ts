@@ -191,23 +191,23 @@ export const actions: Readonly<Actions> = {
 
         const comment = pages.getComment(index);
 
-        const isText = (comment: TextCommentResult | QuizCommentResult): comment is TextCommentResult => {
-            return (<TextCommentResult>comment).text !== undefined;
+        const isQuiz = (comment: TextCommentResult | QuizCommentResult): comment is QuizCommentResult => {
+            return (<QuizCommentResult>comment).quiz !== undefined;
         };
 
         let text;
         let next;
         let hold;
-        if (isText(comment)) {
-            text = comment.text;
-            next = comment.next;
-            hold = undefined;
-        } else {
+        if (isQuiz(comment)) {
             text = comment.quiz;
             if (comment.quiz !== '') {
                 next = comment.quizAfterOperation.getNextPieces(5).filter(piece => piece !== Piece.Empty);
                 hold = comment.quizAfterOperation.getHoldPiece();
             }
+        } else {
+            text = comment.text;
+            next = comment.next;
+            hold = undefined;
         }
 
         const field = pages.getField(index);
