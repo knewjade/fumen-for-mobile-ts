@@ -1,7 +1,10 @@
-import { AnimationState, Piece } from './lib/enums';
+import { AnimationState, Piece, Screens } from './lib/enums';
 import { Page } from './lib/fumen/fumen';
-import konva = require('konva');
 import { HyperStage } from './lib/hyper';
+import { Field } from './lib/fumen/field';
+import konva = require('konva');
+import { Quiz } from './lib/fumen/quiz';
+import { QuizCommentResult, TextCommentResult } from './actions/fumen';
 
 export const VERSION = '###VERSION###';  // Replace build number of CI when run `webpack:prod`
 
@@ -26,7 +29,7 @@ export interface State {
     fumen: {
         currentIndex: number;
         maxPage: number;
-        pages: Page[];
+        pages: CachedPage[];
         value?: string;
         errorMessage?: string;
     };
@@ -37,12 +40,34 @@ export interface State {
     handlers: {
         animation?: number;
     };
+    events: {
+        touch: {
+            piece?: Piece;
+        };
+    };
     version: string;
+    screen: Screens;
 }
 
 export interface Block {
     piece: Piece;
     highlight?: boolean;
+}
+
+export interface CachedPage extends Page {
+    field: {
+        obj?: Field;
+        ref?: number;
+        diff?: Field;
+        cache?: {
+            obj: Field;
+        };
+    };
+    comment: {
+        text?: string;
+        ref?: number;
+        cache?: TextCommentResult | QuizCommentResult;
+    };
 }
 
 export const initState: Readonly<State> = {
@@ -80,7 +105,13 @@ export const initState: Readonly<State> = {
     handlers: {
         animation: undefined,
     },
+    events: {
+        touch: {
+            piece: undefined,
+        },
+    },
     version: VERSION,
+    screen: Screens.Reader,
 };
 
 export const resources = {

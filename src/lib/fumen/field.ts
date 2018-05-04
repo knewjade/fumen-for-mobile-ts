@@ -9,7 +9,7 @@ export class Field {
     private readonly playField: PlayField;
     private readonly sentLine: PlayField;
 
-    static create(length: number): PlayField {
+    private static create(length: number): PlayField {
         return new PlayField({ length });
     }
 
@@ -31,6 +31,14 @@ export class Field {
 
     put(action: { type: Piece, rotation: Rotation, coordinate: { x: number, y: number } }): void {
         this.playField.put(action);
+    }
+
+    setToPlayField(index: number, value: number): void {
+        this.playField.setAt(index, value);
+    }
+
+    settToSentLine(index: number, value: number): void {
+        this.sentLine.setAt(index, value);
     }
 
     clearLine(): void {
@@ -112,7 +120,11 @@ export class PlayField {
     }
 
     set(x: number, y: number, piece: Piece) {
-        this.pieces[x + y * FIELD_WIDTH] = piece;
+        this.setAt(x + y * FIELD_WIDTH, piece);
+    }
+
+    setAt(index: number, piece: Piece) {
+        this.pieces[index] = piece;
     }
 
     put({ type, rotation, coordinate }: { type: Piece, rotation: Rotation, coordinate: { x: number, y: number } }) {

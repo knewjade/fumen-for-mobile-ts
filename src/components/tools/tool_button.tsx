@@ -8,6 +8,10 @@ interface Props {
     sticky?: boolean;
     marginRight?: number;
     datatest?: string;
+    colors: {
+        baseClass: string;
+        darkCode: string;
+    };
     actions: {
         onclick(): void;
     };
@@ -16,10 +20,14 @@ interface Props {
 interface IconProps {
     height: number;
     fontSize: number;
+    colors: {
+        baseClass: string;
+        darkCode: string;
+    };
 }
 
 export const ToolButton: Component<Props & IconProps> = (
-    { height, width, fontSize, iconName, sticky = false, marginRight = 0, datatest, actions },
+    { height, width, fontSize, iconName, sticky = false, marginRight = 0, datatest, colors, actions },
 ) => {
     const aProperties = style({
         height: px(height),
@@ -36,24 +44,26 @@ export const ToolButton: Component<Props & IconProps> = (
            datatest={datatest}
            style={aProperties}
            onclick={() => actions.onclick()}>
-            <Icon height={height} fontSize={fontSize}>{iconName}</Icon>
+            <Icon height={height} fontSize={fontSize} colors={colors}>{iconName}</Icon>
         </a>
     );
 };
 
-const Icon: Component<IconProps> = ({ height, fontSize }, children) => {
+const Icon: Component<IconProps> = ({ height, fontSize, colors }, children) => {
     const properties = style({
         display: 'block',
         fontSize: px(fontSize),
         height: px(height),
         lineHeight: px(height),
         width: '100%',
-        border: 'solid 1px #999',
+        border: 'solid 1px ' + colors.darkCode,
         boxSizing: 'border-box',
         textAlign: 'center',
         cursor: 'pointer',
         color: '#fff',
     });
 
-    return <i className="material-icons teal darken-3" style={properties}>{children}</i>;
+    const className = 'material-icons darken-3 ' + colors.baseClass;
+
+    return <i className={className} style={properties}>{children}</i>;
 };

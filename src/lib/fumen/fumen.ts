@@ -5,21 +5,22 @@ import { decodeAction, encodeAction } from './action';
 import { ENCODE_TABLE_LENGTH, Values } from './values';
 import { FumenError } from '../errors';
 
+export interface Move {
+    type: Piece;
+    rotation: Rotation;
+    coordinate: {
+        x: number;
+        y: number;
+    };
+}
+
 export interface Page {
     index: number;
-    lastPage: boolean;
     field: {
         obj?: Field;
         ref?: number;
     };
-    piece?: {
-        type: Piece;
-        rotation: Rotation;
-        coordinate: {
-            x: number,
-            y: number,
-        };
-    };
+    piece?: Move;
     comment: {
         text?: string;
         ref?: number;
@@ -34,6 +35,7 @@ export interface Page {
         colorize: boolean;
         blockUp: boolean;
     };
+    time: number;
 }
 
 const COMMENT_TABLE =
@@ -84,7 +86,7 @@ export function extract(str: string): string {
     return data.trim().replace(/[?\s]+/g, '');
 }
 
-export async function decode(fumen: string): Promise<Page[]> {
+export async function decode(fumen: string, time: number = Date.now()): Promise<Page[]> {
     const updateField = (prev: Field) => {
         const result = {
             changed: false,
@@ -180,9 +182,9 @@ export async function decode(fumen: string): Promise<Page[]> {
             comment = { text: unescape(flatten.slice(0, commentLength).join('')) };
             store.refIndex.comment = pageIndex;
 
-            if (Quiz.verify(comment.text)) {
+            try {
                 store.quiz = new Quiz(comment.text);
-            } else {
+            } catch (e) {
                 store.quiz = undefined;
             }
         } else if (pageIndex === 0) {
@@ -245,6 +247,7 @@ export async function decode(fumen: string): Promise<Page[]> {
             field,
             comment,
             quiz,
+            time,
             index: pageIndex,
             lastPage: values.isEmpty(),
             piece: currentPiece,

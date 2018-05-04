@@ -1,11 +1,12 @@
 import { Block, initState, State } from './states';
-import { AnimationState, FieldConstants, getBlocks, isMinoPiece, Piece } from './lib/enums';
+import { AnimationState, FieldConstants, Piece, Screens } from './lib/enums';
 import { decode, Page } from './lib/fumen/fumen';
 import { view } from './view';
 import { app } from 'hyperapp';
-import { openDescription, openQuiz } from './lib/helper';
 import { ViewError } from './lib/errors';
 import { withLogger } from '@hyperapp/logger';
+import { Field } from './lib/fumen/field';
+import { Pages, parseToBlocks, QuizCommentResult, TextCommentResult } from './actions/fumen';
 
 type NextState = Partial<State> | undefined;
 export type action = (state: Readonly<State>) => NextState;
@@ -32,8 +33,21 @@ export interface Actions {
     closeFumenModal: () => action;
     closeSettingsModal: () => action;
     refresh: () => action;
+    changeToScreen: (data: { screen: Screens }) => action;
 
     ontapCanvas: (e: any) => action;
+
+    ontouchStartField(data: { index: number }): action;
+
+    ontouchMoveField(data: { index: number }): action;
+
+    ontouchEndField(data: { index: number }): action;
+
+    ontouchStartSentLine(data: { index: number }): action;
+
+    ontouchMoveSentLine(data: { index: number }): action;
+
+    ontouchEndSentLine(data: { index: number }): action;
 }
 
 export const actions: Readonly<Actions> = {
@@ -173,124 +187,39 @@ export const actions: Readonly<Actions> = {
         return { nexts: next };
     },
     openPage: ({ index }) => (state): NextState => {
-        const pages = state.fumen.pages;
-        const page = pages[index];
+        const pages = new Pages(state.fumen.pages);
 
-        // Comment
-        let comment: string;
-        let hold = undefined;
-        let next = undefined;
+        const comment = pages.getComment(index);
 
-        let quiz = undefined;
-        if (page.quiz !== undefined) {
-            const currentQuiz = openQuiz(pages, index);
+        const isQuiz = (comment: TextCommentResult | QuizCommentResult): comment is QuizCommentResult => {
+            return (<QuizCommentResult>comment).quiz !== undefined;
+        };
 
-            if (page.comment.text !== undefined) {
-                comment = page.comment.text;
-            } else {
-                comment = currentQuiz.format().toString();
-            }
-
-            if (currentQuiz.canOperate()) {
-                quiz = currentQuiz;
+        let text;
+        let next;
+        let hold;
+        if (isQuiz(comment)) {
+            text = comment.quiz;
+            if (comment.quiz !== '') {
+                next = comment.quizAfterOperation.getNextPieces(5).filter(piece => piece !== Piece.Empty);
+                hold = comment.quizAfterOperation.getHoldPiece();
             }
         } else {
-            comment = openDescription(pages, index);
+            text = comment.text;
+            next = comment.next;
+            hold = undefined;
         }
 
-        if (quiz !== undefined) {
-            const operatedQuiz = page.quiz !== undefined && page.quiz.operation !== undefined ?
-                quiz.operate(page.quiz.operation) : quiz;
+        const field = pages.getField(index);
 
-            hold = operatedQuiz.getHoldPiece();
-            next = operatedQuiz.getNextPieces(5).filter(piece => piece !== Piece.Empty);
-        } else {
-            const pieces: Piece[] = [];
-            let currentPiece = page.piece !== undefined ? page.piece.type : Piece.Empty;
-            for (const nextPage of pages.slice(index)) {
-                // ミノが変わったときは記録する
-                if (nextPage.piece !== undefined && currentPiece !== nextPage.piece.type) {
-                    const pieceType = nextPage.piece.type;
-                    if (isMinoPiece(pieceType)) {
-                        pieces.push(pieceType);
-                    }
-
-                    currentPiece = pieceType;
-                }
-
-                // 必要な数が溜まったら終了する
-                if (5 <= pieces.length) {
-                    break;
-                }
-
-                // ミノを接着したときは現在の使用ミノをEmptyに置き換える
-                if (nextPage.piece === undefined || nextPage.flags.lock) {
-                    currentPiece = Piece.Empty;
-                }
-            }
-
-            next = pieces;
-        }
-
-        // Field
-        let currentField = page.field.obj;
-        if (currentField === undefined) {
-            const ref = page.field.ref!;
-            const field = pages[ref].field.obj!.copy();
-            for (let i = ref; i < index; i += 1) {
-                const { flags, piece } = pages[i];
-                const { lock, blockUp, mirrored } = flags;
-                if (lock) {
-                    if (piece !== undefined && isMinoPiece(piece.type)) {
-                        field.put(piece);
-                    }
-
-                    field.clearLine();
-                }
-
-                // 公式テト譜では接着フラグがオンでなければ、盛フラグをオンにできない
-                if (blockUp) {
-                    field.up();
-                }
-
-                // 公式テト譜では接着フラグがオンでなければ、鏡フラグをオンにできない
-                if (mirrored) {
-                    field.mirror();
-                }
-            }
-            currentField = field;
-        }
-
-        const field: Block[] = currentField.toPlayFieldPieces().map((value) => {
-            return {
-                piece: value,
-            };
-        });
-        const move = page.piece;
-        if (move !== undefined && isMinoPiece(move.type)) {
-            const coordinate = move.coordinate;
-            const blocks = getBlocks(move.type, move.rotation);
-            for (const block of blocks) {
-                const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
-                field[x + y * 10] = {
-                    piece: move.type,
-                    highlight: true,
-                };
-            }
-        }
-
-        // SentLine
-        const sentLine: Block[] = currentField.toSentLintPieces().map((value) => {
-            return {
-                piece: value,
-            };
-        });
+        const page = state.fumen.pages[index];
+        const blocks = parseToBlocks(field, page.piece);
 
         return sequence(state, [
             state.play.status === AnimationState.Play ? actions.startAnimation() : undefined,
-            actions.setComment({ comment }),
-            actions.setField({ field, filledHighlight: page.flags.lock }),
-            actions.setSentLine({ sentLine }),
+            actions.setComment({ comment: text }),
+            actions.setField({ field: blocks.playField, filledHighlight: page.flags.lock }),
+            actions.setSentLine({ sentLine: blocks.sentLine }),
             actions.setHold({ hold }),
             actions.setNext({ next }),
             () => ({
@@ -352,6 +281,9 @@ export const actions: Readonly<Actions> = {
             },
         };
     },
+    changeToScreen: ({ screen }) => (): NextState => {
+        return { screen };
+    },
     refresh: () => (): NextState => {
         return {};
     },
@@ -362,6 +294,48 @@ export const actions: Readonly<Actions> = {
         const touchX = x / width;
         const action = touchX < 0.5 ? actions.backPage() : actions.nextPage();
         return action(state);
+    },
+    ontouchStartField: ({ index }) => ({ field, fumen }): NextState => {
+        const block = field[index];
+        const currentPageIndex = fumen.currentIndex;
+        const page = fumen.pages[currentPageIndex];
+
+        let piece;
+        if (block.piece === Piece.Empty) {
+            piece = Piece.Gray;
+        } else {
+            piece = Piece.Empty;
+        }
+
+        if (page.field.diff === undefined) {
+            page.field.diff = new Field({});
+        }
+
+        page.field.diff.setToPlayField(index, piece);
+
+        field[index].piece = piece;
+
+        return {
+            field,
+            events: {
+                touch: { piece },
+            },
+        };
+    },
+    ontouchMoveField: ({ index }) => ({ field, events }): NextState => {
+        return undefined;
+    },
+    ontouchEndField: () => (): NextState => {
+        return undefined;
+    },
+    ontouchStartSentLine: ({ index }) => ({ sentLine }): NextState => {
+        return undefined;
+    },
+    ontouchMoveSentLine: ({ index }) => ({ sentLine }): NextState => {
+        return undefined;
+    },
+    ontouchEndSentLine: () => (): NextState => {
+        return undefined;
     },
 };
 

@@ -1,5 +1,30 @@
 import { ViewError } from './errors';
-import { Piece } from './enums';
+import { Piece, Screens } from './enums';
+
+export const Palette = (screen: Screens) => {
+    const getBaseClass = () => {
+        switch (screen) {
+        case Screens.Drawer:
+            return 'red';
+        default:
+            return 'teal';
+        }
+    };
+
+    const getDarkCode = () => {
+        switch (screen) {
+        case Screens.Drawer:
+            return '#d32f2f';
+        default:
+            return '#00796b';
+        }
+    };
+
+    return {
+        baseClass: getBaseClass(),
+        darkCode: getDarkCode(),
+    };
+};
 
 export function getHighlightColor(piece: Piece): string {
     switch (piece) {

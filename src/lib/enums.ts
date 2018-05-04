@@ -36,6 +36,11 @@ export enum FieldConstants {
     SentLine = 1,
 }
 
+export enum Screens {
+    Reader = 'Reader',
+    Drawer = 'Drawer',
+}
+
 export function parsePieceName(piece: Piece) {
     switch (piece) {
     case Piece.I:

@@ -6,7 +6,7 @@ import { FumenError } from '../../errors';
 describe('fumen', () => {
     describe('decode', () => {
         test('empty', async () => {
-            const pages = await decode('vhAAgH');
+            const pages = await decode('vhAAgH', 123456789);
 
             expect(pages).toHaveLength(1);
             expect(pages[0]).toEqual({
@@ -27,6 +27,7 @@ describe('fumen', () => {
                 field: {
                     obj: new Field({}),
                 },
+                time: 123456789,
             } as Page);
         });
 
@@ -36,12 +37,10 @@ describe('fumen', () => {
             expect(pages).toHaveLength(2);
             expect(pages[0]).toMatchObject({
                 index: 0,
-                lastPage: false,
             });
 
             expect(pages[1]).toMatchObject({
                 index: 1,
-                lastPage: true,
             } as Page);
         });
 
@@ -106,7 +105,7 @@ describe('fumen', () => {
         });
 
         test('I-Spawn', async () => {
-            const pages = await decode('vhARQJ');
+            const pages = await decode('vhARQJ', 1234567890);
 
             expect(pages).toHaveLength(1);
             expect(pages[0]).toEqual({
@@ -134,6 +133,7 @@ describe('fumen', () => {
                 field: {
                     obj: new Field({}),
                 },
+                time: 1234567890,
             } as Page);
         });
 
