@@ -2,15 +2,34 @@ import { FumenError } from '../errors';
 import { Operation, parsePiece, parsePieceName, Piece } from '../enums';
 
 export class Quiz {
-    static verify(quiz: string): boolean {
+    private static verify(quiz: string): string {
         const replaced = this.trim(quiz);
 
+        if (replaced.length === 0 || quiz === '#Q=[]()') {
+            return '#Q=[]()';
+        }
+
         if (!replaced.match(/^#Q=\[[TIOSZJL]?]\([TIOSZJL]?\)[TIOSZJL]*$/i)) {
-            return false;
+            throw new FumenError(`Current piece doesn't exist, however next pieces exist: ${quiz}`);
         }
 
         const index = replaced.indexOf(')');
-        return !(replaced[index - 1] === '(' && replaced[index + 1] !== undefined);
+        if (replaced[index - 1] === '(' && replaced[index + 1] !== undefined) {
+            throw new FumenError('Unexpected quiz');
+        }
+
+        return replaced;
+    }
+
+    static create(nexts: string): Quiz;
+    static create(hold: string, nexts: string): Quiz;
+    static create(first: string, second?: string): Quiz {
+        const create = (hold: string | undefined, other: string) => {
+            const parse = (s?: string) => s ? s : '';
+            return new Quiz(`#Q=[${parse(hold)}](${parse(other[0])})${parse(other.substring(1))}`);
+        };
+
+        return second !== undefined ? create(first, second) : create(undefined, first);
     }
 
     private static trim(quiz: string) {
@@ -20,11 +39,7 @@ export class Quiz {
     private readonly quiz: string;
 
     constructor(quiz: string) {
-        if (!Quiz.verify(quiz)) {
-            throw new FumenError(`Current piece doesn't exist, however next pieces exist: ${quiz}`);
-        }
-
-        this.quiz = Quiz.trim(quiz);
+        this.quiz = Quiz.verify(quiz);
     }
 
     getOperation(used: Piece): Operation {

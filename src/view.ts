@@ -125,6 +125,7 @@ export const view: View<State, Actions> = (state, actions) => {
         }) : undefined as any,
 
         resources.konva.stage.isReady && state.screen === Screens.Drawer ? DrawEventCanvas({
+            actions,
             fieldBlocks: resources.konva.fieldBlocks,
             sentBlocks: resources.konva.sentBlocks,
         }) : undefined as any,
