@@ -76,7 +76,7 @@ describe('comment', () => {
         const quiz = Quiz.create('IOT');
         const pages = new Pages([quizText(quiz)] as any);
         expect(pages.getComment(0)).toEqual({
-            quiz,
+            quiz: quiz.toString(),
             quizAfterOperation: quiz,
         });
     });
@@ -84,7 +84,7 @@ describe('comment', () => {
     test('quiz ref', () => {
         const pages = new Pages([quizText(Quiz.create('IOT'), Operation.Direct), quizRef(0, Operation.Stock)] as any);
         expect(pages.getComment(1)).toEqual({
-            quiz: Quiz.create('OT'),
+            quiz: Quiz.create('OT').toString(),
             quizAfterOperation: Quiz.create('O', ''),
         });
     });
@@ -116,20 +116,20 @@ describe('comment', () => {
         ] as any);
 
         expect(pages.getComment(0)).toMatchObject({
-            quiz: Quiz.create('O', 'L'),
+            quiz: Quiz.create('O', 'L').toString(),
             quizAfterOperation: Quiz.create('O', ''),
         });
         expect(pages.getComment(1)).toMatchObject({
-            quiz: Quiz.create('O', ''),
+            quiz: '#Q=[](O)',
             quizAfterOperation: Quiz.create('O', ''),
         });
         expect(pages.getComment(2)).toMatchObject({
-            quiz: Quiz.create('O', ''),
+            quiz: '#Q=[](O)',
             quizAfterOperation: Quiz.create(''),
         });
         expect(pages.getComment(3)).toMatchObject({
-            quiz: Quiz.create(''),
-            quizAfterOperation: Quiz.create(''),
+            text: '',
+            next: [],
         });
     });
 
