@@ -129,7 +129,7 @@ export class Pages {
                     comment = quiz.format().toString();
                 } else {
                     // Next, Holdを算出
-                    const next = this.extractNext(this.pages.slice(index));
+                    const next = this.extractNext(this.pages.slice(i));
 
                     quizPage.comment.cache = {
                         next,

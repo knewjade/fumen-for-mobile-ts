@@ -33,6 +33,15 @@ describe('comment', () => {
         quiz: { operation },
     });
 
+    const quizRefWithPiece = (ref: number, piece?: Piece) => ({
+        comment: { ref },
+        quiz: { },
+        piece: { type: piece },
+        flags: {
+            lock: piece !== undefined,
+        },
+    });
+
     const quizCache = (quiz: string, quizAfterOperation: Quiz) => ({
         comment: {
             ref: -1,
@@ -137,7 +146,8 @@ describe('comment', () => {
             quizRef(0),
             quizRef(0, Operation.Swap),
             quizRef(0),
-            quizRef(0),
+            quizRefWithPiece(0, Piece.Z),
+            quizRefWithPiece(0, Piece.Z),
         ] as any);
 
         expect(pages.getComment(0)).toMatchObject({
@@ -154,15 +164,15 @@ describe('comment', () => {
         });
         expect(pages.getComment(3)).toMatchObject({
             text: '',
-            next: [],
+            next: [Piece.Z, Piece.Z],
         });
         expect(pages.getComment(4)).toMatchObject({
             text: '',
-            next: [],
+            next: [Piece.Z],
         });
     });
 
-    test('last hold with cache', () => {
+    test('last hold with comemnt cache', () => {
         const pages = new Pages([
             quizText(Quiz.create('O', 'L'), Operation.Direct),
             quizRef(0),
@@ -177,7 +187,7 @@ describe('comment', () => {
         });
     });
 
-    test('last hold with cache 2', () => {
+    test('last hold with quiz cache', () => {
         const pages = new Pages([
             quizText(Quiz.create('O', 'L'), Operation.Direct),
             quizCache('#Q=[](O)', Quiz.create('O', '')),

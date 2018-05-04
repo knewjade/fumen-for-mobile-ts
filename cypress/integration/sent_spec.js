@@ -187,7 +187,7 @@ describe('Sent line', () => {
         });
     });
 
-    it('Sent line using cache', () => {
+    it('Sent line / Reverse', () => {
         const page = pages(23);
 
         visit('v115@vhMSwQaAFLDmClcJSAVDEHBEooRBMoAVBqHDMCzOBA?AWyBUoBTpBXmBJnBVhBpeQaAFLDmClcJSAVDEHBEooRBJoA?VBvHUxCqCBAAzdB0XBPTBOfB6WBlhA8AeH8AoFvhDliBtnB?elBFdFlhC8Q4g0wwAtQpglwhAAAvhDA4BAAeAAAAAA');
@@ -197,7 +197,7 @@ describe('Sent line', () => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1));
         }
 
-        // 後ろから順にめくる
+        // 後ろから順に辿る
         leftTap(23);
 
         // フィールド下の確認
