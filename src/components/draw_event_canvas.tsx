@@ -19,6 +19,7 @@ interface Props {
 
 export const DrawEventCanvas: Component<Props> = ({ fieldBlocks, sentBlocks, actions }) => {
     const oncreate = () => {
+        console.log('oncreate');
         fieldBlocks.forEach((rect, index) => {
             rect.on('touchstart mousedown', () => actions.ontouchStartField({ index }));
             rect.on('touchmove mouseenter', () => actions.ontouchMoveField({ index }));
@@ -46,5 +47,6 @@ export const DrawEventCanvas: Component<Props> = ({ fieldBlocks, sentBlocks, act
         });
     };
 
-    return <param name="konva" value="draw-event-box" oncreate={oncreate} ondestroy={ondestroy}/>;
+    return <param key="draw-event-canvas" name="konva" value="draw-event-box"
+                  oncreate={oncreate} ondestroy={ondestroy}/>;
 };

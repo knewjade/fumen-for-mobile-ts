@@ -18,7 +18,7 @@ interface Props {
     };
 }
 
-export const Tools: Component<Props> = ({ height, animationState, pages, screen, actions }) => {
+export const ReaderTools: Component<Props> = ({ height, animationState, pages, screen, actions }) => {
     const navProperties = style({
         width: '100%',
         height: px(height),
@@ -58,7 +58,7 @@ export const Tools: Component<Props> = ({ height, animationState, pages, screen,
                 </ToolText>
 
                 <ToolButton iconName={animationState !== 'pause' ? 'pause' : 'play_arrow'} datatest="btn-play-anime"
-                            width={50} height={height - 10} fontSize={45.375} marginRight={10} colors={colors}
+                            width={50} height={height - 10} fontSize={45.375} colors={colors}
                             actions={{
                                 onclick: () => {
                                     switch (animationState) {

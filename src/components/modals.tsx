@@ -3,6 +3,7 @@ import { h } from 'hyperapp';
 import { resources } from '../states';
 import { i } from '@hyperapp/html';
 import { encode, Page } from '../lib/fumen/fumen';
+import { Screens } from '../lib/enums';
 
 declare const M: any;
 
@@ -100,12 +101,15 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
 interface SettingsProps {
     version: string;
     pages: Page[];
+    screen: Screens;
     actions: {
         closeSettingsModal: () => void;
+        changeToReaderMode: () => void;
+        changeToDrawerMode: () => void;
     };
 }
 
-export const SettingsModal: Component<SettingsProps> = ({ version, pages, actions }) => {
+export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen, actions }) => {
     const oncreate = (element: HTMLDivElement) => {
         const instance = M.Modal.init(element, {
             onOpenEnd: () => {
@@ -150,6 +154,22 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, action
                     <h4>Settings <span style={style({ color: '#999', fontSize: '50%' })}>[build {version}]</span></h4>
 
                     <div style={divProperties}>
+                        {screen === Screens.Drawer ?
+                            <SettingButton href="#" iconName="insert_photo"
+                                           onclick={() => {
+                                               actions.changeToReaderMode();
+                                               actions.closeSettingsModal();
+                                           }}>readonly</SettingButton>
+                            : undefined}
+
+                        {screen === Screens.Reader ?
+                            <SettingButton href="#" iconName="mode_edit"
+                                           onclick={() => {
+                                               actions.changeToDrawerMode();
+                                               actions.closeSettingsModal();
+                                           }}>writable</SettingButton>
+                            : undefined}
+
                         <SettingButton href="#" iconName="content_copy" onclick={async () => {
                             // テト譜の変換
                             const data = await encode(pages);

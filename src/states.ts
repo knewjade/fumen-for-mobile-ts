@@ -2,9 +2,8 @@ import { AnimationState, Piece, Screens } from './lib/enums';
 import { Page } from './lib/fumen/fumen';
 import { HyperStage } from './lib/hyper';
 import { Field } from './lib/fumen/field';
-import konva = require('konva');
-import { Quiz } from './lib/fumen/quiz';
 import { QuizCommentResult, TextCommentResult } from './actions/fumen';
+import konva = require('konva');
 
 export const VERSION = '###VERSION###';  // Replace build number of CI when run `webpack:prod`
 
@@ -58,7 +57,7 @@ export interface CachedPage extends Page {
     field: {
         obj?: Field;
         ref?: number;
-        diff?: Field;
+        operations?: { [key: string]: (field: Field) => void };
         cache?: {
             obj: Field;
         };

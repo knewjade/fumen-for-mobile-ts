@@ -129,7 +129,7 @@ export class Pages {
                     comment = quiz.format().toString();
                 } else {
                     // Next, Holdを算出
-                    const next = this.extractNext(this.pages.slice(i));
+                    const next = Pages.extractNext(this.pages.slice(i));
 
                     quizPage.comment.cache = {
                         next,
@@ -169,7 +169,7 @@ export class Pages {
         };
 
         // Next, Holdを算出
-        const next = this.extractNext(this.pages.slice(index));
+        const next = Pages.extractNext(this.pages.slice(index));
 
         const result = {
             next,
@@ -182,7 +182,7 @@ export class Pages {
         return result;
     }
 
-    private extractNext(pages: CachedPage[]) {
+    private static extractNext(pages: CachedPage[]) {
         const next: Piece[] = [];
         const head = pages[0];
         let currentPiece = head.piece !== undefined ? head.piece.type : Piece.Empty;
@@ -220,7 +220,7 @@ export class Pages {
             return currentPage.field.cache.obj;
         }
 
-        return currentPage.field.obj !== undefined ? currentPage.field.obj : this.restructureField(index);
+        return this.restructureField(index);
     }
 
     private restructureField(index: number) {
@@ -230,39 +230,51 @@ export class Pages {
             let state: undefined | {
                 field: Field;
                 startIndex: number;
+                cache: boolean;
             } = undefined;
 
-            // 参照先から持ってくる
-            const ref = currentPage.field.ref;
-            if (ref === undefined) {
-                throw new ViewError('Cannot open reference for comment');
-            }
+            if (currentPage.field.obj !== undefined) {
+                state = {
+                    field: currentPage.field.obj.copy(),
+                    startIndex: index,
+                    cache: false,
+                };
+            } else {
+                // 参照先から持ってくる
+                const ref = currentPage.field.ref;
+                if (ref === undefined) {
+                    throw new ViewError('Cannot open reference for comment');
+                }
 
-            for (let i = index; ref < i; i -= 1) {
-                const refPage = this.pages[i];
-                const cache = refPage.field.cache;
-                if (cache !== undefined) {
-                    // キャッシュがみつかったとき
+                for (let i = index; ref < i; i -= 1) {
+                    const refPage = this.pages[i];
+                    const cache = refPage.field.cache;
+                    if (cache !== undefined) {
+                        // キャッシュがみつかったとき
+                        state = {
+                            field: cache.obj.copy(),
+                            startIndex: i,
+                            cache: true,
+                        };
+                    }
+                }
+
+                // キャッシュが見つからなかったとき
+                if (state === undefined) {
+                    const refPage = this.pages[ref];
+
+                    if (refPage.field.obj === undefined) {
+                        throw new ViewError('Not found quiz');
+                    }
+
                     state = {
-                        field: cache.obj.copy(),
-                        startIndex: i,
+                        field: refPage.field.obj.copy(),
+                        startIndex: ref,
+                        cache: false,
                     };
                 }
             }
 
-            // キャッシュが見つからなかったとき
-            if (state === undefined) {
-                const refPage = this.pages[ref];
-
-                if (refPage.field.obj === undefined) {
-                    throw new ViewError('Not found quiz');
-                }
-
-                state = {
-                    field: refPage.field.obj.copy(),
-                    startIndex: ref,
-                };
-            }
 
             if (state === undefined) {
                 throw new ViewError('Unexpected state');
@@ -270,9 +282,21 @@ export class Pages {
 
             // 参照ページから現在のページまで操作を再現する
             const { field, startIndex } = state;
+            let { cache } = state;
             for (let i = startIndex; i <= index; i += 1) {
-                // フィールドをキャッシュする
                 const fieldPage = this.pages[i];
+
+                // キャッシュを利用しているとき、最初のdiffはスキップする
+                if (!cache && fieldPage.field.operations !== undefined) {
+                    const operations = fieldPage.field.operations;
+                    for (const key in operations) {
+                        const operation = operations[key];
+                        operation(field);
+                    }
+                    cache = false;
+                }
+
+                // フィールドをキャッシュする
                 fieldPage.field.cache = {
                     obj: field.copy(),
                 };

@@ -5,8 +5,8 @@ import { view } from './view';
 import { app } from 'hyperapp';
 import { ViewError } from './lib/errors';
 import { withLogger } from '@hyperapp/logger';
-import { Field } from './lib/fumen/field';
 import { Pages, parseToBlocks, QuizCommentResult, TextCommentResult } from './actions/fumen';
+import { Field } from './lib/fumen/field';
 
 type NextState = Partial<State> | undefined;
 export type action = (state: Readonly<State>) => NextState;
@@ -33,7 +33,8 @@ export interface Actions {
     closeFumenModal: () => action;
     closeSettingsModal: () => action;
     refresh: () => action;
-    changeToScreen: (data: { screen: Screens }) => action;
+    changeToReaderMode: () => void;
+    changeToDrawerMode: () => void;
 
     ontapCanvas: (e: any) => action;
 
@@ -41,13 +42,13 @@ export interface Actions {
 
     ontouchMoveField(data: { index: number }): action;
 
-    ontouchEndField(data: { index: number }): action;
+    ontouchEndField(): action;
 
     ontouchStartSentLine(data: { index: number }): action;
 
     ontouchMoveSentLine(data: { index: number }): action;
 
-    ontouchEndSentLine(data: { index: number }): action;
+    ontouchEndSentLine(): action;
 }
 
 export const actions: Readonly<Actions> = {
@@ -281,8 +282,11 @@ export const actions: Readonly<Actions> = {
             },
         };
     },
-    changeToScreen: ({ screen }) => (): NextState => {
-        return { screen };
+    changeToReaderMode: () => (): NextState => {
+        return { screen: Screens.Reader };
+    },
+    changeToDrawerMode: () => (): NextState => {
+        return { screen: Screens.Drawer };
     },
     refresh: () => (): NextState => {
         return {};
@@ -295,38 +299,96 @@ export const actions: Readonly<Actions> = {
         const action = touchX < 0.5 ? actions.backPage() : actions.nextPage();
         return action(state);
     },
-    ontouchStartField: ({ index }) => ({ field, fumen }): NextState => {
-        const block = field[index];
-        const currentPageIndex = fumen.currentIndex;
-        const page = fumen.pages[currentPageIndex];
+    ontouchStartField: ({ index }) => (state): NextState => {
+        const pages = state.fumen.pages;
+        const currentPageIndex = state.fumen.currentIndex;
 
-        let piece;
-        if (block.piece === Piece.Empty) {
-            piece = Piece.Gray;
-        } else {
-            piece = Piece.Empty;
+        // 塗りつぶすpieceを決める
+        const block = state.field[index];
+        const piece = block.piece === Piece.Empty ? Piece.Gray : Piece.Empty;
+
+        // フィールドの上書き操作を記録する
+        {
+            const page = pages[currentPageIndex];
+            if (page.field.operations === undefined) {
+                page.field.operations = {};
+            }
+            page.field.operations[index] = (field: Field) => field.setToPlayField(index, piece);
+            page.field.cache = undefined;
         }
 
-        if (page.field.diff === undefined) {
-            page.field.diff = new Field({});
+        return sequence(state, [
+            actions.openPage({ index: currentPageIndex }),
+            () => ({
+                fumen: {
+                    ...state.fumen,
+                    pages,
+                },
+                events: {
+                    ...state.events,
+                    touch: { piece },
+                },
+            }),
+        ]);
+    },
+    ontouchMoveField: ({ index }) => (state): NextState => {
+        const pages = state.fumen.pages;
+        const currentPageIndex = state.fumen.currentIndex;
+
+        // 塗りつぶすpieceを決める
+        const piece = state.events.touch.piece;
+        if (piece === undefined) {
+            return undefined;
         }
 
-        page.field.diff.setToPlayField(index, piece);
+        // フィールドの上書き操作を記録する
+        {
+            const page = pages[currentPageIndex];
+            if (page.field.operations === undefined) {
+                page.field.operations = {};
+            }
+            page.field.operations[index] = (field: Field) => field.setToPlayField(index, piece);
+            page.field.cache = undefined;
+        }
 
-        field[index].piece = piece;
+        // pieceに変化がないときは、表示を更新しない
+        if (state.field[index].piece === piece) {
+            return undefined;
+        }
+
+        return sequence(state, [
+            actions.openPage({ index: currentPageIndex }),
+            () => ({
+                fumen: {
+                    ...state.fumen,
+                    pages,
+                },
+                events: {
+                    ...state.events,
+                    touch: { piece },
+                },
+            }),
+        ]);
+    },
+    ontouchEndField: () => (state): NextState => {
+        const currentPageIndex = state.fumen.currentIndex;
+
+        // 影響のありそうなページのキャッシュを削除する
+        const pages = state.fumen.pages;
+        for (let i = currentPageIndex; i < pages.length; i += 1) {
+            pages[i].field.cache = undefined;
+        }
 
         return {
-            field,
+            fumen: {
+                ...state.fumen,
+                pages,
+            },
             events: {
-                touch: { piece },
+                ...state.events,
+                touch: { piece: undefined },
             },
         };
-    },
-    ontouchMoveField: ({ index }) => ({ field, events }): NextState => {
-        return undefined;
-    },
-    ontouchEndField: () => (): NextState => {
-        return undefined;
     },
     ontouchStartSentLine: ({ index }) => ({ sentLine }): NextState => {
         return undefined;

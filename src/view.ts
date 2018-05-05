@@ -6,12 +6,13 @@ import { isMinoPiece, Piece, Screens } from './lib/enums';
 import { comment } from './components/comment';
 import { KonvaCanvas } from './components/konva_canvas';
 import { getHighlightColor, getNormalColor } from './lib/colors';
-import { Tools } from './components/tools/tools';
+import { ReaderTools } from './components/tools/reader_tools';
 import { OpenFumenModal, SettingsModal } from './components/modals';
 import { Field } from './components/field';
 import { Box } from './components/box';
 import { EventCanvas } from './components/event_canvas';
 import { DrawEventCanvas } from './components/draw_event_canvas';
+import { DrawerTools } from './components/tools/drawer_tools';
 
 const getLayout = (display: { width: number, height: number }) => {
     const commentHeight = 35;
@@ -118,17 +119,7 @@ export const view: View<State, Actions> = (state, actions) => {
             hyperStage: resources.konva.stage,
         }),
 
-        resources.konva.stage.isReady && state.screen === Screens.Reader ? EventCanvas({
-            actions,
-            canvas: layout.canvas.size,
-            rect: resources.konva.event,
-        }) : undefined as any,
-
-        resources.konva.stage.isReady && state.screen === Screens.Drawer ? DrawEventCanvas({
-            actions,
-            fieldBlocks: resources.konva.fieldBlocks,
-            sentBlocks: resources.konva.sentBlocks,
-        }) : undefined as any,
+        resources.konva.stage.isReady ? Events(state, actions, layout) : undefined,
 
         div({
             key: 'field-top',
@@ -178,13 +169,8 @@ export const view: View<State, Actions> = (state, actions) => {
                 height: layout.comment.size.height,
                 text: state.comment.text,
             }),
-            Tools({
-                actions,
-                height: layout.tools.size.height,
-                animationState: state.play.status,
-                pages: state.fumen.currentIndex + 1 + ' / ' + state.fumen.maxPage,
-                screen: state.screen,
-            }),
+
+            Tools(state, actions, layout.tools.size.height),
         ]),
 
         state.modal.fumen ? OpenFumenModal({
@@ -196,6 +182,49 @@ export const view: View<State, Actions> = (state, actions) => {
             actions,
             version: state.version,
             pages: state.fumen.pages,
+            screen: state.screen,
         }) : undefined as any,
     ]);
+};
+
+const Events = (state: State, actions: Actions, layout: any) => {
+    switch (state.screen) {
+    case Screens.Reader:
+        return EventCanvas({
+            actions,
+            canvas: layout.canvas.size,
+            rect: resources.konva.event,
+        });
+    case Screens.Drawer:
+        return DrawEventCanvas({
+            actions,
+            fieldBlocks: resources.konva.fieldBlocks,
+            sentBlocks: resources.konva.sentBlocks,
+        });
+    }
+
+    return undefined as any;
+};
+
+const Tools = (state: State, actions: Actions, height: number) => {
+    switch (state.screen) {
+    case Screens.Reader:
+        return ReaderTools({
+            actions,
+            height,
+            animationState: state.play.status,
+            pages: state.fumen.currentIndex + 1 + ' / ' + state.fumen.maxPage,
+            screen: state.screen,
+        });
+    case Screens.Drawer:
+        return DrawerTools({
+            actions,
+            height,
+            animationState: state.play.status,
+            pages: state.fumen.currentIndex + 1 + ' / ' + state.fumen.maxPage,
+            screen: state.screen,
+        });
+    }
+
+    return undefined as any;
 };
