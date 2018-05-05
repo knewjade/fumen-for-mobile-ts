@@ -1,4 +1,4 @@
-import { AnimationState, Piece, Screens } from './lib/enums';
+import { AnimationState, Piece, Screens, TouchTypes } from './lib/enums';
 import { Page } from './lib/fumen/fumen';
 import { HyperStage } from './lib/hyper';
 import { Field } from './lib/fumen/field';
@@ -44,8 +44,11 @@ export interface State {
             piece?: Piece;
         };
     };
+    mode: {
+        screen: Screens;
+        touch: TouchTypes;
+    };
     version: string;
-    screen: Screens;
 }
 
 export interface Block {
@@ -109,8 +112,11 @@ export const initState: Readonly<State> = {
             piece: undefined,
         },
     },
+    mode: {
+        screen: Screens.Reader,
+        touch: TouchTypes.Drawing,
+    },
     version: VERSION,
-    screen: Screens.Reader,
 };
 
 export const resources = {

@@ -154,7 +154,7 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
                     <h4>Settings <span style={style({ color: '#999', fontSize: '50%' })}>[build {version}]</span></h4>
 
                     <div style={divProperties}>
-                        {screen === Screens.Drawer ?
+                        {screen === Screens.Editor ?
                             <SettingButton href="#" iconName="insert_photo"
                                            onclick={() => {
                                                actions.changeToReaderMode();

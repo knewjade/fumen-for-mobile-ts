@@ -1,4 +1,4 @@
-import { Component } from '../lib/types';
+import { Component } from '../../lib/types';
 import { h } from 'hyperapp';
 import konva = require('konva');
 

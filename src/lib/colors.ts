@@ -4,7 +4,7 @@ import { Piece, Screens } from './enums';
 export const Palette = (screen: Screens) => {
     const getBaseClass = () => {
         switch (screen) {
-        case Screens.Drawer:
+        case Screens.Editor:
             return 'red';
         default:
             return 'teal';
@@ -13,7 +13,7 @@ export const Palette = (screen: Screens) => {
 
     const getDarkCode = () => {
         switch (screen) {
-        case Screens.Drawer:
+        case Screens.Editor:
             return '#d32f2f';
         default:
             return '#00796b';

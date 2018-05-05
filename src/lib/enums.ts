@@ -38,7 +38,12 @@ export enum FieldConstants {
 
 export enum Screens {
     Reader = 'Reader',
-    Drawer = 'Drawer',
+    Editor = 'Editor',
+}
+
+export enum TouchTypes {
+    Drawing = 'Drawing',
+    Piece = 'Piece',
 }
 
 export function parsePieceName(piece: Piece) {

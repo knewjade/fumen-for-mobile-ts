@@ -275,7 +275,6 @@ export class Pages {
                 }
             }
 
-
             if (state === undefined) {
                 throw new ViewError('Unexpected state');
             }
@@ -293,6 +292,7 @@ export class Pages {
                         const operation = operations[key];
                         operation(field);
                     }
+                } else {
                     cache = false;
                 }
 

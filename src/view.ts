@@ -2,7 +2,7 @@ import { View } from 'hyperapp';
 import { div } from '@hyperapp/html';
 import { Actions } from './actions';
 import { resources, State } from './states';
-import { isMinoPiece, Piece, Screens } from './lib/enums';
+import { isMinoPiece, Piece, Screens, TouchTypes } from './lib/enums';
 import { comment } from './components/comment';
 import { KonvaCanvas } from './components/konva_canvas';
 import { getHighlightColor, getNormalColor } from './lib/colors';
@@ -10,9 +10,10 @@ import { ReaderTools } from './components/tools/reader_tools';
 import { OpenFumenModal, SettingsModal } from './components/modals';
 import { Field } from './components/field';
 import { Box } from './components/box';
-import { EventCanvas } from './components/event_canvas';
-import { DrawEventCanvas } from './components/draw_event_canvas';
-import { DrawerTools } from './components/tools/drawer_tools';
+import { EventCanvas } from './components/event/event_canvas';
+import { DrawingEventCanvas } from './components/event/drawing_event_canvas';
+import { EditorTools } from './components/tools/editor_tools';
+import { PieceEventCanvas } from './components/event/piece_event_canvas';
 
 const getLayout = (display: { width: number, height: number }) => {
     const commentHeight = 35;
@@ -182,47 +183,59 @@ export const view: View<State, Actions> = (state, actions) => {
             actions,
             version: state.version,
             pages: state.fumen.pages,
-            screen: state.screen,
+            screen: state.mode.screen,
         }) : undefined as any,
     ]);
 };
 
 const Events = (state: State, actions: Actions, layout: any) => {
-    switch (state.screen) {
+    const mode = state.mode;
+    switch (mode.screen) {
     case Screens.Reader:
         return EventCanvas({
             actions,
             canvas: layout.canvas.size,
             rect: resources.konva.event,
         });
-    case Screens.Drawer:
-        return DrawEventCanvas({
-            actions,
-            fieldBlocks: resources.konva.fieldBlocks,
-            sentBlocks: resources.konva.sentBlocks,
-        });
+    case Screens.Editor: {
+        switch (mode.touch) {
+        case TouchTypes.Drawing:
+            return DrawingEventCanvas({
+                actions,
+                fieldBlocks: resources.konva.fieldBlocks,
+                sentBlocks: resources.konva.sentBlocks,
+            });
+        case TouchTypes.Piece:
+            return PieceEventCanvas({
+                actions,
+                fieldBlocks: resources.konva.fieldBlocks,
+                sentBlocks: resources.konva.sentBlocks,
+            });
+        }
+    }
     }
 
     return undefined as any;
 };
 
 const Tools = (state: State, actions: Actions, height: number) => {
-    switch (state.screen) {
+    const screen = state.mode.screen;
+    switch (screen) {
     case Screens.Reader:
         return ReaderTools({
             actions,
             height,
+            screen,
             animationState: state.play.status,
             pages: state.fumen.currentIndex + 1 + ' / ' + state.fumen.maxPage,
-            screen: state.screen,
         });
-    case Screens.Drawer:
-        return DrawerTools({
+    case Screens.Editor:
+        return EditorTools({
             actions,
             height,
+            screen,
             animationState: state.play.status,
             pages: state.fumen.currentIndex + 1 + ' / ' + state.fumen.maxPage,
-            screen: state.screen,
         });
     }
 
