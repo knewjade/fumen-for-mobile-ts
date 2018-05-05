@@ -1,4 +1,5 @@
 import konva = require('konva');
+import { resources } from '../states';
 
 export class HyperStage {
     private stage: konva.Stage | undefined;
@@ -30,6 +31,47 @@ export class HyperStage {
     batchDraw() {
         if (this.stage !== undefined) {
             this.stage.batchDraw();
+        }
+    }
+
+    reload(completeCallback: (done: (waitMillSeconds?: number) => void) => void) {
+        if (this.stage !== undefined) {
+            const stage = this.stage;
+
+            // Layerを隠す
+            setImmediate(async () => {
+                const sleep = async (wait: number) => new Promise(resolved => setTimeout(resolved, wait));
+                const hide = async (layer: konva.Layer) => {
+                    layer.hide();
+                    stage.batchDraw();
+                    await sleep(4);
+                };
+
+                const layers = resources.konva.layers;
+
+                await hide(layers.boxes);
+                await hide(layers.field);
+                await hide(layers.background);
+
+                // callback処理完了を待つ
+                completeCallback((waitMillSeconds) => {
+                    const show = async (layer: konva.Layer) => {
+                        layer.show();
+                        stage.batchDraw();
+                        await sleep(6);
+                    };
+                    const time = waitMillSeconds !== undefined ? waitMillSeconds : 30;
+
+                    // waitしたあと、Layerを表示する
+                    setImmediate(async () => {
+                        await sleep(time);
+
+                        await show(layers.background);
+                        await show(layers.field);
+                        await show(layers.boxes);
+                    });
+                });
+            });
         }
     }
 }

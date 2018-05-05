@@ -1,4 +1,4 @@
-import { Block, initState, State } from './states';
+import { Block, initState, resources, State } from './states';
 import { AnimationState, FieldConstants, Piece, Screens, TouchTypes } from './lib/enums';
 import { decode, Page } from './lib/fumen/fumen';
 import { view } from './view';
@@ -32,6 +32,7 @@ export interface Actions {
     openSettingsModal: () => action;
     closeFumenModal: () => action;
     closeSettingsModal: () => action;
+    changeMode: (mode: Partial<State['mode']>) => action;
     refresh: () => action;
     changeToReaderMode: () => action;
     changeToDrawerMode: () => action;
@@ -287,21 +288,19 @@ export const actions: Readonly<Actions> = {
             },
         };
     },
-    changeToReaderMode: () => (state): NextState => {
-        return {
-            mode: {
-                ...state.mode,
-                screen: Screens.Reader,
-            },
-        };
+    changeToReaderMode: () => (): NextState => {
+        resources.konva.stage.reload((done) => {
+            main.changeMode({ screen: Screens.Reader });
+            done();
+        });
+        return undefined;
     },
-    changeToDrawerMode: () => (state): NextState => {
-        return {
-            mode: {
-                ...state.mode,
-                screen: Screens.Editor,
-            },
-        };
+    changeToDrawerMode: () => (): NextState => {
+        resources.konva.stage.reload((done) => {
+            main.changeMode({ screen: Screens.Editor });
+            done();
+        });
+        return undefined;
     },
     changeToDrawingMode: () => (state): NextState => {
         return {
@@ -316,6 +315,14 @@ export const actions: Readonly<Actions> = {
             mode: {
                 ...state.mode,
                 touch: TouchTypes.Piece,
+            },
+        };
+    },
+    changeMode: mode => (state): NextState => {
+        return {
+            mode: {
+                ...state.mode,
+                ...mode,
             },
         };
     },

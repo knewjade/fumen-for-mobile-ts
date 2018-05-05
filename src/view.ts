@@ -15,7 +15,7 @@ import { DrawingEventCanvas } from './components/event/drawing_event_canvas';
 import { EditorTools } from './components/tools/editor_tools';
 import { PieceEventCanvas } from './components/event/piece_event_canvas';
 
-const getLayout = (display: { width: number, height: number }) => {
+const getLayout = (display: { width: number, height: number }, screen: Screens) => {
     const commentHeight = 35;
     const toolsHeight = 50;
 
@@ -38,15 +38,15 @@ const getLayout = (display: { width: number, height: number }) => {
         height: (blockSize + 1) * 23.5 + 1 + bottomBorderWidth + 1,
     };
 
-    // フィールドの左上
-    const fieldTopLeft = {
-        x: (canvasSize.width - fieldSize.width) / 2,
-        y: (canvasSize.height - fieldSize.height) / 2,
-    };
-
     // Hold・Nextのボックスサイズ
     const boxSize = Math.max(Math.min(fieldSize.width / 5 * 1.15, (canvasSize.width - fieldSize.width) / 2 - 15), 5);
     const boxMargin = boxSize / 4;
+
+    // フィールドの左上
+    const fieldTopLeft = {
+        x: (canvasSize.width - fieldSize.width) / 2 - (screen === Screens.Editor ? boxSize : 0),
+        y: (canvasSize.height - fieldSize.height) / 2,
+    };
 
     return {
         canvas: {
@@ -99,17 +99,18 @@ const getLayout = (display: { width: number, height: number }) => {
     };
 };
 
+
+const decidePieceColor = (piece: Piece, highlight: boolean) => {
+    return highlight ? getHighlightColor(piece) : getNormalColor(piece);
+};
+
+const getPieceColorInBox = (piece?: Piece) => {
+    return piece !== undefined && isMinoPiece(piece) ? decidePieceColor(piece, true) : '#000';
+};
+
 export const view: View<State, Actions> = (state, actions) => {
     // 初期化
-    const layout = getLayout(state.display);
-
-    const decidePieceColor = (piece: Piece, highlight: boolean) => {
-        return highlight ? getHighlightColor(piece) : getNormalColor(piece);
-    };
-
-    const getPieceColorInBox = (piece?: Piece) => {
-        return piece !== undefined && isMinoPiece(piece) ? decidePieceColor(piece, true) : '#000';
-    };
+    const layout = getLayout(state.display, state.mode.screen);
 
     const batchDraw = () => resources.konva.stage.batchDraw();
 
@@ -122,45 +123,8 @@ export const view: View<State, Actions> = (state, actions) => {
 
         resources.konva.stage.isReady ? Events(state, actions, layout) : undefined,
 
-        div({
-            key: 'field-top',
-        }, [   // canvas:Field とのマッピング用仮想DOM
-            Field({
-                fieldMarginWidth: layout.field.bottomBorderWidth,
-                topLeft: layout.field.topLeft,
-                blockSize: layout.field.blockSize,
-                field: state.field,
-                sentLine: state.sentLine,
-            }),
+        ScreenField(state, actions, layout),
 
-            // Hold
-            state.hold !== undefined ? Box({
-                boxSize: layout.hold.boxSize,
-                key: 'box-hold',
-                rects: resources.konva.hold,
-                topLeft: layout.hold.topLeft,
-                piece: isMinoPiece(state.hold) ? {
-                    type: state.hold,
-                    color: getPieceColorInBox(state.hold),
-                    size: layout.hold.boxSize / 4 - 1,
-                } : undefined,
-            }) : undefined as any,
-
-            // Nexts
-            ...(state.nexts !== undefined ? state.nexts : []).map((value, index) => {
-                return Box({
-                    boxSize: layout.nexts.boxSize,
-                    key: 'box-next-' + index,
-                    rects: resources.konva.nexts[index],
-                    topLeft: layout.nexts.topLeft(index),
-                    piece: isMinoPiece(value) ? {
-                        type: value,
-                        color: getPieceColorInBox(value),
-                        size: layout.nexts.boxSize / 4 - 1,
-                    } : undefined,
-                });
-            }),
-        ]),
         div({
             key: 'menu-top',
         }, [
@@ -186,6 +150,63 @@ export const view: View<State, Actions> = (state, actions) => {
             screen: state.mode.screen,
         }) : undefined as any,
     ]);
+};
+
+const ScreenField = (state: State, actions: Actions, layout: any) => {
+    const getChildren = () => {
+        switch (state.mode.screen) {
+        case Screens.Reader:
+            return [   // canvas:Field とのマッピング用仮想DOM
+                Field({
+                    fieldMarginWidth: layout.field.bottomBorderWidth,
+                    topLeft: layout.field.topLeft,
+                    blockSize: layout.field.blockSize,
+                    field: state.field,
+                    sentLine: state.sentLine,
+                }),
+
+                // Hold
+                state.hold !== undefined ? Box({
+                    boxSize: layout.hold.boxSize,
+                    key: 'box-hold',
+                    rects: resources.konva.hold,
+                    topLeft: layout.hold.topLeft,
+                    piece: isMinoPiece(state.hold) ? {
+                        type: state.hold,
+                        color: getPieceColorInBox(state.hold),
+                        size: layout.hold.boxSize / 4 - 1,
+                    } : undefined,
+                }) : undefined as any,
+
+                // Nexts
+                ...(state.nexts !== undefined ? state.nexts : []).map((value, index) => {
+                    return Box({
+                        boxSize: layout.nexts.boxSize,
+                        key: 'box-next-' + index,
+                        rects: resources.konva.nexts[index],
+                        topLeft: layout.nexts.topLeft(index),
+                        piece: isMinoPiece(value) ? {
+                            type: value,
+                            color: getPieceColorInBox(value),
+                            size: layout.nexts.boxSize / 4 - 1,
+                        } : undefined,
+                    });
+                }),
+            ];
+        case Screens.Editor:
+            return [   // canvas:Field とのマッピング用仮想DOM
+                Field({
+                    fieldMarginWidth: layout.field.bottomBorderWidth,
+                    topLeft: layout.field.topLeft,
+                    blockSize: layout.field.blockSize,
+                    field: state.field,
+                    sentLine: state.sentLine,
+                }),
+            ];
+        }
+    };
+
+    return div({ key: 'field-top' }, getChildren());
 };
 
 const Events = (state: State, actions: Actions, layout: any) => {
