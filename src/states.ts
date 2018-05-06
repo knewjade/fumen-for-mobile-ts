@@ -3,6 +3,7 @@ import { Page } from './lib/fumen/fumen';
 import { HyperStage } from './lib/hyper';
 import { Field } from './lib/fumen/field';
 import { QuizCommentResult, TextCommentResult } from './actions/fumen';
+import { Box } from './components/box';
 import konva = require('konva');
 
 export const VERSION = '###VERSION###';  // Replace build number of CI when run `webpack:prod`
@@ -127,19 +128,30 @@ export const resources = {
     konva: createKonvaObjects(),
 };
 
+interface Box {
+    background: konva.Rect;
+    pieces: konva.Rect[];
+}
+
+interface PieceColorBox {
+    event: konva.Rect;
+    background: konva.Rect;
+    pieces: konva.Rect[];
+}
+
 // konvaオブジェクトの作成
 // 作成コストはやや大きめなので、必要なものは初めに作成する
 function createKonvaObjects() {
     const obj = {
         stage: new HyperStage(),
-        event: undefined as any,
-        background: undefined as any,
-        fieldMarginLine: undefined as any,
+        event: {} as konva.Rect,
+        background: {} as konva.Rect,
+        fieldMarginLine: {} as konva.Line,
         fieldBlocks: [] as konva.Rect[],
         sentBlocks: [] as konva.Rect[],
-        hold: [] as konva.Rect[],
-        nexts: [[]] as konva.Rect[][],
-        pieceButtons: [[]] as konva.Rect[][],
+        hold: {} as Box,
+        nexts: [] as Box[],
+        pieceButtons: [] as PieceColorBox[],
         layers: {
             background: new konva.Layer({ name: 'background' }),
             field: new konva.Layer({ name: 'field' }),
@@ -202,7 +214,14 @@ function createKonvaObjects() {
 
     // Hold
     {
-        const rects = Array.from({ length: 5 }).map(() => {
+        const background = new konva.Rect({
+            fill: '#333',
+            strokeWidth: 1,
+            stroke: '#666',
+            opacity: 1,
+        });
+
+        const pieces = Array.from({ length: 4 }).map(() => {
             return new konva.Rect({
                 fill: '#333',
                 strokeWidth: 1,
@@ -211,8 +230,8 @@ function createKonvaObjects() {
             });
         });
 
-        obj.hold = rects;
-        for (const rect of rects) {
+        obj.hold = { background, pieces };
+        for (const rect of [background].concat(pieces)) {
             layers.boxes.add(rect);
         }
     }
@@ -220,7 +239,14 @@ function createKonvaObjects() {
     // Nexts
     {
         const nexts = Array.from({ length: 5 }).map(() => {
-            return Array.from({ length: 5 }).map(() => {
+            const background = new konva.Rect({
+                fill: '#333',
+                strokeWidth: 1,
+                stroke: '#666',
+                opacity: 1,
+            });
+
+            const pieces = Array.from({ length: 4 }).map(() => {
                 return new konva.Rect({
                     fill: '#333',
                     strokeWidth: 1,
@@ -228,11 +254,13 @@ function createKonvaObjects() {
                     opacity: 1,
                 });
             });
+
+            return { background, pieces };
         });
 
         obj.nexts = nexts;
-        for (const next of nexts) {
-            for (const rect of next) {
+        for (const { background, pieces } of nexts) {
+            for (const rect of [background].concat(pieces)) {
                 layers.boxes.add(rect);
             }
         }
@@ -242,7 +270,21 @@ function createKonvaObjects() {
     {
         const pieces = [Piece.Gray, Piece.I, Piece.L, Piece.O, Piece.Z, Piece.T, Piece.J, Piece.S, Piece.Gray];
         const buttons = pieces.map(() => {
-            return Array.from({ length: 5 }).map(() => {
+            const event = new konva.Rect({
+                fill: '#333',
+                opacity: 0.1,
+                strokeEnabled: false,
+                listening: true,
+            });
+
+            const background = new konva.Rect({
+                fill: '#333',
+                strokeWidth: 1,
+                stroke: '#666',
+                opacity: 1,
+            });
+
+            const pieces = Array.from({ length: 4 }).map(() => {
                 return new konva.Rect({
                     fill: '#333',
                     strokeWidth: 1,
@@ -250,13 +292,16 @@ function createKonvaObjects() {
                     opacity: 1,
                 });
             });
+
+            return { background, event, pieces };
         });
 
         obj.pieceButtons = buttons;
-        for (const button of buttons) {
-            for (const rect of button) {
+        for (const { background, event, pieces } of buttons) {
+            for (const rect of [background].concat(pieces)) {
                 layers.boxes.add(rect);
             }
+            layers.boxes.add(event);  // eventが最も上になる順で追加する
         }
     }
 

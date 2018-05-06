@@ -1,5 +1,5 @@
 import { h } from 'hyperapp';
-import { getPieces, Piece } from '../lib/enums';
+import { getPieces, isMinoPiece, Piece } from '../lib/enums';
 import { Component } from '../lib/types';
 import konva = require('konva');
 
@@ -9,7 +9,11 @@ interface Size {
 }
 
 interface Props {
-    rects: konva.Rect[];
+    rects: {
+        event: konva.Rect,
+        background: konva.Rect,
+        pieces: konva.Rect[],
+    };
     key: string;
     size: Size;
     backgroundColor: string;
@@ -17,7 +21,7 @@ interface Props {
         x: number;
         y: number;
     };
-    piece?: {
+    piece: {
         type: Piece;
         color: string;
         size: number;
@@ -49,17 +53,17 @@ const getPiecePositions = (
         }
     }
 
-    // 中央にあたるIndex
+    // 左端中央にあたるIndex
     const centerIndex = {
-        x: (mmIndex.max.x - mmIndex.min.x + 1) / 2 + mmIndex.min.x,
+        x: mmIndex.min.x,
         y: (mmIndex.max.y - mmIndex.min.y + 1) / 2 + mmIndex.min.y,
     };
 
     const step = (n: number) => n * (pieceSize + margin) + 0.5 * margin;
 
-    // ボックス中央の座標
+    // ボックスの左端中央の座標
     const center = {
-        x: boxLeftTop.x + size.width / 2,
+        x: boxLeftTop.x + pieceSize,
         y: boxLeftTop.y + size.height / 2,
     };
 
@@ -71,28 +75,43 @@ const getPiecePositions = (
 
 export const PieceColorBox: Component<Props> = ({ key, size, backgroundColor, topLeft, piece, rects }) => {
     let positions: any[] = [];
-    if (piece !== undefined) {
+    if (isMinoPiece(piece.type)) {
         const pieceSize = piece.size;
         const pieceSizeObj = { width: pieceSize, height: pieceSize };
 
-        positions = getPiecePositions(topLeft, piece.type, size, pieceSize, 1).map((position, index) => {
+        const pieceBoxSize = {
+            width: size.width * 0.70,
+            height: size.height,
+        };
+
+        const pieceTopLeft = {
+            x: topLeft.x + size.width * 0.25,
+            y: topLeft.y,
+        };
+
+        positions = getPiecePositions(pieceTopLeft, piece.type, pieceBoxSize, pieceSize, 1).map((position, index) => {
             const positionKey = key + '-' + index;
-            return <BoxRect key={positionKey} dataTest={positionKey} rect={rects[index + 1]} size={pieceSizeObj}
+            return <BoxRect key={positionKey} dataTest={positionKey} rect={rects.pieces[index]} size={pieceSizeObj}
                             fillColor={piece.color} strokeColor="#333" strokeWidth={0} position={position}/>;
         });
     }
 
-    const type = piece !== undefined ? piece.type : Piece.Empty;
+    const type = piece.type;
+    const s = {
+        width: size.width * 0.25,
+        height: size.height,
+    };
     return (
         <div>
-            <BoxRect key={key} dataTest={key} rect={rects[0]} type={type}
-                     size={size} fillColor={backgroundColor} strokeColor="#666" strokeWidth={1} position={topLeft}/>
+            <BoxEventRect key={key} dataTest={key} rect={rects.event} type={type} size={size} position={topLeft}/>
+
+            <BoxRect key={key} dataTest={key} rect={rects.background} type={type}
+                     size={s} fillColor={backgroundColor} strokeColor="#666" strokeWidth={1} position={topLeft}/>
 
             {...positions}
         </div>
     );
 };
-
 
 interface BoxRectProps {
     rect: konva.Rect;
@@ -163,4 +182,52 @@ const BoxRect: Component<BoxRectProps> = (
                   oncreate={oncreate} onupdate={onupdate} ondestroy={ondestroy}
                   color={fillColor} position={position} size={size}
                   strokeColor={strokeColor} strokeWidth={strokeWidth}/>;
+};
+
+interface BoxEventRectProps {
+    rect: konva.Rect;
+    key: string;
+    dataTest: string;
+    position: {
+        x: number;
+        y: number;
+    };
+    size: {
+        width: number,
+        height: number,
+    };
+    type: Piece;
+}
+
+const BoxEventRect: Component<BoxEventRectProps> = (
+    { key, dataTest, rect, position, size, type },
+) => {
+    const resize = () => rect.setSize(size);
+    const move = () => rect.setAbsolutePosition(position);
+
+    const oncreate = () => {
+        resize();
+        move();
+        rect.show();
+        rect.on('tap click', () => console.log('select ' + type));
+    };
+
+    const onupdate = (container: any, attr: any) => {
+        if (size.width !== attr.size.width || size.height !== attr.size.height) {
+            resize();
+        }
+
+        if (position.x !== attr.position.x || position.y !== attr.position.y) {
+            move();
+        }
+    };
+
+    const ondestroy = () => {
+        rect.off('tap click');
+
+        rect.hide();
+    };
+
+    return <param name="konva" value={key} key={key} datatest={dataTest} type={type}
+                  oncreate={oncreate} onupdate={onupdate} ondestroy={ondestroy} position={position} size={size}/>;
 };

@@ -87,7 +87,7 @@ const getLayout = (display: { width: number, height: number }, screen: Screens) 
         },
         pieceButtons: {
             size: {
-                width: boxSize,
+                width: boxSize * 1.2,
                 height: boxSize * 0.75,
             },
             topLeft: (index: number) => ({
@@ -221,11 +221,11 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
                         key: 'box-piece-button-' + index,
                         topLeft: layout.pieceButtons.topLeft(index),
                         backgroundColor: getHighlightColor(piece),
-                        piece: isMinoPiece(piece) ? {
+                        piece: {
                             type: piece,
                             color: getHighlightColor(piece),
                             size: layout.pieceButtons.size.height / 4 - 1,
-                        } : undefined,
+                        },
                     });
                 }),
             ];

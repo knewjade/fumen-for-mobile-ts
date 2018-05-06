@@ -9,7 +9,10 @@ interface Size {
 }
 
 interface Props {
-    rects: konva.Rect[];
+    rects: {
+        background: konva.Rect,
+        pieces: konva.Rect[],
+    };
     key: string;
     size: Size;
     topLeft: {
@@ -76,7 +79,7 @@ export const Box: Component<Props> = ({ key, size, topLeft, piece, rects }) => {
 
         positions = getPiecePositions(topLeft, piece.type, size, pieceSize, 1).map((position, index) => {
             const positionKey = key + '-' + index;
-            return <BoxRect key={positionKey} dataTest={positionKey} rect={rects[index + 1]} size={pieceSizeObj}
+            return <BoxRect key={positionKey} dataTest={positionKey} rect={rects.pieces[index]} size={pieceSizeObj}
                             fillColor={piece.color} strokeColor="#333" strokeWidth={0} position={position}/>;
         });
     }
@@ -84,7 +87,7 @@ export const Box: Component<Props> = ({ key, size, topLeft, piece, rects }) => {
     const type = piece !== undefined ? piece.type : Piece.Empty;
     return (
         <div>
-            <BoxRect key={key} dataTest={key} rect={rects[0]} type={type}
+            <BoxRect key={key} dataTest={key} rect={rects.background} type={type}
                      size={size} fillColor="#333" strokeColor="#666" strokeWidth={1} position={topLeft}/>
 
             {...positions}
