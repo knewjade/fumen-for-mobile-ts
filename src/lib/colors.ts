@@ -26,7 +26,7 @@ export const Palette = (screen: Screens) => {
     };
 };
 
-export function getHighlightColor(piece: Piece): string {
+export function getHighlightColor(piece: Piece = Piece.Empty): string {
     switch (piece) {
     case Piece.Gray:
         return '#CCCCCC';
@@ -50,7 +50,7 @@ export function getHighlightColor(piece: Piece): string {
     throw new ViewError('Not found highlight color: ' + piece);
 }
 
-export function getNormalColor(piece: Piece): string {
+export function getNormalColor(piece: Piece = Piece.Empty): string {
     switch (piece) {
     case Piece.Gray:
         return '#999999';

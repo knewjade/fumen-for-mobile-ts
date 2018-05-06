@@ -14,6 +14,7 @@ import { EventCanvas } from './components/event/event_canvas';
 import { DrawingEventCanvas } from './components/event/drawing_event_canvas';
 import { EditorTools } from './components/tools/editor_tools';
 import { PieceEventCanvas } from './components/event/piece_event_canvas';
+import { PieceColorBox } from './components/piece_color_box';
 
 const getLayout = (display: { width: number, height: number }, screen: Screens) => {
     const commentHeight = 35;
@@ -44,7 +45,7 @@ const getLayout = (display: { width: number, height: number }, screen: Screens) 
 
     // フィールドの左上
     const fieldTopLeft = {
-        x: (canvasSize.width - fieldSize.width) / 2 - (screen === Screens.Editor ? boxSize : 0),
+        x: (canvasSize.width - fieldSize.width) / 2 - (screen === Screens.Editor ? boxSize / 2 : 0),
         y: (canvasSize.height - fieldSize.height) / 2,
     };
 
@@ -64,6 +65,10 @@ const getLayout = (display: { width: number, height: number }, screen: Screens) 
         },
         hold: {
             boxSize,
+            size: {
+                width: boxSize,
+                height: boxSize,
+            },
             topLeft: {
                 x: fieldTopLeft.x - (boxSize + boxMargin / 2),
                 y: fieldTopLeft.y,
@@ -71,9 +76,23 @@ const getLayout = (display: { width: number, height: number }, screen: Screens) 
         },
         nexts: {
             boxSize,
+            size: {
+                width: boxSize,
+                height: boxSize,
+            },
             topLeft: (index: number) => ({
                 x: fieldTopLeft.x + fieldSize.width + boxMargin / 2,
                 y: fieldTopLeft.y + index * (boxSize + boxMargin),
+            }),
+        },
+        pieceButtons: {
+            size: {
+                width: boxSize,
+                height: boxSize * 0.75,
+            },
+            topLeft: (index: number) => ({
+                x: fieldTopLeft.x + fieldSize.width + boxMargin,
+                y: fieldTopLeft.y + index * (boxSize * 0.75 + boxMargin),
             }),
         },
         comment: {
@@ -97,15 +116,6 @@ const getLayout = (display: { width: number, height: number }, screen: Screens) 
             },
         },
     };
-};
-
-
-const decidePieceColor = (piece: Piece, highlight: boolean) => {
-    return highlight ? getHighlightColor(piece) : getNormalColor(piece);
-};
-
-const getPieceColorInBox = (piece?: Piece) => {
-    return piece !== undefined && isMinoPiece(piece) ? decidePieceColor(piece, true) : '#000';
 };
 
 export const view: View<State, Actions> = (state, actions) => {
@@ -167,13 +177,13 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
 
                 // Hold
                 state.hold !== undefined ? Box({
-                    boxSize: layout.hold.boxSize,
+                    size: layout.hold.size,
                     key: 'box-hold',
                     rects: resources.konva.hold,
                     topLeft: layout.hold.topLeft,
                     piece: isMinoPiece(state.hold) ? {
                         type: state.hold,
-                        color: getPieceColorInBox(state.hold),
+                        color: getHighlightColor(state.hold),
                         size: layout.hold.boxSize / 4 - 1,
                     } : undefined,
                 }) : undefined as any,
@@ -181,13 +191,13 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
                 // Nexts
                 ...(state.nexts !== undefined ? state.nexts : []).map((value, index) => {
                     return Box({
-                        boxSize: layout.nexts.boxSize,
+                        size: layout.hold.size,
                         key: 'box-next-' + index,
                         rects: resources.konva.nexts[index],
                         topLeft: layout.nexts.topLeft(index),
                         piece: isMinoPiece(value) ? {
                             type: value,
-                            color: getPieceColorInBox(value),
+                            color: getHighlightColor(value),
                             size: layout.nexts.boxSize / 4 - 1,
                         } : undefined,
                     });
@@ -201,6 +211,22 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
                     blockSize: layout.field.blockSize,
                     field: state.field,
                     sentLine: state.sentLine,
+                }),
+
+                ...resources.konva.pieceButtons.map((rects, index) => {
+                    const piece = index as Piece;
+                    return PieceColorBox({
+                        rects,
+                        size: layout.pieceButtons.size,
+                        key: 'box-piece-button-' + index,
+                        topLeft: layout.pieceButtons.topLeft(index),
+                        backgroundColor: getHighlightColor(piece),
+                        piece: isMinoPiece(piece) ? {
+                            type: piece,
+                            color: getHighlightColor(piece),
+                            size: layout.pieceButtons.size.height / 4 - 1,
+                        } : undefined,
+                    });
                 }),
             ];
         }

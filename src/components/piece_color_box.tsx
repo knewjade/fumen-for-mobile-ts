@@ -12,6 +12,7 @@ interface Props {
     rects: konva.Rect[];
     key: string;
     size: Size;
+    backgroundColor: string;
     topLeft: {
         x: number;
         y: number;
@@ -68,7 +69,7 @@ const getPiecePositions = (
     }));
 };
 
-export const Box: Component<Props> = ({ key, size, topLeft, piece, rects }) => {
+export const PieceColorBox: Component<Props> = ({ key, size, backgroundColor, topLeft, piece, rects }) => {
     let positions: any[] = [];
     if (piece !== undefined) {
         const pieceSize = piece.size;
@@ -85,7 +86,7 @@ export const Box: Component<Props> = ({ key, size, topLeft, piece, rects }) => {
     return (
         <div>
             <BoxRect key={key} dataTest={key} rect={rects[0]} type={type}
-                     size={size} fillColor="#333" strokeColor="#666" strokeWidth={1} position={topLeft}/>
+                     size={size} fillColor={backgroundColor} strokeColor="#666" strokeWidth={1} position={topLeft}/>
 
             {...positions}
         </div>

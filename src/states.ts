@@ -139,6 +139,7 @@ function createKonvaObjects() {
         sentBlocks: [] as konva.Rect[],
         hold: [] as konva.Rect[],
         nexts: [[]] as konva.Rect[][],
+        pieceButtons: [[]] as konva.Rect[][],
         layers: {
             background: new konva.Layer({ name: 'background' }),
             field: new konva.Layer({ name: 'field' }),
@@ -232,6 +233,28 @@ function createKonvaObjects() {
         obj.nexts = nexts;
         for (const next of nexts) {
             for (const rect of next) {
+                layers.boxes.add(rect);
+            }
+        }
+    }
+
+    // Piece buttons
+    {
+        const pieces = [Piece.Gray, Piece.I, Piece.L, Piece.O, Piece.Z, Piece.T, Piece.J, Piece.S, Piece.Gray];
+        const buttons = pieces.map(() => {
+            return Array.from({ length: 5 }).map(() => {
+                return new konva.Rect({
+                    fill: '#333',
+                    strokeWidth: 1,
+                    stroke: '#666',
+                    opacity: 1,
+                });
+            });
+        });
+
+        obj.pieceButtons = buttons;
+        for (const button of buttons) {
+            for (const rect of button) {
                 layers.boxes.add(rect);
             }
         }
