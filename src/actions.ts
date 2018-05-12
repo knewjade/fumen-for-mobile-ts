@@ -353,7 +353,7 @@ export const actions: Readonly<Actions> = {
 
         // 塗りつぶすpieceを決める
         const block = state.field[index];
-        const piece = block.piece === Piece.Empty ? state.mode.piece : Piece.Empty;
+        const piece = block.piece !== state.mode.piece ? state.mode.piece : Piece.Empty;
 
         // フィールドの上書き操作を記録する
         {

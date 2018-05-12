@@ -17,6 +17,7 @@ interface Props {
     key: string;
     size: Size;
     backgroundColor: string;
+    selected: boolean;
     topLeft: {
         x: number;
         y: number;
@@ -76,7 +77,9 @@ const getPiecePositions = (
     }));
 };
 
-export const PieceColorBox: Component<Props> = ({ key, size, backgroundColor, topLeft, piece, rects, actions }) => {
+export const PieceColorBox: Component<Props> = (
+    { key, size, backgroundColor, topLeft, piece, rects, actions, selected },
+) => {
     let positions: any[] = [];
     if (isMinoPiece(piece.type)) {
         const pieceSize = piece.size;
@@ -100,17 +103,22 @@ export const PieceColorBox: Component<Props> = ({ key, size, backgroundColor, to
     }
 
     const type = piece.type;
-    const s = {
+    const sizeObj = {
         width: size.width * 0.25,
         height: size.height,
     };
     return (
         <div>
-            <BoxEventRect key={key} dataTest={key} actions={actions}
-                          rect={rects.event} type={type} size={size} position={topLeft}/>
+            {selected ?
+                <BoxEventRect key={key} dataTest={key} actions={actions}
+                              rect={rects.event} type={type} size={size} position={topLeft} strokeEnabled/>
+                :
+                <BoxEventRect key={key} dataTest={key} actions={actions}
+                              rect={rects.event} type={type} size={size} position={topLeft}/>
+            }
 
-            <BoxRect key={key} dataTest={key} rect={rects.background} type={type}
-                     size={s} fillColor={backgroundColor} strokeColor="#666" strokeWidth={1} position={topLeft}/>
+            <BoxRect key={key} dataTest={key} rect={rects.background} type={type} size={sizeObj}
+                     fillColor={backgroundColor} strokeColor="#fff" strokeWidth={0} position={topLeft}/>
 
             {...positions}
         </div>
@@ -201,20 +209,23 @@ interface BoxEventRectProps {
         height: number;
     };
     type: Piece;
+    strokeEnabled?: boolean;
     actions: {
         selectPieceColor: (data: { piece: Piece }) => void;
     };
 }
 
 const BoxEventRect: Component<BoxEventRectProps> = (
-    { key, dataTest, rect, position, size, type, actions },
+    { key, dataTest, rect, position, size, strokeEnabled = false, type, actions },
 ) => {
     const resize = () => rect.setSize(size);
     const move = () => rect.setAbsolutePosition(position);
+    const stroke = () => rect.strokeEnabled(strokeEnabled);
 
     const oncreate = () => {
         resize();
         move();
+        stroke();
         rect.show();
         rect.on('tap click', () => actions.selectPieceColor({ piece: type }));
     };
@@ -227,14 +238,18 @@ const BoxEventRect: Component<BoxEventRectProps> = (
         if (position.x !== attr.position.x || position.y !== attr.position.y) {
             move();
         }
+
+        if (strokeEnabled !== attr.strokeEnabled) {
+            stroke();
+        }
     };
 
     const ondestroy = () => {
         rect.off('tap click');
-
         rect.hide();
     };
 
     return <param name="konva" value={key} key={key} datatest={dataTest} type={type}
-                  oncreate={oncreate} onupdate={onupdate} ondestroy={ondestroy} position={position} size={size}/>;
+                  oncreate={oncreate} onupdate={onupdate} ondestroy={ondestroy} position={position} size={size}
+                  strokeEnabled={strokeEnabled}/>;
 };

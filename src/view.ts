@@ -215,6 +215,7 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
 
                 ...resources.konva.pieceButtons.map((rects, index) => {
                     const piece = index as Piece;
+
                     return PieceColorBox({
                         rects,
                         actions,
@@ -222,6 +223,7 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
                         key: 'box-piece-button-' + index,
                         topLeft: layout.pieceButtons.topLeft(index),
                         backgroundColor: getHighlightColor(piece),
+                        selected: state.mode.piece === piece,
                         piece: {
                             type: piece,
                             color: getHighlightColor(piece),
