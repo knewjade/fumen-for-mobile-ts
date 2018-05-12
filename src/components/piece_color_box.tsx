@@ -26,6 +26,9 @@ interface Props {
         color: string;
         size: number;
     };
+    actions: {
+        selectPieceColor: (data: { piece: Piece }) => void;
+    };
 }
 
 const getPiecePositions = (
@@ -73,7 +76,7 @@ const getPiecePositions = (
     }));
 };
 
-export const PieceColorBox: Component<Props> = ({ key, size, backgroundColor, topLeft, piece, rects }) => {
+export const PieceColorBox: Component<Props> = ({ key, size, backgroundColor, topLeft, piece, rects, actions }) => {
     let positions: any[] = [];
     if (isMinoPiece(piece.type)) {
         const pieceSize = piece.size;
@@ -103,7 +106,8 @@ export const PieceColorBox: Component<Props> = ({ key, size, backgroundColor, to
     };
     return (
         <div>
-            <BoxEventRect key={key} dataTest={key} rect={rects.event} type={type} size={size} position={topLeft}/>
+            <BoxEventRect key={key} dataTest={key} actions={actions}
+                          rect={rects.event} type={type} size={size} position={topLeft}/>
 
             <BoxRect key={key} dataTest={key} rect={rects.background} type={type}
                      size={s} fillColor={backgroundColor} strokeColor="#666" strokeWidth={1} position={topLeft}/>
@@ -193,14 +197,17 @@ interface BoxEventRectProps {
         y: number;
     };
     size: {
-        width: number,
-        height: number,
+        width: number;
+        height: number;
     };
     type: Piece;
+    actions: {
+        selectPieceColor: (data: { piece: Piece }) => void;
+    };
 }
 
 const BoxEventRect: Component<BoxEventRectProps> = (
-    { key, dataTest, rect, position, size, type },
+    { key, dataTest, rect, position, size, type, actions },
 ) => {
     const resize = () => rect.setSize(size);
     const move = () => rect.setAbsolutePosition(position);
@@ -209,7 +216,7 @@ const BoxEventRect: Component<BoxEventRectProps> = (
         resize();
         move();
         rect.show();
-        rect.on('tap click', () => console.log('select ' + type));
+        rect.on('tap click', () => actions.selectPieceColor({ piece: type }));
     };
 
     const onupdate = (container: any, attr: any) => {

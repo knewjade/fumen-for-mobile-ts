@@ -48,6 +48,7 @@ export interface State {
     mode: {
         screen: Screens;
         touch: TouchTypes;
+        piece: Piece;
     };
     version: string;
 }
@@ -116,6 +117,7 @@ export const initState: Readonly<State> = {
     mode: {
         screen: Screens.Reader,
         touch: TouchTypes.Drawing,
+        piece: Piece.Gray,
     },
     version: VERSION,
 };

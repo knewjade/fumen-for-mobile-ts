@@ -40,6 +40,8 @@ export interface Actions {
     changeToDrawingMode: () => action;
     changeToPieceMode: () => action;
 
+    selectPieceColor: (data: { piece: Piece }) => action;
+
     ontapCanvas: (e: any) => action;
 
     ontouchStartField(data: { index: number }): action;
@@ -326,6 +328,14 @@ export const actions: Readonly<Actions> = {
             },
         };
     },
+    selectPieceColor: ({ piece }) => (state): NextState => {
+        return {
+            mode: {
+                ...state.mode,
+                piece,
+            },
+        };
+    },
     refresh: () => (): NextState => {
         return {};
     },
@@ -343,7 +353,7 @@ export const actions: Readonly<Actions> = {
 
         // 塗りつぶすpieceを決める
         const block = state.field[index];
-        const piece = block.piece === Piece.Empty ? Piece.Gray : Piece.Empty;
+        const piece = block.piece === Piece.Empty ? state.mode.piece : Piece.Empty;
 
         // フィールドの上書き操作を記録する
         {

@@ -217,6 +217,7 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
                     const piece = index as Piece;
                     return PieceColorBox({
                         rects,
+                        actions,
                         size: layout.pieceButtons.size,
                         key: 'box-piece-button-' + index,
                         topLeft: layout.pieceButtons.topLeft(index),
