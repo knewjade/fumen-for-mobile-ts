@@ -49,6 +49,87 @@ const getLayout = (display: { width: number, height: number }, screen: Screens) 
         y: (canvasSize.height - fieldSize.height) / 2,
     };
 
+    if (screen === Screens.Editor) {
+        const canvasSize = {
+            width: display.width,
+            height: display.height - (toolsHeight),
+        };
+        const s = Math.min(canvasSize.width / 10, canvasSize.height / 24) - 1;
+        return {
+            canvas: {
+                topLeft: {
+                    x: 0,
+                    y: 0,
+                },
+                size: canvasSize,
+            },
+            field: {
+                bottomBorderWidth,
+                blockSize: s,
+                topLeft: {
+                    x: 0,
+                    y: 0,
+                },
+                size: {
+                    width: (s + 1) * 10 + 1,
+                    height: (s + 1) * 24 + 1,
+                },
+            },
+            hold: {
+                boxSize,
+                size: {
+                    width: boxSize,
+                    height: boxSize,
+                },
+                topLeft: {
+                    x: fieldTopLeft.x - (boxSize + boxMargin / 2),
+                    y: fieldTopLeft.y,
+                },
+            },
+            nexts: {
+                boxSize,
+                size: {
+                    width: boxSize,
+                    height: boxSize,
+                },
+                topLeft: (index: number) => ({
+                    x: fieldTopLeft.x + fieldSize.width + boxMargin / 2,
+                    y: fieldTopLeft.y + index * (boxSize + boxMargin),
+                }),
+            },
+            pieceButtons: {
+                size: {
+                    width: boxSize * 1.2,
+                    height: boxSize * 0.75,
+                },
+                topLeft: (index: number) => ({
+                    x: fieldTopLeft.x + fieldSize.width + boxMargin,
+                    y: fieldTopLeft.y + index * (boxSize * 0.75 + boxMargin),
+                }),
+            },
+            comment: {
+                topLeft: {
+                    x: 0,
+                    y: display.height - (toolsHeight + commentHeight),
+                },
+                size: {
+                    width: display.width,
+                    height: commentHeight,
+                },
+            },
+            tools: {
+                topLeft: {
+                    x: 0,
+                    y: display.height - toolsHeight,
+                },
+                size: {
+                    width: display.width,
+                    height: toolsHeight,
+                },
+            },
+        };
+    }
+
     return {
         canvas: {
             topLeft: {
@@ -121,6 +202,7 @@ const getLayout = (display: { width: number, height: number }, screen: Screens) 
 export const view: View<State, Actions> = (state, actions) => {
     // 初期化
     const layout = getLayout(state.display, state.mode.screen);
+    console.log(layout);
 
     const batchDraw = () => resources.konva.stage.batchDraw();
 
@@ -138,12 +220,12 @@ export const view: View<State, Actions> = (state, actions) => {
         div({
             key: 'menu-top',
         }, [
-            comment({
+            state.mode.screen === Screens.Reader ? comment({
                 dataTest: `text-comment`,
                 highlight: state.comment.isChanged,
                 height: layout.comment.size.height,
                 text: state.comment.text,
-            }),
+            }) : undefined,
 
             Tools(state, actions, layout.tools.size.height),
         ]),
