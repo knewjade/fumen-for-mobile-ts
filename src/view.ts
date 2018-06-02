@@ -104,14 +104,14 @@ const getLayout = (display: { width: number, height: number }, screen: Screens):
         };
 
         const pieceButtonsSize = {
-            width: (canvasSize.width - fieldSize.width) * 0.6,
+            width: Math.min((canvasSize.width - fieldSize.width) * 0.6, 100),
             height: Math.min(
                 fieldSize.height / (1.25 * 9 + 0.25),
                 40,
             ),
         };
 
-        const boxMargin = (canvasSize.width - fieldSize.width) * 0.1;
+        const boxMargin = Math.min((canvasSize.width - fieldSize.width) * 0.1, 10);
         const fieldTopLeft = {
             x: (canvasSize.width - fieldSize.width - pieceButtonsSize.width - boxMargin) / 2,
             y: (canvasSize.height - fieldSize.height) / 2,
@@ -256,7 +256,6 @@ function isReaderLayout(layout: any): layout is ReaderLayout {
 export const view: View<State, Actions> = (state, actions) => {
     // 初期化
     const layout = getLayout(state.display, state.mode.screen);
-    console.log(layout);
 
     const batchDraw = () => resources.konva.stage.batchDraw();
 
@@ -422,7 +421,8 @@ const Tools = (state: State, actions: Actions, height: number) => {
             height,
             screen,
             animationState: state.play.status,
-            pages: state.fumen.currentIndex + 1 + ' / ' + state.fumen.maxPage,
+            currentPage: state.fumen.currentIndex + 1,
+            maxPage: state.fumen.maxPage,
         });
     }
 

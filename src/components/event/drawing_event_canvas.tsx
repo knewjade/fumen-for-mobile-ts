@@ -10,9 +10,9 @@ interface Props {
         ontouchMoveField(data: { index: number }): void;
         ontouchEndField(data: { index: number }): void;
 
-        // ontouchStartSentLine(data: { index: number }): action;
-        // ontouchMoveSentLine(data: { index: number }): action;
-        // ontouchEndSentLine(data: { index: number }): action;
+        ontouchStartSentLine(data: { index: number }): void;
+        ontouchMoveSentLine(data: { index: number }): void;
+        ontouchEndSentLine(data: { index: number }): void;
     };
 }
 
@@ -25,12 +25,9 @@ export const DrawingEventCanvas: Component<Props> = ({ fieldBlocks, sentBlocks, 
         });
 
         sentBlocks.forEach((rect, index) => {
-            rect.on('touchstart mousedown', () => {
-            });
-            rect.on('touchmove mouseenter', () => {
-            });
-            rect.on('touchend mouseup', () => {
-            });
+            rect.on('touchstart mousedown', () => actions.ontouchStartSentLine({ index }));
+            rect.on('touchmove mouseenter', () => actions.ontouchMoveSentLine({ index }));
+            rect.on('touchend mouseup', () => actions.ontouchEndSentLine({ index }));
         });
     };
 
@@ -41,7 +38,7 @@ export const DrawingEventCanvas: Component<Props> = ({ fieldBlocks, sentBlocks, 
             rect.off('touchend mouseup');
         });
 
-        sentBlocks.forEach((rect, index) => {
+        sentBlocks.forEach((rect) => {
             rect.off('touchstart mousedown');
             rect.off('touchmove mouseenter');
             rect.off('touchend mouseup');

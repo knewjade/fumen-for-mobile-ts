@@ -25,8 +25,11 @@ export interface Actions {
     setHold: (data: { hold?: Piece }) => action;
     setNext: (data: { next?: Piece[] }) => action;
     openPage: (data: { index: number }) => action;
+    insertPage: (data: { index: number }) => action;
+    backLoopPage: () => action;
+    nextLoopPage: () => action;
     backPage: () => action;
-    nextPage: () => action;
+    nextPageOrNewPage: () => action;
     showOpenErrorMessage: (data: { message: string }) => action;
     openFumenModal: () => action;
     openSettingsModal: () => action;
@@ -131,7 +134,7 @@ export const actions: Readonly<Actions> = {
                 },
                 handlers: {
                     animation: setInterval(() => {
-                        main.nextPage();
+                        main.nextLoopPage();
                     }, state.play.intervalTime),
                 },
             }),
@@ -239,13 +242,41 @@ export const actions: Readonly<Actions> = {
             }),
         ]);
     },
-    backPage: () => (state): NextState => {
+    insertPage: ({ index }) => (state): NextState => {
+        const pages = new Pages(state.fumen.pages);
+        pages.insertPage(index);
+        const newPages = pages.pages;
+        return {
+            fumen: {
+                ...state.fumen,
+                pages: newPages,
+                maxPage: newPages.length,
+            },
+        };
+    },
+    backLoopPage: () => (state): NextState => {
         const index = (state.fumen.currentIndex - 1 + state.fumen.maxPage) % state.fumen.maxPage;
         return actions.openPage({ index })(state);
     },
-    nextPage: () => (state): NextState => {
+    nextLoopPage: () => (state): NextState => {
         const index = (state.fumen.currentIndex + 1) % state.fumen.maxPage;
         return actions.openPage({ index })(state);
+    },
+    backPage: () => (state): NextState => {
+        const backPage = state.fumen.currentIndex - 1;
+        if (backPage < 0) return;
+
+        return actions.openPage({ index: backPage })(state);
+    },
+    nextPageOrNewPage: () => (state): NextState => {
+        const nextPage = state.fumen.currentIndex + 1;
+        if (state.fumen.maxPage <= nextPage) {
+            return sequence(state, [
+                actions.insertPage({ index: nextPage }),
+                actions.openPage({ index: nextPage }),
+            ]);
+        }
+        return actions.openPage({ index: nextPage })(state);
     },
     showOpenErrorMessage: ({ message }) => (state): NextState => {
         return sequence(state, [
@@ -344,100 +375,26 @@ export const actions: Readonly<Actions> = {
         const { x } = stage.getPointerPosition();
         const { width } = stage.getSize();
         const touchX = x / width;
-        const action = touchX < 0.5 ? actions.backPage() : actions.nextPage();
+        const action = touchX < 0.5 ? actions.backLoopPage() : actions.nextLoopPage();
         return action(state);
     },
     ontouchStartField: ({ index }) => (state): NextState => {
-        const pages = state.fumen.pages;
-        const currentPageIndex = state.fumen.currentIndex;
-
-        // 塗りつぶすpieceを決める
-        const block = state.field[index];
-        const piece = block.piece !== state.mode.piece ? state.mode.piece : Piece.Empty;
-
-        // フィールドの上書き操作を記録する
-        {
-            const page = pages[currentPageIndex];
-            if (page.field.operations === undefined) {
-                page.field.operations = {};
-            }
-            page.field.operations[index] = (field: Field) => field.setToPlayField(index, piece);
-        }
-
-        // 影響のありそうなページのキャッシュを削除する
-        for (let i = currentPageIndex; i < pages.length; i += 1) {
-            pages[i].field.cache = undefined;
-        }
-
-        return sequence(state, [
-            () => ({
-                fumen: {
-                    ...state.fumen,
-                    pages,
-                },
-                events: {
-                    ...state.events,
-                    touch: { piece },
-                },
-            }),
-            actions.openPage({ index: currentPageIndex }),
-        ]);
+        return startDrawingField(state, index, true);
     },
     ontouchMoveField: ({ index }) => (state): NextState => {
-        const pages = state.fumen.pages;
-        const currentPageIndex = state.fumen.currentIndex;
-
-        // 塗りつぶすpieceを決める
-        const piece = state.events.touch.piece;
-        if (piece === undefined) {
-            return undefined;
-        }
-
-        // フィールドの上書き操作を記録する
-        {
-            const page = pages[currentPageIndex];
-            if (page.field.operations === undefined) {
-                page.field.operations = {};
-            }
-            page.field.operations[index] = (field: Field) => field.setToPlayField(index, piece);
-            page.field.cache = undefined;
-        }
-
-        // pieceに変化がないときは、表示を更新しない
-        if (state.field[index].piece === piece) {
-            return undefined;
-        }
-
-        return sequence(state, [
-            () => ({
-                fumen: {
-                    ...state.fumen,
-                    pages,
-                },
-                events: {
-                    ...state.events,
-                    touch: { piece },
-                },
-            }),
-            actions.openPage({ index: currentPageIndex }),
-        ]);
+        return moveDrawingField(state, index, true);
     },
     ontouchEndField: () => (state): NextState => {
-        return {
-            events: {
-                ...state.events,
-                touch: { piece: undefined },
-            },
-        };
+        return endDrawingField(state);
     },
-    ontouchStartSentLine: ({ index }) => ({ sentLine }): NextState => {
-        return undefined;
+    ontouchStartSentLine: ({ index }) => (state): NextState => {
+        return startDrawingField(state, index, false);
     },
-    ontouchMoveSentLine: ({ index }) => ({ sentLine }): NextState => {
-        return undefined;
+    ontouchMoveSentLine: ({ index }) => (state): NextState => {
+        return moveDrawingField(state, index, false);
     },
-    ontouchEndSentLine: () => (): NextState => {
-        return undefined;
+    ontouchEndSentLine: () => (state): NextState => {
+        return endDrawingField(state);
     },
     ontouchStartPiece: ({ index }) => (state): NextState => {
         const pages = state.fumen.pages;
@@ -481,18 +438,112 @@ function sequence(
         }
 
         const partial = action(currentState);
-
-        currentState = {
-            ...currentState,
-            ...partial,
-        };
         merged = {
             ...merged,
             ...partial,
         };
+        currentState = {
+            ...state,
+            ...merged,
+        };
     }
     return merged;
 }
+
+const startDrawingField = (state: State, index: number, isField: boolean): NextState => {
+    const pages = state.fumen.pages;
+    const currentPageIndex = state.fumen.currentIndex;
+
+    // 塗りつぶすpieceを決める
+    const block = state.field[index];
+    const piece = block.piece !== state.mode.piece ? state.mode.piece : Piece.Empty;
+
+    // フィールドの上書き操作を記録する
+    {
+        const page = pages[currentPageIndex];
+        if (page.field.operations === undefined) {
+            page.field.operations = {};
+        }
+
+        const key = isField ? 'field-' + index : 'sent-' + index;
+        page.field.operations[key] = isField
+            ? (field: Field) => field.setToPlayField(index, piece)
+            : (field: Field) => field.setToSentLine(index, piece);
+    }
+
+    // 影響のありそうなページのキャッシュを削除する
+    for (let i = currentPageIndex; i < pages.length; i += 1) {
+        pages[i].field.cache = undefined;
+    }
+
+    return sequence(state, [
+        () => ({
+            fumen: {
+                ...state.fumen,
+                pages,
+            },
+            events: {
+                ...state.events,
+                touch: { piece },
+            },
+        }),
+        actions.openPage({ index: currentPageIndex }),
+    ]);
+};
+
+const moveDrawingField = (state: State, index: number, isField: boolean): NextState => {
+    const pages = state.fumen.pages;
+    const currentPageIndex = state.fumen.currentIndex;
+
+    // 塗りつぶすpieceを決める
+    const piece = state.events.touch.piece;
+    if (piece === undefined) {
+        return undefined;
+    }
+
+    // フィールドの上書き操作を記録する
+    {
+        const page = pages[currentPageIndex];
+        if (page.field.operations === undefined) {
+            page.field.operations = {};
+        }
+
+        const key = isField ? 'field-' + index : 'sent-' + index;
+        page.field.operations[key] = isField
+            ? (field: Field) => field.setToPlayField(index, piece)
+            : (field: Field) => field.setToSentLine(index, piece);
+
+        page.field.cache = undefined;
+    }
+
+    // pieceに変化がないときは、表示を更新しない
+    if (state.field[index].piece === piece) {
+        return undefined;
+    }
+
+    return sequence(state, [
+        () => ({
+            fumen: {
+                ...state.fumen,
+                pages,
+            },
+            events: {
+                ...state.events,
+                touch: { piece },
+            },
+        }),
+        actions.openPage({ index: currentPageIndex }),
+    ]);
+};
+
+const endDrawingField = (state: State): NextState => {
+    return {
+        events: {
+            ...state.events,
+            touch: { piece: undefined },
+        },
+    };
+};
 
 // Mounting
 const mount = (isDebug: boolean = false): Actions => {

@@ -203,8 +203,7 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
 
                         <SettingButton href="./help.html" iconName="help_outline">help</SettingButton>
 
-                        <div style={style({ height: px(10), width: '100%', backgroundColor: '#fff' })}/>
-
+                        <div style={style({ height: px(10), width: '100%' })}/>
                     </div>
                 </div>
             </div>

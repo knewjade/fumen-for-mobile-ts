@@ -1,5 +1,5 @@
 import { Block, CachedPage } from '../states';
-import { ViewError } from '../lib/errors';
+import { FumenError, ViewError } from '../lib/errors';
 import { Quiz } from '../lib/fumen/quiz';
 import { Field } from '../lib/fumen/field';
 import { Move } from '../lib/fumen/fumen';
@@ -19,7 +19,7 @@ export interface QuizCommentResult {
 
 // 必要があればCacheを作成しつつ、Pageを操作する
 export class Pages {
-    constructor(private readonly pages: CachedPage[]) {
+    constructor(public readonly pages: CachedPage[]) {
     }
 
     // 指定したページのコメントを取得する
@@ -242,6 +242,7 @@ export class Pages {
             } else {
                 // 参照先から持ってくる
                 const ref = currentPage.field.ref;
+                console.log(ref);
                 if (ref === undefined) {
                     throw new ViewError('Cannot open reference for comment');
                 }
@@ -324,6 +325,52 @@ export class Pages {
         };
 
         return getField();
+    }
+
+    // TODO: Add test
+    insertPage(index: number) {
+        if (index < 0) {
+            throw new FumenError('Illegal index: ' + index);
+        }
+
+        // ひとつ前のページがないときはエラー
+        const prev = this.pages[index - 1];
+        if (prev === undefined) {
+            throw new FumenError('Not found prev page: ' + index);
+        }
+
+        const page: CachedPage = {
+            index,
+            field: { ref: undefined },
+            comment: { ref: undefined },
+            flags: {
+                lock: true,
+                send: false,
+                mirrored: false,
+                colorize: prev.flags.colorize,
+                blockUp: false,
+            },
+        };
+
+        // フィールドの参照
+        if (prev.field.ref !== undefined) {
+            page.field.ref = prev.field.ref;
+        } else if (prev.field.obj !== undefined) {
+            page.field.ref = index - 1;
+        } else {
+            throw new FumenError('Unexpected field: ' + prev.field);
+        }
+
+        // コメントの参照
+        if (prev.comment.ref !== undefined) {
+            page.comment.ref = prev.comment.ref;
+        } else if (prev.comment.text !== undefined) {
+            page.comment.ref = index - 1;
+        } else {
+            throw new FumenError('Unexpected comment: ' + prev.comment);
+        }
+
+        this.pages[index] = page;
     }
 }
 

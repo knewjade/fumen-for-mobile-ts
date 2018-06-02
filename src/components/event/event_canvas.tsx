@@ -9,8 +9,6 @@ interface Props {
         height: number;
     };
     actions: {
-        backPage: () => void;
-        nextPage: () => void;
         ontapCanvas: (e: any) => void;
     };
 }
