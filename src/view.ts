@@ -5,7 +5,7 @@ import { resources, State } from './states';
 import { isMinoPiece, Piece, Screens, TouchTypes } from './lib/enums';
 import { comment } from './components/comment';
 import { KonvaCanvas } from './components/konva_canvas';
-import { getHighlightColor, getNormalColor } from './lib/colors';
+import { getHighlightColor } from './lib/colors';
 import { ReaderTools } from './components/tools/reader_tools';
 import { OpenFumenModal, SettingsModal } from './components/modals';
 import { Field } from './components/field';

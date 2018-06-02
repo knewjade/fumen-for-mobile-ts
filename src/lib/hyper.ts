@@ -1,5 +1,5 @@
-import konva = require('konva');
 import { resources } from '../states';
+import konva = require('konva');
 
 export class HyperStage {
     private stage: konva.Stage | undefined;
