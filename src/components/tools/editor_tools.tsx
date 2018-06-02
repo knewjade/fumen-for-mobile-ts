@@ -69,9 +69,9 @@ export const EditorTools: Component<Props> = ({ height, animationState, pages, s
                             fontSize={33.75} marginRight={10} colors={colors}
                             actions={{ onclick: () => actions.changeToDrawingMode() }}/>
 
-                <ToolButton iconName="pan_tool" datatest="btn-next-page" width={35} height={height - 10}
-                            fontSize={29} colors={colors}
-                            actions={{ onclick: () => actions.changeToPieceMode() }}/>
+                {/*<ToolButton iconName="pan_tool" datatest="btn-next-page" width={35} height={height - 10}*/}
+                            {/*fontSize={29} colors={colors}*/}
+                            {/*actions={{ onclick: () => actions.changeToPieceMode() }}/>*/}
 
                 <ToolButton iconName="settings" datatest="btn-open-settings" sticky={true}
                             width={45} height={height - 10} fontSize={31.25} colors={colors}

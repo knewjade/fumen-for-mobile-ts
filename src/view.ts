@@ -15,47 +15,111 @@ import { DrawingEventCanvas } from './components/event/drawing_event_canvas';
 import { EditorTools } from './components/tools/editor_tools';
 import { PieceEventCanvas } from './components/event/piece_event_canvas';
 import { PieceColorBox } from './components/piece_color_box';
+import { ViewError } from './lib/errors';
 
-const getLayout = (display: { width: number, height: number }, screen: Screens) => {
+interface Position {
+    x: number;
+    y: number;
+}
+
+interface Size {
+    width: number;
+    height: number;
+}
+
+interface ReaderLayout {
+    screen: Screens.Reader;
+    canvas: {
+        topLeft: Position;
+        size: Size;
+    };
+    field: {
+        blockSize: number;
+        bottomBorderWidth: number;
+        topLeft: Position;
+        size: Size;
+    };
+    hold: {
+        boxSize: number;
+        size: Size;
+        topLeft: Position;
+    };
+    nexts: {
+        boxSize: number;
+        size: Size;
+        topLeft: (index: number) => Position;
+    };
+    comment: {
+        topLeft: Position;
+        size: Size;
+    };
+    tools: {
+        topLeft: Position;
+        size: Size;
+    };
+}
+
+interface EditorLayout {
+    screen: Screens.Editor;
+    canvas: {
+        topLeft: Position;
+        size: Size;
+    };
+    field: {
+        blockSize: number;
+        bottomBorderWidth: number;
+        topLeft: Position;
+        size: Size;
+    };
+    pieceButtons: {
+        size: Size;
+        topLeft: (index: number) => Position;
+    };
+    tools: {
+        topLeft: Position;
+        size: Size;
+    };
+}
+
+const getLayout = (display: { width: number, height: number }, screen: Screens): ReaderLayout | EditorLayout => {
     const commentHeight = 35;
     const toolsHeight = 50;
+    const borderWidthBottomField = 2.4;
 
-    // キャンバスの大きさ
-    const canvasSize = {
-        width: display.width,
-        height: display.height - (toolsHeight + commentHeight),
-    };
-
-    // フィールドのブロックサイズ
-    const blockSize = Math.min(
-        Math.floor(Math.min(canvasSize.height / 23.5, canvasSize.width / 10)) - 2,
-        (canvasSize.width / 16),
-    );
-
-    // フィールドの大きさ
-    const bottomBorderWidth = 2.4;
-    const fieldSize = {
-        width: (blockSize + 1) * 10 + 1,
-        height: (blockSize + 1) * 23.5 + 1 + bottomBorderWidth + 1,
-    };
-
-    // Hold・Nextのボックスサイズ
-    const boxSize = Math.max(Math.min(fieldSize.width / 5 * 1.15, (canvasSize.width - fieldSize.width) / 2 - 15), 5);
-    const boxMargin = boxSize / 4;
-
-    // フィールドの左上
-    const fieldTopLeft = {
-        x: (canvasSize.width - fieldSize.width) / 2 - (screen === Screens.Editor ? boxSize / 2 : 0),
-        y: (canvasSize.height - fieldSize.height) / 2,
-    };
-
-    if (screen === Screens.Editor) {
+    switch (screen) {
+    case Screens.Editor: {
         const canvasSize = {
             width: display.width,
             height: display.height - (toolsHeight),
         };
-        const s = Math.min(canvasSize.width / 10, canvasSize.height / 24) - 1;
+
+        const blockSize = Math.min(
+            (canvasSize.width - 1) / 10.5,
+            (canvasSize.height - borderWidthBottomField - 2) / 24,
+        ) - 1;
+
+        const fieldSize = {
+            width: (blockSize + 1) * 10 + 1,
+            height: (blockSize + 1) * 23.5 + 1 + borderWidthBottomField + 1,
+        };
+
+        const pieceButtonsSize = {
+            width: (canvasSize.width - fieldSize.width) * 0.6,
+            height: Math.min(
+                fieldSize.height / (1.25 * 9 + 0.25),
+                40,
+            ),
+        };
+
+        const boxMargin = (canvasSize.width - fieldSize.width) * 0.1;
+        const fieldTopLeft = {
+            x: (canvasSize.width - fieldSize.width - pieceButtonsSize.width - boxMargin) / 2,
+            y: (canvasSize.height - fieldSize.height) / 2,
+        };
+        const boxTopY = fieldTopLeft.y + fieldSize.height - pieceButtonsSize.height * (1.25 * 9 + 0.25);
+
         return {
+            screen,
             canvas: {
                 topLeft: {
                     x: 0,
@@ -64,16 +128,76 @@ const getLayout = (display: { width: number, height: number }, screen: Screens) 
                 size: canvasSize,
             },
             field: {
-                bottomBorderWidth,
-                blockSize: s,
+                blockSize,
+                bottomBorderWidth: borderWidthBottomField,
+                topLeft: fieldTopLeft,
+                size: fieldSize,
+            },
+            pieceButtons: {
+                size: pieceButtonsSize,
+                topLeft: (index: number) => ({
+                    x: fieldTopLeft.x + fieldSize.width + boxMargin,
+                    y: boxTopY + (index + 0.125) * pieceButtonsSize.height * 1.25,
+                }),
+            },
+            tools: {
+                topLeft: {
+                    x: 0,
+                    y: display.height - toolsHeight,
+                },
+                size: {
+                    width: display.width,
+                    height: toolsHeight,
+                },
+            },
+        };
+    }
+    case Screens.Reader: {
+        // キャンバスの大きさ
+        const canvasSize = {
+            width: display.width,
+            height: display.height - (toolsHeight + commentHeight),
+        };
+
+        // フィールドのブロックサイズ
+        const blockSize = Math.min(
+            Math.floor(Math.min(canvasSize.height / 23.5, canvasSize.width / 10)) - 2,
+            (canvasSize.width / 16),
+        );
+
+        // フィールドの大きさ
+        const fieldSize = {
+            width: (blockSize + 1) * 10 + 1,
+            height: (blockSize + 1) * 23.5 + 1 + borderWidthBottomField + 1,
+        };
+
+        // Hold・Nextのボックスサイズ
+        const boxSize = Math.max(
+            Math.min(fieldSize.width / 5 * 1.15, (canvasSize.width - fieldSize.width) / 2 - 15),
+            5,
+        );
+        const boxMargin = boxSize / 4;
+
+        // フィールドの左上
+        const fieldTopLeft = {
+            x: (canvasSize.width - fieldSize.width) / 2,
+            y: (canvasSize.height - fieldSize.height) / 2,
+        };
+
+        return {
+            screen,
+            canvas: {
                 topLeft: {
                     x: 0,
                     y: 0,
                 },
-                size: {
-                    width: (s + 1) * 10 + 1,
-                    height: (s + 1) * 24 + 1,
-                },
+                size: canvasSize,
+            },
+            field: {
+                blockSize,
+                bottomBorderWidth: borderWidthBottomField,
+                topLeft: fieldTopLeft,
+                size: fieldSize,
             },
             hold: {
                 boxSize,
@@ -95,16 +219,6 @@ const getLayout = (display: { width: number, height: number }, screen: Screens) 
                 topLeft: (index: number) => ({
                     x: fieldTopLeft.x + fieldSize.width + boxMargin / 2,
                     y: fieldTopLeft.y + index * (boxSize + boxMargin),
-                }),
-            },
-            pieceButtons: {
-                size: {
-                    width: boxSize * 1.2,
-                    height: boxSize * 0.75,
-                },
-                topLeft: (index: number) => ({
-                    x: fieldTopLeft.x + fieldSize.width + boxMargin,
-                    y: fieldTopLeft.y + index * (boxSize * 0.75 + boxMargin),
                 }),
             },
             comment: {
@@ -129,75 +243,15 @@ const getLayout = (display: { width: number, height: number }, screen: Screens) 
             },
         };
     }
-
-    return {
-        canvas: {
-            topLeft: {
-                x: 0,
-                y: 0,
-            },
-            size: canvasSize,
-        },
-        field: {
-            blockSize,
-            bottomBorderWidth,
-            topLeft: fieldTopLeft,
-            size: fieldSize,
-        },
-        hold: {
-            boxSize,
-            size: {
-                width: boxSize,
-                height: boxSize,
-            },
-            topLeft: {
-                x: fieldTopLeft.x - (boxSize + boxMargin / 2),
-                y: fieldTopLeft.y,
-            },
-        },
-        nexts: {
-            boxSize,
-            size: {
-                width: boxSize,
-                height: boxSize,
-            },
-            topLeft: (index: number) => ({
-                x: fieldTopLeft.x + fieldSize.width + boxMargin / 2,
-                y: fieldTopLeft.y + index * (boxSize + boxMargin),
-            }),
-        },
-        pieceButtons: {
-            size: {
-                width: boxSize * 1.2,
-                height: boxSize * 0.75,
-            },
-            topLeft: (index: number) => ({
-                x: fieldTopLeft.x + fieldSize.width + boxMargin,
-                y: fieldTopLeft.y + index * (boxSize * 0.75 + boxMargin),
-            }),
-        },
-        comment: {
-            topLeft: {
-                x: 0,
-                y: display.height - (toolsHeight + commentHeight),
-            },
-            size: {
-                width: display.width,
-                height: commentHeight,
-            },
-        },
-        tools: {
-            topLeft: {
-                x: 0,
-                y: display.height - toolsHeight,
-            },
-            size: {
-                width: display.width,
-                height: toolsHeight,
-            },
-        },
-    };
+    default: {
+        throw new ViewError('Unsupported screen: ' + screen);
+    }
+    }
 };
+
+function isReaderLayout(layout: any): layout is ReaderLayout {
+    return layout.screen === Screens.Reader;
+}
 
 export const view: View<State, Actions> = (state, actions) => {
     // 初期化
@@ -220,7 +274,7 @@ export const view: View<State, Actions> = (state, actions) => {
         div({
             key: 'menu-top',
         }, [
-            state.mode.screen === Screens.Reader ? comment({
+            isReaderLayout(layout) ? comment({
                 dataTest: `text-comment`,
                 highlight: state.comment.isChanged,
                 height: layout.comment.size.height,
@@ -295,6 +349,7 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
                     sentLine: state.sentLine,
                 }),
 
+                // Piece buttons
                 ...resources.konva.pieceButtons.map((rects, index) => {
                     const piece = index as Piece;
 
@@ -309,7 +364,7 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
                         piece: {
                             type: piece,
                             color: getHighlightColor(piece),
-                            size: layout.pieceButtons.size.height / 4 - 1,
+                            size: layout.pieceButtons.size.height / 3.5 - 1,
                         },
                     });
                 }),
