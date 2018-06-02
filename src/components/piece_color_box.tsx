@@ -100,14 +100,14 @@ export const PieceColorBox: Component<Props> = (
     return (
         <div>
             {selected ?
-                <BoxEventRect key={key} dataTest={key} actions={actions}
+                <BoxEventRect key={key + '-event'} dataTest={key} actions={actions}
                               rect={rects.event} type={type} size={size} position={topLeft} strokeEnabled/>
                 :
-                <BoxEventRect key={key} dataTest={key} actions={actions}
+                <BoxEventRect key={key + '-event'} dataTest={key} actions={actions}
                               rect={rects.event} type={type} size={size} position={topLeft}/>
             }
 
-            <BoxRect key={key} dataTest={key} rect={rects.background} type={type} size={sizeObj}
+            <BoxRect key={key + '-backgound'} dataTest={key} rect={rects.background} type={type} size={sizeObj}
                      fillColor={backgroundColor} strokeColor="#fff" strokeWidth={0} position={topLeft}/>
 
             {...pieceRects}

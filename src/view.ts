@@ -94,8 +94,8 @@ const getLayout = (display: { width: number, height: number }, screen: Screens):
         };
 
         const blockSize = Math.min(
-            (canvasSize.width - 1) / 10.5,
             (canvasSize.height - borderWidthBottomField - 2) / 24,
+            (canvasSize.width - 75) / 10.5,  // 横のスペースが最低でも75pxは残るようにする
         ) - 1;
 
         const fieldSize = {
