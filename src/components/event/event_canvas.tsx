@@ -1,4 +1,4 @@
-import { Component } from '../lib/types';
+import { Component } from '../../lib/types';
 import { h } from 'hyperapp';
 import konva = require('konva');
 
@@ -11,7 +11,7 @@ interface Props {
     actions: {
         backPage: () => void;
         nextPage: () => void;
-        ontapCanvas: (e:any) => void;
+        ontapCanvas: (e: any) => void;
     };
 }
 
@@ -21,6 +21,7 @@ export const EventCanvas: Component<Props> = ({ rect, canvas, actions }) => {
     const oncreate = () => {
         resize();
 
+        rect.show();
         rect.on('tap click', actions.ontapCanvas);
     };
 
@@ -32,8 +33,9 @@ export const EventCanvas: Component<Props> = ({ rect, canvas, actions }) => {
 
     const ondestroy = () => {
         rect.off('tap click');
+        rect.hide();
     };
 
-    return <param name="konva" value="event-box" canvas={canvas}
+    return <param key="reader-event-canvas" name="konva" value="event-box" canvas={canvas}
                   oncreate={oncreate} onupdate={onupdate} ondestroy={ondestroy}/>;
 };

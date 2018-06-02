@@ -4,6 +4,7 @@ import { Field } from './field';
 import { decodeAction, encodeAction } from './action';
 import { ENCODE_TABLE_LENGTH, Values } from './values';
 import { FumenError } from '../errors';
+import { CachedPage } from '../../states';
 
 export interface Move {
     type: Piece;
@@ -287,7 +288,7 @@ export async function decode(fumen: string, time: number = Date.now()): Promise<
     return pages;
 }
 
-export async function encode(pages: Page[]): Promise<string> {
+export async function encode(pages: CachedPage[]): Promise<string> {
     const updateField = (prev: Field, current: Field) => {
         const { changed, values } = encodeField(prev, current);
 
@@ -316,6 +317,14 @@ export async function encode(pages: Page[]): Promise<string> {
 
         // フィールドの更新
         const currentField = currentPage.field.obj !== undefined ? currentPage.field.obj.copy() : prevField.copy();
+        if (currentPage.field.operations) {
+            const operations = currentPage.field.operations;
+            for (const key in operations) {
+                const operation = operations[key];
+                operation(currentField);
+            }
+        }
+
         updateField(prevField, currentField);
 
         // アクションの更新

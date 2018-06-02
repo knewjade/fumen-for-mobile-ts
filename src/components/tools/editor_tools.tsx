@@ -15,10 +15,14 @@ interface Props {
         openSettingsModal: () => void;
         startAnimation: () => void;
         pauseAnimation: () => void;
+        backPage: () => void;
+        nextPage: () => void;
+        changeToDrawingMode: () => void;
+        changeToPieceMode: () => void;
     };
 }
 
-export const Tools: Component<Props> = ({ height, animationState, pages, screen, actions }) => {
+export const EditorTools: Component<Props> = ({ height, animationState, pages, screen, actions }) => {
     const navProperties = style({
         width: '100%',
         height: px(height),
@@ -48,29 +52,26 @@ export const Tools: Component<Props> = ({ height, animationState, pages, screen,
         <nav datatest="tools" className={themeColor} style={navProperties}>
             <div className="nav-wrapper" style={divProperties}>
 
-                <ToolButton iconName="open_in_new" datatest="btn-open-fumen" width={55} height={height - 10}
+                <ToolButton iconName="keyboard_arrow_left" datatest="btn-back-page" width={35} height={height - 10}
                             fontSize={33.75} marginRight={10} colors={colors}
-                            actions={{ onclick: () => actions.openFumenModal() }}/>
+                            actions={{ onclick: () => actions.backPage() }}/>
 
                 <ToolText datatest="text-pages" height={height - 10}
                           minWidth={85} fontSize={18} marginRight={10}>
                     {pages}
                 </ToolText>
 
-                <ToolButton iconName={animationState !== 'pause' ? 'pause' : 'play_arrow'} datatest="btn-play-anime"
-                            width={50} height={height - 10} fontSize={45.375} marginRight={10} colors={colors}
-                            actions={{
-                                onclick: () => {
-                                    switch (animationState) {
-                                    case AnimationState.Play:
-                                        actions.pauseAnimation();
-                                        break;
-                                    default:
-                                        actions.startAnimation();
-                                        break;
-                                    }
-                                },
-                            }}/>
+                <ToolButton iconName="keyboard_arrow_right" datatest="btn-next-page" width={35} height={height - 10}
+                            fontSize={33.75} marginRight={10} colors={colors}
+                            actions={{ onclick: () => actions.nextPage() }}/>
+
+                <ToolButton iconName="brush" datatest="btn-next-page" width={35} height={height - 10}
+                            fontSize={33.75} marginRight={10} colors={colors}
+                            actions={{ onclick: () => actions.changeToDrawingMode() }}/>
+
+                <ToolButton iconName="pan_tool" datatest="btn-next-page" width={35} height={height - 10}
+                            fontSize={29} colors={colors}
+                            actions={{ onclick: () => actions.changeToPieceMode() }}/>
 
                 <ToolButton iconName="settings" datatest="btn-open-settings" sticky={true}
                             width={45} height={height - 10} fontSize={31.25} colors={colors}

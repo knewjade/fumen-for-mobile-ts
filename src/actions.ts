@@ -1,12 +1,12 @@
-import { Block, initState, State } from './states';
-import { AnimationState, FieldConstants, Piece, Screens } from './lib/enums';
+import { Block, initState, resources, State } from './states';
+import { AnimationState, FieldConstants, Piece, Screens, TouchTypes } from './lib/enums';
 import { decode, Page } from './lib/fumen/fumen';
 import { view } from './view';
 import { app } from 'hyperapp';
 import { ViewError } from './lib/errors';
 import { withLogger } from '@hyperapp/logger';
-import { Field } from './lib/fumen/field';
 import { Pages, parseToBlocks, QuizCommentResult, TextCommentResult } from './actions/fumen';
+import { Field } from './lib/fumen/field';
 
 type NextState = Partial<State> | undefined;
 export type action = (state: Readonly<State>) => NextState;
@@ -32,8 +32,15 @@ export interface Actions {
     openSettingsModal: () => action;
     closeFumenModal: () => action;
     closeSettingsModal: () => action;
+    changeMode: (mode: Partial<State['mode']>) => action;
     refresh: () => action;
-    changeToScreen: (data: { screen: Screens }) => action;
+    changeToReaderMode: () => action;
+    changeToDrawerMode: () => action;
+
+    changeToDrawingMode: () => action;
+    changeToPieceMode: () => action;
+
+    selectPieceColor: (data: { piece: Piece }) => action;
 
     ontapCanvas: (e: any) => action;
 
@@ -41,13 +48,15 @@ export interface Actions {
 
     ontouchMoveField(data: { index: number }): action;
 
-    ontouchEndField(data: { index: number }): action;
+    ontouchEndField(): action;
 
     ontouchStartSentLine(data: { index: number }): action;
 
     ontouchMoveSentLine(data: { index: number }): action;
 
-    ontouchEndSentLine(data: { index: number }): action;
+    ontouchEndSentLine(): action;
+
+    ontouchStartPiece(data: { index: number }): action;
 }
 
 export const actions: Readonly<Actions> = {
@@ -281,8 +290,51 @@ export const actions: Readonly<Actions> = {
             },
         };
     },
-    changeToScreen: ({ screen }) => (): NextState => {
-        return { screen };
+    changeToReaderMode: () => (): NextState => {
+        resources.konva.stage.reload((done) => {
+            main.changeMode({ screen: Screens.Reader });
+            done();
+        });
+        return undefined;
+    },
+    changeToDrawerMode: () => (): NextState => {
+        resources.konva.stage.reload((done) => {
+            main.changeMode({ screen: Screens.Editor });
+            done();
+        });
+        return undefined;
+    },
+    changeToDrawingMode: () => (state): NextState => {
+        return {
+            mode: {
+                ...state.mode,
+                touch: TouchTypes.Drawing,
+            },
+        };
+    },
+    changeToPieceMode: () => (state): NextState => {
+        return {
+            mode: {
+                ...state.mode,
+                touch: TouchTypes.Piece,
+            },
+        };
+    },
+    changeMode: mode => (state): NextState => {
+        return {
+            mode: {
+                ...state.mode,
+                ...mode,
+            },
+        };
+    },
+    selectPieceColor: ({ piece }) => (state): NextState => {
+        return {
+            mode: {
+                ...state.mode,
+                piece,
+            },
+        };
     },
     refresh: () => (): NextState => {
         return {};
@@ -295,38 +347,88 @@ export const actions: Readonly<Actions> = {
         const action = touchX < 0.5 ? actions.backPage() : actions.nextPage();
         return action(state);
     },
-    ontouchStartField: ({ index }) => ({ field, fumen }): NextState => {
-        const block = field[index];
-        const currentPageIndex = fumen.currentIndex;
-        const page = fumen.pages[currentPageIndex];
+    ontouchStartField: ({ index }) => (state): NextState => {
+        const pages = state.fumen.pages;
+        const currentPageIndex = state.fumen.currentIndex;
 
-        let piece;
-        if (block.piece === Piece.Empty) {
-            piece = Piece.Gray;
-        } else {
-            piece = Piece.Empty;
+        // 塗りつぶすpieceを決める
+        const block = state.field[index];
+        const piece = block.piece !== state.mode.piece ? state.mode.piece : Piece.Empty;
+
+        // フィールドの上書き操作を記録する
+        {
+            const page = pages[currentPageIndex];
+            if (page.field.operations === undefined) {
+                page.field.operations = {};
+            }
+            page.field.operations[index] = (field: Field) => field.setToPlayField(index, piece);
         }
 
-        if (page.field.diff === undefined) {
-            page.field.diff = new Field({});
+        // 影響のありそうなページのキャッシュを削除する
+        for (let i = currentPageIndex; i < pages.length; i += 1) {
+            pages[i].field.cache = undefined;
         }
 
-        page.field.diff.setToPlayField(index, piece);
+        return sequence(state, [
+            () => ({
+                fumen: {
+                    ...state.fumen,
+                    pages,
+                },
+                events: {
+                    ...state.events,
+                    touch: { piece },
+                },
+            }),
+            actions.openPage({ index: currentPageIndex }),
+        ]);
+    },
+    ontouchMoveField: ({ index }) => (state): NextState => {
+        const pages = state.fumen.pages;
+        const currentPageIndex = state.fumen.currentIndex;
 
-        field[index].piece = piece;
+        // 塗りつぶすpieceを決める
+        const piece = state.events.touch.piece;
+        if (piece === undefined) {
+            return undefined;
+        }
 
+        // フィールドの上書き操作を記録する
+        {
+            const page = pages[currentPageIndex];
+            if (page.field.operations === undefined) {
+                page.field.operations = {};
+            }
+            page.field.operations[index] = (field: Field) => field.setToPlayField(index, piece);
+            page.field.cache = undefined;
+        }
+
+        // pieceに変化がないときは、表示を更新しない
+        if (state.field[index].piece === piece) {
+            return undefined;
+        }
+
+        return sequence(state, [
+            () => ({
+                fumen: {
+                    ...state.fumen,
+                    pages,
+                },
+                events: {
+                    ...state.events,
+                    touch: { piece },
+                },
+            }),
+            actions.openPage({ index: currentPageIndex }),
+        ]);
+    },
+    ontouchEndField: () => (state): NextState => {
         return {
-            field,
             events: {
-                touch: { piece },
+                ...state.events,
+                touch: { piece: undefined },
             },
         };
-    },
-    ontouchMoveField: ({ index }) => ({ field, events }): NextState => {
-        return undefined;
-    },
-    ontouchEndField: () => (): NextState => {
-        return undefined;
     },
     ontouchStartSentLine: ({ index }) => ({ sentLine }): NextState => {
         return undefined;
@@ -337,19 +439,53 @@ export const actions: Readonly<Actions> = {
     ontouchEndSentLine: () => (): NextState => {
         return undefined;
     },
+    ontouchStartPiece: ({ index }) => (state): NextState => {
+        const pages = state.fumen.pages;
+        const currentPageIndex = state.fumen.currentIndex;
+
+        // ミノを移動させる
+        const page = pages[currentPageIndex];
+        if (page.piece !== undefined) {
+            page.piece.coordinate = {
+                x: index % 10,
+                y: Math.floor(index / 10),
+            };
+        }
+
+        // 影響のありそうなページのキャッシュを削除する
+        for (let i = currentPageIndex; i < pages.length; i += 1) {
+            pages[i].field.cache = undefined;
+        }
+
+        return sequence(state, [
+            () => ({
+                fumen: {
+                    ...state.fumen,
+                    pages,
+                },
+            }),
+            actions.openPage({ index: currentPageIndex }),
+        ]);
+    },
 };
 
 function sequence(
     state: Readonly<State>,
     actions: (action | undefined)[],
 ): Partial<Readonly<State>> {
+    let currentState = state;
     let merged: Partial<Readonly<State>> = {};
     for (const action of actions) {
         if (action === undefined) {
             continue;
         }
 
-        const partial = action(state);
+        const partial = action(currentState);
+
+        currentState = {
+            ...currentState,
+            ...partial,
+        };
         merged = {
             ...merged,
             ...partial,

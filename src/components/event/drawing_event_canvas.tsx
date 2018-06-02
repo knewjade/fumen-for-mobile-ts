@@ -1,7 +1,6 @@
-import { Component } from '../lib/types';
+import { Component } from '../../lib/types';
 import { h } from 'hyperapp';
 import konva = require('konva');
-import { action } from '../actions';
 
 interface Props {
     fieldBlocks: konva.Rect[];
@@ -11,13 +10,13 @@ interface Props {
         ontouchMoveField(data: { index: number }): void;
         ontouchEndField(data: { index: number }): void;
 
-        ontouchStartSentLine(data: { index: number }): action;
-        ontouchMoveSentLine(data: { index: number }): action;
-        ontouchEndSentLine(data: { index: number }): action;
+        // ontouchStartSentLine(data: { index: number }): action;
+        // ontouchMoveSentLine(data: { index: number }): action;
+        // ontouchEndSentLine(data: { index: number }): action;
     };
 }
 
-export const DrawEventCanvas: Component<Props> = ({ fieldBlocks, sentBlocks, actions }) => {
+export const DrawingEventCanvas: Component<Props> = ({ fieldBlocks, sentBlocks, actions }) => {
     const oncreate = () => {
         fieldBlocks.forEach((rect, index) => {
             rect.on('touchstart mousedown', () => actions.ontouchStartField({ index }));
@@ -26,9 +25,12 @@ export const DrawEventCanvas: Component<Props> = ({ fieldBlocks, sentBlocks, act
         });
 
         sentBlocks.forEach((rect, index) => {
-            rect.on('touchstart mousedown', () => actions.ontouchStartSentLine({ index }));
-            rect.on('touchmove mouseenter', () => actions.ontouchMoveSentLine({ index }));
-            rect.on('touchend mouseup', () => actions.ontouchEndSentLine({ index }));
+            rect.on('touchstart mousedown', () => {
+            });
+            rect.on('touchmove mouseenter', () => {
+            });
+            rect.on('touchend mouseup', () => {
+            });
         });
     };
 
@@ -46,5 +48,6 @@ export const DrawEventCanvas: Component<Props> = ({ fieldBlocks, sentBlocks, act
         });
     };
 
-    return <param name="konva" value="draw-event-box" oncreate={oncreate} ondestroy={ondestroy}/>;
+    return <param key="drawing-event-canvas" name="konva" value="draw-event-box"
+                  oncreate={oncreate} ondestroy={ondestroy}/>;
 };
