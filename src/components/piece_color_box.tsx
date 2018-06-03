@@ -33,11 +33,13 @@ interface Props {
 }
 
 const getPiecePositions = (
-    boxLeftTop: { x: number, y: number }, piece: Piece, size: Size, pieceSize: number, margin: number,
+    center: { x: number, y: number },
+    piece: Piece,
+    size: Size,
+    pieceSize: number,
+    margin: number,
+    blocks: number[][],
 ) => {
-    // ブロックの相対位置を取得
-    const blocks = getPieces(piece).map(([x, y]) => [x, -y]);
-
     // 最大値と最小値を取得
     const mmIndex = {
         max: { x: 0, y: 0 },
@@ -57,20 +59,13 @@ const getPiecePositions = (
         }
     }
 
-    // 左端中央にあたるIndex
+    // 中央にあたるIndex
     const centerIndex = {
-        x: mmIndex.min.x,
+        x: (mmIndex.max.x - mmIndex.min.x + 1) / 2 + mmIndex.min.x,
         y: (mmIndex.max.y - mmIndex.min.y + 1) / 2 + mmIndex.min.y,
     };
 
     const step = (n: number) => n * (pieceSize + margin) + 0.5 * margin;
-
-    // ボックスの左端中央の座標
-    const center = {
-        x: boxLeftTop.x + pieceSize,
-        y: boxLeftTop.y + size.height / 2,
-    };
-
     return blocks.map(([x, y]) => ({
         x: center.x + step(x - centerIndex.x),
         y: center.y + step(y - centerIndex.y),
@@ -80,47 +75,42 @@ const getPiecePositions = (
 export const PieceColorBox: Component<Props> = (
     { key, size, backgroundColor, topLeft, piece, rects, actions, selected },
 ) => {
-    let positions: any[] = [];
-    if (isMinoPiece(piece.type)) {
-        const pieceSize = piece.size;
-        const pieceSizeObj = { width: pieceSize, height: pieceSize };
-
-        const pieceBoxSize = {
-            width: size.width * 0.70,
-            height: size.height,
-        };
-
-        const pieceTopLeft = {
-            x: topLeft.x + size.width * 0.25,
-            y: topLeft.y,
-        };
-
-        positions = getPiecePositions(pieceTopLeft, piece.type, pieceBoxSize, pieceSize, 1).map((position, index) => {
-            const positionKey = key + '-' + index;
-            return <BoxRect key={positionKey} dataTest={positionKey} rect={rects.pieces[index]} size={pieceSizeObj}
-                            fillColor={piece.color} strokeColor="#333" strokeWidth={0} position={position}/>;
-        });
-    }
-
     const type = piece.type;
-    const sizeObj = {
-        width: size.width * 0.25,
-        height: size.height,
+
+    const pieceSize = piece.size * (isMinoPiece(type) ? 1 : 2);
+    const pieceSizeObj = { width: pieceSize, height: pieceSize };
+    const sizeObj = { width: size.width * 0.20, height: size.height };
+
+    // ブロックの相対位置を取得
+    const blocks = isMinoPiece(type) ? getPieces(type).map(([x, y]) => [x, -y]) : [[0, 0]];
+
+    // ボックスの中央の座標
+    const center = {
+        x: topLeft.x + size.width * 0.6,
+        y: topLeft.y + size.height / 2,
     };
+
+    const positions = getPiecePositions(center, type, size, pieceSize, 1, blocks);
+    const pieceRects = positions.map((position, index) => {
+        const positionKey = key + '-' + index;
+        return <BoxRect key={positionKey} dataTest={positionKey} rect={rects.pieces[index]} size={pieceSizeObj}
+                        fillColor={piece.color} strokeColor="#333" strokeWidth={0} position={position}/>;
+    });
+
     return (
         <div>
             {selected ?
-                <BoxEventRect key={key} dataTest={key} actions={actions}
+                <BoxEventRect key={key + '-event'} dataTest={key} actions={actions}
                               rect={rects.event} type={type} size={size} position={topLeft} strokeEnabled/>
                 :
-                <BoxEventRect key={key} dataTest={key} actions={actions}
+                <BoxEventRect key={key + '-event'} dataTest={key} actions={actions}
                               rect={rects.event} type={type} size={size} position={topLeft}/>
             }
 
-            <BoxRect key={key} dataTest={key} rect={rects.background} type={type} size={sizeObj}
+            <BoxRect key={key + '-backgound'} dataTest={key} rect={rects.background} type={type} size={sizeObj}
                      fillColor={backgroundColor} strokeColor="#fff" strokeWidth={0} position={topLeft}/>
 
-            {...positions}
+            {...pieceRects}
         </div>
     );
 };

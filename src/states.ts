@@ -273,7 +273,7 @@ function createKonvaObjects() {
         const pieces = [Piece.Gray, Piece.I, Piece.L, Piece.O, Piece.Z, Piece.T, Piece.J, Piece.S, Piece.Gray];
         const buttons = pieces.map(() => {
             const event = new konva.Rect({
-                fill: 'rgba(51,51,51,0.1)',  // #333
+                fill: 'rgba(51,51,51,0.05)',  // #333
                 stroke: '#ee6e73',
                 strokeWidth: 3,
                 opacity: 1,

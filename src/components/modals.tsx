@@ -154,21 +154,21 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
                     <h4>Settings <span style={style({ color: '#999', fontSize: '50%' })}>[build {version}]</span></h4>
 
                     <div style={divProperties}>
-                        {/*{screen === Screens.Editor ?*/}
-                            {/*<SettingButton href="#" iconName="insert_photo"*/}
-                                           {/*onclick={() => {*/}
-                                               {/*actions.changeToReaderMode();*/}
-                                               {/*actions.closeSettingsModal();*/}
-                                           {/*}}>readonly</SettingButton>*/}
-                            {/*: undefined}*/}
+                        {screen === Screens.Editor ?
+                            <SettingButton href="#" iconName="insert_photo"
+                                           onclick={() => {
+                                               actions.changeToReaderMode();
+                                               actions.closeSettingsModal();
+                                           }}>readonly</SettingButton>
+                            : undefined}
 
-                        {/*{screen === Screens.Reader ?*/}
-                            {/*<SettingButton href="#" iconName="mode_edit"*/}
-                                           {/*onclick={() => {*/}
-                                               {/*actions.changeToDrawerMode();*/}
-                                               {/*actions.closeSettingsModal();*/}
-                                           {/*}}>writable</SettingButton>*/}
-                            {/*: undefined}*/}
+                        {screen === Screens.Reader ?
+                            <SettingButton href="#" iconName="mode_edit"
+                                           onclick={() => {
+                                               actions.changeToDrawerMode();
+                                               actions.closeSettingsModal();
+                                           }}>writable</SettingButton>
+                            : undefined}
 
                         <SettingButton href="#" iconName="content_copy" onclick={async () => {
                             // テト譜の変換
@@ -203,8 +203,7 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
 
                         <SettingButton href="./help.html" iconName="help_outline">help</SettingButton>
 
-                        <div style={style({ height: px(10), width: '100%', backgroundColor: '#fff' })}/>
-
+                        <div style={style({ height: px(10), width: '100%' })}/>
                     </div>
                 </div>
             </div>

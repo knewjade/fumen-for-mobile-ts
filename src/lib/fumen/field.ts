@@ -37,7 +37,7 @@ export class Field {
         this.playField.setAt(index, value);
     }
 
-    settToSentLine(index: number, value: number): void {
+    setToSentLine(index: number, value: number): void {
         this.sentLine.setAt(index, value);
     }
 

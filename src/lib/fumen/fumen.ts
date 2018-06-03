@@ -36,7 +36,6 @@ export interface Page {
         colorize: boolean;
         blockUp: boolean;
     };
-    time: number;
 }
 
 const COMMENT_TABLE =
@@ -87,7 +86,7 @@ export function extract(str: string): string {
     return data.trim().replace(/[?\s]+/g, '');
 }
 
-export async function decode(fumen: string, time: number = Date.now()): Promise<Page[]> {
+export async function decode(fumen: string): Promise<Page[]> {
     const updateField = (prev: Field) => {
         const result = {
             changed: false,
@@ -248,7 +247,6 @@ export async function decode(fumen: string, time: number = Date.now()): Promise<
             field,
             comment,
             quiz,
-            time,
             index: pageIndex,
             lastPage: values.isEmpty(),
             piece: currentPiece,
