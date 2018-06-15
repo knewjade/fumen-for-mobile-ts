@@ -248,7 +248,6 @@ export async function decode(fumen: string): Promise<Page[]> {
             comment,
             quiz,
             index: pageIndex,
-            lastPage: values.isEmpty(),
             piece: currentPiece,
             flags: {
                 lock: action.isLock,

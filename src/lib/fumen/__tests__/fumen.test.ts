@@ -11,7 +11,6 @@ describe('fumen', () => {
             expect(pages).toHaveLength(1);
             expect(pages[0]).toEqual({
                 index: 0,
-                lastPage: true,
                 piece: undefined,
                 comment: {
                     text: '',
@@ -109,7 +108,6 @@ describe('fumen', () => {
             expect(pages).toHaveLength(1);
             expect(pages[0]).toEqual({
                 index: 0,
-                lastPage: true,
                 piece: {
                     type: Piece.I,
                     rotation: Rotation.Spawn,
