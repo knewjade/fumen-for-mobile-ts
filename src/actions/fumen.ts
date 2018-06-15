@@ -350,6 +350,8 @@ export class Pages {
                 colorize: prev.flags.colorize,
                 blockUp: false,
             },
+            piece: undefined,
+            quiz: prev.quiz !== undefined ? { operation: undefined } : undefined,
         };
 
         // フィールドの参照

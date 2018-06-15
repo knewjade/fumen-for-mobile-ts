@@ -202,6 +202,7 @@ export const actions: Readonly<Actions> = {
         const pages = new Pages(state.fumen.pages);
 
         const comment = pages.getComment(index);
+        console.log(comment)
 
         const isQuiz = (comment: TextCommentResult | QuizCommentResult): comment is QuizCommentResult => {
             return (<QuizCommentResult>comment).quiz !== undefined;
