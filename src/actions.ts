@@ -490,7 +490,6 @@ const moveDrawingField = (state: State, index: number, isField: boolean): NextSt
 
     // 塗りつぶすpieceを決める
     const piece = state.events.touch.piece;
-    console.log(index, isField, piece);
     if (piece === undefined) {
         return undefined;
     }
