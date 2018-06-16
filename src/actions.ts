@@ -44,21 +44,14 @@ export interface Actions {
     changeToPieceMode: () => action;
 
     selectPieceColor: (data: { piece: Piece }) => action;
-
     ontapCanvas: (e: any) => action;
 
     ontouchStartField(data: { index: number }): action;
-
     ontouchMoveField(data: { index: number }): action;
-
     ontouchEndField(): action;
-
     ontouchStartSentLine(data: { index: number }): action;
-
     ontouchMoveSentLine(data: { index: number }): action;
-
     ontouchEndSentLine(): action;
-
     ontouchStartPiece(data: { index: number }): action;
 }
 
@@ -202,7 +195,6 @@ export const actions: Readonly<Actions> = {
         const pages = new Pages(state.fumen.pages);
 
         const comment = pages.getComment(index);
-        console.log(comment)
 
         const isQuiz = (comment: TextCommentResult | QuizCommentResult): comment is QuizCommentResult => {
             return (<QuizCommentResult>comment).quiz !== undefined;
@@ -456,7 +448,7 @@ const startDrawingField = (state: State, index: number, isField: boolean): NextS
     const currentPageIndex = state.fumen.currentIndex;
 
     // 塗りつぶすpieceを決める
-    const block = state.field[index];
+    const block = isField ? state.field[index] : state.sentLine[index];
     const piece = block.piece !== state.mode.piece ? state.mode.piece : Piece.Empty;
 
     // フィールドの上書き操作を記録する
@@ -498,6 +490,7 @@ const moveDrawingField = (state: State, index: number, isField: boolean): NextSt
 
     // 塗りつぶすpieceを決める
     const piece = state.events.touch.piece;
+    console.log(index, isField, piece);
     if (piece === undefined) {
         return undefined;
     }
@@ -518,7 +511,8 @@ const moveDrawingField = (state: State, index: number, isField: boolean): NextSt
     }
 
     // pieceに変化がないときは、表示を更新しない
-    if (state.field[index].piece === piece) {
+    const block = isField ? state.field[index] : state.sentLine[index];
+    if (block.piece === piece) {
         return undefined;
     }
 
