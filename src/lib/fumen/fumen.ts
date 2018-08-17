@@ -242,7 +242,7 @@ export async function innerDecode(
                     store.quiz = store.quiz.operate(operation);
                 } catch (e) {
                     // Not operate
-                    console.error(e.message);
+                    // console.error(e.message);
                     quiz = { operation: undefined };
                 }
             } else {
