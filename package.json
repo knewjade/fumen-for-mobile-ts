@@ -15,6 +15,7 @@
   "devDependencies": {
     "@hyperapp/html": "1.1.1",
     "@types/jest": "23.3.1",
+    "typescript": "3.0.1",
     "cypress": "3.1.0",
     "jest": "23.5.0",
     "konva": "2.2.1",
@@ -23,7 +24,6 @@
     "ts-loader": "4.4.2",
     "tslint": "5.11.0",
     "tslint-config-airbnb": "5.9.2",
-    "typescript": "3.0.1",
     "typestyle": "2.0.1",
     "webpack": "4.16.5",
     "webpack-cli": "3.1.0"

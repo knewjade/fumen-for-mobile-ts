@@ -14,6 +14,7 @@ jobs:
       yarn: true
       directories:
         - node_modules
+        - .cache
     script:
       - yarn test-ci
       - yarn webpack:prod
@@ -26,6 +27,7 @@ jobs:
       yarn: true
       directories:
         - node_modules
+        - .cache
     script:
       - yarn webpack:prod
     before_deploy:
@@ -48,6 +50,7 @@ jobs:
       yarn: true
       directories:
         - node_modules
+        - .cache
     script:
       - yarn webpack:prod
     before_deploy:
