@@ -4,6 +4,7 @@ import { Field } from './field';
 import { decodeAction, encodeAction } from './action';
 import { ENCODE_TABLE_LENGTH, Values } from './values';
 import { FumenError } from '../errors';
+import { Pages } from '../../actions/fumen';
 
 export interface Move {
     type: Piece;
@@ -324,7 +325,7 @@ export async function innerDecode(
     return pages;
 }
 
-export async function encode(pages: Page[]): Promise<string> {
+export async function encode(pages2: Page[]): Promise<string> {
     const updateField = (prev: Field, current: Field) => {
         const { changed, values } = encodeField(prev, current);
 
@@ -348,11 +349,15 @@ export async function encode(pages: Page[]): Promise<string> {
     const allValues = new Values();
     let prevField = new Field({});
 
-    for (let index = 0; index < pages.length; index += 1) {
-        const currentPage = pages[index];
+    const pages = new Pages(pages2);
+
+    for (let index = 0; index < pages2.length; index += 1) {
+        const field = pages.getField(index);
+
+        const currentPage = pages2[index];
 
         // フィールドの更新
-        const currentField = currentPage.field.obj !== undefined ? currentPage.field.obj.copy() : prevField.copy();
+        const currentField = field !== undefined ? field.copy() : prevField.copy();
         updateField(prevField, currentField);
 
         // アクションの更新

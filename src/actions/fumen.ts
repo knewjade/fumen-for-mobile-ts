@@ -213,7 +213,7 @@ export class Pages {
     }
 
     // 指定したページのフィールドを取得する
-    getField(index: number) {
+    getField(index: number): Field {
         const currentPage = this.pages[index];
 
         if (currentPage.field.cache !== undefined) {
