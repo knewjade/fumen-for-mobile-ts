@@ -1,4 +1,4 @@
-import {block, Color, datatest, mino, pages, Piece, rightTap, leftTap, Rotation, sentBlock, visit} from './common';
+import { block, Color, datatest, leftTap, mino, pages, Piece, rightTap, Rotation, sentBlock, visit } from './common';
 
 // テト譜を開く
 describe('Sent line', () => {
@@ -316,5 +316,29 @@ describe('Sent line', () => {
             cy.get(block(7, 1)).should('have.attr', 'color', Color.Normal.J);
         });
     });
-});
 
+    it('Sent line / v110', () => {
+        const page = pages(23);
+
+        visit('v110@7eMSWPaAFLDmClcJSAVDEHBEooRBMoAVBqHDMCzOBA?AWoBUeBTfBXcBJdBVXBpEPaAFLDmClcJSAVDEHBEooRBJoA?VBvHUxCqCBAAzTB0NBPJBOVB6MBxeA3gbH3A6SUAFLDmClc?JSAVDEHBEooRBUoAVB7eDlIPUAFLDmClcJSAVDEHBEooRBU?oAVBtdBebBF/ExeC3kzIwssQp0lYi8eAAAteEYsbAuB7eCA?gbAAAAAA');
+
+        // 設定を開く
+        {
+            cy.get(datatest('btn-open-settings')).click();
+        }
+
+        // テト譜をコピー
+        {
+            cy.get(datatest('btn-copy-fumen')).click();
+        }
+
+        cy.wait(500);
+
+        leftTap();
+
+        // v110のデータを取り出す
+        {
+            cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@vhMSwQaAFLDmClcJSAVDEHBEooRBMoAVBqHDMCzOBA?AWyBUoBTpBXmBJnBVhBpeQaAFLDmClcJSAVDEHBEooRBJoA?VBvHUxCqCBAAzdB0XBPTBOfB6WBlhA8AeH8AoUUAFLDmClc?JSAVDEHBEooRBUoAVBvhDliQUAFLDmClcJSAVDEHBEooRBU?oAVBtnBelBFdFlhC8Q4g0wwAtQpglwhAAAhhQaMeA4BvhCA?AeAAAAAA');
+        }
+    });
+});

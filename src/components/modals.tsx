@@ -146,6 +146,41 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
         alignItems: 'center',
     });
 
+    const copyOnClick = async (event: MouseEvent) => {
+        // テト譜の変換
+        const data = 'v115@' + await encode(pages);
+
+        // コピー用のelementを作成
+        const element = document.createElement('pre');
+        {
+            const style = element.style;
+            style.position = 'fixed';
+            style.left = '-100%';
+            element.textContent = data;
+            document.body.appendChild(element);
+        }
+
+        // クリップボードにコピーする
+        if (element !== undefined && element !== null) {
+            document.getSelection().selectAllChildren(element);
+            const success = document.execCommand('copy');
+            if (!success) {
+                console.error('Cannot copy fumen');
+            }
+        } else {
+            console.error('Unexpected element to copy');
+        }
+
+        M.toast({ html: 'Copied to clipboard', classes: 'mytoast', displayLength: 600 });
+
+        // コピー用のelementを削除
+        document.body.removeChild(element);
+
+        // データをElementに保存する // 主にテスト用
+        document.body.setAttribute('datatest', 'copied-fumen-data');
+        document.body.setAttribute('data', data);
+    };
+
     return (
         <div key="settings-modal-top">
             <div datatest="mdl-open-fumen" className="modal bottom-sheet" oncreate={oncreate} ondestroy={ondestroy}>
@@ -163,43 +198,16 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
                             : undefined}
 
                         {screen === Screens.Reader ?
-                            <SettingButton href="#" iconName="mode_edit"
+                            <SettingButton datatest="btn-writable" href="#" iconName="mode_edit"
                                            onclick={() => {
                                                actions.changeToDrawerMode();
                                                actions.closeSettingsModal();
                                            }}>writable</SettingButton>
                             : undefined}
 
-                        <SettingButton href="#" iconName="content_copy" onclick={async () => {
-                            // テト譜の変換
-                            const data = await encode(pages);
-
-                            // コピー用のelementを作成
-                            const element = document.createElement('pre');
-                            {
-                                const style = element.style;
-                                style.position = 'fixed';
-                                style.left = '-100%';
-                                element.textContent = 'v115@' + data;
-                                document.body.appendChild(element);
-                            }
-
-                            // クリップボードにコピーする
-                            if (element !== undefined && element !== null) {
-                                document.getSelection().selectAllChildren(element);
-                                const success = document.execCommand('copy');
-                                if (!success) {
-                                    console.error('Cannot copy fumen');
-                                }
-                            } else {
-                                console.error('Unexpected element to copy');
-                            }
-
-                            M.toast({ html: 'Copied to clipboard', classes: 'mytoast', displayLength: 600 });
-
-                            // コピー用のelementを削除
-                            document.body.removeChild(element);
-                        }}>clipboard</SettingButton>
+                        <SettingButton datatest="btn-copy-fumen" href="#" iconName="content_copy" onclick={copyOnClick}>
+                            clipboard
+                        </SettingButton>
 
                         <SettingButton href="./help.html" iconName="help_outline">help</SettingButton>
 
@@ -211,14 +219,16 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
     );
 };
 
-
 interface SettingButtonProps {
     href?: string;
-    onclick?: () => void;
+    onclick?: (event: MouseEvent) => void;
     iconName: string;
+    datatest?: string;
 }
 
-export const SettingButton: ComponentWithText<SettingButtonProps> = ({ href = '#', onclick, iconName }, showName) => (
+export const SettingButton: ComponentWithText<SettingButtonProps> = (
+    { href = '#', onclick, iconName, datatest }, showName,
+) => (
     <a href={href} onclick={onclick}>
         <i className="material-icons z-depth-1" style={style({
             width: px(50),
@@ -234,7 +244,7 @@ export const SettingButton: ComponentWithText<SettingButtonProps> = ({ href = '#
             cursor: 'pointer',
         })}>{iconName}</i>
 
-        <div style={style({ textAlign: 'center', color: '#333' })}>
+        <div datatest={datatest} style={style({ textAlign: 'center', color: '#333' })}>
             {showName}
         </div>
     </a>

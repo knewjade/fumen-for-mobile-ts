@@ -242,7 +242,7 @@ export async function innerDecode(
                     store.quiz = store.quiz.operate(operation);
                 } catch (e) {
                     // Not operate
-                    // console.error(e.message);
+                    console.error(e.message);
                     quiz = { operation: undefined };
                 }
             } else {
@@ -325,7 +325,7 @@ export async function innerDecode(
     return pages;
 }
 
-export async function encode(pages2: Page[]): Promise<string> {
+export async function encode(inputPages: Page[]): Promise<string> {
     const updateField = (prev: Field, current: Field) => {
         const { changed, values } = encodeField(prev, current);
 
@@ -349,12 +349,12 @@ export async function encode(pages2: Page[]): Promise<string> {
     const allValues = new Values();
     let prevField = new Field({});
 
-    const pages = new Pages(pages2);
+    const pages = new Pages(inputPages);
 
-    for (let index = 0; index < pages2.length; index += 1) {
+    for (let index = 0; index < inputPages.length; index += 1) {
         const field = pages.getField(index);
 
-        const currentPage = pages2[index];
+        const currentPage = inputPages[index];
 
         // フィールドの更新
         const currentField = field !== undefined ? field.copy() : prevField.copy();

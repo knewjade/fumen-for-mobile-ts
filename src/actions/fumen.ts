@@ -242,7 +242,6 @@ export class Pages {
             } else {
                 // 参照先から持ってくる
                 const ref = currentPage.field.ref;
-                console.log(ref);
                 if (ref === undefined) {
                     throw new ViewError('Cannot open reference for comment');
                 }
