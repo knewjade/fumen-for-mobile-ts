@@ -15,6 +15,8 @@ jobs:
       directories:
         - node_modules
         - ~/.cache
+    install:
+      yarn install --frozen-lockfile
     script:
       - yarn test-ci
       - yarn webpack:prod
@@ -28,6 +30,8 @@ jobs:
       directories:
         - node_modules
         - ~/.cache
+    install:
+      yarn install --frozen-lockfile
     script:
       - yarn webpack:prod
     before_deploy:
@@ -51,6 +55,8 @@ jobs:
       directories:
         - node_modules
         - ~/.cache
+    install:
+      yarn install --frozen-lockfile
     script:
       - yarn webpack:prod
     before_deploy:
