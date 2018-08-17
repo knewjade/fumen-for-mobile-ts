@@ -21,14 +21,16 @@ export interface Action {
     isLock: boolean;
 }
 
-export function decodeAction(v: number): Action {
+export function decodeAction(v: number, fieldTop: number): Action {
+    const fieldBlocks = (fieldTop + FieldConstants.SentLine) * FIELD_WIDTH;
+
     let value = v;
     const type = decodePiece(value % 8);
     value = Math.floor(value / 8);
     const rotation = decodeRotation(value % 4);
     value = Math.floor(value / 4);
-    const coordinate = decodeCoordinate(value % FIELD_BLOCKS, type, rotation);
-    value = Math.floor(value / FIELD_BLOCKS);
+    const coordinate = decodeCoordinate(value % fieldBlocks, type, rotation, fieldTop);
+    value = Math.floor(value / fieldBlocks);
     const isBlockUp = decodeBool(value % 2);
     value = Math.floor(value / 2);
     const isMirror = decodeBool(value % 2);
@@ -91,10 +93,10 @@ function decodeRotation(n: number) {
     throw new FumenError('Unexpected rotation');
 }
 
-function decodeCoordinate(n: number, piece: Piece, rotation: Rotation) {
+function decodeCoordinate(n: number, piece: Piece, rotation: Rotation, fieldTop: number) {
     let x = n % FIELD_WIDTH;
     const originY = Math.floor(n / 10);
-    let y = FIELD_TOP - originY - 1;
+    let y = fieldTop - originY - 1;
 
     if (piece === Piece.O && rotation === Rotation.Left) {
         x += 1;

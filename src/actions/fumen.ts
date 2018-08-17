@@ -213,7 +213,7 @@ export class Pages {
     }
 
     // 指定したページのフィールドを取得する
-    getField(index: number) {
+    getField(index: number): Field {
         const currentPage = this.pages[index];
 
         if (currentPage.field.cache !== undefined) {
@@ -242,7 +242,6 @@ export class Pages {
             } else {
                 // 参照先から持ってくる
                 const ref = currentPage.field.ref;
-                console.log(ref);
                 if (ref === undefined) {
                     throw new ViewError('Cannot open reference for comment');
                 }
