@@ -6,7 +6,7 @@ describe('action', () => {
     describe('get', () => {
         test('L-Spawn', () => {
             const values = new Values('yOJ');
-            const action = decodeAction(values.poll(3));
+            const action = decodeAction(values.poll(3), 23);
             expect(action).toEqual({
                 piece: {
                     type: Piece.L,
@@ -26,7 +26,7 @@ describe('action', () => {
 
         test('mirror on', () => {
             const values = new Values('X8M');
-            const action = decodeAction(values.poll(3));
+            const action = decodeAction(values.poll(3), 23);
             expect(action).toEqual({
                 piece: {
                     type: Piece.S,
@@ -46,7 +46,7 @@ describe('action', () => {
 
         test('piece on top', () => {
             const values = new Values('hgl');
-            const action = decodeAction(values.poll(3));
+            const action = decodeAction(values.poll(3), 23);
             expect(action).toEqual({
                 piece: {
                     type: Piece.I,
@@ -66,7 +66,7 @@ describe('action', () => {
 
         test('color off', () => {
             const values = new Values('zhf');
-            const action = decodeAction(values.poll(3));
+            const action = decodeAction(values.poll(3), 23);
             expect(action).toEqual({
                 piece: {
                     type: Piece.O,
@@ -86,7 +86,7 @@ describe('action', () => {
 
         test('no piece', () => {
             const values = new Values('AgH');
-            const action = decodeAction(values.poll(3));
+            const action = decodeAction(values.poll(3), 23);
             expect(action).toEqual({
                 piece: {
                     type: Piece.Empty,
@@ -106,7 +106,7 @@ describe('action', () => {
 
         test('comment on', () => {
             const values = new Values('uJY');
-            const action = decodeAction(values.poll(3));
+            const action = decodeAction(values.poll(3), 23);
             expect(action).toEqual({
                 piece: {
                     type: Piece.J,
@@ -126,7 +126,7 @@ describe('action', () => {
 
         test('block up on', () => {
             const values = new Values('sEa');
-            const action = decodeAction(values.poll(3));
+            const action = decodeAction(values.poll(3), 23);
             expect(action).toEqual({
                 piece: {
                     type: Piece.Z,
@@ -148,7 +148,7 @@ describe('action', () => {
     describe('coordinate', () => {
         test('O-Left', () => {
             const values = new Values('bJJ');
-            const action = decodeAction(values.poll(3));
+            const action = decodeAction(values.poll(3), 23);
             expect(action).toEqual({
                 piece: {
                     type: Piece.O,
@@ -168,7 +168,7 @@ describe('action', () => {
 
         test('O-Reverse', () => {
             const values = new Values('DJJ');
-            const action = decodeAction(values.poll(3));
+            const action = decodeAction(values.poll(3), 23);
             expect(action).toEqual({
                 piece: {
                     type: Piece.O,
@@ -188,7 +188,7 @@ describe('action', () => {
 
         test('I-Right', () => {
             const values = new Values('JEJ');
-            const action = decodeAction(values.poll(3));
+            const action = decodeAction(values.poll(3), 23);
             expect(action).toEqual({
                 piece: {
                     type: Piece.I,
@@ -208,7 +208,7 @@ describe('action', () => {
 
         test('I-Left', () => {
             const values = new Values('ZEJ');
-            const action = decodeAction(values.poll(3));
+            const action = decodeAction(values.poll(3), 23);
             expect(action).toEqual({
                 piece: {
                     type: Piece.I,
@@ -228,7 +228,7 @@ describe('action', () => {
 
         test('S-Right', () => {
             const values = new Values('vJJ');
-            const action = decodeAction(values.poll(3));
+            const action = decodeAction(values.poll(3), 23);
             expect(action).toEqual({
                 piece: {
                     type: Piece.S,
@@ -248,7 +248,7 @@ describe('action', () => {
 
         test('Z-Spawn', () => {
             const values = new Values('0JJ');
-            const action = decodeAction(values.poll(3));
+            const action = decodeAction(values.poll(3), 23);
             expect(action).toEqual({
                 piece: {
                     type: Piece.Z,
@@ -268,7 +268,7 @@ describe('action', () => {
 
         test('Z-Left', () => {
             const values = new Values('cJJ');
-            const action = decodeAction(values.poll(3));
+            const action = decodeAction(values.poll(3), 23);
             expect(action).toEqual({
                 piece: {
                     type: Piece.Z,
@@ -288,7 +288,7 @@ describe('action', () => {
 
         test('T-Spawn', () => {
             const values = new Values('1OJ');
-            const action = decodeAction(values.poll(3));
+            const action = decodeAction(values.poll(3), 23);
             expect(action).toEqual({
                 piece: {
                     type: Piece.T,
