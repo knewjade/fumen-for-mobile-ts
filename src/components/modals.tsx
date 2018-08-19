@@ -4,8 +4,7 @@ import { resources } from '../states';
 import { i } from '@hyperapp/html';
 import { encode, Page } from '../lib/fumen/fumen';
 import { Screens } from '../lib/enums';
-import { default as i18next } from 'i18next';
-import { I18NKeys } from '../locales/keys';
+import { i18n } from '../locales/keys';
 
 declare const M: any;
 
@@ -77,10 +76,10 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
             <div datatest="mdl-open-fumen" className="modal" oncreate={oncreate} ondestroy={ondestroy}>
                 <div className="modal-content">
 
-                    <h4 dataTest="open-fumen-label">{i18next.t(I18NKeys.OpenFumenMessage)}</h4>
+                    <h4 dataTest="open-fumen-label">{i18n.OpenFumen.Title()}</h4>
 
                     <textarea dataTest="input-fumen" rows={3} style={textAreaStyle} oninput={oninput}
-                              value={textAreaValue} placeholder="URL or v115@~ / Support v115 or v110"/>
+                              value={textAreaValue} placeholder={i18n.OpenFumen.PlaceHolder()}/>
 
                     <span datatest="text-message" id="text-fumen-modal-error" className="red-text text-accent-2"
                           style={style({ display: errorMessage !== undefined ? undefined : 'none' })}>
@@ -91,9 +90,13 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
                 <div className="modal-footer">
 
                     <a href="#" datatest="btn-cancel" className="waves-effect waves-teal btn-flat"
-                       onclick={cancel}>Cancel</a>
+                       onclick={cancel}>
+                        {i18n.OpenFumen.Buttons.Cancel()}
+                    </a>
 
-                    <a href="#" datatest="btn-open" className={openClassName} onclick={open}>Open</a>
+                    <a href="#" datatest="btn-open" className={openClassName} onclick={open}>
+                        {i18n.OpenFumen.Buttons.Open()}
+                    </a>
                 </div>
             </div>
         </div>
@@ -148,7 +151,7 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
         alignItems: 'center',
     });
 
-    const copyOnClick = async (event: MouseEvent) => {
+    const copyOnClick = async () => {
         // テト譜の変換
         const data = 'v115@' + await encode(pages);
 
@@ -188,7 +191,10 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
             <div datatest="mdl-open-fumen" className="modal bottom-sheet" oncreate={oncreate} ondestroy={ondestroy}>
                 <div className="modal-content">
 
-                    <h4>Settings <span style={style({ color: '#999', fontSize: '50%' })}>[build {version}]</span></h4>
+                    <h4>
+                        {i18n.Settings.Title()}&nbsp;
+                        <span style={style({ color: '#999', fontSize: '50%' })}>[{i18n.Settings.Build(version)}]</span>
+                    </h4>
 
                     <div style={divProperties}>
                         {screen === Screens.Editor ?
@@ -196,7 +202,7 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
                                            onclick={() => {
                                                actions.changeToReaderMode();
                                                actions.closeSettingsModal();
-                                           }}>readonly</SettingButton>
+                                           }}>{i18n.Settings.Buttons.Readonly()}</SettingButton>
                             : undefined}
 
                         {screen === Screens.Reader ?
@@ -204,14 +210,16 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
                                            onclick={() => {
                                                actions.changeToDrawerMode();
                                                actions.closeSettingsModal();
-                                           }}>writable</SettingButton>
+                                           }}>{i18n.Settings.Buttons.Writable()}</SettingButton>
                             : undefined}
 
                         <SettingButton datatest="btn-copy-fumen" href="#" iconName="content_copy" onclick={copyOnClick}>
-                            clipboard
+                            {i18n.Settings.Buttons.Clipboard()}
                         </SettingButton>
 
-                        <SettingButton href="./help.html" iconName="help_outline">help</SettingButton>
+                        <SettingButton href="./help.html" iconName="help_outline">
+                            {i18n.Settings.Buttons.Help()}
+                        </SettingButton>
 
                         <div style={style({ height: px(10), width: '100%' })}/>
                     </div>

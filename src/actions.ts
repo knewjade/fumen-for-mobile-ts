@@ -7,11 +7,12 @@ import { ViewError } from './lib/errors';
 import { withLogger } from '@hyperapp/logger';
 import { Pages, parseToBlocks, QuizCommentResult, TextCommentResult } from './lib/pages';
 import { Field } from './lib/fumen/field';
-import * as i18next from 'i18next';
+import { default as i18next } from 'i18next';
 import { default as LanguageDetector } from 'i18next-browser-languagedetector';
 import { resources as resourcesJa } from './locales/ja/translation';
 import { resources as resourcesEn } from './locales/en/translation';
 import { PageEnv } from './env';
+import { i18n } from './locales/keys';
 
 type NextState = Partial<State> | undefined;
 export type action = (state: Readonly<State>) => NextState;
@@ -90,9 +91,9 @@ export const actions: Readonly<Actions> = {
             } catch (e) {
                 console.error(e);
                 if (e instanceof ViewError) {
-                    main.showOpenErrorMessage({ message: e.message });
+                    main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.Unexpected(e.message) });
                 } else {
-                    main.showOpenErrorMessage({ message: 'テト譜を読み込めませんでした' });
+                    main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.FailedToLoad() });
                 }
             }
         })();

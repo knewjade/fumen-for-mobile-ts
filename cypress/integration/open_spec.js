@@ -3,7 +3,7 @@ import { datatest, holdBox, leftTap, nextBox, pages, Piece, visit } from './comm
 // テト譜を開く
 describe('Open fumen', () => {
     it('Error -> success', () => {
-        cy.visit('./public/index.html');
+        cy.visit('./public/index.html?lng=ja');
 
         // モーダルを開く
         cy.get(datatest('btn-open-fumen')).click();

@@ -1,10 +1,24 @@
-import { I18NKeys } from '../keys';
-
-export const resources: { [key in I18NKeys]: string | object } = {
-    OpenFumenMessage: 'Open Fumen',
-    // world: 'world',
-    // welcome: 'welcome, {{name}}!!',
-    // validation: {
-    //     isNotEmail: '{{email}} is not valid email.',
-    // },
+export const resources = {
+    OpenFumen: {
+        Title: 'Open Fumen',
+        PlaceHolder: 'URL or v115@~ / Support v115 or v110',
+        Buttons: {
+            Open: 'Open',
+            Cancel: 'Cancel',
+        },
+        Errors: {
+            FailedToLoad: 'Failed to load',
+            Unexpected: 'Unexpected error: {{message}}',
+        },
+    },
+    Settings: {
+        Title: 'Settings',
+        Build: 'build {{version}}',
+        Buttons: {
+            Readonly: 'readonly',
+            Writable: 'writable',
+            Clipboard: 'clipboard',
+            Help: 'help',
+        },
+    },
 };
