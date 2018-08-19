@@ -5,8 +5,13 @@ import { view } from './view';
 import { app } from 'hyperapp';
 import { ViewError } from './lib/errors';
 import { withLogger } from '@hyperapp/logger';
-import { Pages, parseToBlocks, QuizCommentResult, TextCommentResult } from './actions/fumen';
+import { Pages, parseToBlocks, QuizCommentResult, TextCommentResult } from './lib/pages';
 import { Field } from './lib/fumen/field';
+import * as i18next from 'i18next';
+import { default as LanguageDetector } from 'i18next-browser-languagedetector';
+import { resources as resourcesJa } from './locales/ja/translation';
+import { resources as resourcesEn } from './locales/en/translation';
+import { PageEnv } from './env';
 
 type NextState = Partial<State> | undefined;
 export type action = (state: Readonly<State>) => NextState;
@@ -47,11 +52,17 @@ export interface Actions {
     ontapCanvas: (e: any) => action;
 
     ontouchStartField(data: { index: number }): action;
+
     ontouchMoveField(data: { index: number }): action;
+
     ontouchEndField(): action;
+
     ontouchStartSentLine(data: { index: number }): action;
+
     ontouchMoveSentLine(data: { index: number }): action;
+
     ontouchEndSentLine(): action;
+
     ontouchStartPiece(data: { index: number }): action;
 }
 
@@ -546,7 +557,22 @@ const mount = (isDebug: boolean = false): Actions => {
     }
     return app<State, Actions>(initState, actions, view, document.body);
 };
-const main = mount(JSON.parse('###DEBUG###'));
+const main = mount(PageEnv.Debug);
+
+// Loading
+i18next.use(LanguageDetector).init({
+    fallbackLng: 'en',
+    resources: {
+        en: { translation: resourcesEn },
+        ja: { translation: resourcesJa },
+    },
+}, (error) => {
+    if (error) {
+        console.error('Failed to load i18n');
+    } else {
+        main.refresh();
+    }
+});
 
 window.onresize = () => {
     main.resize({
@@ -555,10 +581,12 @@ window.onresize = () => {
     });
 };
 
-function extractFumenFromURL() {
-    const url = decodeURIComponent(location.search);
-    const paramQuery = url.substr(1).split('&').find(value => value.startsWith('d='));
-    return paramQuery !== undefined ? paramQuery.substr(2) : 'v115@vhAAgH';
-}
+window.onload = () => {
+    const extractFumenFromURL = () => {
+        const url = decodeURIComponent(location.search);
+        const paramQuery = url.substr(1).split('&').find(value => value.startsWith('d='));
+        return paramQuery !== undefined ? paramQuery.substr(2) : 'v115@vhAAgH';
+    };
 
-main.loadFumen({ fumen: extractFumenFromURL() });
+    main.loadFumen({ fumen: extractFumenFromURL() });
+};

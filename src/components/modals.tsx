@@ -4,6 +4,8 @@ import { resources } from '../states';
 import { i } from '@hyperapp/html';
 import { encode, Page } from '../lib/fumen/fumen';
 import { Screens } from '../lib/enums';
+import { default as i18next } from 'i18next';
+import { I18NKeys } from '../locales/keys';
 
 declare const M: any;
 
@@ -75,10 +77,10 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
             <div datatest="mdl-open-fumen" className="modal" oncreate={oncreate} ondestroy={ondestroy}>
                 <div className="modal-content">
 
-                    <h4>テト譜を開く</h4>
+                    <h4 dataTest="open-fumen-label">{i18next.t(I18NKeys.OpenFumenMessage)}</h4>
 
                     <textarea dataTest="input-fumen" rows={3} style={textAreaStyle} oninput={oninput}
-                              value={textAreaValue} placeholder="URL or v115@~ / Support v115 only"/>
+                              value={textAreaValue} placeholder="URL or v115@~ / Support v115 or v110"/>
 
                     <span datatest="text-message" id="text-fumen-modal-error" className="red-text text-accent-2"
                           style={style({ display: errorMessage !== undefined ? undefined : 'none' })}>

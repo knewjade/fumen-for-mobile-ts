@@ -1,9 +1,9 @@
 import { Block, CachedPage } from '../states';
-import { FumenError, ViewError } from '../lib/errors';
-import { Quiz } from '../lib/fumen/quiz';
-import { Field } from '../lib/fumen/field';
-import { Move } from '../lib/fumen/fumen';
-import { getBlocks, isMinoPiece, Piece } from '../lib/enums';
+import { FumenError, ViewError } from './errors';
+import { Quiz } from './fumen/quiz';
+import { Field } from './fumen/field';
+import { Move } from './fumen/fumen';
+import { getBlocks, isMinoPiece, Piece } from './enums';
 
 const NEXT_PIECES = 5;
 

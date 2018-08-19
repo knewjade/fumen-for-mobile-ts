@@ -2,11 +2,12 @@ import { AnimationState, Piece, Screens, TouchTypes } from './lib/enums';
 import { Page } from './lib/fumen/fumen';
 import { HyperStage } from './lib/hyper';
 import { Field } from './lib/fumen/field';
-import { QuizCommentResult, TextCommentResult } from './actions/fumen';
+import { QuizCommentResult, TextCommentResult } from './lib/pages';
 import { Box } from './components/box';
+import { PageEnv } from './env';
 import konva = require('konva');
 
-export const VERSION = '###VERSION###';  // Replace build number of CI when run `webpack:prod`
+const VERSION = PageEnv.Version;
 
 // Immutableにする
 export interface State {

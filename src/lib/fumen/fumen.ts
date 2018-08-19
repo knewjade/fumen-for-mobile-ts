@@ -4,7 +4,7 @@ import { Field } from './field';
 import { decodeAction, encodeAction } from './action';
 import { ENCODE_TABLE_LENGTH, Values } from './values';
 import { FumenError } from '../errors';
-import { Pages } from '../../actions/fumen';
+import { Pages } from '../pages';
 
 export interface Move {
     type: Piece;

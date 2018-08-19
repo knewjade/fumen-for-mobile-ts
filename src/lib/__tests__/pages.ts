@@ -1,8 +1,8 @@
-import { Operation, Piece, Rotation } from '../../lib/enums';
-import { Quiz } from '../../lib/fumen/quiz';
-import { Pages } from '../fumen';
-import { Field } from '../../lib/fumen/field';
-import { Move } from '../../lib/fumen/fumen';
+import { Operation, Piece, Rotation } from '../enums';
+import { Quiz } from '../fumen/quiz';
+import { Pages } from '../pages';
+import { Field } from '../fumen/field';
+import { Move } from '../fumen/fumen';
 
 describe('comment', () => {
     const commentText = (text: string) => ({

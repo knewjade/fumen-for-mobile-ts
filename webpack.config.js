@@ -13,7 +13,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /states\.ts$/,
+                test: /env\.ts$/,
                 loader: 'string-replace-loader',
                 options: {
                     search: '###VERSION###',
@@ -21,7 +21,7 @@ module.exports = {
                 }
             },
             {
-                test: /actions\.ts$/,
+                test: /env\.ts$/,
                 loader: 'string-replace-loader',
                 options: {
                     search: '###DEBUG###',
