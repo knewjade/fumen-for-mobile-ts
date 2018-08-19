@@ -1,7 +1,12 @@
 import { ViewError } from './errors';
 import { Piece, Screens } from './enums';
 
-export const Palette = (screen: Screens) => {
+export interface ColorPalette {
+    baseClass: string;
+    darkCode: string;
+}
+
+export const Palette = (screen: Screens): ColorPalette => {
     const getBaseClass = () => {
         switch (screen) {
         case Screens.Editor:

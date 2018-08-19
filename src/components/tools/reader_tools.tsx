@@ -2,14 +2,14 @@ import { Component, px, style } from '../../lib/types';
 import { h } from 'hyperapp';
 import { ToolButton } from './tool_button';
 import { ToolText } from './tool_text';
-import { AnimationState, Screens } from '../../lib/enums';
-import { Palette } from '../../lib/colors';
+import { AnimationState } from '../../lib/enums';
+import { ColorPalette } from '../../lib/colors';
 
 interface Props {
     height: number;
     animationState: AnimationState;
     pages: string;
-    screen: Screens;
+    palette: ColorPalette;
     actions: {
         openFumenModal: () => void;
         openSettingsModal: () => void;
@@ -18,7 +18,7 @@ interface Props {
     };
 }
 
-export const ReaderTools: Component<Props> = ({ height, animationState, pages, screen, actions }) => {
+export const ReaderTools: Component<Props> = ({ height, animationState, pages, palette, actions }) => {
     const navProperties = style({
         width: '100%',
         height: px(height),
@@ -37,11 +37,6 @@ export const ReaderTools: Component<Props> = ({ height, animationState, pages, s
         alignItems: 'center',
     });
 
-    const palette = Palette(screen);
-    const colors = {
-        baseClass: palette.baseClass,
-        darkCode: palette.darkCode,
-    };
     const themeColor = 'page-footer tools ' + palette.baseClass;
 
     return (
@@ -49,7 +44,7 @@ export const ReaderTools: Component<Props> = ({ height, animationState, pages, s
             <div className="nav-wrapper" style={divProperties}>
 
                 <ToolButton iconName="open_in_new" datatest="btn-open-fumen" width={55} height={height - 10}
-                            fontSize={33.75} marginRight={10} colors={colors}
+                            fontSize={33.75} marginRight={10} colors={palette}
                             actions={{ onclick: () => actions.openFumenModal() }}/>
 
                 <ToolText datatest="text-pages" height={height - 10}
@@ -58,7 +53,7 @@ export const ReaderTools: Component<Props> = ({ height, animationState, pages, s
                 </ToolText>
 
                 <ToolButton iconName={animationState !== 'pause' ? 'pause' : 'play_arrow'} datatest="btn-play-anime"
-                            width={50} height={height - 10} fontSize={45.375} colors={colors}
+                            width={50} height={height - 10} fontSize={45.375} colors={palette}
                             actions={{
                                 onclick: () => {
                                     switch (animationState) {
@@ -73,7 +68,7 @@ export const ReaderTools: Component<Props> = ({ height, animationState, pages, s
                             }}/>
 
                 <ToolButton iconName="settings" datatest="btn-open-settings" sticky={true}
-                            width={45} height={height - 10} fontSize={31.25} colors={colors}
+                            width={45} height={height - 10} fontSize={31.25} colors={palette}
                             actions={{ onclick: () => actions.openSettingsModal() }}/>
 
             </div>

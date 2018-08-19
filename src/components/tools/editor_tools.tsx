@@ -2,15 +2,15 @@ import { Component, px, style } from '../../lib/types';
 import { h } from 'hyperapp';
 import { ToolButton } from './tool_button';
 import { ToolText } from './tool_text';
-import { AnimationState, Screens } from '../../lib/enums';
-import { Palette } from '../../lib/colors';
+import { AnimationState } from '../../lib/enums';
+import { ColorPalette } from '../../lib/colors';
 
 interface Props {
     height: number;
     animationState: AnimationState;
     currentPage: number;
     maxPage: number;
-    screen: Screens;
+    palette: ColorPalette;
     actions: {
         openFumenModal: () => void;
         openSettingsModal: () => void;
@@ -23,7 +23,7 @@ interface Props {
     };
 }
 
-export const EditorTools: Component<Props> = ({ currentPage, maxPage, height, animationState, screen, actions }) => {
+export const EditorTools: Component<Props> = ({ currentPage, maxPage, height, animationState, palette, actions }) => {
     const navProperties = style({
         width: '100%',
         height: px(height),
@@ -42,7 +42,6 @@ export const EditorTools: Component<Props> = ({ currentPage, maxPage, height, an
         alignItems: 'center',
     });
 
-    const palette = Palette(screen);
     const colors = {
         baseClass: palette.baseClass,
         darkCode: palette.darkCode,
@@ -71,8 +70,8 @@ export const EditorTools: Component<Props> = ({ currentPage, maxPage, height, an
                             actions={{ onclick: () => actions.nextPageOrNewPage() }}/>
 
                 {/*<ToolButton iconName="brush" datatest="btn-drawing" width={35} height={height - 10}*/}
-                            {/*fontSize={33.75} marginRight={10} colors={colors}*/}
-                            {/*actions={{ onclick: () => actions.changeToDrawingMode() }}/>*/}
+                {/*fontSize={33.75} marginRight={10} colors={colors}*/}
+                {/*actions={{ onclick: () => actions.changeToDrawingMode() }}/>*/}
 
                 {/*<ToolButton iconName="pan_tool" datatest="btn-put-piece" width={35} height={height - 10}*/}
                 {/*fontSize={29} colors={colors}*/}
