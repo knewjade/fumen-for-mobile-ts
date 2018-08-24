@@ -73,13 +73,9 @@ const startDrawingField = (state: State, index: number, isField: boolean): NextS
     {
         const x = index % 10;
         const y = Math.floor(index / 10);
-        const key = `${x}-${y}`;
-        page.commands.pre[key] = {
-            x,
-            y,
-            piece,
-            type: isField ? 'block' : 'sentBlock',
-        };
+        const type = isField ? 'block' : 'sentBlock';
+        const key = `${type}-${index}`;
+        page.commands.pre[key] = { x, y, piece, type };
     }
 
     return sequence(state, [
@@ -124,13 +120,9 @@ const moveDrawingField = (state: State, index: number, isField: boolean): NextSt
     {
         const x = index % 10;
         const y = Math.floor(index / 10);
-        const key = `${x}-${y}`;
-        page.commands.pre[key] = {
-            x,
-            y,
-            piece,
-            type: isField ? 'block' : 'sentBlock',
-        };
+        const type = isField ? 'block' : 'sentBlock';
+        const key = `${type}-${index}`;
+        page.commands.pre[key] = { x, y, piece, type };
     }
 
     return sequence(state, [

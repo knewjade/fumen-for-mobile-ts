@@ -42,6 +42,37 @@ describe('Sent line', () => {
             cy.get('body').click(150, 550);
         }
 
+        // Select S color
+        cy.get('body').click(300, 540);
+
+        {
+            cy.get('body')
+                .trigger('mousedown', 50, 580)
+                .trigger('mousemove', 75, 580)
+                .trigger('mousemove', 100, 580)
+                .trigger('mousemove', 125, 580)
+                .trigger('mousemove', 150, 580)
+                .trigger('mousemove', 175, 580)
+                .trigger('mousemove', 200, 580)
+                .trigger('mousemove', 225, 580)
+                .trigger('mousemove', 250, 580)
+                .trigger('mouseup', 250, 580);
+        }
+
+        {
+            cy.get('body')
+                .trigger('mousedown', 50, 600)
+                .trigger('mousemove', 75, 600)
+                .trigger('mousemove', 100, 600)
+                .trigger('mousemove', 125, 600)
+                .trigger('mousemove', 150, 600)
+                .trigger('mousemove', 175, 600)
+                .trigger('mousemove', 200, 600)
+                .trigger('mousemove', 225, 600)
+                .trigger('mousemove', 250, 600)
+                .trigger('mouseup', 250, 600);
+        }
+
         // 設定を開く
         {
             cy.get(datatest('btn-open-settings')).click();
@@ -56,7 +87,7 @@ describe('Sent line', () => {
 
         // データを取り出す
         {
-            cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@qeA8UeA8QeA8ceg0Jeg0Jeg0Jeg0Jeg0RfAgHygQpQ?eQpQeQpXeAgH');
+            cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@qeA8UeA8QeA8ceg0Jeg0Jeg0Jeg0Jeg0RfAgHygQpQ?eQpQeQpEeY4AeY4AgH');
         }
     });
 });
