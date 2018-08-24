@@ -1,10 +1,9 @@
 import { AnimationState, Piece, Screens, TouchTypes } from './lib/enums';
 import { Page } from './lib/fumen/fumen';
 import { HyperStage } from './lib/hyper';
-import { Field } from './lib/fumen/field';
-import { QuizCommentResult, TextCommentResult } from './lib/pages';
 import { Box } from './components/box';
 import { PageEnv } from './env';
+import { Block } from './state_types';
 import konva = require('konva');
 
 const VERSION = PageEnv.Version;
@@ -30,7 +29,7 @@ export interface State {
     fumen: {
         currentIndex: number;
         maxPage: number;
-        pages: CachedPage[];
+        pages: Page[];
         value?: string;
         errorMessage?: string;
     };
@@ -52,27 +51,6 @@ export interface State {
         piece: Piece;
     };
     version: string;
-}
-
-export interface Block {
-    piece: Piece;
-    highlight?: boolean;
-}
-
-export interface CachedPage extends Page {
-    field: {
-        obj?: Field;
-        ref?: number;
-        operations?: { [key: string]: (field: Field) => void };
-        cache?: {
-            obj: Field;
-        };
-    };
-    comment: {
-        text?: string;
-        ref?: number;
-        cache?: TextCommentResult | QuizCommentResult;
-    };
 }
 
 export const initState: Readonly<State> = {

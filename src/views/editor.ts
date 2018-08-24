@@ -202,6 +202,7 @@ export const view: View<State, Actions> = (state, actions) => {
             version: state.version,
             pages: state.fumen.pages,
             screen: state.mode.screen,
+            currentIndex: state.fumen.currentIndex,
         }) : undefined as any,
     ]);
 };

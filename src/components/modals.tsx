@@ -5,6 +5,7 @@ import { i } from '@hyperapp/html';
 import { encode, Page } from '../lib/fumen/fumen';
 import { Screens } from '../lib/enums';
 import { i18n } from '../locales/keys';
+import { PageEnv } from '../env';
 
 declare const M: any;
 
@@ -107,14 +108,16 @@ interface SettingsProps {
     version: string;
     pages: Page[];
     screen: Screens;
+    currentIndex: number;
     actions: {
         closeSettingsModal: () => void;
         changeToReaderMode: () => void;
         changeToDrawerMode: () => void;
+        deletePage: (data: { index: number }) => void;
     };
 }
 
-export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen, actions }) => {
+export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen, currentIndex, actions }) => {
     const oncreate = (element: HTMLDivElement) => {
         const instance = M.Modal.init(element, {
             onOpenEnd: () => {
@@ -216,6 +219,15 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
                         <SettingButton datatest="btn-copy-fumen" href="#" iconName="content_copy" onclick={copyOnClick}>
                             {i18n.Settings.Buttons.Clipboard()}
                         </SettingButton>
+
+                        {
+                            PageEnv.Debug ?
+                                <SettingButton href="#" iconName="remove_circle_outline"
+                                               onclick={() => actions.deletePage({ index: currentIndex })}>
+                                    {i18n.Settings.Buttons.RemovePage()}
+                                </SettingButton>
+                                : undefined
+                        }
 
                         <SettingButton href="./help.html" iconName="help_outline">
                             {i18n.Settings.Buttons.Help()}

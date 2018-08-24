@@ -19,6 +19,7 @@ export const resources = {
             Writable: 'writable',
             Clipboard: 'clipboard',
             Help: 'help',
+            RemovePage: 'remove',
         },
     },
 };

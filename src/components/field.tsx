@@ -1,8 +1,9 @@
 import { Component } from '../lib/types';
 import { h } from 'hyperapp';
-import { Block as Blocks, resources } from '../states';
+import { Block } from '../state_types';
 import { Piece } from '../lib/enums';
 import { getHighlightColor, getNormalColor } from '../lib/colors';
+import { resources } from '../states';
 import konva = require('konva');
 
 interface Props {
@@ -10,8 +11,8 @@ interface Props {
         x: number;
         y: number;
     };
-    field: Blocks[];
-    sentLine: Blocks[];
+    field: Block[];
+    sentLine: Block[];
     blockSize: number;
     fieldMarginWidth: number;
 }

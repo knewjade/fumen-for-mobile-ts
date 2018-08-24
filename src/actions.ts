@@ -12,7 +12,7 @@ import { DrawBlockActions, drawBlockActions } from './actions/draw_block';
 import { animationActions, AnimationActions } from './actions/animation';
 import { modeActions, ModeActions } from './actions/mode';
 import { modalActions, ModalActions } from './actions/modal';
-import { pageActions, PageActions } from './actions/page';
+import { pageActions, PageActions } from './actions/pages';
 import { setterActions, SetterActions } from './actions/setter';
 import { UtilsActions, utilsActions } from './actions/utils';
 

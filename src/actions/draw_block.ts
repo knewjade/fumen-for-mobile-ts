@@ -1,7 +1,6 @@
 import { State } from '../states';
 import { Piece } from '../lib/enums';
 import { action, actions } from '../actions';
-import { Field } from '../lib/fumen/field';
 import { NextState, sequence } from './commons';
 
 export interface DrawBlockActions {
@@ -39,23 +38,9 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
     ontouchEndSentLine: () => (state): NextState => {
         return endDrawingField(state);
     },
-    ontouchStartPiece: ({ index }) => (state): NextState => {
+    ontouchStartPiece: ({}) => (state): NextState => {
         const pages = state.fumen.pages;
         const currentPageIndex = state.fumen.currentIndex;
-
-        // ミノを移動させる
-        const page = pages[currentPageIndex];
-        if (page.piece !== undefined) {
-            page.piece.coordinate = {
-                x: index % 10,
-                y: Math.floor(index / 10),
-            };
-        }
-
-        // 影響のありそうなページのキャッシュを削除する
-        for (let i = currentPageIndex; i < pages.length; i += 1) {
-            pages[i].field.cache = undefined;
-        }
 
         return sequence(state, [
             () => ({
@@ -77,22 +62,24 @@ const startDrawingField = (state: State, index: number, isField: boolean): NextS
     const block = isField ? state.field[index] : state.sentLine[index];
     const piece = block.piece !== state.mode.piece ? state.mode.piece : Piece.Empty;
 
-    // フィールドの上書き操作を記録する
-    {
-        const page = pages[currentPageIndex];
-        if (page.field.operations === undefined) {
-            page.field.operations = {};
-        }
-
-        const key = isField ? 'field-' + index : 'sent-' + index;
-        page.field.operations[key] = isField
-            ? (field: Field) => field.setToPlayField(index, piece)
-            : (field: Field) => field.setToSentLine(index, piece);
+    const page = pages[currentPageIndex];
+    if (!page.commands) {
+        page.commands = {
+            pre: {},
+        };
     }
 
-    // 影響のありそうなページのキャッシュを削除する
-    for (let i = currentPageIndex; i < pages.length; i += 1) {
-        pages[i].field.cache = undefined;
+    // Blockを追加
+    {
+        const x = index % 10;
+        const y = Math.floor(index / 10);
+        const key = `${x}-${y}`;
+        page.commands.pre[key] = {
+            x,
+            y,
+            piece,
+            type: isField ? 'block' : 'sentBlock',
+        };
     }
 
     return sequence(state, [
@@ -120,25 +107,30 @@ const moveDrawingField = (state: State, index: number, isField: boolean): NextSt
         return undefined;
     }
 
-    // フィールドの上書き操作を記録する
-    {
-        const page = pages[currentPageIndex];
-        if (page.field.operations === undefined) {
-            page.field.operations = {};
-        }
-
-        const key = isField ? 'field-' + index : 'sent-' + index;
-        page.field.operations[key] = isField
-            ? (field: Field) => field.setToPlayField(index, piece)
-            : (field: Field) => field.setToSentLine(index, piece);
-
-        page.field.cache = undefined;
-    }
-
     // pieceに変化がないときは、表示を更新しない
     const block = isField ? state.field[index] : state.sentLine[index];
     if (block.piece === piece) {
         return undefined;
+    }
+
+    const page = pages[currentPageIndex];
+    if (!page.commands) {
+        page.commands = {
+            pre: {},
+        };
+    }
+
+    // Blockを追加
+    {
+        const x = index % 10;
+        const y = Math.floor(index / 10);
+        const key = `${x}-${y}`;
+        page.commands.pre[key] = {
+            x,
+            y,
+            piece,
+            type: isField ? 'block' : 'sentBlock',
+        };
     }
 
     return sequence(state, [

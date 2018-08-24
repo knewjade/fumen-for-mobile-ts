@@ -1,8 +1,8 @@
 import { Operation, Piece, Rotation } from '../enums';
 import { Quiz } from '../fumen/quiz';
-import { Pages } from '../pages';
 import { Field } from '../fumen/field';
 import { Move } from '../fumen/fumen';
+import { Pages } from '../pages';
 
 describe('comment', () => {
     const commentText = (text: string) => ({
@@ -11,16 +11,6 @@ describe('comment', () => {
 
     const commentRef = (ref: number) => ({
         comment: { ref },
-    });
-
-    const commentCached = (text: string, next: Piece[]) => ({
-        comment: {
-            ref: -1,
-            cache: {
-                text,
-                next,
-            },
-        },
     });
 
     const quizText = (quiz: Quiz, operation?: Operation) => ({
@@ -35,20 +25,10 @@ describe('comment', () => {
 
     const quizRefWithPiece = (ref: number, piece?: Piece) => ({
         comment: { ref },
-        quiz: { },
+        quiz: {},
         piece: { type: piece },
         flags: {
             lock: piece !== undefined,
-        },
-    });
-
-    const quizCache = (quiz: string, quizAfterOperation: Quiz) => ({
-        comment: {
-            ref: -1,
-            cache: {
-                quiz,
-                quizAfterOperation,
-            },
         },
     });
 
@@ -95,24 +75,6 @@ describe('comment', () => {
         expect(pages.getComment(1)).toEqual({
             quiz: Quiz.create('OT').toString(),
             quizAfterOperation: Quiz.create('O', ''),
-        });
-    });
-
-    test('using comment cache', () => {
-        const pages = new Pages([commentCached('hello', [Piece.I])] as any);
-        expect(pages.getComment(0)).toEqual({
-            text: 'hello',
-            next: [Piece.I],
-        });
-    });
-
-    test('using quiz cache', () => {
-        const quizString = Quiz.create('LJ').toString();
-        const quizAfterOperation = Quiz.create('J');
-        const pages = new Pages([quizCache(quizString, quizAfterOperation)] as any);
-        expect(pages.getComment(0)).toEqual({
-            quizAfterOperation,
-            quiz: quizString,
         });
     });
 
@@ -171,40 +133,6 @@ describe('comment', () => {
             next: [Piece.Z],
         });
     });
-
-    test('last hold with comemnt cache', () => {
-        const pages = new Pages([
-            quizText(Quiz.create('O', 'L'), Operation.Direct),
-            quizRef(0),
-            quizRef(0, Operation.Swap),
-            commentCached('', []),
-            quizRef(0),
-        ] as any);
-
-        expect(pages.getComment(4)).toMatchObject({
-            text: '',
-            next: [],
-        });
-    });
-
-    test('last hold with quiz cache', () => {
-        const pages = new Pages([
-            quizText(Quiz.create('O', 'L'), Operation.Direct),
-            quizCache('#Q=[](O)', Quiz.create('O', '')),
-            quizRef(0, Operation.Swap),
-            quizRef(0),
-            quizRef(0),
-        ] as any);
-
-        expect(pages.getComment(2)).toMatchObject({
-            quiz: '#Q=[](O)',
-            quizAfterOperation: Quiz.create(''),
-        });
-        expect(pages.getComment(3)).toMatchObject({
-            text: '',
-            next: [],
-        });
-    });
 });
 
 describe('field', () => {
@@ -228,18 +156,6 @@ describe('field', () => {
         },
     });
 
-    const fieldCache = (obj: Field, piece?: Move) => ({
-        piece,
-        field: {
-            cache: { obj },
-        },
-        flags: {
-            lock: piece !== undefined,
-            blockUp: false,
-            mirrored: false,
-        },
-    });
-
     test('field obj only', () => {
         const field = new Field({});
         field.put({ type: Piece.I, rotation: Rotation.Spawn, coordinate: { x: 1, y: 0 } });
@@ -253,38 +169,6 @@ describe('field', () => {
         const secondMove = { type: Piece.T, rotation: Rotation.Reverse, coordinate: { x: 1, y: 1 } };
 
         const pages = new Pages([fieldObj(field, firstMove), fieldRef(0, secondMove), fieldRef(0)] as any);
-
-        {
-            const expectedField = field.copy();
-            expectedField.put(firstMove);
-            expectedField.put(secondMove);
-            expect(pages.getField(2)).toEqual(expectedField);
-        }
-    });
-
-    test('using cache', () => {
-        const field = new Field({});
-        field.put({ type: Piece.O, rotation: Rotation.Spawn, coordinate: { x: 8, y: 0 } });
-
-        const pages = new Pages([fieldCache(field)] as any);
-        expect(pages.getField(0)).toEqual(field);
-    });
-
-    test('using cache ref', () => {
-        const field = new Field({});
-        const firstMove = { type: Piece.I, rotation: Rotation.Spawn, coordinate: { x: 1, y: 0 } };
-        const secondMove = { type: Piece.T, rotation: Rotation.Reverse, coordinate: { x: 1, y: 1 } };
-        const thirdMove = { type: Piece.O, rotation: Rotation.Spawn, coordinate: { x: 8, y: 0 } };
-
-        const cache = field.copy();
-        cache.put(firstMove);
-        cache.put(secondMove);
-
-        const pages = new Pages([
-            fieldObj(field, firstMove),
-            fieldCache(cache, secondMove),
-            fieldRef(0, thirdMove),
-        ] as any);
 
         {
             const expectedField = field.copy();

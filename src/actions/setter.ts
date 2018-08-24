@@ -1,7 +1,7 @@
 import { NextState } from './commons';
 import { action, actions, main } from '../actions';
 import { FieldConstants, Piece } from '../lib/enums';
-import { Block } from '../states';
+import { Block } from '../state_types';
 import { Page } from '../lib/fumen/fumen';
 
 export interface SetterActions {

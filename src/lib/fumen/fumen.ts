@@ -29,6 +29,11 @@ export interface Page {
     quiz?: {
         operation?: Operation;
     };
+    commands?: {
+        pre: {
+            [key in string]: PreCommand;
+        };
+    };
     flags: {
         lock: boolean;
         send: boolean;
@@ -36,6 +41,15 @@ export interface Page {
         colorize: boolean;
         blockUp: boolean;
     };
+}
+
+export type PreCommand = BlockAction;
+
+export interface BlockAction {
+    type: 'block' | 'sentBlock';
+    x: number;
+    y: number;
+    piece: Piece;
 }
 
 const COMMENT_TABLE =
@@ -355,9 +369,30 @@ export async function encode(inputPages: Page[]): Promise<string> {
         const field = pages.getField(index);
 
         const currentPage = inputPages[index];
+        const currentField = field !== undefined ? field.copy() : prevField.copy();
+
+        // コマンドの反映
+        const commands = currentPage.commands;
+        if (commands !== undefined) {
+            Object.keys(commands.pre)
+                .map(key => commands.pre[key])
+                .forEach((command: PreCommand) => {
+                    switch (command.type) {
+                    case 'block': {
+                        const { x, y, piece } = command;
+                        currentField.setToPlayField(x + y * 10, piece);
+                        return;
+                    }
+                    case 'sentBlock': {
+                        const { x, y, piece } = command;
+                        currentField.setToSentLine(x + y * 10, piece);
+                        return;
+                    }
+                    }
+                });
+        }
 
         // フィールドの更新
-        const currentField = field !== undefined ? field.copy() : prevField.copy();
         updateField(prevField, currentField);
 
         // アクションの更新
