@@ -18,8 +18,7 @@ interface Props {
         pauseAnimation: () => void;
         backPage: () => void;
         nextPageOrNewPage: () => void;
-        changeToDrawingMode: () => void;
-        changeToPieceMode: () => void;
+        changeToDrawingToolMode: () => void;
     };
 }
 
@@ -69,9 +68,13 @@ export const EditorTools: Component<Props> = ({ currentPage, maxPage, height, an
                             fontSize={33.75} marginRight={10} colors={colors}
                             actions={{ onclick: () => actions.nextPageOrNewPage() }}/>
 
-                {/*<ToolButton iconName="brush" datatest="btn-drawing" width={35} height={height - 10}*/}
-                {/*fontSize={33.75} marginRight={10} colors={colors}*/}
+                {/*<ToolButton iconName="edit" datatest="btn-block-mode" width={35} height={height - 10}*/}
+                {/*fontSize={32} marginRight={10} colors={colors}*/}
                 {/*actions={{ onclick: () => actions.changeToDrawingMode() }}/>*/}
+
+                <ToolButton iconName="build" datatest="btn-drawing-tool" width={45} height={height - 10}
+                            fontSize={27} marginRight={20} colors={colors}
+                            actions={{ onclick: () => actions.changeToDrawingToolMode() }}/>
 
                 {/*<ToolButton iconName="pan_tool" datatest="btn-put-piece" width={35} height={height - 10}*/}
                 {/*fontSize={29} colors={colors}*/}

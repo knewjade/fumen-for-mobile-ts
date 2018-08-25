@@ -1,4 +1,4 @@
-import { block, Color, datatest, leftTap, mino, pages, Piece, rightTap, Rotation, sentBlock, visit } from './common';
+import { block, Color, datatest, leftTap, mino, pages, Piece, rightTap, Rotation, sentBlock, visit } from './_common';
 
 // テト譜を開く
 describe('Sent line', () => {

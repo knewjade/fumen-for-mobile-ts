@@ -1,5 +1,4 @@
-import {datatest, holdBox, nextBox, pages, Piece, rightTap, visit} from './common.js';
-import {leftTap} from "./common";
+import { datatest, visit } from './_common.js';
 
 // Hold & Nextのテスト
 describe('Langauge', () => {

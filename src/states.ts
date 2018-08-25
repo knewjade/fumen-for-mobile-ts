@@ -1,4 +1,4 @@
-import { AnimationState, Piece, Screens, TouchTypes } from './lib/enums';
+import { AnimationState, ModeTypes, Piece, Screens, TouchTypes } from './lib/enums';
 import { Page } from './lib/fumen/fumen';
 import { HyperStage } from './lib/hyper';
 import { Box } from './components/box';
@@ -47,6 +47,7 @@ export interface State {
     };
     mode: {
         screen: Screens;
+        type: ModeTypes;
         touch: TouchTypes;
         piece: Piece;
     };
@@ -95,6 +96,7 @@ export const initState: Readonly<State> = {
     },
     mode: {
         screen: Screens.Reader,
+        type: ModeTypes.DrawingTool,
         touch: TouchTypes.Drawing,
         piece: Piece.Gray,
     },
@@ -110,12 +112,6 @@ export const resources = {
 };
 
 interface Box {
-    background: konva.Rect;
-    pieces: konva.Rect[];
-}
-
-interface PieceColorBox {
-    event: konva.Rect;
     background: konva.Rect;
     pieces: konva.Rect[];
 }
@@ -244,39 +240,6 @@ function createKonvaObjects() {
                 layers.boxes.add(rect);
             }
         }
-    }
-
-    // Piece buttons
-    {
-        const pieces = [Piece.Gray, Piece.I, Piece.L, Piece.O, Piece.Z, Piece.T, Piece.J, Piece.S, Piece.Gray];
-        const buttons = pieces.map(() => {
-            const event = new konva.Rect({
-                fill: 'rgba(51,51,51,0.05)',  // #333
-                stroke: '#ee6e73',
-                strokeWidth: 3,
-                opacity: 1,
-                strokeEnabled: false,
-                listening: true,
-            });
-
-            const background = new konva.Rect({
-                fill: '#333',
-                strokeWidth: 1,
-                stroke: '#666',
-                opacity: 1,
-            });
-
-            const pieces = Array.from({ length: 4 }).map(() => {
-                return new konva.Rect({
-                    fill: '#333',
-                    strokeWidth: 1,
-                    stroke: '#666',
-                    opacity: 1,
-                });
-            });
-
-            return { background, event, pieces };
-        });
     }
 
     // Overlay

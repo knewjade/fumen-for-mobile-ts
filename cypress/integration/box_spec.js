@@ -1,5 +1,5 @@
-import {datatest, holdBox, nextBox, pages, Piece, rightTap, visit} from './common.js';
-import {leftTap} from "./common";
+import { datatest, holdBox, nextBox, pages, Piece, rightTap, visit } from './_common.js';
+import { leftTap } from "./_common";
 
 // Hold & Nextのテスト
 describe('Box', () => {

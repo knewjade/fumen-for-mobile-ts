@@ -1,4 +1,4 @@
-import {datatest, pages, rightTap, leftTap, holdBox, Piece, nextBox, Color, mino, Rotation, visit} from './common';
+import { Color, datatest, holdBox, leftTap, mino, nextBox, pages, Piece, rightTap, Rotation, visit } from './_common';
 
 // Quizのテスト
 describe('Quiz', () => {

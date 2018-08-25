@@ -1,4 +1,4 @@
-import {Color, datatest, leftTap, mino, pages, Piece, rightTap, Rotation, visit} from './common.js';
+import { Color, datatest, leftTap, mino, pages, Piece, rightTap, Rotation, visit } from './_common.js';
 
 // タップのテスト
 describe('Tap', () => {

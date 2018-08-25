@@ -10,9 +10,6 @@ jobs:
   - stage: test
     language: node_js
     node_js: 8
-    env:
-      - ARTIFACTS_KEY=${AWS_ACCESS_KEY}
-      - ARTIFACTS_SECRET=${AWS_SECRET_KEY}
     cache:
       yarn: true
       directories:
@@ -26,7 +23,6 @@ jobs:
       - yarn cypress-ci
     addons:
       artifacts:
-        debug: true
         paths:
           - /home/travis/build/knewjade/fumen-for-mobile-ts/cypress/videos/
 

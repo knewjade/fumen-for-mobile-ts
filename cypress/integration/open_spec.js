@@ -1,4 +1,4 @@
-import { datatest, holdBox, leftTap, nextBox, pages, Piece, visit } from './common';
+import { datatest, holdBox, leftTap, nextBox, pages, Piece, visit } from './_common';
 
 // テト譜を開く
 describe('Open fumen', () => {

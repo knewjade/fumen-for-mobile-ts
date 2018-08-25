@@ -1,4 +1,4 @@
-import { parsePieceName, Piece, Screens, TouchTypes } from '../lib/enums';
+import { ModeTypes, parsePieceName, Piece, Screens, TouchTypes } from '../lib/enums';
 import { Coordinate, Size } from './commons';
 import { View } from 'hyperapp';
 import { resources, State } from '../states';
@@ -10,7 +10,7 @@ import { Field } from '../components/field';
 import { PieceEventCanvas } from '../components/event/piece_event_canvas';
 import { KonvaCanvas } from '../components/konva_canvas';
 import { DrawingEventCanvas } from '../components/event/drawing_event_canvas';
-import { a, div, img } from '@hyperapp/html';
+import { a, div, i, img, span } from '@hyperapp/html';
 import { px, style } from '../lib/types';
 
 interface EditorLayout {
@@ -105,6 +105,7 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
         highlight: boolean,
         actions: {
             selectPieceColor: (data: { piece: Piece }) => void;
+            removePage: (data: { index: number }) => void;
         },
     }) => {
         const boarderWidth = highlight ? 3 : 1;
@@ -147,6 +148,118 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
         ]);
     };
 
+    const blockMode = () => {
+        const pieces = [Piece.Empty, Piece.I, Piece.L, Piece.O, Piece.Z, Piece.T, Piece.J, Piece.S, Piece.Gray];
+
+        return div({
+            style: style({
+                marginLeft: px(10),
+                paddingBottom: px(10),
+                display: 'flex',
+                justifyContent: 'flex-end',
+                flexDirection: 'column',
+                alignItems: 'center',
+                height: px(layout.canvas.size.height),
+                width: px(layout.buttons.size.width),
+            }),
+        }, pieces.map(piece => colorButton({ actions, piece, highlight: state.mode.piece === piece })));
+    };
+
+    const toolButton = (
+        {
+            backgroundColorClass, textColor, borderColor, iconName, datatest, fontSize, onclick, description,
+        }: {
+            backgroundColorClass: string;
+            textColor: string;
+            borderColor: string;
+            description: string;
+            iconName: string;
+            datatest: string;
+            fontSize: number;
+            onclick: () => void;
+        }) => {
+        const properties = style({
+            display: 'block',
+            height: px(layout.buttons.size.height),
+            lineHeight: px(layout.buttons.size.height),
+            fontSize: px(fontSize),
+            border: 'solid 0px #000',
+            marginRight: px(2),
+            cursor: 'pointer',
+        });
+
+        const className = 'material-icons';
+
+        const icon = i({
+            className,
+            style: properties,
+        }, iconName);
+
+        return a({
+            datatest,
+            onclick,
+            href: '#',
+            class: `waves-effect z-depth-0 btn ${backgroundColorClass}`,
+            style: style({
+                color: textColor,
+                border: `solid 1px ${borderColor}`,
+                margin: px(5),
+                width: px(layout.buttons.size.width),
+                maxWidth: px(layout.buttons.size.width),
+                padding: px(0),
+                boxSizing: 'border-box',
+                textAlign: 'center',
+            }),
+        }, [
+            div({
+                style: {
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                },
+            }, [icon, span({ style: style({ fontSize: px(9) }) }, description)]),
+        ]);
+    };
+
+    const toolMode = () => {
+        return div({
+            style: style({
+                marginLeft: px(10),
+                paddingBottom: px(10),
+                display: 'flex',
+                justifyContent: 'flex-end',
+                flexDirection: 'column',
+                alignItems: 'center',
+                height: px(layout.canvas.size.height),
+                width: px(layout.buttons.size.width),
+            }),
+        }, [
+            toolButton({
+                description: 'remove',
+                backgroundColorClass: 'white',
+                textColor: '#333',
+                borderColor: '#333',
+                iconName: 'remove_circle_outline',
+                datatest: 'btn-remove-page',
+                fontSize: 22,
+                onclick: () => actions.removePage({ index: state.fumen.currentIndex }),
+            }),
+            toolButton({
+                description: 'block',
+                backgroundColorClass: 'red',
+                textColor: '#fff',
+                borderColor: '#fff',
+                iconName: 'edit',
+                datatest: 'btn-block-mode',
+                fontSize: 22,
+                onclick: () => actions.changeToDrawingMode(),
+            }),
+        ]);
+    };
+
     const getChildren = () => {
         return [   // canvas:Field とのマッピング用仮想DOM
             KonvaCanvas({  // canvas空間のみ
@@ -163,28 +276,9 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
                 sentLine: state.sentLine,
             }),
 
-            div({
-                style: style({
-                    marginLeft: px(10),
-                    paddingBottom: px(10),
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    height: px(layout.canvas.size.height),
-                    width: px(layout.buttons.size.width),
-                }),
-            }, [
-                colorButton({ actions, piece: Piece.Empty, highlight: state.mode.piece === Piece.Empty }),
-                colorButton({ actions, piece: Piece.I, highlight: state.mode.piece === Piece.I }),
-                colorButton({ actions, piece: Piece.L, highlight: state.mode.piece === Piece.L }),
-                colorButton({ actions, piece: Piece.O, highlight: state.mode.piece === Piece.O }),
-                colorButton({ actions, piece: Piece.Z, highlight: state.mode.piece === Piece.Z }),
-                colorButton({ actions, piece: Piece.T, highlight: state.mode.piece === Piece.T }),
-                colorButton({ actions, piece: Piece.J, highlight: state.mode.piece === Piece.J }),
-                colorButton({ actions, piece: Piece.S, highlight: state.mode.piece === Piece.S }),
-                colorButton({ actions, piece: Piece.Gray, highlight: state.mode.piece === Piece.Gray }),
-            ]),
+            state.mode.type === ModeTypes.Drawing
+                ? blockMode()
+                : toolMode(),
         ];
     };
 

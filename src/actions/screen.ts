@@ -1,25 +1,26 @@
 import { NextState } from './commons';
 import { action, main } from '../actions';
-import { Screens, TouchTypes } from '../lib/enums';
+import { ModeTypes, Screens, TouchTypes } from '../lib/enums';
 import { resources, State } from '../states';
 
-export interface ModeActions {
-    changeToReaderMode: () => action;
-    changeToDrawerMode: () => action;
+export interface ScreenActions {
+    changeToReaderScreen: () => action;
+    changeToDrawerScreen: () => action;
     changeToDrawingMode: () => action;
+    changeToDrawingToolMode: () => action;
     changeToPieceMode: () => action;
     changeMode: (mode: Partial<State['mode']>) => action;
 }
 
-export const modeActions: Readonly<ModeActions> = {
-    changeToReaderMode: () => (): NextState => {
+export const modeActions: Readonly<ScreenActions> = {
+    changeToReaderScreen: () => (): NextState => {
         resources.konva.stage.reload((done) => {
             main.changeMode({ screen: Screens.Reader });
             done();
         });
         return undefined;
     },
-    changeToDrawerMode: () => (): NextState => {
+    changeToDrawerScreen: () => (): NextState => {
         resources.konva.stage.reload((done) => {
             main.changeMode({ screen: Screens.Editor });
             done();
@@ -30,6 +31,7 @@ export const modeActions: Readonly<ModeActions> = {
         return {
             mode: {
                 ...state.mode,
+                type: ModeTypes.Drawing,
                 touch: TouchTypes.Drawing,
             },
         };
@@ -38,7 +40,16 @@ export const modeActions: Readonly<ModeActions> = {
         return {
             mode: {
                 ...state.mode,
+                type: ModeTypes.Piece,
                 touch: TouchTypes.Piece,
+            },
+        };
+    },
+    changeToDrawingToolMode: () => (state): NextState => {
+        return {
+            mode: {
+                ...state.mode,
+                type: ModeTypes.DrawingTool,
             },
         };
     },

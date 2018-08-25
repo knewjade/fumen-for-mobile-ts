@@ -5,7 +5,6 @@ import { i } from '@hyperapp/html';
 import { encode, Page } from '../lib/fumen/fumen';
 import { Screens } from '../lib/enums';
 import { i18n } from '../locales/keys';
-import { PageEnv } from '../env';
 
 declare const M: any;
 
@@ -111,9 +110,8 @@ interface SettingsProps {
     currentIndex: number;
     actions: {
         closeSettingsModal: () => void;
-        changeToReaderMode: () => void;
-        changeToDrawerMode: () => void;
-        deletePage: (data: { index: number }) => void;
+        changeToReaderScreen: () => void;
+        changeToDrawerScreen: () => void;
     };
 }
 
@@ -203,7 +201,7 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
                         {screen === Screens.Editor ?
                             <SettingButton href="#" iconName="insert_photo"
                                            onclick={() => {
-                                               actions.changeToReaderMode();
+                                               actions.changeToReaderScreen();
                                                actions.closeSettingsModal();
                                            }}>{i18n.Settings.Buttons.Readonly()}</SettingButton>
                             : undefined}
@@ -211,7 +209,7 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
                         {screen === Screens.Reader ?
                             <SettingButton datatest="btn-writable" href="#" iconName="mode_edit"
                                            onclick={() => {
-                                               actions.changeToDrawerMode();
+                                               actions.changeToDrawerScreen();
                                                actions.closeSettingsModal();
                                            }}>{i18n.Settings.Buttons.Writable()}</SettingButton>
                             : undefined}
@@ -219,15 +217,6 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
                         <SettingButton datatest="btn-copy-fumen" href="#" iconName="content_copy" onclick={copyOnClick}>
                             {i18n.Settings.Buttons.Clipboard()}
                         </SettingButton>
-
-                        {
-                            PageEnv.Debug ?
-                                <SettingButton href="#" iconName="remove_circle_outline"
-                                               onclick={() => actions.deletePage({ index: currentIndex })}>
-                                    {i18n.Settings.Buttons.RemovePage()}
-                                </SettingButton>
-                                : undefined
-                        }
 
                         <SettingButton href="./help.html" iconName="help_outline">
                             {i18n.Settings.Buttons.Help()}

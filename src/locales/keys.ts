@@ -24,7 +24,6 @@ export const i18n = {
             Writable: () => t('Settings.Buttons.Writable'),
             Clipboard: () => t('Settings.Buttons.Clipboard'),
             Help: () => t('Settings.Buttons.Help'),
-            RemovePage: () => t('Settings.Buttons.RemovePage'),
         },
     },
 };

@@ -10,7 +10,7 @@ import { PageEnv } from './env';
 import { NextState } from './actions/commons';
 import { DrawBlockActions, drawBlockActions } from './actions/draw_block';
 import { animationActions, AnimationActions } from './actions/animation';
-import { modeActions, ModeActions } from './actions/mode';
+import { modeActions, ScreenActions } from './actions/screen';
 import { modalActions, ModalActions } from './actions/modal';
 import { pageActions, PageActions } from './actions/pages';
 import { setterActions, SetterActions } from './actions/setter';
@@ -20,7 +20,7 @@ export type action = (state: Readonly<State>) => NextState;
 
 export type Actions = DrawBlockActions
     & AnimationActions
-    & ModeActions
+    & ScreenActions
     & ModalActions
     & PageActions
     & SetterActions

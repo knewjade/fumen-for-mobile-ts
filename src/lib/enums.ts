@@ -30,6 +30,10 @@ export enum Operation {
     Stock = 'stock',
 }
 
+export enum Action {
+    Block = 'block',
+}
+
 export enum FieldConstants {
     Width = 10,
     Height = 23,
@@ -39,6 +43,12 @@ export enum FieldConstants {
 export enum Screens {
     Reader = 'Reader',
     Editor = 'Editor',
+}
+
+export enum ModeTypes {
+    Drawing = 'Drawing',
+    Piece = 'Piece',
+    DrawingTool = 'DrawingTool',
 }
 
 export enum TouchTypes {

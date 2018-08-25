@@ -9,7 +9,7 @@ import { Pages, QuizCommentResult, TextCommentResult } from '../lib/pages';
 export interface PageActions {
     openPage: (data: { index: number }) => action;
     insertPage: (data: { index: number }) => action;
-    deletePage: (data: { index: number }) => action;
+    removePage: (data: { index: number }) => action;
     backLoopPage: () => action;
     nextLoopPage: () => action;
     backPage: () => action;
@@ -73,7 +73,7 @@ export const pageActions: Readonly<PageActions> = {
             },
         };
     },
-    deletePage: ({ index }) => (state): NextState => {
+    removePage: ({ index }) => (state): NextState => {
         const pages = new Pages(state.fumen.pages);
         pages.deletePage(index);
         const newPages = pages.pages;

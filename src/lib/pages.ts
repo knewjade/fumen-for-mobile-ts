@@ -122,7 +122,7 @@ export class Pages {
         this.pages[index] = page;
     }
 
-    // TODO: Add test
+    // TODO: Add unit test
     deletePage(index: number) {
         if (index < 0) {
             throw new FumenError('Illegal index: ' + index);
@@ -157,11 +157,11 @@ export class Pages {
             const currentFieldObj = this.restructureField(index, true);
             const nextFieldObj = this.restructureField(index + 1, false);
             if (currentFieldObj !== nextFieldObj) {
-                console.log('not same');
                 next.field = { obj: currentFieldObj };
             }
         }
 
+        // コメントの参照
         if (current.comment.text !== undefined && next.comment.text === undefined) {
             // コメント参照
             // 現ページにtextがあって、次のページが参照のときは統合する
@@ -174,6 +174,11 @@ export class Pages {
                 throw new ViewError('Unexpected quiz comment');
             }
             next.comment = { text: comment.quizAfterOperation.format().toString() };
+        }
+
+        // 色の参照
+        if (index === 0 && current.flags.colorize !== next.flags.colorize) {
+            next.flags.colorize = current.flags.colorize;
         }
 
         const slidedPages = [next].concat(this.pages.slice(index + 2));
@@ -199,9 +204,7 @@ export class Pages {
             }
         }
 
-        console.log(this.pages);
         this.pages = this.pages.slice(0, index).concat(slidedPages);
-        console.log(this.pages);
     }
 
     private restructureQuiz(index: number): TextCommentResult | QuizCommentResult {
