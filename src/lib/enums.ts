@@ -62,6 +62,10 @@ export function parsePieceName(piece: Piece) {
         return 'J';
     case Piece.S:
         return 'S';
+    case Piece.Gray:
+        return 'Gray';
+    case Piece.Empty:
+        return 'Empty';
     }
     throw new FumenError('Unexpected piece');
 }

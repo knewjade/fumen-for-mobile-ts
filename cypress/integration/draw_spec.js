@@ -18,7 +18,7 @@ describe('Sent line', () => {
         }
 
         // Select J color
-        cy.get('body').click(300, 480);
+        cy.get(datatest('btn-piece-j')).click();
 
         {
             cy.get('body')
@@ -31,7 +31,7 @@ describe('Sent line', () => {
         }
 
         // Select O color
-        cy.get('body').click(300, 310);
+        cy.get(datatest('btn-piece-o')).click();
 
         // Go to next page
         cy.get(datatest('btn-next-page')).click();
@@ -43,7 +43,7 @@ describe('Sent line', () => {
         }
 
         // Select S color
-        cy.get('body').click(300, 540);
+        cy.get(datatest('btn-piece-s')).click();
 
         {
             cy.get('body')

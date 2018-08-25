@@ -1,17 +1,17 @@
-import { Piece, Screens, TouchTypes } from '../lib/enums';
+import { parsePieceName, Piece, Screens, TouchTypes } from '../lib/enums';
 import { Coordinate, Size } from './commons';
 import { View } from 'hyperapp';
 import { resources, State } from '../states';
 import { EditorTools } from '../components/tools/editor_tools';
 import { OpenFumenModal, SettingsModal } from '../components/modals';
-import { getHighlightColor, Palette } from '../lib/colors';
+import { Palette } from '../lib/colors';
 import { Actions } from '../actions';
 import { Field } from '../components/field';
-import { PieceColorBox } from '../components/piece_color_box';
 import { PieceEventCanvas } from '../components/event/piece_event_canvas';
 import { KonvaCanvas } from '../components/konva_canvas';
 import { DrawingEventCanvas } from '../components/event/drawing_event_canvas';
-import { div } from '@hyperapp/html';
+import { a, div, img } from '@hyperapp/html';
+import { px, style } from '../lib/types';
 
 interface EditorLayout {
     canvas: {
@@ -24,9 +24,8 @@ interface EditorLayout {
         topLeft: Coordinate;
         size: Size;
     };
-    pieceButtons: {
+    buttons: {
         size: Size;
-        topLeft: (index: number) => Coordinate;
     };
     tools: {
         topLeft: Coordinate;
@@ -61,33 +60,31 @@ const getLayout = (display: { width: number, height: number }): EditorLayout => 
         ),
     };
 
-    const boxMargin = Math.min((canvasSize.width - fieldSize.width) * 0.1, 10);
-    const fieldTopLeft = {
-        x: (canvasSize.width - fieldSize.width - pieceButtonsSize.width - boxMargin) / 2,
-        y: (canvasSize.height - fieldSize.height) / 2,
-    };
-    const boxTopY = fieldTopLeft.y + fieldSize.height - pieceButtonsSize.height * (1.25 * 9 + 0.25);
-
     return {
         canvas: {
             topLeft: {
                 x: 0,
                 y: 0,
             },
-            size: canvasSize,
+            size: {
+                width: fieldSize.width,
+                height: canvasSize.height,
+            },
         },
         field: {
             blockSize,
             bottomBorderWidth: borderWidthBottomField,
-            topLeft: fieldTopLeft,
-            size: fieldSize,
+            topLeft: {
+                x: 0,
+                y: (canvasSize.height - fieldSize.height) / 2.0,
+            },
+            size: {
+                width: fieldSize.width,
+                height: fieldSize.height,
+            },
         },
-        pieceButtons: {
+        buttons: {
             size: pieceButtonsSize,
-            topLeft: (index: number) => ({
-                x: fieldTopLeft.x + fieldSize.width + boxMargin,
-                y: boxTopY + (index + 0.125) * pieceButtonsSize.height * 1.25,
-            }),
         },
         tools: {
             topLeft: {
@@ -103,8 +100,61 @@ const getLayout = (display: { width: number, height: number }): EditorLayout => 
 };
 
 const ScreenField = (state: State, actions: Actions, layout: any) => {
+    const colorButton = ({ piece, highlight, actions }: {
+        piece: Piece,
+        highlight: boolean,
+        actions: {
+            selectPieceColor: (data: { piece: Piece }) => void;
+        },
+    }) => {
+        const boarderWidth = highlight ? 3 : 1;
+        const pieceName = parsePieceName(piece);
+        return a({
+            href: '#',
+            class: 'waves-effect z-depth-0 btn',
+            datatest: `btn-piece-${pieceName.toLowerCase()}`,
+            style: style({
+                backgroundColor: '#fff',
+                color: '#333',
+                border: `solid ${boarderWidth}px ` + (highlight ? '#ff8a80' : '#333'),
+                margin: px(5),
+                width: px(layout.buttons.size.width),
+                maxWidth: px(layout.buttons.size.width),
+                padding: px(0),
+                boxSizing: 'border-box',
+                textAlign: 'center',
+            }),
+            onclick: () => actions.selectPieceColor({ piece }),
+        }, [
+            div({
+                style: {
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                },
+            }, [
+                img({
+                    src: `img/${pieceName}.svg`,
+                    height: (0.6 * layout.buttons.size.height) + '',
+                    style: style({
+                        margin: 'auto',
+                    }),
+                }),
+            ]),
+        ]);
+    };
+
     const getChildren = () => {
         return [   // canvas:Field とのマッピング用仮想DOM
+            KonvaCanvas({  // canvas空間のみ
+                actions,
+                canvas: layout.canvas.size,
+                hyperStage: resources.konva.stage,
+            }),
+
             Field({
                 fieldMarginWidth: layout.field.bottomBorderWidth,
                 topLeft: layout.field.topLeft,
@@ -113,29 +163,40 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
                 sentLine: state.sentLine,
             }),
 
-            // Piece buttons
-            ...resources.konva.pieceButtons.map((rects, index) => {
-                const piece = index as Piece;
-
-                return PieceColorBox({
-                    rects,
-                    actions,
-                    size: layout.pieceButtons.size,
-                    key: 'box-piece-button-' + index,
-                    topLeft: layout.pieceButtons.topLeft(index),
-                    backgroundColor: getHighlightColor(piece),
-                    selected: state.mode.piece === piece,
-                    piece: {
-                        type: piece,
-                        color: getHighlightColor(piece),
-                        size: layout.pieceButtons.size.height / 3.5 - 1,
-                    },
-                });
-            }),
+            div({
+                style: style({
+                    marginLeft: px(10),
+                    paddingBottom: px(10),
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    height: px(layout.canvas.size.height),
+                    width: px(layout.buttons.size.width),
+                }),
+            }, [
+                colorButton({ actions, piece: Piece.Empty, highlight: state.mode.piece === Piece.Empty }),
+                colorButton({ actions, piece: Piece.I, highlight: state.mode.piece === Piece.I }),
+                colorButton({ actions, piece: Piece.L, highlight: state.mode.piece === Piece.L }),
+                colorButton({ actions, piece: Piece.O, highlight: state.mode.piece === Piece.O }),
+                colorButton({ actions, piece: Piece.Z, highlight: state.mode.piece === Piece.Z }),
+                colorButton({ actions, piece: Piece.T, highlight: state.mode.piece === Piece.T }),
+                colorButton({ actions, piece: Piece.J, highlight: state.mode.piece === Piece.J }),
+                colorButton({ actions, piece: Piece.S, highlight: state.mode.piece === Piece.S }),
+                colorButton({ actions, piece: Piece.Gray, highlight: state.mode.piece === Piece.Gray }),
+            ]),
         ];
     };
 
-    return div({ key: 'field-top' }, getChildren());
+    return div({
+        key: 'field-top',
+        style: style({
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'row',
+            alignItems: 'center',
+        }),
+    }, getChildren());
 };
 
 const Events = (state: State, actions: Actions) => {
@@ -176,12 +237,6 @@ export const view: View<State, Actions> = (state, actions) => {
     const batchDraw = () => resources.konva.stage.batchDraw();
 
     return div({ oncreate: batchDraw, onupdate: batchDraw }, [ // Hyperappでは最上位のノードが最後に実行される
-        KonvaCanvas({  // canvas空間のみ
-            actions,
-            canvas: layout.canvas.size,
-            hyperStage: resources.konva.stage,
-        }),
-
         resources.konva.stage.isReady ? Events(state, actions) : undefined,
 
         ScreenField(state, actions, layout),

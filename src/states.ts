@@ -132,7 +132,6 @@ function createKonvaObjects() {
         sentBlocks: [] as konva.Rect[],
         hold: {} as Box,
         nexts: [] as Box[],
-        pieceButtons: [] as PieceColorBox[],
         layers: {
             background: new konva.Layer({ name: 'background' }),
             field: new konva.Layer({ name: 'field' }),
@@ -278,14 +277,6 @@ function createKonvaObjects() {
 
             return { background, event, pieces };
         });
-
-        obj.pieceButtons = buttons;
-        for (const { background, event, pieces } of buttons) {
-            for (const rect of [background].concat(pieces)) {
-                layers.boxes.add(rect);
-            }
-            layers.boxes.add(event);  // eventが最も上になる順で追加する
-        }
     }
 
     // Overlay

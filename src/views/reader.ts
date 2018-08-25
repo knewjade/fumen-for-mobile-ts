@@ -150,6 +150,12 @@ const Events = (state: State, actions: Actions, layout: any) => {
 const ScreenField = (state: State, actions: Actions, layout: any) => {
     const getChildren = () => {
         return [   // canvas:Field とのマッピング用仮想DOM
+            KonvaCanvas({  // canvas空間のみ
+                actions,
+                canvas: layout.canvas.size,
+                hyperStage: resources.konva.stage,
+            }),
+
             Field({
                 fieldMarginWidth: layout.field.bottomBorderWidth,
                 topLeft: layout.field.topLeft,
@@ -208,12 +214,6 @@ export const view: View<State, Actions> = (state, actions) => {
     const batchDraw = () => resources.konva.stage.batchDraw();
 
     return div({ oncreate: batchDraw, onupdate: batchDraw }, [ // Hyperappでは最上位のノードが最後に実行される
-        KonvaCanvas({  // canvas空間のみ
-            actions,
-            canvas: layout.canvas.size,
-            hyperStage: resources.konva.stage,
-        }),
-
         resources.konva.stage.isReady ? Events(state, actions, layout) : undefined,
 
         ScreenField(state, actions, layout),
