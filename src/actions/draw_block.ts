@@ -8,13 +8,11 @@ export interface DrawBlockActions {
 
     ontouchMoveField(data: { index: number }): action;
 
-    ontouchEndField(): action;
+    ontouchEnd(): action;
 
     ontouchStartSentLine(data: { index: number }): action;
 
     ontouchMoveSentLine(data: { index: number }): action;
-
-    ontouchEndSentLine(): action;
 
     ontouchStartPiece(data: { index: number }): action;
 }
@@ -26,7 +24,7 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
     ontouchMoveField: ({ index }) => (state): NextState => {
         return moveDrawingField(state, index, true);
     },
-    ontouchEndField: () => (state): NextState => {
+    ontouchEnd: () => (state): NextState => {
         return endDrawingField(state);
     },
     ontouchStartSentLine: ({ index }) => (state): NextState => {
@@ -34,9 +32,6 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
     },
     ontouchMoveSentLine: ({ index }) => (state): NextState => {
         return moveDrawingField(state, index, false);
-    },
-    ontouchEndSentLine: () => (state): NextState => {
-        return endDrawingField(state);
     },
     ontouchStartPiece: ({}) => (state): NextState => {
         const pages = state.fumen.pages;

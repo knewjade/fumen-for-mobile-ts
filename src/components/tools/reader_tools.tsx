@@ -44,7 +44,7 @@ export const ReaderTools: Component<Props> = ({ height, animationState, pages, p
             <div className="nav-wrapper" style={divProperties}>
 
                 <ToolButton iconName="open_in_new" datatest="btn-open-fumen" width={55} height={height - 10}
-                            fontSize={33.75} marginRight={10} colors={palette}
+                            key="btn-open-fumen" fontSize={33.75} marginRight={10} colors={palette}
                             actions={{ onclick: () => actions.openFumenModal() }}/>
 
                 <ToolText datatest="text-pages" height={height - 10}
@@ -53,7 +53,7 @@ export const ReaderTools: Component<Props> = ({ height, animationState, pages, p
                 </ToolText>
 
                 <ToolButton iconName={animationState !== 'pause' ? 'pause' : 'play_arrow'} datatest="btn-play-anime"
-                            width={50} height={height - 10} fontSize={45.375} colors={palette}
+                            key="btn-play-anime" width={50} height={height - 10} fontSize={45.375} colors={palette}
                             actions={{
                                 onclick: () => {
                                     switch (animationState) {
@@ -68,9 +68,8 @@ export const ReaderTools: Component<Props> = ({ height, animationState, pages, p
                             }}/>
 
                 <ToolButton iconName="settings" datatest="btn-open-settings" sticky={true}
-                            width={45} height={height - 10} fontSize={31.25} colors={palette}
+                            key="btn-open-settings" width={45} height={height - 10} fontSize={31.25} colors={palette}
                             actions={{ onclick: () => actions.openSettingsModal() }}/>
-
             </div>
         </nav>
     );

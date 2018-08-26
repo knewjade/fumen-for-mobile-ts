@@ -99,14 +99,122 @@ const getLayout = (display: { width: number, height: number }): EditorLayout => 
     };
 };
 
-const ScreenField = (state: State, actions: Actions, layout: any) => {
-    const colorButton = ({ piece, highlight, actions }: {
+const toolMode = ({ layout, currentIndex, actions }: {
+    layout: any;
+    currentIndex: number;
+    actions: {
+        removePage: (data: { index: number }) => void;
+        changeToDrawingMode: () => void;
+    };
+}) => {
+    const toolButton = (
+        {
+            backgroundColorClass, textColor, borderColor, iconName, datatest, key, fontSize, onclick, description,
+        }: {
+            backgroundColorClass: string;
+            textColor: string;
+            borderColor: string;
+            description: string;
+            iconName: string;
+            datatest: string;
+            key: string;
+            fontSize: number;
+            onclick: () => void;
+        }) => {
+        const properties = style({
+            display: 'block',
+            height: px(layout.buttons.size.height),
+            lineHeight: px(layout.buttons.size.height),
+            fontSize: px(fontSize),
+            border: 'solid 0px #000',
+            marginRight: px(2),
+            cursor: 'pointer',
+        });
+
+        const className = 'material-icons';
+
+        const icon = i({
+            className,
+            style: properties,
+        }, iconName);
+
+        return a({
+            datatest,
+            onclick,
+            key,
+            href: '#',
+            class: `waves-effect z-depth-0 btn ${backgroundColorClass}`,
+            style: style({
+                color: textColor,
+                border: `solid 1px ${borderColor}`,
+                margin: px(5),
+                width: px(layout.buttons.size.width),
+                maxWidth: px(layout.buttons.size.width),
+                padding: px(0),
+                boxSizing: 'border-box',
+                textAlign: 'center',
+            }),
+        }, [
+            div({
+                style: {
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                },
+            }, [icon, span({ style: style({ fontSize: px(9) }) }, description)]),
+        ]);
+    };
+
+    return div({
+        style: style({
+            marginLeft: px(10),
+            paddingBottom: px(10),
+            display: 'flex',
+            justifyContent: 'flex-end',
+            flexDirection: 'column',
+            alignItems: 'center',
+            height: px(layout.canvas.size.height),
+            width: px(layout.buttons.size.width),
+        }),
+    }, [
+        toolButton({
+            description: 'remove',
+            backgroundColorClass: 'white',
+            textColor: '#333',
+            borderColor: '#333',
+            iconName: 'remove_circle_outline',
+            datatest: 'btn-remove-page',
+            key: 'btn-remove-page',
+            fontSize: 22,
+            onclick: () => actions.removePage({ index: currentIndex }),
+        }),
+        toolButton({
+            description: 'block',
+            backgroundColorClass: 'red',
+            textColor: '#fff',
+            borderColor: '#fff',
+            iconName: 'edit',
+            datatest: 'btn-block-mode',
+            key: 'btn-block-mode',
+            fontSize: 22,
+            onclick: () => actions.changeToDrawingMode(),
+        }),
+    ]);
+};
+
+const blockMode = ({ layout, modePiece, actions }: {
+    layout: any;
+    modePiece: Piece;
+    actions: {
+        selectPieceColor: (data: { piece: Piece }) => void;
+    };
+}) => {
+    const colorButton = ({ piece, highlight }: {
         piece: Piece,
         highlight: boolean,
-        actions: {
-            selectPieceColor: (data: { piece: Piece }) => void;
-            removePage: (data: { index: number }) => void;
-        },
     }) => {
         const boarderWidth = highlight ? 3 : 1;
         const pieceName = parsePieceName(piece);
@@ -114,6 +222,7 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
             href: '#',
             class: 'waves-effect z-depth-0 btn',
             datatest: `btn-piece-${pieceName.toLowerCase()}`,
+            key: `btn-piece-${pieceName.toLowerCase()}`,
             style: style({
                 backgroundColor: '#fff',
                 color: '#333',
@@ -148,118 +257,23 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
         ]);
     };
 
-    const blockMode = () => {
-        const pieces = [Piece.Empty, Piece.I, Piece.L, Piece.O, Piece.Z, Piece.T, Piece.J, Piece.S, Piece.Gray];
+    const pieces = [Piece.Empty, Piece.I, Piece.L, Piece.O, Piece.Z, Piece.T, Piece.J, Piece.S, Piece.Gray];
 
-        return div({
-            style: style({
-                marginLeft: px(10),
-                paddingBottom: px(10),
-                display: 'flex',
-                justifyContent: 'flex-end',
-                flexDirection: 'column',
-                alignItems: 'center',
-                height: px(layout.canvas.size.height),
-                width: px(layout.buttons.size.width),
-            }),
-        }, pieces.map(piece => colorButton({ actions, piece, highlight: state.mode.piece === piece })));
-    };
+    return div({
+        style: style({
+            marginLeft: px(10),
+            paddingBottom: px(10),
+            display: 'flex',
+            justifyContent: 'flex-end',
+            flexDirection: 'column',
+            alignItems: 'center',
+            height: px(layout.canvas.size.height),
+            width: px(layout.buttons.size.width),
+        }),
+    }, pieces.map(piece => colorButton({ piece, highlight: modePiece === piece })));
+};
 
-    const toolButton = (
-        {
-            backgroundColorClass, textColor, borderColor, iconName, datatest, fontSize, onclick, description,
-        }: {
-            backgroundColorClass: string;
-            textColor: string;
-            borderColor: string;
-            description: string;
-            iconName: string;
-            datatest: string;
-            fontSize: number;
-            onclick: () => void;
-        }) => {
-        const properties = style({
-            display: 'block',
-            height: px(layout.buttons.size.height),
-            lineHeight: px(layout.buttons.size.height),
-            fontSize: px(fontSize),
-            border: 'solid 0px #000',
-            marginRight: px(2),
-            cursor: 'pointer',
-        });
-
-        const className = 'material-icons';
-
-        const icon = i({
-            className,
-            style: properties,
-        }, iconName);
-
-        return a({
-            datatest,
-            onclick,
-            href: '#',
-            class: `waves-effect z-depth-0 btn ${backgroundColorClass}`,
-            style: style({
-                color: textColor,
-                border: `solid 1px ${borderColor}`,
-                margin: px(5),
-                width: px(layout.buttons.size.width),
-                maxWidth: px(layout.buttons.size.width),
-                padding: px(0),
-                boxSizing: 'border-box',
-                textAlign: 'center',
-            }),
-        }, [
-            div({
-                style: {
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                },
-            }, [icon, span({ style: style({ fontSize: px(9) }) }, description)]),
-        ]);
-    };
-
-    const toolMode = () => {
-        return div({
-            style: style({
-                marginLeft: px(10),
-                paddingBottom: px(10),
-                display: 'flex',
-                justifyContent: 'flex-end',
-                flexDirection: 'column',
-                alignItems: 'center',
-                height: px(layout.canvas.size.height),
-                width: px(layout.buttons.size.width),
-            }),
-        }, [
-            toolButton({
-                description: 'remove',
-                backgroundColorClass: 'white',
-                textColor: '#333',
-                borderColor: '#333',
-                iconName: 'remove_circle_outline',
-                datatest: 'btn-remove-page',
-                fontSize: 22,
-                onclick: () => actions.removePage({ index: state.fumen.currentIndex }),
-            }),
-            toolButton({
-                description: 'block',
-                backgroundColorClass: 'red',
-                textColor: '#fff',
-                borderColor: '#fff',
-                iconName: 'edit',
-                datatest: 'btn-block-mode',
-                fontSize: 22,
-                onclick: () => actions.changeToDrawingMode(),
-            }),
-        ]);
-    };
-
+const ScreenField = (state: State, actions: Actions, layout: any) => {
     const getChildren = () => {
         return [   // canvas:Field とのマッピング用仮想DOM
             KonvaCanvas({  // canvas空間のみ
@@ -277,8 +291,16 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
             }),
 
             state.mode.type === ModeTypes.Drawing
-                ? blockMode()
-                : toolMode(),
+                ? blockMode({
+                    layout,
+                    actions,
+                    modePiece: state.mode.piece,
+                })
+                : toolMode({
+                    layout,
+                    actions,
+                    currentIndex: state.fumen.currentIndex,
+                }),
         ];
     };
 
@@ -301,6 +323,7 @@ const Events = (state: State, actions: Actions) => {
             actions,
             fieldBlocks: resources.konva.fieldBlocks,
             sentBlocks: resources.konva.sentBlocks,
+            fieldLayer: resources.konva.layers.field,
         });
     case TouchTypes.Piece:
         return PieceEventCanvas({
@@ -321,6 +344,7 @@ const Tools = (state: State, actions: Actions, height: number) => {
         animationState: state.play.status,
         currentPage: state.fumen.currentIndex + 1,
         maxPage: state.fumen.maxPage,
+        modeType: state.mode.type,
     });
 };
 

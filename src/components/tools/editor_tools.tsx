@@ -2,7 +2,7 @@ import { Component, px, style } from '../../lib/types';
 import { h } from 'hyperapp';
 import { ToolButton } from './tool_button';
 import { ToolText } from './tool_text';
-import { AnimationState } from '../../lib/enums';
+import { AnimationState, ModeTypes } from '../../lib/enums';
 import { ColorPalette } from '../../lib/colors';
 
 interface Props {
@@ -11,6 +11,7 @@ interface Props {
     currentPage: number;
     maxPage: number;
     palette: ColorPalette;
+    modeType: ModeTypes;
     actions: {
         openFumenModal: () => void;
         openSettingsModal: () => void;
@@ -22,7 +23,9 @@ interface Props {
     };
 }
 
-export const EditorTools: Component<Props> = ({ currentPage, maxPage, height, animationState, palette, actions }) => {
+export const EditorTools: Component<Props> = (
+    { currentPage, maxPage, height, animationState, palette, modeType, actions },
+) => {
     const navProperties = style({
         width: '100%',
         height: px(height),
@@ -56,7 +59,7 @@ export const EditorTools: Component<Props> = ({ currentPage, maxPage, height, an
             <div className="nav-wrapper" style={divProperties}>
 
                 <ToolButton iconName={leftIconName} datatest="btn-back-page" width={35} height={height - 10}
-                            fontSize={33.75} marginRight={10} colors={colors}
+                            key="btn-back-page" fontSize={33.75} marginRight={10} colors={colors}
                             actions={{ onclick: () => actions.backPage() }}/>
 
                 <ToolText datatest="text-pages" height={height - 10}
@@ -65,23 +68,28 @@ export const EditorTools: Component<Props> = ({ currentPage, maxPage, height, an
                 </ToolText>
 
                 <ToolButton iconName={rightIconName} datatest="btn-next-page" width={35} height={height - 10}
-                            fontSize={33.75} marginRight={10} colors={colors}
+                            key="btn-next-page" fontSize={33.75} marginRight={10} colors={colors}
                             actions={{ onclick: () => actions.nextPageOrNewPage() }}/>
 
-                {/*<ToolButton iconName="edit" datatest="btn-block-mode" width={35} height={height - 10}*/}
-                {/*fontSize={32} marginRight={10} colors={colors}*/}
-                {/*actions={{ onclick: () => actions.changeToDrawingMode() }}/>*/}
-
-                <ToolButton iconName="build" datatest="btn-drawing-tool" width={45} height={height - 10}
-                            fontSize={27} marginRight={20} colors={colors}
-                            actions={{ onclick: () => actions.changeToDrawingToolMode() }}/>
+                {
+                    modeType !== ModeTypes.DrawingTool
+                        ? <ToolButton iconName="home" datatest="btn-drawing-tool" width={45} height={height - 10}
+                                      key="btn-drawing-tool" fontSize={30} marginRight={20} colors={colors}
+                                      actions={{ onclick: () => actions.changeToDrawingToolMode() }}/>
+                        : <ToolButton iconName="" datatest="btn-drawing-tool" width={45} height={height - 10}
+                                      key="btn-drawing-tool" fontSize={30} marginRight={20} colors={colors}
+                                      actions={{
+                                          onclick: () => {
+                                          },
+                                      }}/>
+                }
 
                 {/*<ToolButton iconName="pan_tool" datatest="btn-put-piece" width={35} height={height - 10}*/}
                 {/*fontSize={29} colors={colors}*/}
                 {/*actions={{ onclick: () => actions.changeToPieceMode() }}/>*/}
 
                 <ToolButton iconName="settings" datatest="btn-open-settings" sticky={true}
-                            width={45} height={height - 10} fontSize={31.25} colors={colors}
+                            key="btn-open-settings" width={45} height={height - 10} fontSize={31.25} colors={colors}
                             actions={{ onclick: () => actions.openSettingsModal() }}/>
             </div>
         </nav>
