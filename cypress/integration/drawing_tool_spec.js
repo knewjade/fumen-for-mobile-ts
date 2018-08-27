@@ -66,7 +66,7 @@ describe('Drawing Tools', () => {
 
         // データを取り出す
         {
-            cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@QhwwFeBtxwGeBtwwJeXDYaAFLDmClcJSAVDEHBEooR?BUoAVBa9aPCM+AAAvhA2uBIhRpHeRpaeifQXAFLDmClcJSA?VjiSAVG88AYP88AZSdBAvhAplBLhwwFeRpAewwAeAPAeQaA?egHhlQ4C8BtQpJeHiuFA3XaDEEBAAA9giWQaDexDwwBtg0Q?LAewhRLwSQahWQaQLwwwhhlwhA8HeAAJeHmB9gU4Eek0Eek?lOeEtEeAAA');
+            cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@QhwwFeBtxwGeBtwwJeXDYaAFLDmClcJSAVDEHBEooR?BUoAVBa9aPCM+AAAvhA2uBIhRpHeRpaeifQXAFLDmClcJSA?VjiSAVG88AYP88AZSdBAvhAplBLhwwFeRpAewwAeAPAeQaA?egHhlQ4C8BtQpJeHiuFA3XaDEEBAAA9giWQaDexDwwBtg0Q?LAewhRLwSQahWQaQLwwwhhlwhA8HeAAJeHmB9gV4Del0Del?lNeFtDeAAA');
         }
     });
 });

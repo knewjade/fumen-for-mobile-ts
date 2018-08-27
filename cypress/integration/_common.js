@@ -17,6 +17,7 @@ export const Color = {
         S: '#26CE22',
         O: '#CCCE19',
         T: '#CE27CE',
+        Completion: '#fff',
     },
     Empty: {
         Field: '#000',

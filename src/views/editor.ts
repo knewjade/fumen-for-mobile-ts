@@ -7,7 +7,6 @@ import { OpenFumenModal, SettingsModal } from '../components/modals';
 import { Palette } from '../lib/colors';
 import { Actions } from '../actions';
 import { Field } from '../components/field';
-import { PieceEventCanvas } from '../components/event/piece_event_canvas';
 import { KonvaCanvas } from '../components/konva_canvas';
 import { DrawingEventCanvas } from '../components/event/drawing_event_canvas';
 import { a, div, i, img, span } from '@hyperapp/html';
@@ -164,7 +163,7 @@ const toolMode = ({ layout, currentIndex, actions }: {
                     flexDirection: 'row',
                     alignItems: 'center',
                 },
-            }, [icon, span({ style: style({ fontSize: px(9) }) }, description)]),
+            }, [icon, span({ style: style({ fontSize: px(10) }) }, description)]),
         ]);
     };
 
@@ -207,9 +206,10 @@ const toolMode = ({ layout, currentIndex, actions }: {
 
 const blockMode = ({ layout, modePiece, actions }: {
     layout: any;
-    modePiece: Piece;
+    modePiece: Piece | undefined;
     actions: {
         selectPieceColor: (data: { piece: Piece }) => void;
+        selectInferencePieceColor: () => void;
     };
 }) => {
     const colorButton = ({ piece, highlight }: {
@@ -257,6 +257,58 @@ const blockMode = ({ layout, modePiece, actions }: {
         ]);
     };
 
+    const inferenceButton = ({ highlight }: {
+        highlight: boolean,
+    }) => {
+        const properties = style({
+            display: 'block',
+            height: px(layout.buttons.size.height),
+            lineHeight: px(layout.buttons.size.height),
+            fontSize: px(22),
+            border: 'solid 0px #000',
+            marginRight: px(2),
+            cursor: 'pointer',
+        });
+
+        const className = 'material-icons';
+
+        const icon = i({
+            className,
+            style: properties,
+        }, 'image_aspect_ratio');
+
+        const boarderWidth = highlight ? 3 : 1;
+        return a({
+            href: '#',
+            class: 'waves-effect z-depth-0 btn',
+            datatest: `btn-piece-inference`,
+            key: `btn-piece-inference`,
+            style: style({
+                backgroundColor: '#fff',
+                color: '#333',
+                border: `solid ${boarderWidth}px ` + (highlight ? '#ff8a80' : '#333'),
+                margin: px(5),
+                width: px(layout.buttons.size.width),
+                maxWidth: px(layout.buttons.size.width),
+                padding: px(0),
+                boxSizing: 'border-box',
+                textAlign: 'center',
+            }),
+            onclick: () => actions.selectInferencePieceColor(),
+        }, [
+            div({
+                style: {
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                },
+            }, [icon, span({ style: style({ fontSize: px(10) }) }, 'comp')]),
+        ]);
+    };
+
     const pieces = [Piece.Empty, Piece.I, Piece.L, Piece.O, Piece.Z, Piece.T, Piece.J, Piece.S, Piece.Gray];
 
     return div({
@@ -270,7 +322,9 @@ const blockMode = ({ layout, modePiece, actions }: {
             height: px(layout.canvas.size.height),
             width: px(layout.buttons.size.width),
         }),
-    }, pieces.map(piece => colorButton({ piece, highlight: modePiece === piece })));
+    }, pieces.map(piece => colorButton({ piece, highlight: modePiece === piece })).concat([
+        inferenceButton({ highlight: modePiece === undefined }),
+    ]));
 };
 
 const ScreenField = (state: State, actions: Actions, layout: any) => {
@@ -324,12 +378,6 @@ const Events = (state: State, actions: Actions) => {
             fieldBlocks: resources.konva.fieldBlocks,
             sentBlocks: resources.konva.sentBlocks,
             fieldLayer: resources.konva.layers.field,
-        });
-    case TouchTypes.Piece:
-        return PieceEventCanvas({
-            actions,
-            fieldBlocks: resources.konva.fieldBlocks,
-            sentBlocks: resources.konva.sentBlocks,
         });
     }
 

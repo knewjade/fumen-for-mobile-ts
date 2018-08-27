@@ -53,7 +53,6 @@ export enum ModeTypes {
 
 export enum TouchTypes {
     Drawing = 'Drawing',
-    Piece = 'Piece',
 }
 
 export function parsePieceName(piece: Piece) {

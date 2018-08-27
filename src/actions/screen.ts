@@ -8,7 +8,6 @@ export interface ScreenActions {
     changeToDrawerScreen: () => action;
     changeToDrawingMode: () => action;
     changeToDrawingToolMode: () => action;
-    changeToPieceMode: () => action;
     changeMode: (mode: Partial<State['mode']>) => action;
 }
 
@@ -33,15 +32,6 @@ export const modeActions: Readonly<ScreenActions> = {
                 ...state.mode,
                 type: ModeTypes.Drawing,
                 touch: TouchTypes.Drawing,
-            },
-        };
-    },
-    changeToPieceMode: () => (state): NextState => {
-        return {
-            mode: {
-                ...state.mode,
-                type: ModeTypes.Piece,
-                touch: TouchTypes.Piece,
             },
         };
     },

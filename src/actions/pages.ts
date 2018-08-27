@@ -49,7 +49,11 @@ export const pageActions: Readonly<PageActions> = {
         return sequence(state, [
             state.play.status === AnimationState.Play ? actions.startAnimation() : undefined,
             actions.setComment({ comment: text }),
-            actions.setField({ field: blocks.playField, filledHighlight: page.flags.lock }),
+            actions.setField({
+                field: blocks.playField,
+                filledHighlight: page.flags.lock,
+                inferences: state.events.inferences,
+            }),
             actions.setSentLine({ sentLine: blocks.sentLine }),
             actions.setHold({ hold }),
             actions.setNext({ next }),
@@ -106,13 +110,12 @@ export const pageActions: Readonly<PageActions> = {
     },
     nextPageOrNewPage: () => (state): NextState => {
         const nextPage = state.fumen.currentIndex + 1;
-        if (state.fumen.maxPage <= nextPage) {
-            return sequence(state, [
-                pageActions.insertPage({ index: nextPage }),
-                pageActions.openPage({ index: nextPage }),
-            ]);
-        }
-        return pageActions.openPage({ index: nextPage })(state);
+        return sequence(state, [
+            actions.fixInferencePiece(),
+            actions.clearInferencePiece(),
+            state.fumen.maxPage <= nextPage ? pageActions.insertPage({ index: nextPage }) : undefined,
+            pageActions.openPage({ index: nextPage }),
+        ]);
     },
 };
 

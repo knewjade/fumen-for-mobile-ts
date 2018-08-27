@@ -112,6 +112,7 @@ interface SettingsProps {
         closeSettingsModal: () => void;
         changeToReaderScreen: () => void;
         changeToDrawerScreen: () => void;
+        fixInferencePiece: () => void;
     };
 }
 
@@ -153,6 +154,8 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
     });
 
     const copyOnClick = async () => {
+        actions.fixInferencePiece();
+
         // テト譜の変換
         const data = 'v115@' + await encode(pages);
 

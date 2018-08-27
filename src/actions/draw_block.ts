@@ -2,8 +2,15 @@ import { State } from '../states';
 import { Piece } from '../lib/enums';
 import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
+import { inferPiece } from '../lib/inference';
 
 export interface DrawBlockActions {
+    fixInferencePiece(): action;
+
+    clearInferencePiece(): action;
+
+    resetInferencePiece(): action;
+
     ontouchStartField(data: { index: number }): action;
 
     ontouchMoveField(data: { index: number }): action;
@@ -14,71 +21,202 @@ export interface DrawBlockActions {
 
     ontouchMoveSentLine(data: { index: number }): action;
 
-    ontouchStartPiece(data: { index: number }): action;
+    selectPieceColor(data: { piece: Piece }): action;
+
+    selectInferencePieceColor(): action;
 }
 
 export const drawBlockActions: Readonly<DrawBlockActions> = {
+    fixInferencePiece: () => (state): NextState => {
+        const inferences = state.events.inferences;
+        if (inferences.length < 4) {
+            return undefined;
+        }
+
+        // InferencePieceが揃っているとき
+        let piece;
+        try {
+            piece = inferPiece(inferences).piece;
+        } catch (e) {
+            return undefined;
+        }
+
+        const currentPageIndex = state.fumen.currentIndex;
+        const pages = state.fumen.pages;
+        const page = pages[currentPageIndex];
+        if (!page.commands) {
+            page.commands = {
+                pre: {},
+            };
+        }
+
+        // Blockを追加
+        for (const index of inferences) {
+            const x = index % 10;
+            const y = Math.floor(index / 10);
+            const type = 'block';
+            const key = `${type}-${index}`;
+            page.commands.pre[key] = { x, y, piece, type };
+        }
+
+        // 4つ以上あるとき
+        return sequence(state, [
+            drawBlockActions.resetInferencePiece(),
+        ]);
+    },
+    clearInferencePiece: () => (state): NextState => {
+        return sequence(state, [
+            () => ({
+                events: {
+                    ...state.events,
+                    inferences: [],
+                },
+            }),
+        ]);
+    },
+    resetInferencePiece: () => (state): NextState => {
+        return sequence(state, [
+            drawBlockActions.clearInferencePiece(),
+            actions.openPage({ index: state.fumen.currentIndex }),
+        ]);
+    },
     ontouchStartField: ({ index }) => (state): NextState => {
-        return startDrawingField(state, index, true);
+        if (state.mode.piece !== undefined) {
+            return sequence(state, [
+                drawBlockActions.fixInferencePiece(),
+                newState => startDrawingField(newState, index, true),
+                drawBlockActions.ontouchMoveField({ index }),
+            ]);
+        }
+
+        const inferences = state.events.inferences;
+
+        return sequence(state, [
+            inferences.find(e => e === index) === undefined ? drawBlockActions.fixInferencePiece() : undefined,
+            newState => ({
+                events: {
+                    ...newState.events,
+                    touch: {
+                        piece: newState.events.inferences.find(e => e === index) === undefined
+                            ? Piece.Gray
+                            : Piece.Empty,
+                    },
+                },
+            }),
+            drawBlockActions.ontouchMoveField({ index }),
+        ]);
     },
     ontouchMoveField: ({ index }) => (state): NextState => {
-        return moveDrawingField(state, index, true);
+        if (state.mode.piece !== undefined) {
+            return moveDrawingField(state, index, true);
+        }
+
+        const piece = state.events.touch.piece;
+        if (piece === undefined) {
+            return undefined;
+        }
+
+        // 追加
+        const inferences = state.events.inferences;
+        if (piece !== Piece.Empty) {
+            // 4つ以上あるとき
+            if (4 <= inferences.length) {
+                return undefined;
+            }
+
+            // すでに表示上にブロックがある
+            if (state.field[index].piece !== Piece.Empty) {
+                return undefined;
+            }
+
+            // まだ存在しないとき
+            if (inferences.find(e => e === index) === undefined) {
+                const nextInterences = state.events.inferences.concat([index]);
+                return sequence(state, [
+                    () => ({
+                        events: {
+                            ...state.events,
+                            inferences: nextInterences,
+                        },
+                    }),
+                    actions.openPage({ index: state.fumen.currentIndex }),
+                ]);
+            }
+        }
+
+        // 削除
+        if (piece === Piece.Empty) {
+            return sequence(state, [
+                () => ({
+                    events: {
+                        ...state.events,
+                        inferences: state.events.inferences.filter(e => e !== index),
+                    },
+                }),
+                actions.openPage({ index: state.fumen.currentIndex }),
+            ]);
+        }
+
+        return undefined;
     },
     ontouchEnd: () => (state): NextState => {
         return endDrawingField(state);
     },
     ontouchStartSentLine: ({ index }) => (state): NextState => {
-        return startDrawingField(state, index, false);
+        if (state.mode.piece !== undefined) {
+            return sequence(state, [
+                () => startDrawingField(state, index, false),
+                drawBlockActions.ontouchMoveSentLine({ index }),
+            ]);
+        }
+
+        return undefined;
     },
     ontouchMoveSentLine: ({ index }) => (state): NextState => {
-        return moveDrawingField(state, index, false);
-    },
-    ontouchStartPiece: ({}) => (state): NextState => {
-        const pages = state.fumen.pages;
-        const currentPageIndex = state.fumen.currentIndex;
+        if (state.mode.piece !== undefined) {
+            return moveDrawingField(state, index, false);
+        }
 
+        return undefined;
+    },
+    selectPieceColor: ({ piece }) => (state): NextState => {
         return sequence(state, [
-            () => ({
-                fumen: {
-                    ...state.fumen,
-                    pages,
+            drawBlockActions.fixInferencePiece(),
+            drawBlockActions.resetInferencePiece(),
+            newState => ({
+                mode: {
+                    ...newState.mode,
+                    piece,
                 },
             }),
-            actions.openPage({ index: currentPageIndex }),
+        ]);
+    },
+    selectInferencePieceColor: () => (state): NextState => {
+        return sequence(state, [
+            drawBlockActions.fixInferencePiece(),
+            drawBlockActions.resetInferencePiece(),
+            newState => ({
+                mode: {
+                    ...newState.mode,
+                    piece: undefined,
+                },
+            }),
         ]);
     },
 };
 
 const startDrawingField = (state: State, index: number, isField: boolean): NextState => {
-    const pages = state.fumen.pages;
     const currentPageIndex = state.fumen.currentIndex;
 
     // 塗りつぶすpieceを決める
     const block = isField ? state.field[index] : state.sentLine[index];
     const piece = block.piece !== state.mode.piece ? state.mode.piece : Piece.Empty;
-
-    const page = pages[currentPageIndex];
-    if (!page.commands) {
-        page.commands = {
-            pre: {},
-        };
-    }
-
-    // Blockを追加
-    {
-        const x = index % 10;
-        const y = Math.floor(index / 10);
-        const type = isField ? 'block' : 'sentBlock';
-        const key = `${type}-${index}`;
-        page.commands.pre[key] = { x, y, piece, type };
+    if (piece === undefined) {
+        return undefined;
     }
 
     return sequence(state, [
         () => ({
-            fumen: {
-                ...state.fumen,
-                pages,
-            },
             events: {
                 ...state.events,
                 touch: { piece },

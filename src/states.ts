@@ -44,12 +44,13 @@ export interface State {
         touch: {
             piece?: Piece;
         };
+        inferences: number[];
     };
     mode: {
         screen: Screens;
         type: ModeTypes;
         touch: TouchTypes;
-        piece: Piece;
+        piece: Piece | undefined;
     };
     version: string;
 }
@@ -93,12 +94,13 @@ export const initState: Readonly<State> = {
         touch: {
             piece: undefined,
         },
+        inferences: [],
     },
     mode: {
         screen: Screens.Reader,
         type: ModeTypes.DrawingTool,
         touch: TouchTypes.Drawing,
-        piece: Piece.Gray,
+        piece: undefined,
     },
     version: VERSION,
 };

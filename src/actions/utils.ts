@@ -1,6 +1,5 @@
 import { NextState } from './commons';
 import { action, actions, main } from '../actions';
-import { Piece } from '../lib/enums';
 import { decode, Page } from '../lib/fumen/fumen';
 import { i18n } from '../locales/keys';
 import { ViewError } from '../lib/errors';
@@ -9,7 +8,6 @@ export interface UtilsActions {
     resize: (data: { width: number, height: number }) => action;
     loadFumen: (args: { fumen: string | undefined }) => action;
     refresh: () => action;
-    selectPieceColor: (data: { piece: Piece }) => action;
     ontapCanvas: (e: any) => action;
 }
 
@@ -45,14 +43,6 @@ export const utilsActions: Readonly<UtilsActions> = {
         })();
 
         return undefined;
-    },
-    selectPieceColor: ({ piece }) => (state): NextState => {
-        return {
-            mode: {
-                ...state.mode,
-                piece,
-            },
-        };
     },
     refresh: () => (): NextState => {
         return {};

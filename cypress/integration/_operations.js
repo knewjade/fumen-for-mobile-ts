@@ -25,6 +25,9 @@ export const operations = {
             open: () => {
                 cy.get(datatest('btn-block-mode')).click();
             },
+            Completion: () => {
+                cy.get(datatest('btn-piece-inference')).click();
+            },
             J: () => {
                 cy.get(datatest('btn-piece-j')).click();
             },
@@ -58,8 +61,8 @@ export const operations = {
 
                 const maxCount = 10;
                 const dx = (to - from) / maxCount;
-                for (let count = 0; count < maxCount; count++) {
-                    body = body.trigger('mousemove', px(dx * count), py(y));
+                for (let count = 0; count <= maxCount; count++) {
+                    body = body.trigger('mousemove', px(dx * count + from), py(y));
                 }
 
                 body.trigger('mouseup', px(to), py(y));

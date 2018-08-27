@@ -17,7 +17,10 @@ interface Props {
     fieldMarginWidth: number;
 }
 
-const decidePieceColor = (piece: Piece, highlight: boolean) => {
+const decidePieceColor = (piece: Block['piece'], highlight: boolean) => {
+    if (piece === 'inference') {
+        return '#fff';
+    }
     return highlight ? getHighlightColor(piece) : getNormalColor(piece);
 };
 
