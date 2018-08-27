@@ -202,7 +202,7 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
 
                     <div style={divProperties}>
                         {screen === Screens.Editor ?
-                            <SettingButton href="#" iconName="insert_photo"
+                            <SettingButton datatest="btn-readonly" href="#" iconName="insert_photo"
                                            onclick={() => {
                                                actions.changeToReaderScreen();
                                                actions.closeSettingsModal();

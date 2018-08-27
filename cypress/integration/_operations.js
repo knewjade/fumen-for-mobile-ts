@@ -11,6 +11,11 @@ export const operations = {
             cy.get(datatest('btn-writable')).click();
             cy.wait(500);
         },
+        readonly: () => {
+            cy.get(datatest('btn-open-settings')).click();
+            cy.get(datatest('btn-readonly')).click();
+            cy.wait(500);
+        },
     },
     mode: {
         editor: {

@@ -186,32 +186,64 @@ describe('Drawing', () => {
         cy.get(block(1, 0)).should('have.attr', 'color', Color.Highlight.Z);
         cy.get(block(2, 0)).should('have.attr', 'color', Color.Highlight.Z);
 
-        // 補完ボタン
-        operations.mode.block.Completion();
-
-        operations.mode.block.click(2, 3);
-        operations.mode.block.click(2, 2);
-        operations.mode.block.click(2, 1);
-        operations.mode.block.click(1, 1);
-
-        // 補完ミノの確認
         {
-            cy.get(block(2, 3)).should('have.attr', 'color', Color.Highlight.Completion);
-            cy.get(block(2, 2)).should('have.attr', 'color', Color.Highlight.Completion);
-            cy.get(block(2, 1)).should('have.attr', 'color', Color.Highlight.Completion);
-            cy.get(block(1, 1)).should('have.attr', 'color', Color.Normal.Z);
+            // 補完ボタン
+            operations.mode.block.Completion();
+
+            operations.mode.block.click(2, 3);
+            operations.mode.block.click(2, 2);
+            operations.mode.block.click(2, 1);
+            operations.mode.block.click(1, 1);
+
+            // 補完ミノの確認
+            {
+                cy.get(block(2, 3)).should('have.attr', 'color', Color.Highlight.Completion);
+                cy.get(block(2, 2)).should('have.attr', 'color', Color.Highlight.Completion);
+                cy.get(block(2, 1)).should('have.attr', 'color', Color.Highlight.Completion);
+                cy.get(block(1, 1)).should('have.attr', 'color', Color.Normal.Z);
+            }
+
+            // 補完ボタン // リセット
+            operations.mode.block.Completion();
+
+            // 補完が消えている
+            {
+                cy.get(block(2, 3)).should('have.attr', 'color', Color.Empty.Field);
+                cy.get(block(2, 2)).should('have.attr', 'color', Color.Empty.Field);
+                cy.get(block(2, 1)).should('have.attr', 'color', Color.Empty.Field);
+                cy.get(block(1, 1)).should('have.attr', 'color', Color.Normal.Z);
+            }
         }
 
-        // 補完ボタン
-        operations.mode.block.Completion();
-
-        // Iミノの確認
         {
-            cy.get(block(2, 3)).should('have.attr', 'color', Color.Empty.Field);
-            cy.get(block(2, 2)).should('have.attr', 'color', Color.Empty.Field);
-            cy.get(block(2, 1)).should('have.attr', 'color', Color.Empty.Field);
-            cy.get(block(1, 1)).should('have.attr', 'color', Color.Normal.Z);
+            // 補完ボタン
+            operations.mode.block.Completion();
+
+            operations.mode.block.click(2, 3);
+            operations.mode.block.click(2, 2);
+            operations.mode.block.click(2, 1);
+            operations.mode.block.click(1, 1);
+
+            // 補完ミノの確認
+            {
+                cy.get(block(2, 3)).should('have.attr', 'color', Color.Highlight.Completion);
+                cy.get(block(2, 2)).should('have.attr', 'color', Color.Highlight.Completion);
+                cy.get(block(2, 1)).should('have.attr', 'color', Color.Highlight.Completion);
+                cy.get(block(1, 1)).should('have.attr', 'color', Color.Normal.Z);
+            }
+
+            // 補完ボタン
+            operations.screen.readonly();
+
+            // 補完が消えている
+            {
+                cy.get(block(2, 3)).should('have.attr', 'color', Color.Empty.Field);
+                cy.get(block(2, 2)).should('have.attr', 'color', Color.Empty.Field);
+                cy.get(block(2, 1)).should('have.attr', 'color', Color.Empty.Field);
+                cy.get(block(1, 1)).should('have.attr', 'color', Color.Normal.Z);
+            }
         }
+
 
         operations.settings.copyToClipboard();
 
