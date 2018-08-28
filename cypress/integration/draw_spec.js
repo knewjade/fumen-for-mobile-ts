@@ -288,7 +288,7 @@ describe('Drawing', () => {
 
         // データを取り出す
         {
-            cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@AhG8CeG8BtAeH8BtG8JeAgH');
+            cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@AhG8CeG8BtAeH8BtG8JeAgHvhAAgH');
         }
     });
 });
