@@ -219,6 +219,46 @@ describe('Drawing', () => {
             // 補完ボタン
             operations.mode.block.Completion();
 
+            operations.mode.block.click(2, 2);
+
+            // 補完ミノの確認
+            {
+                cy.get(block(2, 2)).should('have.attr', 'color', Color.Highlight.Completion);
+            }
+
+            // 戻るボタン
+            operations.mode.editor.nextPage();
+
+            // 補完が消えている
+            {
+                cy.get(block(2, 2)).should('have.attr', 'color', Color.Empty.Field);
+            }
+        }
+
+        {
+            // 補完ボタン
+            operations.mode.block.Completion();
+
+            operations.mode.block.click(2, 2);
+
+            // 補完ミノの確認
+            {
+                cy.get(block(2, 2)).should('have.attr', 'color', Color.Highlight.Completion);
+            }
+
+            // 戻るボタン
+            operations.mode.editor.backPage();
+
+            // 補完が消えている
+            {
+                cy.get(block(2, 2)).should('have.attr', 'color', Color.Empty.Field);
+            }
+        }
+
+        {
+            // 補完ボタン
+            operations.mode.block.Completion();
+
             operations.mode.block.click(2, 3);
             operations.mode.block.click(2, 2);
             operations.mode.block.click(2, 1);
@@ -243,7 +283,6 @@ describe('Drawing', () => {
                 cy.get(block(1, 1)).should('have.attr', 'color', Color.Normal.Z);
             }
         }
-
 
         operations.settings.copyToClipboard();
 

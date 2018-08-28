@@ -106,7 +106,11 @@ export const pageActions: Readonly<PageActions> = {
         const backPage = state.fumen.currentIndex - 1;
         if (backPage < 0) return;
 
-        return pageActions.openPage({ index: backPage })(state);
+        return sequence(state, [
+            actions.fixInferencePiece(),
+            actions.clearInferencePiece(),
+            pageActions.openPage({ index: backPage }),
+        ]);
     },
     nextPageOrNewPage: () => (state): NextState => {
         const nextPage = state.fumen.currentIndex + 1;
