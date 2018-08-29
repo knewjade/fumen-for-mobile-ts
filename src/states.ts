@@ -4,6 +4,7 @@ import { HyperStage } from './lib/hyper';
 import { Box } from './components/box';
 import { PageEnv } from './env';
 import { Block } from './state_types';
+import { Field } from './lib/fumen/field';
 import konva = require('konva');
 
 const VERSION = PageEnv.Version;
@@ -32,6 +33,9 @@ export interface State {
         pages: Page[];
         value?: string;
         errorMessage?: string;
+    };
+    cache: {
+        currentInitField: Field;
     };
     modal: {
         fumen: boolean;
@@ -82,6 +86,9 @@ export const initState: Readonly<State> = {
         pages: [],
         value: undefined,
         errorMessage: undefined,
+    },
+    cache: {
+        currentInitField: new Field({}),
     },
     modal: {
         fumen: false,

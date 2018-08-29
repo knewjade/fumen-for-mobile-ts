@@ -58,6 +58,10 @@ export class Field {
         return 0 <= y ? this.playField.get(x, y) : this.sentLine.get(x, -(y + 1));
     }
 
+    getAtIndex(index: number): Piece {
+        return this.get(index % 10, Math.floor(index / 10));
+    }
+
     copy(): Field {
         return new Field({ field: this.playField.copy(), sentLine: this.sentLine.copy() });
     }

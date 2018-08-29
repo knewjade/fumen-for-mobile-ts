@@ -62,6 +62,9 @@ export const pageActions: Readonly<PageActions> = {
                     ...state.fumen,
                     currentIndex: index,
                 },
+                cache: {
+                    currentInitField: field,
+                },
             }),
         ]);
     },

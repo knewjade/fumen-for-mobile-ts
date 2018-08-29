@@ -56,7 +56,14 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
             const y = Math.floor(index / 10);
             const type = 'block';
             const key = `${type}-${index}`;
-            page.commands.pre[key] = { x, y, piece, type };
+
+            if (state.cache.currentInitField.getAtIndex(index) !== piece) {
+                // 操作の結果、最初のフィールドの状態から変化するとき
+                page.commands.pre[key] = { x, y, piece, type };
+            } else {
+                // 操作の結果、最初のフィールドの状態に戻るとき
+                delete page.commands.pre[key];
+            }
         }
 
         // 4つ以上あるとき
@@ -255,7 +262,14 @@ const moveDrawingField = (state: State, index: number, isField: boolean): NextSt
         const y = Math.floor(index / 10);
         const type = isField ? 'block' : 'sentBlock';
         const key = `${type}-${index}`;
-        page.commands.pre[key] = { x, y, piece, type };
+
+        if (state.cache.currentInitField.getAtIndex(index) !== piece) {
+            // 操作の結果、最初のフィールドの状態から変化するとき
+            page.commands.pre[key] = { x, y, piece, type };
+        } else {
+            // 操作の結果、最初のフィールドの状態に戻るとき
+            delete page.commands.pre[key];
+        }
     }
 
     return sequence(state, [

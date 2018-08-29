@@ -57,6 +57,9 @@ export const operations = {
             Gray: () => {
                 cy.get(datatest('btn-piece-gray')).click();
             },
+            Empty: () => {
+                cy.get(datatest('btn-piece-empty')).click();
+            },
             click: (x, y) => {
                 cy.get('body').click(px(x), py(y));
             },

@@ -73,6 +73,27 @@ export const mino = (piece, rotation) => {
     };
 };
 
+export const minoPosition = (piece, rotation) => {
+    let blocks = getPieces(piece);
+    switch (rotation) {
+        case Rotation.Spawn:
+            break;
+        case Rotation.Reverse:
+            blocks = blocks.map(current => [-current[0], -current[1]]);
+            break;
+        case Rotation.Left:
+            blocks = blocks.map(current => [-current[1], current[0]]);
+            break;
+        case Rotation.Right:
+            blocks = blocks.map(current => [current[1], -current[0]]);
+            break;
+    }
+
+    return (x, y) => {
+        return blocks.map(current => [current[0] + x, current[1] + y]);
+    };
+};
+
 const getPieces = (piece) => {
     switch (piece) {
         case Piece.I:

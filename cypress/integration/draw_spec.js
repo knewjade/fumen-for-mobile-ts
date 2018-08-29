@@ -1,4 +1,4 @@
-import { block, Color, datatest, mino, Piece, Rotation } from './_common';
+import { block, Color, datatest, mino, minoPosition, Piece, Rotation } from './_common';
 import { operations } from './_operations';
 
 // テト譜を開く
@@ -290,5 +290,56 @@ describe('Drawing', () => {
         {
             cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@AhG8CeG8BtAeH8BtG8JeAgHvhAAgH');
         }
+    });
+
+    it('Completion blocks 3', () => {
+        cy.visit('./public/index.html?d=v115@vhAAgH');
+
+        operations.screen.writable();
+
+        operations.mode.block.open();
+
+        // 次のページ
+        operations.mode.editor.nextPage();
+
+        operations.mode.block.O();
+
+        // Oミノを置く
+        minoPosition(Piece.O, Rotation.Spawn)(5, 0).forEach(([x, y]) => {
+            operations.mode.block.click(x, y);
+        });
+
+        // Oミノを消す
+        minoPosition(Piece.O, Rotation.Spawn)(5, 0).forEach(([x, y]) => {
+            operations.mode.block.click(x, y);
+        });
+
+        operations.mode.block.T();
+
+        operations.mode.block.click(7, 0);
+        operations.mode.block.click(7, 1);
+
+        operations.mode.block.Empty();
+
+        operations.mode.block.click(7, 0);
+        operations.mode.block.click(7, 1);
+
+        // 前のページ
+        operations.mode.editor.backPage();
+
+        operations.mode.block.I();
+
+        // Iミノを置く
+        minoPosition(Piece.I, Rotation.Spawn)(4, 0).forEach(([x, y]) => {
+            operations.mode.block.click(x, y);
+        });
+
+        // 次のページ
+        operations.mode.editor.nextPage();
+
+        // Iミノの確認
+        mino(Piece.I, Rotation.Spawn)(4, 0).forEach((block) => {
+            cy.get(block).should('have.attr', 'color', Color.Normal.I);
+        });
     });
 });
