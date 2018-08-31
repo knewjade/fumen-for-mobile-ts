@@ -22,4 +22,7 @@ export const resources = {
             Help: 'help',
         },
     },
+    Domains: {
+        Fumen: 'http://harddrop.com/fumen/?',
+    },
 };

@@ -9,4 +9,7 @@ export const resources = {
             FailedToLoad: 'テト譜を読み込めませんでした',
         },
     },
+    Domains: {
+        Fumen: 'http://fumen.zui.jp/?',
+    },
 };

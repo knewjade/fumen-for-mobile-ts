@@ -161,12 +161,13 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
         const data = 'v115@' + await encode(pages);
 
         // コピー用のelementを作成
+        const domain = i18n.Domains.Fumen();
         const element = document.createElement('pre');
         {
             const style = element.style;
             style.position = 'fixed';
             style.left = '-100%';
-            element.textContent = data;
+            element.textContent = domain + data;
             document.body.appendChild(element);
         }
 

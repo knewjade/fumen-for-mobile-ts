@@ -27,4 +27,7 @@ export const i18n = {
             Help: () => t('Settings.Buttons.Help'),
         },
     },
+    Domains: {
+        Fumen: () => t('Domains.Fumen'),
+    },
 };
