@@ -118,7 +118,7 @@ const toolMode = ({ layout, currentIndex, actions }: {
             datatest: string;
             key: string;
             fontSize: number;
-            onclick: () => void;
+            onclick: (event: MouseEvent) => void;
         }) => {
         const properties = style({
             display: 'block',
@@ -139,7 +139,6 @@ const toolMode = ({ layout, currentIndex, actions }: {
 
         return a({
             datatest,
-            onclick,
             key,
             href: '#',
             class: `waves-effect z-depth-0 btn ${backgroundColorClass}`,
@@ -153,6 +152,10 @@ const toolMode = ({ layout, currentIndex, actions }: {
                 boxSizing: 'border-box',
                 textAlign: 'center',
             }),
+            onclick: (event: MouseEvent) => {
+                onclick(event);
+                event.stopPropagation();
+            },
         }, [
             div({
                 style: {
@@ -234,7 +237,10 @@ const blockMode = ({ layout, modePiece, actions }: {
                 boxSizing: 'border-box',
                 textAlign: 'center',
             }),
-            onclick: () => actions.selectPieceColor({ piece }),
+            onclick: (event: MouseEvent) => {
+                actions.selectPieceColor({ piece });
+                event.stopPropagation();
+            },
         }, [
             div({
                 style: {
@@ -294,7 +300,10 @@ const blockMode = ({ layout, modePiece, actions }: {
                 boxSizing: 'border-box',
                 textAlign: 'center',
             }),
-            onclick: () => actions.selectInferencePieceColor(),
+            onclick: (event: MouseEvent) => {
+                actions.selectInferencePieceColor();
+                event.stopPropagation();
+            },
         }, [
             div({
                 style: {
@@ -309,7 +318,7 @@ const blockMode = ({ layout, modePiece, actions }: {
         ]);
     };
 
-    const pieces = [Piece.Empty, Piece.I, Piece.L, Piece.O, Piece.Z, Piece.T, Piece.J, Piece.S, Piece.Gray];
+    const pieces = [Piece.I, Piece.L, Piece.O, Piece.Z, Piece.T, Piece.J, Piece.S, Piece.Empty, Piece.Gray];
 
     return div({
         style: style({
@@ -360,11 +369,13 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
 
     return div({
         key: 'field-top',
+        id: 'field-top',
         style: style({
             display: 'flex',
             justifyContent: 'center',
             flexDirection: 'row',
             alignItems: 'center',
+            userSelect: 'none',
         }),
     }, getChildren());
 };
@@ -393,6 +404,8 @@ const Tools = (state: State, actions: Actions, height: number) => {
         currentPage: state.fumen.currentIndex + 1,
         maxPage: state.fumen.maxPage,
         modeType: state.mode.type,
+        undoCount: state.history.undoCount,
+        redoCount: state.history.redoCount,
     });
 };
 

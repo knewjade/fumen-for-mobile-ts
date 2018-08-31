@@ -3,10 +3,12 @@ import { action, actions, main } from '../actions';
 import { decode, Page } from '../lib/fumen/fumen';
 import { i18n } from '../locales/keys';
 import { ViewError } from '../lib/errors';
+import { toFumenTask, toPrimitivePage } from "../history_task";
 
 export interface UtilsActions {
     resize: (data: { width: number, height: number }) => action;
-    loadFumen: (args: { fumen: string | undefined }) => action;
+    loadFumen: (args: { fumen: string | undefined, purgeOnFailed?: boolean }) => action;
+    loadNewFumen: () => action;
     refresh: () => action;
     ontapCanvas: (e: any) => action;
 }
@@ -17,7 +19,7 @@ export const utilsActions: Readonly<UtilsActions> = {
             display: { width, height },
         };
     },
-    loadFumen: ({ fumen }) => (): NextState => {
+    loadFumen: ({ fumen, purgeOnFailed = false }) => (state): NextState => {
         main.pauseAnimation();
 
         if (fumen === undefined) {
@@ -25,6 +27,7 @@ export const utilsActions: Readonly<UtilsActions> = {
             return undefined;
         }
 
+        const prevPages = state.fumen.pages.map(toPrimitivePage);
         (async () => {
             try {
                 const pages: Page[] = await decode(fumen);
@@ -32,9 +35,13 @@ export const utilsActions: Readonly<UtilsActions> = {
                 main.setPages({ pages });
                 main.closeFumenModal();
                 main.clearFumenData();
+
+                main.registerHistoryTask({ task: toFumenTask(prevPages, fumen, state.fumen.currentIndex) });
             } catch (e) {
                 console.error(e);
-                if (e instanceof ViewError) {
+                if (purgeOnFailed) {
+                    main.loadNewFumen();
+                } else if (e instanceof ViewError) {
                     main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.Unexpected(e.message) });
                 } else {
                     main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.FailedToLoad() });
@@ -43,6 +50,9 @@ export const utilsActions: Readonly<UtilsActions> = {
         })();
 
         return undefined;
+    },
+    loadNewFumen: () => (state): NextState => {
+        return utilsActions.loadFumen({ fumen: 'v115@vhAAgH' })(state);
     },
     refresh: () => (): NextState => {
         return {};

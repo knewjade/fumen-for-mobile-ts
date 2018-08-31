@@ -11,6 +11,7 @@ interface Props {
     key: string;
     colors: {
         baseClass: string;
+        baseCode: string;
         darkCode: string;
     };
     actions: {
@@ -21,14 +22,19 @@ interface Props {
 interface IconProps {
     height: number;
     fontSize: number;
+    enable?: boolean;
     colors: {
         baseClass: string;
+        baseCode: string;
         darkCode: string;
     };
 }
 
 export const ToolButton: Component<Props & IconProps> = (
-    { height, width, fontSize, key, iconName, sticky = false, marginRight = 0, datatest, colors, actions },
+    {
+        height, width, fontSize, key, iconName, sticky = false, marginRight = 0,
+        datatest, colors, enable = true, actions,
+    },
 ) => {
     const aProperties = style({
         height: px(height),
@@ -46,26 +52,26 @@ export const ToolButton: Component<Props & IconProps> = (
            datatest={datatest}
            style={aProperties}
            onclick={() => actions.onclick()}>
-            <Icon height={height} fontSize={fontSize} colors={colors}>{iconName}</Icon>
+            <Icon height={height} fontSize={fontSize} colors={colors} enable={enable}>{iconName}</Icon>
         </a>
     );
 };
 
-const Icon: Component<IconProps> = ({ height, fontSize, colors }, children) => {
+const Icon: Component<IconProps> = ({ height, fontSize, colors, enable }, children) => {
     const properties = style({
         display: 'block',
         fontSize: px(fontSize),
         height: px(height),
         lineHeight: px(height),
         width: '100%',
-        border: 'solid 1px ' + colors.darkCode,
+        border: 'solid 1px ' + (enable ? colors.darkCode : colors.baseCode),
         boxSizing: 'border-box',
         textAlign: 'center',
         cursor: 'pointer',
         color: '#fff',
     });
 
-    const className = 'material-icons darken-3 ' + colors.baseClass;
+    const className = `material-icons darken-${enable ? 3 : 1} ${colors.baseClass}`;
 
-    return <i className={className} style={properties}>{children}</i>;
+    return <i className={className} style={properties}>{enable ? children : ''}</i>;
 };

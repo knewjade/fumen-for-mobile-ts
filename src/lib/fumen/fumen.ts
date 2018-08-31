@@ -339,7 +339,7 @@ export async function innerDecode(
     return pages;
 }
 
-export async function encode(inputPages: Page[]): Promise<string> {
+export async function encode(inputPages: Page[], isAsync: boolean = false): Promise<string> {
     const updateField = (prev: Field, current: Field) => {
         const { changed, values } = encodeField(prev, current);
 
@@ -365,7 +365,7 @@ export async function encode(inputPages: Page[]): Promise<string> {
 
     const pages = new Pages(inputPages);
 
-    for (let index = 0; index < inputPages.length; index += 1) {
+    const innerEncode = (index: number) => {
         const field = pages.getField(index);
 
         const currentPage = inputPages[index];
@@ -460,6 +460,18 @@ export async function encode(inputPages: Page[]): Promise<string> {
         }
 
         prevField = currentField;
+    };
+
+    const innerEncodeAsync = async (index: number) => {
+        innerEncode(index);
+    };
+
+    for (let index = 0; index < inputPages.length; index += 1) {
+        if (isAsync) {
+            await innerEncodeAsync(index);
+        } else {
+            innerEncode(index);
+        }
     }
 
     // テト譜が短いときはそのまま出力する

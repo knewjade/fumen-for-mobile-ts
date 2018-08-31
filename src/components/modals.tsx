@@ -113,6 +113,7 @@ interface SettingsProps {
         changeToReaderScreen: () => void;
         changeToDrawerScreen: () => void;
         fixInferencePiece: () => void;
+        loadNewFumen: () => void;
     };
 }
 
@@ -202,7 +203,7 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
 
                     <div style={divProperties}>
                         {screen === Screens.Editor ?
-                            <SettingButton datatest="btn-readonly" href="#" iconName="insert_photo"
+                            <SettingButton datatest="btn-readonly" href="#" iconName="insert_photo" fontSize={31.25}
                                            onclick={() => {
                                                actions.changeToReaderScreen();
                                                actions.closeSettingsModal();
@@ -210,18 +211,28 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
                             : undefined}
 
                         {screen === Screens.Reader ?
-                            <SettingButton datatest="btn-writable" href="#" iconName="mode_edit"
+                            <SettingButton datatest="btn-writable" href="#" iconName="mode_edit" fontSize={31.25}
                                            onclick={() => {
                                                actions.changeToDrawerScreen();
                                                actions.closeSettingsModal();
                                            }}>{i18n.Settings.Buttons.Writable()}</SettingButton>
                             : undefined}
 
-                        <SettingButton datatest="btn-copy-fumen" href="#" iconName="content_copy" onclick={copyOnClick}>
+                        <SettingButton datatest="btn-copy-fumen" href="#" iconName="content_copy"
+                                       fontSize={29.3} onclick={copyOnClick}>
                             {i18n.Settings.Buttons.Clipboard()}
                         </SettingButton>
 
-                        <SettingButton href="./help.html" iconName="help_outline">
+                        <SettingButton datatest="btn-new-fumen" href="#" iconName="insert_drive_file" fontSize={32.3}
+                                       onclick={() => {
+                                           actions.loadNewFumen();
+                                           actions.changeToDrawerScreen();
+                                           actions.closeSettingsModal();
+                                       }}>
+                            {i18n.Settings.Buttons.New()}
+                        </SettingButton>
+
+                        <SettingButton href="./help.html" iconName="help_outline" fontSize={31.25}>
                             {i18n.Settings.Buttons.Help()}
                         </SettingButton>
 
@@ -238,17 +249,18 @@ interface SettingButtonProps {
     onclick?: (event: MouseEvent) => void;
     iconName: string;
     datatest?: string;
+    fontSize: number;
 }
 
 export const SettingButton: ComponentWithText<SettingButtonProps> = (
-    { href = '#', onclick, iconName, datatest }, showName,
+    { href = '#', onclick, iconName, datatest, fontSize }, showName,
 ) => (
     <a href={href} onclick={onclick}>
         <i className="material-icons z-depth-1" style={style({
             width: px(50),
             height: px(40),
             lineHeight: px(40),
-            fontSize: px(31.25),
+            fontSize: px(fontSize),
             display: 'block',
             color: '#333',
             margin: px(5),

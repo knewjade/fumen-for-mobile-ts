@@ -7,7 +7,7 @@ module.exports = {
         './src/actions.ts'
     ],
     output: {
-        filename: 'bundle.js',
+        filename: '[name].bundle.js',
         path: path.join(__dirname, 'public')
     },
     module: {
@@ -33,6 +33,12 @@ module.exports = {
                 use: 'ts-loader'
             },
         ]
+    },
+    optimization: {
+        splitChunks: {
+            name: 'vendor',
+            chunks: 'initial',
+        },
     },
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx']

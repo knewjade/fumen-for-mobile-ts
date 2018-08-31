@@ -5,6 +5,7 @@ import { Box } from './components/box';
 import { PageEnv } from './env';
 import { Block } from './state_types';
 import { Field } from './lib/fumen/field';
+import { PrimitivePage } from './history_task';
 import konva = require('konva');
 
 const VERSION = PageEnv.Version;
@@ -49,12 +50,17 @@ export interface State {
             piece?: Piece;
         };
         inferences: number[];
+        prevPage?: PrimitivePage;
     };
     mode: {
         screen: Screens;
         type: ModeTypes;
         touch: TouchTypes;
         piece: Piece | undefined;
+    };
+    history: {
+        undoCount: number;
+        redoCount: number;
     };
     version: string;
 }
@@ -102,12 +108,17 @@ export const initState: Readonly<State> = {
             piece: undefined,
         },
         inferences: [],
+        prevPage: undefined,
     },
     mode: {
         screen: Screens.Reader,
         type: ModeTypes.DrawingTool,
         touch: TouchTypes.Drawing,
         piece: undefined,
+    },
+    history: {
+        undoCount: 0,
+        redoCount: 0,
     },
     version: VERSION,
 };

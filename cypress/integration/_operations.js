@@ -83,11 +83,21 @@ export const operations = {
             removePage: () => {
                 cy.get(datatest('btn-remove-page')).click();
             },
+            undo: () => {
+                cy.get(datatest('btn-undo')).click();
+            },
+            redo: () => {
+                cy.get(datatest('btn-redo')).click();
+            },
         },
     },
     settings: {
         open: () => {
             cy.get(datatest('btn-open-settings')).click();
+        },
+        newPage: () => {
+            operations.settings.open();
+            cy.get(datatest('btn-new-fumen')).click();
         },
         copyToClipboard: () => {
             operations.settings.open();

@@ -3,6 +3,7 @@ import { Piece } from '../lib/enums';
 import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
 import { inferPiece } from '../lib/inference';
+import { toPrimitivePage, toSinglePageTask } from '../history_task';
 
 export interface DrawBlockActions {
     fixInferencePiece(): action;
@@ -44,6 +45,8 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
         const currentPageIndex = state.fumen.currentIndex;
         const pages = state.fumen.pages;
         const page = pages[currentPageIndex];
+        const prevPage = toPrimitivePage(page);
+
         if (!page.commands) {
             page.commands = {
                 pre: {},
@@ -69,6 +72,8 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
         // 4つ以上あるとき
         return sequence(state, [
             drawBlockActions.resetInferencePiece(),
+            actions.saveToMemento(),
+            actions.registerHistoryTask({ task: toSinglePageTask(currentPageIndex, prevPage, page) }),
         ]);
     },
     clearInferencePiece: () => (state): NextState => {
@@ -167,7 +172,15 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
         return undefined;
     },
     ontouchEnd: () => (state): NextState => {
-        return endDrawingField(state);
+        const currentIndex = state.fumen.currentIndex;
+        const page = state.fumen.pages[currentIndex];
+        return sequence(state, [
+            actions.saveToMemento(),
+            state.events.prevPage !== undefined
+                ? actions.registerHistoryTask({ task: toSinglePageTask(currentIndex, state.events.prevPage, page) })
+                : undefined,
+            endDrawingField,
+        ]);
     },
     ontouchStartSentLine: ({ index }) => (state): NextState => {
         if (state.mode.piece !== undefined) {
@@ -227,6 +240,7 @@ const startDrawingField = (state: State, index: number, isField: boolean): NextS
             events: {
                 ...state.events,
                 touch: { piece },
+                prevPage: toPrimitivePage(state.fumen.pages[state.fumen.currentIndex]),
             },
         }),
         actions.openPage({ index: currentPageIndex }),
@@ -292,6 +306,7 @@ const endDrawingField = (state: State): NextState => {
         events: {
             ...state.events,
             touch: { piece: undefined },
+            prevPage: undefined,
         },
     };
 };

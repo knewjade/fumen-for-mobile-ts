@@ -5,6 +5,7 @@ import { Move, Page, PreCommand } from '../lib/fumen/fumen';
 import { Field } from '../lib/fumen/field';
 import { Block } from '../state_types';
 import { Pages, QuizCommentResult, TextCommentResult } from '../lib/pages';
+import { toInsertPageTask, toPrimitivePage, toRemovePageTask } from '../history_task';
 
 export interface PageActions {
     openPage: (data: { index: number }) => action;
@@ -72,20 +73,28 @@ export const pageActions: Readonly<PageActions> = {
         const pages = new Pages(state.fumen.pages);
         pages.insertPage(index);
         const newPages = pages.pages;
-        return {
-            fumen: {
-                ...state.fumen,
-                pages: newPages,
-                maxPage: newPages.length,
-            },
-        };
+
+        return sequence(state, [
+            actions.registerHistoryTask({ task: toInsertPageTask(index, toPrimitivePage(newPages[index])) }),
+            () => ({
+                fumen: {
+                    ...state.fumen,
+                    pages: newPages,
+                    maxPage: newPages.length,
+                },
+            }),
+        ]);
     },
     removePage: ({ index }) => (state): NextState => {
-        const pages = new Pages(state.fumen.pages);
+        const fumen = state.fumen.pages;
+        const primitivePrev = toPrimitivePage(fumen[index]);
+
+        const pages = new Pages(fumen);
         pages.deletePage(index);
         const newPages = pages.pages;
         const nextIndex = index < newPages.length ? index : newPages.length - 1;
         return sequence(state, [
+            actions.registerHistoryTask({ task: toRemovePageTask(index, primitivePrev) }),
             () => ({
                 fumen: {
                     ...state.fumen,

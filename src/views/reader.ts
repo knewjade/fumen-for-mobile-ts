@@ -194,7 +194,10 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
         ];
     };
 
-    return div({ key: 'field-top' }, getChildren());
+    return div({
+        key: 'field-top',
+        id: 'field-top',
+    }, getChildren());
 };
 
 const Tools = (state: State, actions: Actions, height: number) => {

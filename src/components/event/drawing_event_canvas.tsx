@@ -1,5 +1,6 @@
 import { Component } from '../../lib/types';
 import { h } from 'hyperapp';
+import { main } from '../../actions';
 import konva = require('konva');
 
 interface Props {
@@ -16,6 +17,13 @@ interface Props {
         ontouchEnd(): void;
     };
 }
+
+const bodyClickListner = function (e: any) {
+    if (!e.target || (e.target as HTMLElement).nodeName !== 'DIV') {
+        return;
+    }
+    main.fixInferencePiece();
+};
 
 export const DrawingEventCanvas: Component<Props> = ({ fieldBlocks, sentBlocks, fieldLayer, actions }) => {
     const oncreate = () => {

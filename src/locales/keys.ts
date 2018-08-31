@@ -23,6 +23,7 @@ export const i18n = {
             Readonly: () => t('Settings.Buttons.Readonly'),
             Writable: () => t('Settings.Buttons.Writable'),
             Clipboard: () => t('Settings.Buttons.Clipboard'),
+            New: () => t('Settings.Buttons.New'),
             Help: () => t('Settings.Buttons.Help'),
         },
     },

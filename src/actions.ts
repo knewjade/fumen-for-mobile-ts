@@ -15,6 +15,7 @@ import { modalActions, ModalActions } from './actions/modal';
 import { pageActions, PageActions } from './actions/pages';
 import { setterActions, SetterActions } from './actions/setter';
 import { UtilsActions, utilsActions } from './actions/utils';
+import { mementoActions, MementoActions } from './actions/memento';
 
 export type action = (state: Readonly<State>) => NextState;
 
@@ -24,7 +25,8 @@ export type Actions = DrawBlockActions
     & ModalActions
     & PageActions
     & SetterActions
-    & UtilsActions;
+    & UtilsActions
+    & MementoActions;
 
 export const actions: Readonly<Actions> = {
     ...drawBlockActions,
@@ -34,6 +36,7 @@ export const actions: Readonly<Actions> = {
     ...pageActions,
     ...setterActions,
     ...utilsActions,
+    ...mementoActions,
 };
 
 // Mounting
@@ -68,11 +71,23 @@ window.onresize = () => {
 };
 
 window.onload = () => {
-    const extractFumenFromURL = () => {
+    // URLからロードする
+    {
         const url = decodeURIComponent(location.search);
         const paramQuery = url.substr(1).split('&').find(value => value.startsWith('d='));
-        return paramQuery !== undefined ? paramQuery.substr(2) : 'v115@vhAAgH';
-    };
+        if (paramQuery !== undefined) {
+            return main.loadFumen({ fumen: paramQuery.substr(2) });
+        }
+    }
 
-    main.loadFumen({ fumen: extractFumenFromURL() });
+    // LocalStrageからロードする
+    {
+        const fumen = localStorage.getItem('data@1');
+        if (fumen) {
+            return main.loadFumen({ fumen });
+        }
+    }
+
+    // 空のフィールドを読み込む
+    return main.loadNewFumen();
 };

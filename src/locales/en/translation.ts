@@ -18,6 +18,7 @@ export const resources = {
             Readonly: 'readonly',
             Writable: 'writable',
             Clipboard: 'clipboard',
+            New: 'new',
             Help: 'help',
         },
     },

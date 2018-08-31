@@ -3,6 +3,7 @@ import { Piece, Screens } from './enums';
 
 export interface ColorPalette {
     baseClass: string;
+    baseCode: string;
     darkCode: string;
 }
 
@@ -13,6 +14,15 @@ export const Palette = (screen: Screens): ColorPalette => {
             return 'red';
         default:
             return 'teal';
+        }
+    };
+
+    const getBaseCode = () => {
+        switch (screen) {
+        case Screens.Editor:
+            return '#f44336';
+        default:
+            return '#009688';
         }
     };
 
@@ -27,6 +37,7 @@ export const Palette = (screen: Screens): ColorPalette => {
 
     return {
         baseClass: getBaseClass(),
+        baseCode: getBaseCode(),
         darkCode: getDarkCode(),
     };
 };

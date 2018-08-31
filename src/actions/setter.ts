@@ -6,7 +6,7 @@ import { Page } from '../lib/fumen/fumen';
 import { inferPiece } from '../lib/inference';
 
 export interface SetterActions {
-    setPages: (args: { pages: Page[] }) => action;
+    setPages: (args: { pages: Page[], open?: boolean }) => action;
     inputFumenData: (args: { value?: string }) => action;
     clearFumenData: () => action;
     setComment: (data: { comment: string }) => action;
@@ -17,14 +17,16 @@ export interface SetterActions {
 }
 
 export const setterActions: Readonly<SetterActions> = {
-    setPages: ({ pages }) => (state): NextState => {
+    setPages: ({ pages, open = true }) => (state): NextState => {
         if (pages.length < 1) {
             return undefined;
         }
 
-        setImmediate(() => {
-            main.openPage({ index: 0 });
-        });
+        if (open) {
+            setImmediate(() => {
+                main.openPage({ index: 0 });
+            });
+        }
 
         return {
             fumen: {
