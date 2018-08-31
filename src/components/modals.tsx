@@ -114,6 +114,8 @@ interface SettingsProps {
         changeToDrawerScreen: () => void;
         fixInferencePiece: () => void;
         loadNewFumen: () => void;
+        firstPage: () => void;
+        lastPage: () => void;
     };
 }
 
@@ -204,7 +206,7 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
 
                     <div style={divProperties}>
                         {screen === Screens.Editor ?
-                            <SettingButton datatest="btn-readonly" href="#" iconName="insert_photo" fontSize={31.25}
+                            <SettingButton datatest="btn-readonly" href="#" iconName="visibility" fontSize={31.25}
                                            onclick={() => {
                                                actions.changeToReaderScreen();
                                                actions.closeSettingsModal();
@@ -231,6 +233,22 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
                                            actions.closeSettingsModal();
                                        }}>
                             {i18n.Settings.Buttons.New()}
+                        </SettingButton>
+
+                        <SettingButton datatest="btn-first-page" href="#" iconName="fast_rewind" fontSize={32.3}
+                                       onclick={() => {
+                                           actions.firstPage();
+                                           actions.closeSettingsModal();
+                                       }}>
+                            {i18n.Settings.Buttons.FirstPage()}
+                        </SettingButton>
+
+                        <SettingButton datatest="btn-last-page" href="#" iconName="fast_forward" fontSize={32.3}
+                                       onclick={() => {
+                                           actions.lastPage();
+                                           actions.closeSettingsModal();
+                                       }}>
+                            {i18n.Settings.Buttons.LastPage()}
                         </SettingButton>
 
                         <SettingButton href="./help.html" iconName="help_outline" fontSize={31.25}>

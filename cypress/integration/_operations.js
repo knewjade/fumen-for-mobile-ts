@@ -104,5 +104,15 @@ export const operations = {
             cy.get(datatest('btn-copy-fumen')).click();
             cy.wait(100);
         },
+        firstPage: () => {
+            operations.settings.open();
+            cy.get(datatest('btn-first-page')).click();
+            cy.wait(100);
+        },
+        lastPage: () => {
+            operations.settings.open();
+            cy.get(datatest('btn-last-page')).click();
+            cy.wait(100);
+        },
     },
 };

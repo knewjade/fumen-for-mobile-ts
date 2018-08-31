@@ -15,6 +15,8 @@ export interface PageActions {
     nextLoopPage: () => action;
     backPage: () => action;
     nextPageOrNewPage: () => action;
+    firstPage: () => action;
+    lastPage: () => action;
 }
 
 export const pageActions: Readonly<PageActions> = {
@@ -131,6 +133,20 @@ export const pageActions: Readonly<PageActions> = {
             actions.clearInferencePiece(),
             state.fumen.maxPage <= nextPage ? pageActions.insertPage({ index: nextPage }) : undefined,
             pageActions.openPage({ index: nextPage }),
+        ]);
+    },
+    firstPage: () => (state): NextState => {
+        return sequence(state, [
+            actions.fixInferencePiece(),
+            actions.clearInferencePiece(),
+            pageActions.openPage({ index: 0 }),
+        ]);
+    },
+    lastPage: () => (state): NextState => {
+        return sequence(state, [
+            actions.fixInferencePiece(),
+            actions.clearInferencePiece(),
+            pageActions.openPage({ index: state.fumen.pages.length - 1 }),
         ]);
     },
 };

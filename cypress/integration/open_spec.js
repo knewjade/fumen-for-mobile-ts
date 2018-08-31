@@ -1,4 +1,5 @@
 import { datatest, holdBox, leftTap, nextBox, pages, Piece, visit } from './_common';
+import { operations } from './_operations';
 
 // テト譜を開く
 describe('Open fumen', () => {
@@ -29,6 +30,20 @@ describe('Open fumen', () => {
 
         // Assertion: モーダルが閉じられている
         cy.get(datatest('mdl-open-fumen')).should('not.exist');
+
+        // Assertion: ページ番号の確認
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 6');
+    });
+
+    it('First page/Last page', () => {
+        cy.visit('./public/index.html?lng=ja&d=v115@vhF2OYaAFLDmClcJSAVDEHBEooRBKoAVBU3TWCpXBA?AVqBTfBSwBJnBMmB');
+
+        operations.settings.lastPage();
+
+        // Assertion: ページ番号の確認
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '6 / 6');
+
+        operations.settings.firstPage();
 
         // Assertion: ページ番号の確認
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 6');

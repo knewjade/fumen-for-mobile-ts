@@ -18,6 +18,8 @@ export const resources = {
             Readonly: 'readonly',
             Writable: 'writable',
             Clipboard: 'clipboard',
+            FirstPage: 'firstpage',
+            LastPage: 'lastpage',
             New: 'new',
             Help: 'help',
         },
