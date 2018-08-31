@@ -14,6 +14,7 @@ interface Props {
     modeType: ModeTypes;
     undoCount: number;
     redoCount: number;
+    inferenceCount: number;
     actions: {
         openFumenModal: () => void;
         openSettingsModal: () => void;
@@ -28,7 +29,7 @@ interface Props {
 }
 
 export const EditorTools: Component<Props> = (
-    { currentPage, maxPage, height, animationState, palette, modeType, undoCount, redoCount, actions },
+    { currentPage, maxPage, height, animationState, palette, modeType, undoCount, redoCount, inferenceCount, actions },
 ) => {
     const navProperties = style({
         width: '100%',
@@ -64,7 +65,7 @@ export const EditorTools: Component<Props> = (
 
                 <ToolButton iconName="undo" datatest="btn-undo" width={35} height={height - 10}
                             key="btn-undo" fontSize={33.75} marginRight={5} colors={colors}
-                            actions={{ onclick: () => actions.undo() }} enable={0 < undoCount}/>
+                            actions={{ onclick: () => actions.undo() }} enable={0 < undoCount || 0 < inferenceCount}/>
 
                 <ToolButton iconName="redo" datatest="btn-redo" width={35} height={height - 10}
                             key="btn-redo" fontSize={33.75} marginRight={15} colors={colors}

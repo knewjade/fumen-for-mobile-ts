@@ -60,6 +60,9 @@ export const operations = {
             Empty: () => {
                 cy.get(datatest('btn-piece-empty')).click();
             },
+            Inference: () => {
+                cy.get(datatest('btn-piece-inference')).click();
+            },
             click: (x, y) => {
                 cy.get('body').click(px(x), py(y));
             },

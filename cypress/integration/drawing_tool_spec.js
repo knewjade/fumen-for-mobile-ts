@@ -128,6 +128,18 @@ describe('Drawing Tools', () => {
 
         cy.get(block(6, 0)).should('have.attr', 'color', Color.Normal.I);
 
+        // inference
+
+        operations.mode.block.Inference();
+        operations.mode.block.click(9, 0);
+
+        operations.mode.tools.undo();
+
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 1');
+        cy.get(block(9, 0)).should('not.have.attr', 'color', Color.Normal.S);
+        cy.get(block(9, 1)).should('not.have.attr', 'color', Color.Normal.Z);
+        cy.get(block(9, 2)).should('not.have.attr', 'color', Color.Normal.T);
+
         // Redo
         operations.mode.tools.redo();
 

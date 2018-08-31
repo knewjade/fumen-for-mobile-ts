@@ -21,13 +21,18 @@ export const mementoActions: Readonly<MementoActions> = {
         return mementoActions.setHistoryCount({ undoCount, redoCount: 0 })(state);
     },
     undo: () => (state): NextState => {
+        if (0 < state.events.inferences.length) {
+            return sequence(state, [
+                actions.clearInferencePiece(),
+                actions.openPage({ index: state.fumen.currentIndex }),
+            ]);
+        }
+
         if (state.history.undoCount <= 0) {
             return;
         }
 
         return sequence(state, [
-            actions.fixInferencePiece(),
-            actions.clearInferencePiece(),
             (newState) => {
                 (async () => {
                     const result = await memento.undo(newState.fumen.pages);

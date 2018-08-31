@@ -406,6 +406,7 @@ const Tools = (state: State, actions: Actions, height: number) => {
         modeType: state.mode.type,
         undoCount: state.history.undoCount,
         redoCount: state.history.redoCount,
+        inferenceCount: state.events.inferences.length,
     });
 };
 
