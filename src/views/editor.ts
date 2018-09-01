@@ -1,4 +1,4 @@
-import { ModeTypes, parsePieceName, Piece, Screens, TouchTypes } from '../lib/enums';
+import { ModeTypes, Piece, Screens, TouchTypes } from '../lib/enums';
 import { Coordinate, Size } from './commons';
 import { View } from 'hyperapp';
 import { resources, State } from '../states';
@@ -9,10 +9,11 @@ import { Actions } from '../actions';
 import { Field } from '../components/field';
 import { KonvaCanvas } from '../components/konva_canvas';
 import { DrawingEventCanvas } from '../components/event/drawing_event_canvas';
-import { a, div, i, img, span } from '@hyperapp/html';
+import { div } from '@hyperapp/html';
 import { px, style } from '../lib/types';
+import { colorButton, iconContents, inferenceButton, toolButton } from './editor_buttons';
 
-interface EditorLayout {
+export interface EditorLayout {
     canvas: {
         topLeft: Coordinate;
         size: Size;
@@ -99,78 +100,13 @@ const getLayout = (display: { width: number, height: number }): EditorLayout => 
 };
 
 const toolMode = ({ layout, currentIndex, actions }: {
-    layout: any;
+    layout: EditorLayout;
     currentIndex: number;
     actions: {
         removePage: (data: { index: number }) => void;
         changeToDrawingMode: () => void;
     };
 }) => {
-    const toolButton = (
-        {
-            backgroundColorClass, textColor, borderColor, iconName, datatest, key, fontSize, onclick, description,
-        }: {
-            backgroundColorClass: string;
-            textColor: string;
-            borderColor: string;
-            description: string;
-            iconName: string;
-            datatest: string;
-            key: string;
-            fontSize: number;
-            onclick: (event: MouseEvent) => void;
-        }) => {
-        const properties = style({
-            display: 'block',
-            height: px(layout.buttons.size.height),
-            lineHeight: px(layout.buttons.size.height),
-            fontSize: px(fontSize),
-            border: 'solid 0px #000',
-            marginRight: px(2),
-            cursor: 'pointer',
-        });
-
-        const className = 'material-icons';
-
-        const icon = i({
-            className,
-            style: properties,
-        }, iconName);
-
-        return a({
-            datatest,
-            key,
-            href: '#',
-            class: `waves-effect z-depth-0 btn ${backgroundColorClass}`,
-            style: style({
-                color: textColor,
-                border: `solid 1px ${borderColor}`,
-                margin: px(5),
-                width: px(layout.buttons.size.width),
-                maxWidth: px(layout.buttons.size.width),
-                padding: px(0),
-                boxSizing: 'border-box',
-                textAlign: 'center',
-            }),
-            onclick: (event: MouseEvent) => {
-                onclick(event);
-                event.stopPropagation();
-                event.preventDefault();
-            },
-        }, [
-            div({
-                style: {
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                },
-            }, [icon, span({ style: style({ fontSize: px(10) }) }, description)]),
-        ]);
-    };
-
     return div({
         style: style({
             marginLeft: px(10),
@@ -184,26 +120,36 @@ const toolMode = ({ layout, currentIndex, actions }: {
         }),
     }, [
         toolButton({
-            description: 'remove',
+            borderWidth: 1,
+            width: layout.buttons.size.width,
             backgroundColorClass: 'white',
             textColor: '#333',
             borderColor: '#333',
-            iconName: 'remove_circle_outline',
             datatest: 'btn-remove-page',
             key: 'btn-remove-page',
-            fontSize: 22,
             onclick: () => actions.removePage({ index: currentIndex }),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: 'remove',
+                iconSize: 22,
+                iconName: 'remove_circle_outline',
+            }),
         }),
         toolButton({
-            description: 'block',
+            borderWidth: 1,
+            width: layout.buttons.size.width,
             backgroundColorClass: 'red',
             textColor: '#fff',
             borderColor: '#fff',
-            iconName: 'edit',
             datatest: 'btn-block-mode',
             key: 'btn-block-mode',
-            fontSize: 22,
             onclick: () => actions.changeToDrawingMode(),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: 'block',
+                iconSize: 22,
+                iconName: 'edit',
+            }),
         }),
     ]);
 };
@@ -216,111 +162,6 @@ const blockMode = ({ layout, modePiece, actions }: {
         selectInferencePieceColor: () => void;
     };
 }) => {
-    const colorButton = ({ piece, highlight }: {
-        piece: Piece,
-        highlight: boolean,
-    }) => {
-        const boarderWidth = highlight ? 3 : 1;
-        const pieceName = parsePieceName(piece);
-        return a({
-            href: '#',
-            class: 'waves-effect z-depth-0 btn',
-            datatest: `btn-piece-${pieceName.toLowerCase()}`,
-            key: `btn-piece-${pieceName.toLowerCase()}`,
-            style: style({
-                backgroundColor: '#fff',
-                color: '#333',
-                border: `solid ${boarderWidth}px ` + (highlight ? '#ff8a80' : '#333'),
-                margin: px(5),
-                width: px(layout.buttons.size.width),
-                maxWidth: px(layout.buttons.size.width),
-                padding: px(0),
-                boxSizing: 'border-box',
-                textAlign: 'center',
-            }),
-            onclick: (event: MouseEvent) => {
-                actions.selectPieceColor({ piece });
-                event.stopPropagation();
-                event.preventDefault();
-            },
-        }, [
-            div({
-                style: {
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                },
-            }, [
-                img({
-                    src: `img/${pieceName}.svg`,
-                    height: (0.6 * layout.buttons.size.height) + '',
-                    style: style({
-                        margin: 'auto',
-                    }),
-                }),
-            ]),
-        ]);
-    };
-
-    const inferenceButton = ({ highlight }: {
-        highlight: boolean,
-    }) => {
-        const properties = style({
-            display: 'block',
-            height: px(layout.buttons.size.height),
-            lineHeight: px(layout.buttons.size.height),
-            fontSize: px(22),
-            border: 'solid 0px #000',
-            marginRight: px(2),
-            cursor: 'pointer',
-        });
-
-        const className = 'material-icons';
-
-        const icon = i({
-            className,
-            style: properties,
-        }, 'image_aspect_ratio');
-
-        const boarderWidth = highlight ? 3 : 1;
-        return a({
-            href: '#',
-            class: 'waves-effect z-depth-0 btn',
-            datatest: `btn-piece-inference`,
-            key: `btn-piece-inference`,
-            style: style({
-                backgroundColor: '#fff',
-                color: '#333',
-                border: `solid ${boarderWidth}px ` + (highlight ? '#ff8a80' : '#333'),
-                margin: px(5),
-                width: px(layout.buttons.size.width),
-                maxWidth: px(layout.buttons.size.width),
-                padding: px(0),
-                boxSizing: 'border-box',
-                textAlign: 'center',
-            }),
-            onclick: (event: MouseEvent) => {
-                actions.selectInferencePieceColor();
-                event.stopPropagation();
-                event.preventDefault();
-            },
-        }, [
-            div({
-                style: {
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                },
-            }, [icon, span({ style: style({ fontSize: px(10) }) }, 'comp')]),
-        ]);
-    };
-
     const pieces = [Piece.I, Piece.L, Piece.O, Piece.Z, Piece.T, Piece.J, Piece.S, Piece.Empty, Piece.Gray];
 
     return div({
@@ -334,8 +175,14 @@ const blockMode = ({ layout, modePiece, actions }: {
             height: px(layout.canvas.size.height),
             width: px(layout.buttons.size.width),
         }),
-    }, pieces.map(piece => colorButton({ piece, highlight: modePiece === piece })).concat([
-        inferenceButton({ highlight: modePiece === undefined }),
+    }, pieces.map(piece => (
+        colorButton({ layout, piece, actions, highlight: modePiece === piece })
+    )).concat([
+        inferenceButton({
+            layout,
+            actions,
+            highlight: modePiece === undefined,
+        }),
     ]));
 };
 
