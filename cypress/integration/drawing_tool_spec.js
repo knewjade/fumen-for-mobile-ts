@@ -1,9 +1,11 @@
-import { block, Color, datatest, px, py } from './_common';
+import { block, Color, datatest, px, py, visit } from './_common';
 import { operations } from './_operations';
 
 describe('Drawing Tools', () => {
     it('Remove', () => {
-        cy.visit('./public/index.html?d=v115@vhG9NYaAFLDmClcJSAVDEHBEooRBUoAVBa9aPCM+AA?A0sBXjB2uBzkBifBplBmhI8NjSFAooMDEPBAAAvhEHiuFA3?XaDEEBAAAHiBAwDHmBAAA');
+        visit({
+            fumen: 'v115@vhG9NYaAFLDmClcJSAVDEHBEooRBUoAVBa9aPCM+AA?A0sBXjB2uBzkBifBplBmhI8NjSFAooMDEPBAAAvhEHiuFA3?XaDEEBAAAHiBAwDHmBAAA',
+        });
 
         operations.screen.writable();
 
@@ -71,7 +73,9 @@ describe('Drawing Tools', () => {
     });
 
     it('Undo/Redo', () => {
-        cy.visit('./public/index.html?d=v115@HhglIeglIehlAezhMeAgH');
+        visit({
+            fumen: 'v115@HhglIeglIehlAezhMeAgH',
+        });
 
         operations.screen.writable();
 
@@ -211,7 +215,9 @@ describe('Drawing Tools', () => {
     });
 
     it('Auto save', () => {
-        cy.visit('./public/index.html?d=v115@HhglIeglIehlAezhMeAgH');
+        visit({
+            fumen: 'v115@HhglIeglIehlAezhMeAgH',
+        });
 
         operations.screen.writable();
 
@@ -229,7 +235,7 @@ describe('Drawing Tools', () => {
 
         cy.wait(1000);
 
-        cy.visit('./public/index.html');
+        visit({});
 
         operations.settings.copyToClipboard();
 

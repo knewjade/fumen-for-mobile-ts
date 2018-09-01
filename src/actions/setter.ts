@@ -57,24 +57,22 @@ export const setterActions: Readonly<SetterActions> = {
         };
     },
     setField: ({ field, filledHighlight, inferences }) => (): NextState => {
-        if (!filledHighlight) {
-            return { field };
-        }
-
         // 列が揃っているか確認
         const drawnField: Block[] = field.concat();
 
-        // 列が揃っているか確認
-        for (let y = 0; y < FieldConstants.Height + FieldConstants.SentLine; y += 1) {
-            const [start, end] = [y * FieldConstants.Width, (y + 1) * FieldConstants.Width];
-            const line = drawnField.slice(start, end);
-            const filled = line.every(block => block.piece !== Piece.Empty);
-            if (filled) {
-                for (let index = start; index < end; index += 1) {
-                    drawnField[index] = {
-                        ...field[index],
-                        highlight: true,
-                    };
+        if (filledHighlight) {
+            // 列が揃っているか確認
+            for (let y = 0; y < FieldConstants.Height + FieldConstants.SentLine; y += 1) {
+                const [start, end] = [y * FieldConstants.Width, (y + 1) * FieldConstants.Width];
+                const line = drawnField.slice(start, end);
+                const filled = line.every(block => block.piece !== Piece.Empty);
+                if (filled) {
+                    for (let index = start; index < end; index += 1) {
+                        drawnField[index] = {
+                            ...field[index],
+                            highlight: true,
+                        };
+                    }
                 }
             }
         }

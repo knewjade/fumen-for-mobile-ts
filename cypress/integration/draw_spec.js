@@ -1,10 +1,10 @@
-import { block, Color, datatest, mino, minoPosition, Piece, Rotation } from './_common';
+import { block, Color, datatest, mino, minoPosition, Piece, Rotation, visit } from './_common';
 import { operations } from './_operations';
 
 // テト譜を開く
 describe('Drawing', () => {
     it('Draw blocks', () => {
-        cy.visit('./public/index.html');
+        visit({});
 
         operations.screen.writable();
 
@@ -54,7 +54,7 @@ describe('Drawing', () => {
     });
 
     it('Draw blocks 2', () => {
-        cy.visit('./public/index.html');
+        visit({});
 
         operations.screen.writable();
 
@@ -86,7 +86,7 @@ describe('Drawing', () => {
     });
 
     it('Completion blocks', () => {
-        cy.visit('./public/index.html');
+        visit({});
 
         operations.screen.writable();
 
@@ -160,7 +160,9 @@ describe('Drawing', () => {
     });
 
     it('Completion blocks 2', () => {
-        cy.visit('./public/index.html?d=v115@AhG8CeG8CeH8BeG8JeAgH');
+        visit({
+            fumen: 'v115@AhG8CeG8CeH8BeG8JeAgH',
+        });
 
         operations.screen.writable();
 
@@ -293,7 +295,9 @@ describe('Drawing', () => {
     });
 
     it('Completion blocks 3', () => {
-        cy.visit('./public/index.html?d=v115@vhAAgH');
+        visit({
+            fumen: 'v115@vhAAgH',
+        });
 
         operations.screen.writable();
 
@@ -341,5 +345,29 @@ describe('Drawing', () => {
         mino(Piece.I, Rotation.Spawn)(4, 0).forEach((block) => {
             cy.get(block).should('have.attr', 'color', Color.Normal.I);
         });
+    });
+
+    it('Inference without lock flag', () => {
+        // 接着なしオンのテト譜
+        visit({
+            fumen: 'v115@HhE8CeG8CeH8BeB8JeAgl',
+        });
+
+        operations.screen.writable();
+
+        operations.mode.block.open();
+        // inference
+
+        operations.mode.block.Inference();
+        operations.mode.block.click(9, 3);
+        operations.mode.block.click(8, 3);
+        operations.mode.block.click(7, 3);
+        operations.mode.block.click(6, 3);
+
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 1');
+        cy.get(block(9, 3)).should('not.have.attr', 'color', Color.Highlight.Completion);
+        cy.get(block(8, 3)).should('not.have.attr', 'color', Color.Highlight.Completion);
+        cy.get(block(7, 3)).should('not.have.attr', 'color', Color.Highlight.Completion);
+        cy.get(block(6, 3)).should('not.have.attr', 'color', Color.Highlight.Completion);
     });
 });

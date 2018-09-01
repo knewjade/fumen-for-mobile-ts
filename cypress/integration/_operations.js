@@ -18,6 +18,11 @@ export const operations = {
         },
     },
     mode: {
+        reader: {
+            openPage: () => {
+                cy.get(datatest('btn-open-fumen')).click();
+            },
+        },
         editor: {
             nextPage: () => {
                 cy.get(datatest('btn-next-page')).click();

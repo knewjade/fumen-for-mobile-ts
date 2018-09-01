@@ -4,7 +4,7 @@ import { leftTap } from "./_common";
 // Hold & Nextのテスト
 describe('Box', () => {
     it('init', () => {
-        visit('./public/index.html');
+        visit({});
 
         // Hold & Nextの確認
         cy.get(holdBox()).should('not.exist');
@@ -19,7 +19,9 @@ describe('Box', () => {
     it('without Quiz', () => {
         const page = pages(17);
 
-        visit('v115@vhG0fm0Tf0sBvtB39e3qBTpfRhRpHeRpRemkBvhCpm?BNsfGofOhi0Ieg0TeAAevhExkBlcBdrfAAeNsf');
+        visit({
+            fumen: 'v115@vhG0fm0Tf0sBvtB39e3qBTpfRhRpHeRpRemkBvhCpm?BNsfGofOhi0Ieg0TeAAevhExkBlcBdrfAAeNsf',
+        });
 
         // Assertion: ページ番号の確認
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1));
@@ -123,7 +125,9 @@ describe('Box', () => {
     it('without Quiz / Reverse', () => {
         const page = pages(17);
 
-        visit('v115@vhG0fm0Tf0sBvtB39e3qBTpfRhRpHeRpRemkBvhCpm?BNsfGofOhi0Ieg0TeAAevhExkBlcBdrfAAeNsf');
+        visit({
+            fumen: 'v115@vhG0fm0Tf0sBvtB39e3qBTpfRhRpHeRpRemkBvhCpm?BNsfGofOhi0Ieg0TeAAevhExkBlcBdrfAAeNsf',
+        });
 
         // Assertion: ページ番号の確認
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1));
@@ -230,7 +234,9 @@ describe('Box', () => {
     it('with Quiz', () => {
         const page = pages(14);
 
-        visit('v115@vhN0KYaAFLDmClcJSAVDEHBEooRBaoAVBp/9tCvCBA?A2uBlkBxfBTtBSoBAAAXsBAAAUmB0mQaAFLDmClcJSAVDEH?BEooRBUoAVB6yaFDK+AAAAAAlsQaAFLDmClcJSAVDEHBEoo?RBJoAVBvyjPC0XBAAAAA');
+        visit({
+            fumen: 'v115@vhN0KYaAFLDmClcJSAVDEHBEooRBaoAVBp/9tCvCBA?A2uBlkBxfBTtBSoBAAAXsBAAAUmB0mQaAFLDmClcJSAVDEH?BEooRBUoAVB6yaFDK+AAAAAAlsQaAFLDmClcJSAVDEHBEoo?RBJoAVBvyjPC0XBAAAAA',
+        });
 
         // Assertion: ページ番号の確認
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1));
@@ -430,7 +436,9 @@ describe('Box', () => {
     it('with Quiz / Reverse', () => {
         const page = pages(14);
 
-        visit('v115@vhN0KYaAFLDmClcJSAVDEHBEooRBaoAVBp/9tCvCBA?A2uBlkBxfBTtBSoBAAAXsBAAAUmB0mQaAFLDmClcJSAVDEH?BEooRBUoAVB6yaFDK+AAAAAAlsQaAFLDmClcJSAVDEHBEoo?RBJoAVBvyjPC0XBAAAAA');
+        visit({
+            fumen: 'v115@vhN0KYaAFLDmClcJSAVDEHBEooRBaoAVBp/9tCvCBA?A2uBlkBxfBTtBSoBAAAXsBAAAUmB0mQaAFLDmClcJSAVDEH?BEooRBUoAVB6yaFDK+AAAAAAlsQaAFLDmClcJSAVDEHBEoo?RBJoAVBvyjPC0XBAAAAA',
+        });
 
         // Assertion: ページ番号の確認
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1));

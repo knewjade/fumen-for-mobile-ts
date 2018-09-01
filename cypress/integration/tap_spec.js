@@ -5,7 +5,7 @@ describe('Tap', () => {
     const page = pages(3);
 
     it('Next / Prev', () => {
-       visit('v115@vhCRQJUmBKpB');
+        visit({ fumen: 'v115@vhCRQJUmBKpB' });
 
         {
             // Assertion: ページ番号の確認

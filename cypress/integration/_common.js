@@ -113,8 +113,26 @@ const getPieces = (piece) => {
     }
 };
 
-export const visit = (fumen, sleepInMill = 500) => {
-    cy.visit('./public/index.html?d=' + fumen);
+export const visit = ({ fumen, sleepInMill = 500, lng = 'en' }) => {
+    const baseUrl = './public/index.html';
+
+    const params = {};
+
+    if (fumen) {
+        params.d = fumen;
+    }
+
+    if (lng) {
+        params.lng = lng;
+    }
+
+    if (params) {
+        const query = Object.entries(params).map(value => value[0] + '=' + value[1]).join('&');
+        cy.visit(baseUrl + '?' + query);
+    } else {
+        cy.visit(baseUrl);
+    }
+
     cy.wait(sleepInMill);
 };
 

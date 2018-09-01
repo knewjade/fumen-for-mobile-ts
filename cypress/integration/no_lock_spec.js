@@ -5,7 +5,9 @@ describe('No lock', () => {
     const page = pages(52);
 
     it('S', () => {
-        visit('v115@UeB8beB8beB8beB8beB8beB8beB8ke3Jnvhyvpfnpf?/pf3afvafnaf/af3LfvLfnLf/Lf38ev8en8e/8e3tevtent?e/te3eeveenee/ee3PevPenPevPe3Pe/eeneevee3ee/ten?tevte3te/8en8ev8e38e/LfnLfvLf3Lf/afnafvaf3af/pf?npfnpf');
+        visit({
+            fumen: 'v115@UeB8beB8beB8beB8beB8beB8beB8ke3Jnvhyvpfnpf?/pf3afvafnaf/af3LfvLfnLf/Lf38ev8en8e/8e3tevtent?e/te3eeveenee/ee3PevPenPevPe3Pe/eeneevee3ee/ten?tevte3te/8en8ev8e38e/LfnLfvLf3Lf/afnafvaf3af/pf?npfnpf',
+        });
 
         {
             // Assertion: ページ番号の確認
