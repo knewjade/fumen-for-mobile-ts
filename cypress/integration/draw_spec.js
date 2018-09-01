@@ -1,4 +1,4 @@
-import { block, Color, datatest, mino, minoPosition, Piece, Rotation, visit } from './_common';
+import { block, Color, datatest, mino, minoPosition, Piece, Rotation, sentBlock, visit } from './_common';
 import { operations } from './_operations';
 
 // テト譜を開く
@@ -369,5 +369,26 @@ describe('Drawing', () => {
         cy.get(block(8, 3)).should('not.have.attr', 'color', Color.Highlight.Completion);
         cy.get(block(7, 3)).should('not.have.attr', 'color', Color.Highlight.Completion);
         cy.get(block(6, 3)).should('not.have.attr', 'color', Color.Highlight.Completion);
+    });
+
+    it('Sent block', () => {
+        // sentBlockを置くかどうかの判定に、フィールドのブロックを参照してしまう問題に対するテスト
+        visit({});
+
+        operations.settings.newPage();
+
+        operations.mode.block.open();
+
+        operations.mode.block.Gray();
+
+        operations.mode.block.dragToRight({ from: 3, to: 6 }, 0);
+
+        operations.mode.editor.nextPage();
+
+        operations.mode.block.dragToRight({ from: 0, to: 9 }, -1);
+
+        for (let x = 0; x < 9; x++) {
+            cy.get(sentBlock(x)).should('have.attr', 'color', Color.Gray.Field);
+        }
     });
 });
