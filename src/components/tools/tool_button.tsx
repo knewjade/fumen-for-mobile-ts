@@ -15,7 +15,7 @@ interface Props {
         darkCode: string;
     };
     actions: {
-        onclick(): void;
+        onclick?: (e: MouseEvent) => void;
     };
 }
 
@@ -46,12 +46,18 @@ export const ToolButton: Component<Props & IconProps> = (
         marginRight: px(marginRight),
     });
 
+    const onclick = actions.onclick;
+
     return (
         <a href="#"
            key={key}
            datatest={datatest}
            style={aProperties}
-           onclick={() => actions.onclick()}>
+           onclick={onclick !== undefined ? (event: MouseEvent) => {
+               onclick(event);
+               event.stopPropagation();
+               event.preventDefault();
+           } : undefined}>
             <Icon height={height} fontSize={fontSize} colors={colors} enable={enable}>{iconName}</Icon>
         </a>
     );

@@ -155,6 +155,7 @@ const toolMode = ({ layout, currentIndex, actions }: {
             onclick: (event: MouseEvent) => {
                 onclick(event);
                 event.stopPropagation();
+                event.preventDefault();
             },
         }, [
             div({
@@ -240,6 +241,7 @@ const blockMode = ({ layout, modePiece, actions }: {
             onclick: (event: MouseEvent) => {
                 actions.selectPieceColor({ piece });
                 event.stopPropagation();
+                event.preventDefault();
             },
         }, [
             div({
@@ -303,6 +305,7 @@ const blockMode = ({ layout, modePiece, actions }: {
             onclick: (event: MouseEvent) => {
                 actions.selectInferencePieceColor();
                 event.stopPropagation();
+                event.preventDefault();
             },
         }, [
             div({

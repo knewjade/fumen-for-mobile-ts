@@ -274,7 +274,11 @@ interface SettingButtonProps {
 export const SettingButton: ComponentWithText<SettingButtonProps> = (
     { href = '#', onclick, iconName, datatest, fontSize }, showName,
 ) => (
-    <a href={href} onclick={onclick}>
+    <a href={href} onclick={onclick !== undefined ? (event: MouseEvent) => {
+        onclick(event);
+        event.stopPropagation();
+        event.preventDefault();
+    } : undefined}>
         <i className="material-icons z-depth-1" style={style({
             width: px(50),
             height: px(40),
