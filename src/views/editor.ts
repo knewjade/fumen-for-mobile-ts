@@ -11,7 +11,7 @@ import { KonvaCanvas } from '../components/konva_canvas';
 import { DrawingEventCanvas } from '../components/event/drawing_event_canvas';
 import { div } from '@hyperapp/html';
 import { px, style } from '../lib/types';
-import { colorButton, iconContents, inferenceButton, toolButton } from './editor_buttons';
+import { colorButton, iconContents, inferenceButton, toolButton, toolSpace } from './editor_buttons';
 
 export interface EditorLayout {
     canvas: {
@@ -53,7 +53,7 @@ const getLayout = (display: { width: number, height: number }): EditorLayout => 
     };
 
     const pieceButtonsSize = {
-        width: Math.min((canvasSize.width - fieldSize.width) * 0.6, 100),
+        width: Math.min((canvasSize.width - fieldSize.width) * 0.6, 80),
         height: Math.min(
             fieldSize.height / (1.25 * 9 + 0.25),
             40,
@@ -99,18 +99,29 @@ const getLayout = (display: { width: number, height: number }): EditorLayout => 
     };
 };
 
-const toolMode = ({ layout, currentIndex, actions }: {
+const toolMode = ({ layout, currentIndex, keyPage, actions }: {
     layout: EditorLayout;
     currentIndex: number;
+    keyPage: boolean;
     actions: {
         removePage: (data: { index: number }) => void;
         changeToDrawingMode: () => void;
+        changeToRef: (data: { index: number }) => void;
+        changeToKey: (data: { index: number }) => void;
     };
 }) => {
+    const toolButtonMargin = 5;
+    const margin = (layout.canvas.size.height - layout.field.size.height) / 2;
+
+    const keyOnclick = keyPage ?
+        () => actions.changeToRef({ index: currentIndex })
+        : () => actions.changeToKey({ index: currentIndex });
+
     return div({
         style: style({
             marginLeft: px(10),
-            paddingBottom: px(10),
+            paddingTop: px(margin - toolButtonMargin),
+            paddingBottom: px(margin),
             display: 'flex',
             justifyContent: 'flex-end',
             flexDirection: 'column',
@@ -119,9 +130,33 @@ const toolMode = ({ layout, currentIndex, actions }: {
             width: px(layout.buttons.size.width),
         }),
     }, [
+        // toolButton({
+        //     borderWidth: 1,
+        //     width: layout.buttons.size.width,
+        //     margin: toolButtonMargin,
+        //     backgroundColorClass: keyPage ? 'red' : 'white',
+        //     textColor: keyPage ? '#fff' : '#333',
+        //     borderColor: keyPage ? '#f44336' : '#333',
+        //     datatest: 'btn-key-ref',
+        //     key: 'btn-key-ref',
+        //     onclick: keyOnclick,
+        //     contents: iconContents({
+        //         height: layout.buttons.size.height,
+        //         description: keyPage ? 'key' : 'ref',
+        //         iconSize: 22,
+        //         iconName: keyPage ? 'vpn_key' : 'insert_link',
+        //     }),
+        // }),
+        toolSpace({
+            flexGrow: 100,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            key: 'div-space',
+        }),
         toolButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
+            margin: toolButtonMargin,
             backgroundColorClass: 'white',
             textColor: '#333',
             borderColor: '#333',
@@ -138,9 +173,10 @@ const toolMode = ({ layout, currentIndex, actions }: {
         toolButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
+            margin: toolButtonMargin,
             backgroundColorClass: 'red',
             textColor: '#fff',
-            borderColor: '#fff',
+            borderColor: '#f44336',
             datatest: 'btn-block-mode',
             key: 'btn-block-mode',
             onclick: () => actions.changeToDrawingMode(),
@@ -154,20 +190,32 @@ const toolMode = ({ layout, currentIndex, actions }: {
     ]);
 };
 
-const blockMode = ({ layout, modePiece, actions }: {
+const blockMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
     layout: any;
+    keyPage: boolean;
+    currentIndex: number;
     modePiece: Piece | undefined;
     actions: {
         selectPieceColor: (data: { piece: Piece }) => void;
         selectInferencePieceColor: () => void;
+        changeToRef: (data: { index: number }) => void;
+        changeToKey: (data: { index: number }) => void;
     };
 }) => {
     const pieces = [Piece.I, Piece.L, Piece.O, Piece.Z, Piece.T, Piece.J, Piece.S, Piece.Empty, Piece.Gray];
 
+    const toolButtonMargin = 5;
+    const margin = (layout.canvas.size.height - layout.field.size.height) / 2;
+
+    const keyOnclick = keyPage ?
+        () => actions.changeToRef({ index: currentIndex })
+        : () => actions.changeToKey({ index: currentIndex });
+
     return div({
         style: style({
             marginLeft: px(10),
-            paddingBottom: px(10),
+            paddingTop: px(margin - toolButtonMargin),
+            paddingBottom: px(margin),
             display: 'flex',
             justifyContent: 'flex-end',
             flexDirection: 'column',
@@ -175,9 +223,33 @@ const blockMode = ({ layout, modePiece, actions }: {
             height: px(layout.canvas.size.height),
             width: px(layout.buttons.size.width),
         }),
-    }, pieces.map(piece => (
+    }, [
+        // toolButton({
+        //     borderWidth: 1,
+        //     width: layout.buttons.size.width,
+        //     margin: toolButtonMargin,
+        //     backgroundColorClass: keyPage ? 'red' : 'white',
+        //     textColor: keyPage ? '#fff' : '#333',
+        //     borderColor: keyPage ? '#f44336' : '#333',
+        //     datatest: 'btn-key-ref',
+        //     key: 'btn-key-ref',
+        //     onclick: keyOnclick,
+        //     contents: iconContents({
+        //         height: layout.buttons.size.height,
+        //         description: keyPage ? 'key' : 'ref',
+        //         iconSize: 22,
+        //         iconName: keyPage ? 'vpn_key' : 'insert_link',
+        //     }),
+        // }),
+        toolSpace({
+            flexGrow: 100,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            key: 'div-space',
+        }),
+    ].concat(pieces.map(piece => (
         colorButton({ layout, piece, actions, highlight: modePiece === piece })
-    )).concat([
+    ))).concat([
         inferenceButton({
             layout,
             actions,
@@ -187,6 +259,8 @@ const blockMode = ({ layout, modePiece, actions }: {
 };
 
 const ScreenField = (state: State, actions: Actions, layout: any) => {
+    const keyPage = state.fumen.pages[state.fumen.currentIndex].field.obj !== undefined;
+
     const getChildren = () => {
         return [   // canvas:Field とのマッピング用仮想DOM
             KonvaCanvas({  // canvas空間のみ
@@ -207,11 +281,14 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
                 ? blockMode({
                     layout,
                     actions,
+                    keyPage,
+                    currentIndex: state.fumen.currentIndex,
                     modePiece: state.mode.piece,
                 })
                 : toolMode({
                     layout,
                     actions,
+                    keyPage,
                     currentIndex: state.fumen.currentIndex,
                 }),
         ];

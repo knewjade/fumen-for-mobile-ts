@@ -70,8 +70,8 @@ export class Pages {
     }
 
     // 指定したページのフィールドを取得する
-    getField(index: number): Field {
-        return this.restructureField(index, false);
+    getField(index: number, isOperation: boolean = false): Field {
+        return this.restructureField(index, isOperation);
     }
 
     // TODO: Add test

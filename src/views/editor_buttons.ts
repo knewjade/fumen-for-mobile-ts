@@ -29,6 +29,7 @@ export const colorButton = ({ layout, piece, highlight, actions }: {
         borderWidth,
         contents,
         width: layout.buttons.size.width,
+        margin: 5,
         backgroundColorClass: 'white',
         textColor: '#333',
         borderColor: highlight ? '#ff8a80' : '#333',
@@ -57,6 +58,7 @@ export const inferenceButton = ({ layout, highlight, actions }: {
         borderWidth,
         contents,
         width: layout.buttons.size.width,
+        margin: 5,
         backgroundColorClass: 'white',
         textColor: '#333',
         borderColor: highlight ? '#ff8a80' : '#333',
@@ -96,9 +98,12 @@ export const iconContents = (
 
 export const toolButton = (
     {
-        width, backgroundColorClass, textColor, borderColor, borderWidth = 1, datatest, key, onclick, contents,
+        width, backgroundColorClass, textColor, borderColor, borderWidth = 1,
+        datatest, key, onclick, contents, flexGrow, margin,
     }: {
+        flexGrow?: number;
         width: number;
+        margin: number;
         backgroundColorClass: string;
         textColor: string;
         borderColor: string;
@@ -114,13 +119,13 @@ export const toolButton = (
         href: '#',
         class: `waves-effect z-depth-0 btn ${backgroundColorClass}`,
         style: style({
+            flexGrow,
             color: textColor,
             border: `solid ${borderWidth}px ${borderColor}`,
-            margin: px(5),
+            marginTop: px(margin),
+            marginBottom: px(margin),
             width: px(width),
             maxWidth: px(width),
-            padding: px(0),
-            boxSizing: 'border-box',
             textAlign: 'center',
         }),
         onclick: (event: MouseEvent) => {
@@ -140,4 +145,28 @@ export const toolButton = (
             },
         }, contents),
     ]);
+};
+
+export const toolSpace = (
+    { width, key, flexGrow, margin }: {
+        flexGrow?: number;
+        width: number;
+        margin: number;
+        key: string;
+    }) => {
+    return div({
+        key,
+        class: 'white',
+        style: style({
+            flexGrow,
+            color: '#fff',
+            border: `solid 0px #fff`,
+            marginTop: px(margin),
+            width: px(width),
+            maxWidth: px(width),
+            padding: px(0),
+            boxSizing: 'border-box',
+            textAlign: 'center',
+        }),
+    }, []);
 };
