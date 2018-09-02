@@ -305,6 +305,7 @@ describe('Drawing', () => {
 
         // 次のページ
         operations.mode.editor.nextPage();
+        operations.mode.editor.toRef();
 
         operations.mode.block.O();
 

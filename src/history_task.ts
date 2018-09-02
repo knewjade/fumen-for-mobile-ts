@@ -58,10 +58,9 @@ export const toRemovePageTask = (removeIndex: number, primitivePrev: PrimitivePa
             return { pages: newPages, index: removeIndex < newPages.length ? removeIndex : newPages.length - 1 };
         },
         revert: async (pages: Page[]) => {
-            const newPages = pages.slice(0, removeIndex)
-                .concat([toPage(primitivePrev)])
-                .concat(pages.slice(removeIndex));
-            return { pages: newPages, index: removeIndex };
+            const pagesObj = new Pages(pages);
+            pagesObj.insertPage(removeIndex, toPage(primitivePrev));
+            return { pages: pagesObj.pages, index: removeIndex };
         },
         fixed: false,
     };
@@ -70,10 +69,9 @@ export const toRemovePageTask = (removeIndex: number, primitivePrev: PrimitivePa
 export const toInsertPageTask = (insertIndex: number, primitiveNext: PrimitivePage): OperationTask => {
     return {
         reply: async (pages: Page[]) => {
-            const newPages = pages.slice(0, insertIndex)
-                .concat([toPage(primitiveNext)])
-                .concat(pages.slice(insertIndex));
-            return { pages: newPages, index: insertIndex };
+            const pagesObj = new Pages(pages);
+            pagesObj.insertPage(insertIndex, toPage(primitiveNext));
+            return { pages: pagesObj.pages, index: insertIndex };
         },
         revert: async (pages: Page[]) => {
             const pagesObj = new Pages(pages);

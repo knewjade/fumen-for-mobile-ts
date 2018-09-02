@@ -9,7 +9,8 @@ import { toInsertPageTask, toPrimitivePage, toRemovePageTask } from '../history_
 
 export interface PageActions {
     openPage: (data: { index: number }) => action;
-    insertPage: (data: { index: number }) => action;
+    insertRefPage: (data: { index: number }) => action;
+    insertKeyPage: (data: { index: number }) => action;
     removePage: (data: { index: number }) => action;
     backLoopPage: () => action;
     nextLoopPage: () => action;
@@ -73,13 +74,31 @@ export const pageActions: Readonly<PageActions> = {
             }),
         ]);
     },
-    insertPage: ({ index }) => (state): NextState => {
+    insertRefPage: ({ index }) => (state): NextState => {
         const pages = new Pages(state.fumen.pages);
-        pages.insertPage(index);
+        pages.insertRefPage(index);
         const newPages = pages.pages;
 
+        const task = toInsertPageTask(index, toPrimitivePage(newPages[index]));
         return sequence(state, [
-            actions.registerHistoryTask({ task: toInsertPageTask(index, toPrimitivePage(newPages[index])) }),
+            actions.registerHistoryTask({ task }),
+            () => ({
+                fumen: {
+                    ...state.fumen,
+                    pages: newPages,
+                    maxPage: newPages.length,
+                },
+            }),
+        ]);
+    },
+    insertKeyPage: ({ index }) => (state): NextState => {
+        const pages = new Pages(state.fumen.pages);
+        pages.insertKeyPage(index);
+        const newPages = pages.pages;
+
+        const task = toInsertPageTask(index, toPrimitivePage(newPages[index]));
+        return sequence(state, [
+            actions.registerHistoryTask({ task }),
             () => ({
                 fumen: {
                     ...state.fumen,
@@ -132,11 +151,19 @@ export const pageActions: Readonly<PageActions> = {
         ]);
     },
     nextPageOrNewPage: () => (state): NextState => {
-        const nextPage = state.fumen.currentIndex + 1;
+        const fumen = state.fumen;
+        const nextPage = fumen.currentIndex + 1;
+
+        let insert = undefined;
+        if (fumen.maxPage <= nextPage) {
+            const field = fumen.pages[fumen.currentIndex].field;
+            insert = field.obj !== undefined ? pageActions.insertKeyPage : pageActions.insertRefPage;
+        }
+
         return sequence(state, [
             actions.fixInferencePiece(),
             actions.clearInferencePiece(),
-            state.fumen.maxPage <= nextPage ? pageActions.insertPage({ index: nextPage }) : undefined,
+            insert !== undefined ? insert({ index: nextPage }) : undefined,
             pageActions.openPage({ index: nextPage }),
         ]);
     },

@@ -30,6 +30,12 @@ export const operations = {
             backPage: () => {
                 cy.get(datatest('btn-back-page')).click();
             },
+            toRef: () => {
+                cy.get(datatest('btn-ref-page')).click();
+            },
+            toKey: () => {
+                cy.get(datatest('btn-key-page')).click();
+            },
         },
         block: {
             open: () => {
