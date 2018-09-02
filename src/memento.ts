@@ -103,8 +103,7 @@ export const memento = (() => {
 
             redoQueue.push(lastTask);
 
-            const promise = lastTask.fixed ? lastTask.revert() : lastTask.revert(pages);
-            const result = await promise;
+            const result = lastTask.fixed ? (await lastTask.revert()) : lastTask.revert(pages);
             return {
                 pages: result.pages,
                 index: result.index,
@@ -120,8 +119,7 @@ export const memento = (() => {
 
             undoQueue.push(lastTask);
 
-            const promise = lastTask.fixed ? lastTask.reply() : lastTask.reply(pages);
-            const result = await promise;
+            const result = lastTask.fixed ? (await lastTask.reply()) : lastTask.reply(pages);
             return {
                 pages: result.pages,
                 index: result.index,

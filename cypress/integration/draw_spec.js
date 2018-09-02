@@ -228,7 +228,7 @@ describe('Drawing', () => {
                 cy.get(block(2, 2)).should('have.attr', 'color', Color.Highlight.Completion);
             }
 
-            // 戻るボタン
+            // 次のボタン
             operations.mode.editor.nextPage();
 
             // 補完が消えている

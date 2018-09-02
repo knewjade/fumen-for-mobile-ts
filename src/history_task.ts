@@ -11,8 +11,8 @@ interface TaskResult {
 }
 
 interface OperationTask {
-    reply: (pages: Page[]) => Promise<TaskResult>;
-    revert: (pages: Page[]) => Promise<TaskResult>;
+    reply: (pages: Page[]) => TaskResult;
+    revert: (pages: Page[]) => TaskResult;
     fixed: false;
 }
 
@@ -37,11 +37,11 @@ export const toFumenTask = (primitivePrev: PrimitivePage[], fumen: string, prevI
 export const toSinglePageTask = (index: number, primitivePrev: PrimitivePage, next: Page): OperationTask => {
     const primitiveNext = toPrimitivePage(next);
     return {
-        reply: async (pages: Page[]) => {
+        reply: (pages: Page[]) => {
             pages[index] = toPage(primitiveNext);
             return { pages, index };
         },
-        revert: async (pages: Page[]) => {
+        revert: (pages: Page[]) => {
             pages[index] = toPage(primitivePrev);
             return { pages, index };
         },
@@ -51,13 +51,13 @@ export const toSinglePageTask = (index: number, primitivePrev: PrimitivePage, ne
 
 export const toRemovePageTask = (removeIndex: number, primitivePrev: PrimitivePage): OperationTask => {
     return {
-        reply: async (pages: Page[]) => {
+        reply: (pages: Page[]) => {
             const pagesObj = new Pages(pages);
             pagesObj.deletePage(removeIndex);
             const newPages = pagesObj.pages;
             return { pages: newPages, index: removeIndex < newPages.length ? removeIndex : newPages.length - 1 };
         },
-        revert: async (pages: Page[]) => {
+        revert: (pages: Page[]) => {
             const pagesObj = new Pages(pages);
             pagesObj.insertPage(removeIndex, toPage(primitivePrev));
             return { pages: pagesObj.pages, index: removeIndex };
@@ -68,15 +68,47 @@ export const toRemovePageTask = (removeIndex: number, primitivePrev: PrimitivePa
 
 export const toInsertPageTask = (insertIndex: number, primitiveNext: PrimitivePage): OperationTask => {
     return {
-        reply: async (pages: Page[]) => {
+        reply: (pages: Page[]) => {
             const pagesObj = new Pages(pages);
             pagesObj.insertPage(insertIndex, toPage(primitiveNext));
             return { pages: pagesObj.pages, index: insertIndex };
         },
-        revert: async (pages: Page[]) => {
+        revert: (pages: Page[]) => {
             const pagesObj = new Pages(pages);
             pagesObj.deletePage(insertIndex);
             return { pages: pagesObj.pages, index: insertIndex - 1 };
+        },
+        fixed: false,
+    };
+};
+
+export const toKeyPageTask = (index: number): OperationTask => {
+    return {
+        reply: (pages: Page[]) => {
+            const pagesObj = new Pages(pages);
+            pagesObj.toKeyPage(index);
+            return { index, pages: pagesObj.pages };
+        },
+        revert: (pages: Page[]) => {
+            const pagesObj = new Pages(pages);
+            pagesObj.toRefPage(index);
+            return { index, pages: pagesObj.pages };
+        },
+        fixed: false,
+    };
+};
+
+export const toRefPageTask = (index: number): OperationTask => {
+    return {
+        reply: (pages: Page[]) => {
+            const pagesObj = new Pages(pages);
+            pagesObj.toRefPage(index);
+            return { index, pages: pagesObj.pages };
+        },
+        revert: (pages: Page[]) => {
+            const pagesObj = new Pages(pages);
+            pagesObj.toKeyPage(index);
+            return { index, pages: pagesObj.pages };
         },
         fixed: false,
     };

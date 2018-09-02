@@ -5,7 +5,7 @@ import { Move, Page, PreCommand } from '../lib/fumen/fumen';
 import { Field } from '../lib/fumen/field';
 import { Block } from '../state_types';
 import { Pages, QuizCommentResult, TextCommentResult } from '../lib/pages';
-import { toInsertPageTask, toPrimitivePage, toRemovePageTask } from '../history_task';
+import { toInsertPageTask, toKeyPageTask, toPrimitivePage, toRefPageTask, toRemovePageTask } from '../history_task';
 
 export interface PageActions {
     openPage: (data: { index: number }) => action;
@@ -182,85 +182,20 @@ export const pageActions: Readonly<PageActions> = {
         ]);
     },
     changeToRef: ({ index }: { index: number }) => (state): NextState => {
+        const task = toRefPageTask(index);
+
         return sequence(state, [
             actions.fixInferencePiece(),
             actions.clearInferencePiece(),
+            actions.registerHistoryTask({ task }),
             (newState) => {
-                const pages = newState.fumen.pages;
-
-                if (index <= 0 || pages.length <= index) {
-                    return;
-                }
-
-                if (pages[index].field.obj === undefined) {
-                    return;
-                }
-
-                // 現在のフィールドを取得
-                const pagesObj = new Pages(pages);
-                const prevField = pagesObj.getField(index - 1, true);
-                const currentField = pagesObj.getField(index, false);
-
-                // 前のページで最も近いobjのインデックスを取得
-                let ref = 0;
-                for (let i = index - 1; 0 <= i; i -= 1) {
-                    if (pages[i].field.obj !== undefined) {
-                        ref = i;
-                        break;
-                    }
-                }
-
-                // 次のページ以降で、現在のページをrefにしていたページの参照先を置き換える
-                for (let i = ref + 1; i < pages.length; i += 1) {
-                    const fieldRef = pages[i].field.ref;
-                    if (fieldRef === index) {
-                        pages[i].field.ref = ref;
-                    }
-                }
-
-                const page = pages[index];
-                const currentCommands = page.commands ? page.commands : { pre: {} };
-                const newCommands: Page['commands'] = {
-                    pre: {},
-                };
-
-                // 前ページとの差をコマンドに変換
-                for (let y = -1; y < 24; y += 1) {
-                    for (let x = 0; x < 10; x += 1) {
-                        const currentPiece = currentField.get(x, y);
-                        const prevPiece = prevField.get(x, y);
-
-                        const isField = 0 <= y;
-                        const i = isField ? x + y * 10 : -x;
-                        const type = isField ? 'block' : 'sentBlock';
-                        const key = `${type}-${i}`;
-
-                        if (currentPiece !== prevPiece) {
-                            // 操作の結果、最初のフィールドの状態から変化するとき
-                            newCommands.pre[key] = { x, y, type, piece: currentPiece };
-                        } else {
-                            // 操作の結果、最初のフィールドの状態に戻るとき
-                            delete newCommands.pre[key];
-                        }
-                    }
-                }
-
-                // 現ページの操作を引き継ぐ
-                Object.keys(currentCommands.pre).forEach((key) => {
-                    newCommands.pre[key] = currentCommands.pre[key];
-                });
-
-                // 反映
-                page.commands = newCommands;
-
-                pages[index].field = {
-                    ref,
-                };
+                const pages = new Pages(newState.fumen.pages);
+                pages.toRefPage(index);
 
                 return {
                     fumen: {
                         ...newState.fumen,
-                        pages,
+                        pages: pages.pages,
                     },
                 };
             },
@@ -271,42 +206,19 @@ export const pageActions: Readonly<PageActions> = {
 
     },
     changeToKey: ({ index }: { index: number }) => (state): NextState => {
+        const task = toKeyPageTask(index);
+
         return sequence(state, [
             actions.fixInferencePiece(),
             actions.clearInferencePiece(),
+            actions.registerHistoryTask({ task }),
             (newState) => {
-                const pages = newState.fumen.pages;
-
-                if (index <= 0 || pages.length <= index) {
-                    return;
-                }
-
-                const ref = pages[index].field.ref;
-                if (ref === undefined) {
-                    return;
-                }
-
-                // 現在のフィールドを取得
-                const pagesObj = new Pages(pages);
-                const currentField = pagesObj.getField(index, false);
-
-                // 次のページ以降で、現在のページより前をrefにしているページの参照先を置き換える
-                for (let i = index + 1; i < pages.length; i += 1) {
-                    const fieldRef = pages[i].field.ref;
-                    if (fieldRef !== undefined && fieldRef < index) {
-                        pages[i].field.ref = index;
-                    }
-                }
-
-                // 反映
-                pages[index].field = {
-                    obj: currentField,
-                };
-
+                const pages = new Pages(newState.fumen.pages);
+                pages.toKeyPage(index);
                 return {
                     fumen: {
                         ...newState.fumen,
-                        pages,
+                        pages: pages.pages,
                     },
                 };
             },
