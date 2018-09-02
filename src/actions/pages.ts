@@ -95,10 +95,13 @@ export const pageActions: Readonly<PageActions> = {
 
         const pages = new Pages(fumen);
         pages.deletePage(index);
+
         const newPages = pages.pages;
         const nextIndex = index < newPages.length ? index : newPages.length - 1;
+        const task = toRemovePageTask(index, primitivePrev);
+
         return sequence(state, [
-            actions.registerHistoryTask({ task: toRemovePageTask(index, primitivePrev) }),
+            actions.registerHistoryTask({ task }),
             () => ({
                 fumen: {
                     ...state.fumen,

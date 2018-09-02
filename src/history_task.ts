@@ -1,6 +1,7 @@
 import { decode, Move, Page, PreCommand } from './lib/fumen/fumen';
 import { Operation, Piece } from './lib/enums';
 import { Field, PlayField } from './lib/fumen/field';
+import { Pages } from './lib/pages';
 
 export type HistoryTask = OperationTask | FixedTask;
 
@@ -51,7 +52,9 @@ export const toSinglePageTask = (index: number, primitivePrev: PrimitivePage, ne
 export const toRemovePageTask = (removeIndex: number, primitivePrev: PrimitivePage): OperationTask => {
     return {
         reply: async (pages: Page[]) => {
-            const newPages = pages.slice(0, removeIndex).concat(pages.slice(removeIndex + 1));
+            const pagesObj = new Pages(pages);
+            pagesObj.deletePage(removeIndex);
+            const newPages = pagesObj.pages;
             return { pages: newPages, index: removeIndex < newPages.length ? removeIndex : newPages.length - 1 };
         },
         revert: async (pages: Page[]) => {
@@ -73,8 +76,9 @@ export const toInsertPageTask = (insertIndex: number, primitiveNext: PrimitivePa
             return { pages: newPages, index: insertIndex };
         },
         revert: async (pages: Page[]) => {
-            const newPages = pages.slice(0, insertIndex).concat(pages.slice(insertIndex + 1));
-            return { pages: newPages, index: insertIndex - 1 };
+            const pagesObj = new Pages(pages);
+            pagesObj.deletePage(insertIndex);
+            return { pages: pagesObj.pages, index: insertIndex - 1 };
         },
         fixed: false,
     };
