@@ -49,14 +49,12 @@ export const ToolButton: Component<Props & IconProps> = (
     const onclick = actions.onclick;
 
     return (
-        <a href="#"
-           key={key}
-           datatest={datatest}
+        <a datatest={datatest}
            style={aProperties}
            onclick={onclick !== undefined ? (event: MouseEvent) => {
-               onclick(event);
                event.stopPropagation();
                event.preventDefault();
+               onclick(event);
            } : undefined}>
             <Icon height={height} fontSize={fontSize} colors={colors} enable={enable}>{iconName}</Icon>
         </a>
