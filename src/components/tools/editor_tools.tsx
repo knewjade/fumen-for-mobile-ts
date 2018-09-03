@@ -86,7 +86,8 @@ export const EditorTools: Component<Props> = (
 
                 <ToolButton iconName="home" datatest="btn-drawing-tool" width={40} height={height - 10}
                             key="btn-drawing-tool" fontSize={30} marginRight={40} colors={colors}
-                            actions={{ onclick: () => actions.changeToDrawingToolMode() }}/>
+                            actions={{ onclick: () => actions.changeToDrawingToolMode() }}
+                            enable={modeType !== ModeTypes.DrawingTool}/>
 
                 {/*<ToolButton iconName="pan_tool" datatest="btn-put-piece" width={35} height={height - 10}*/}
                 {/*fontSize={29} colors={colors}*/}

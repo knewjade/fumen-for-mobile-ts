@@ -117,6 +117,7 @@ interface MenuProps {
         changeToReaderScreen: () => void;
         changeToDrawerScreen: () => void;
         fixInferencePiece: () => void;
+        clearInferencePiece: () => void;
         loadNewFumen: () => void;
         firstPage: () => void;
         lastPage: () => void;
@@ -233,6 +234,8 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
 
                         <SettingButton datatest="btn-new-fumen" iconName="insert_drive_file" fontSize={32.3}
                                        onclick={() => {
+                                           actions.fixInferencePiece();
+                                           actions.clearInferencePiece();
                                            actions.loadNewFumen();
                                            actions.changeToDrawerScreen();
                                            actions.closeMenuModal();

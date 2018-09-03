@@ -357,9 +357,10 @@ describe('Drawing', () => {
         operations.screen.writable();
 
         operations.mode.block.open();
-        // inference
 
+        // inference
         operations.mode.block.Inference();
+
         operations.mode.block.click(9, 3);
         operations.mode.block.click(8, 3);
         operations.mode.block.click(7, 3);
@@ -391,5 +392,24 @@ describe('Drawing', () => {
         for (let x = 0; x < 9; x++) {
             cy.get(sentBlock(x)).should('have.attr', 'color', Color.Gray.Field);
         }
+    });
+
+    it('Reset completion when create new page', () => {
+        visit({});
+
+        operations.screen.writable();
+
+        operations.mode.block.open();
+
+        operations.mode.block.click(0, 0);
+        operations.mode.block.click(0, 1);
+
+        cy.get(block(0, 0)).should('have.attr', 'color', Color.Highlight.Completion);
+        cy.get(block(0, 1)).should('have.attr', 'color', Color.Highlight.Completion);
+
+        operations.menu.newPage();
+
+        cy.get(block(0, 0)).should('have.attr', 'color', Color.Empty.Field);
+        cy.get(block(0, 1)).should('have.attr', 'color', Color.Empty.Field);
     });
 });
