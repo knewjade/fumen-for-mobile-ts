@@ -56,16 +56,12 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
         actions.inputFumenData({ value });
     };
 
-    const cancel = (e: MouseEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
+    const cancel = () => {
         actions.closeFumenModal();
         actions.clearFumenData();
     };
 
-    const open = (e: MouseEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
+    const open = () => {
         if (textAreaValue !== undefined) {
             actions.loadFumen({ fumen: textAreaValue });
         }
@@ -93,12 +89,12 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
                 </div>
                 <div className="modal-footer">
 
-                    <a datatest="btn-cancel" className="waves-effect waves-teal btn-flat"
+                    <a href="#" datatest="btn-cancel" className="waves-effect waves-teal btn-flat"
                        onclick={cancel}>
                         {i18n.OpenFumen.Buttons.Cancel()}
                     </a>
 
-                    <a datatest="btn-open" className={openClassName} onclick={open}>
+                    <a href="#" datatest="btn-open" className={openClassName} onclick={open}>
                         {i18n.OpenFumen.Buttons.Open()}
                     </a>
                 </div>
@@ -161,7 +157,6 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
         alignItems: 'center',
     });
 
-    // Asyncで実行する
     const copyOnClick = async () => {
         actions.fixInferencePiece();
 
@@ -212,7 +207,7 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
 
                     <div style={divProperties}>
                         {screen === Screens.Editor ?
-                            <SettingButton datatest="btn-readonly" iconName="visibility" fontSize={31.25}
+                            <SettingButton datatest="btn-readonly" href="#" iconName="visibility" fontSize={31.25}
                                            onclick={() => {
                                                actions.changeToReaderScreen();
                                                actions.closeMenuModal();
@@ -220,19 +215,19 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                             : undefined}
 
                         {screen === Screens.Reader ?
-                            <SettingButton datatest="btn-writable" iconName="mode_edit" fontSize={31.25}
+                            <SettingButton datatest="btn-writable" href="#" iconName="mode_edit" fontSize={31.25}
                                            onclick={() => {
                                                actions.changeToDrawerScreen();
                                                actions.closeMenuModal();
                                            }}>{i18n.Menu.Buttons.Writable()}</SettingButton>
                             : undefined}
 
-                        <SettingButton datatest="btn-copy-fumen" iconName="content_copy"
+                        <SettingButton datatest="btn-copy-fumen" href="#" iconName="content_copy"
                                        fontSize={29.3} onclick={copyOnClick}>
                             {i18n.Menu.Buttons.Clipboard()}
                         </SettingButton>
 
-                        <SettingButton datatest="btn-new-fumen" iconName="insert_drive_file" fontSize={32.3}
+                        <SettingButton datatest="btn-new-fumen" href="#" iconName="insert_drive_file" fontSize={32.3}
                                        onclick={() => {
                                            actions.fixInferencePiece();
                                            actions.clearInferencePiece();
@@ -243,7 +238,7 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                             {i18n.Menu.Buttons.New()}
                         </SettingButton>
 
-                        <SettingButton datatest="btn-first-page" iconName="fast_rewind" fontSize={32.3}
+                        <SettingButton datatest="btn-first-page" href="#" iconName="fast_rewind" fontSize={32.3}
                                        onclick={() => {
                                            actions.firstPage();
                                            actions.closeMenuModal();
@@ -251,7 +246,7 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                             {i18n.Menu.Buttons.FirstPage()}
                         </SettingButton>
 
-                        <SettingButton datatest="btn-last-page" iconName="fast_forward" fontSize={32.3}
+                        <SettingButton datatest="btn-last-page" href="#" iconName="fast_forward" fontSize={32.3}
                                        onclick={() => {
                                            actions.lastPage();
                                            actions.closeMenuModal();
@@ -280,7 +275,7 @@ interface SettingButtonProps {
 }
 
 export const SettingButton: ComponentWithText<SettingButtonProps> = (
-    { href, onclick, iconName, datatest, fontSize }, showName,
+    { href = '#', onclick, iconName, datatest, fontSize }, showName,
 ) => (
     <a href={href} onclick={onclick !== undefined ? (event: MouseEvent) => {
         onclick(event);

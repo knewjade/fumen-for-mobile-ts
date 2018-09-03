@@ -116,6 +116,7 @@ export const toolButton = (
     return a({
         datatest,
         key,
+        href: '#',
         class: `waves-effect z-depth-0 btn ${backgroundColorClass}`,
         style: style({
             flexGrow,
