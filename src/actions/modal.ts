@@ -4,9 +4,9 @@ import { action } from '../actions';
 export interface ModalActions {
     showOpenErrorMessage: (data: { message: string }) => action;
     openFumenModal: () => action;
-    openSettingsModal: () => action;
+    openMenuModal: () => action;
     closeFumenModal: () => action;
-    closeSettingsModal: () => action;
+    closeMenuModal: () => action;
 }
 
 export const modalActions: Readonly<ModalActions> = {
@@ -29,11 +29,11 @@ export const modalActions: Readonly<ModalActions> = {
             },
         };
     },
-    openSettingsModal: () => (state): NextState => {
+    openMenuModal: () => (state): NextState => {
         return {
             modal: {
                 ...state.modal,
-                settings: true,
+                menu: true,
             },
         };
     },
@@ -45,11 +45,11 @@ export const modalActions: Readonly<ModalActions> = {
             },
         };
     },
-    closeSettingsModal: () => (state): NextState => {
+    closeMenuModal: () => (state): NextState => {
         return {
             modal: {
                 ...state.modal,
-                settings: false,
+                menu: false,
             },
         };
     },

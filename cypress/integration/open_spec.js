@@ -38,12 +38,12 @@ describe('Open fumen', () => {
     it('First page/Last page', () => {
         cy.visit('./public/index.html?lng=ja&d=v115@vhF2OYaAFLDmClcJSAVDEHBEooRBKoAVBU3TWCpXBA?AVqBTfBSwBJnBMmB');
 
-        operations.settings.lastPage();
+        operations.menu.lastPage();
 
         // Assertion: ページ番号の確認
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '6 / 6');
 
-        operations.settings.firstPage();
+        operations.menu.firstPage();
 
         // Assertion: ページ番号の確認
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 6');

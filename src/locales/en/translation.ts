@@ -11,8 +11,8 @@ export const resources = {
             Unexpected: 'Unexpected error: {{message}}',
         },
     },
-    Settings: {
-        Title: 'Settings',
+    Menu: {
+        Title: 'Menu',
         Build: 'build {{version}}',
         Buttons: {
             Readonly: 'readonly',

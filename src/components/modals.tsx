@@ -107,13 +107,13 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
     );
 };
 
-interface SettingsProps {
+interface MenuProps {
     version: string;
     pages: Page[];
     screen: Screens;
     currentIndex: number;
     actions: {
-        closeSettingsModal: () => void;
+        closeMenuModal: () => void;
         changeToReaderScreen: () => void;
         changeToDrawerScreen: () => void;
         fixInferencePiece: () => void;
@@ -123,7 +123,7 @@ interface SettingsProps {
     };
 }
 
-export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen, currentIndex, actions }) => {
+export const MenuModal: Component<MenuProps> = ({ version, pages, screen, currentIndex, actions }) => {
     const oncreate = (element: HTMLDivElement) => {
         const instance = M.Modal.init(element, {
             onOpenEnd: () => {
@@ -133,21 +133,21 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
                 }
             },
             onCloseStart: () => {
-                actions.closeSettingsModal();
+                actions.closeMenuModal();
             },
         });
 
         instance.open();
 
-        resources.modals.settings = instance;
+        resources.modals.menu = instance;
     };
 
     const ondestroy = () => {
-        const modal = resources.modals.settings;
+        const modal = resources.modals.menu;
         if (modal !== undefined) {
             modal.close();
         }
-        resources.modals.settings = undefined;
+        resources.modals.menu = undefined;
     };
 
     const divProperties = style({
@@ -200,13 +200,13 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
     };
 
     return (
-        <div key="settings-modal-top">
+        <div key="menu-modal-top">
             <div datatest="mdl-open-fumen" className="modal bottom-sheet" oncreate={oncreate} ondestroy={ondestroy}>
                 <div className="modal-content">
 
                     <h4>
-                        {i18n.Settings.Title()}&nbsp;
-                        <span style={style({ color: '#999', fontSize: '50%' })}>[{i18n.Settings.Build(version)}]</span>
+                        {i18n.Menu.Title()}&nbsp;
+                        <span style={style({ color: '#999', fontSize: '50%' })}>[{i18n.Menu.Build(version)}]</span>
                     </h4>
 
                     <div style={divProperties}>
@@ -214,50 +214,50 @@ export const SettingsModal: Component<SettingsProps> = ({ version, pages, screen
                             <SettingButton datatest="btn-readonly" iconName="visibility" fontSize={31.25}
                                            onclick={() => {
                                                actions.changeToReaderScreen();
-                                               actions.closeSettingsModal();
-                                           }}>{i18n.Settings.Buttons.Readonly()}</SettingButton>
+                                               actions.closeMenuModal();
+                                           }}>{i18n.Menu.Buttons.Readonly()}</SettingButton>
                             : undefined}
 
                         {screen === Screens.Reader ?
                             <SettingButton datatest="btn-writable" iconName="mode_edit" fontSize={31.25}
                                            onclick={() => {
                                                actions.changeToDrawerScreen();
-                                               actions.closeSettingsModal();
-                                           }}>{i18n.Settings.Buttons.Writable()}</SettingButton>
+                                               actions.closeMenuModal();
+                                           }}>{i18n.Menu.Buttons.Writable()}</SettingButton>
                             : undefined}
 
                         <SettingButton datatest="btn-copy-fumen" iconName="content_copy"
                                        fontSize={29.3} onclick={copyOnClick}>
-                            {i18n.Settings.Buttons.Clipboard()}
+                            {i18n.Menu.Buttons.Clipboard()}
                         </SettingButton>
 
                         <SettingButton datatest="btn-new-fumen" iconName="insert_drive_file" fontSize={32.3}
                                        onclick={() => {
                                            actions.loadNewFumen();
                                            actions.changeToDrawerScreen();
-                                           actions.closeSettingsModal();
+                                           actions.closeMenuModal();
                                        }}>
-                            {i18n.Settings.Buttons.New()}
+                            {i18n.Menu.Buttons.New()}
                         </SettingButton>
 
                         <SettingButton datatest="btn-first-page" iconName="fast_rewind" fontSize={32.3}
                                        onclick={() => {
                                            actions.firstPage();
-                                           actions.closeSettingsModal();
+                                           actions.closeMenuModal();
                                        }}>
-                            {i18n.Settings.Buttons.FirstPage()}
+                            {i18n.Menu.Buttons.FirstPage()}
                         </SettingButton>
 
                         <SettingButton datatest="btn-last-page" iconName="fast_forward" fontSize={32.3}
                                        onclick={() => {
                                            actions.lastPage();
-                                           actions.closeSettingsModal();
+                                           actions.closeMenuModal();
                                        }}>
-                            {i18n.Settings.Buttons.LastPage()}
+                            {i18n.Menu.Buttons.LastPage()}
                         </SettingButton>
 
                         <SettingButton href="./help.html" iconName="help_outline" fontSize={31.25}>
-                            {i18n.Settings.Buttons.Help()}
+                            {i18n.Menu.Buttons.Help()}
                         </SettingButton>
 
                         <div style={style({ height: px(10), width: '100%' })}/>

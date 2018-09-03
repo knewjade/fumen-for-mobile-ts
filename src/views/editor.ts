@@ -3,7 +3,7 @@ import { Coordinate, Size } from './commons';
 import { View } from 'hyperapp';
 import { resources, State } from '../states';
 import { EditorTools } from '../components/tools/editor_tools';
-import { OpenFumenModal, SettingsModal } from '../components/modals';
+import { MenuModal, OpenFumenModal } from '../components/modals';
 import { Palette } from '../lib/colors';
 import { Actions } from '../actions';
 import { Field } from '../components/field';
@@ -359,7 +359,7 @@ export const view: View<State, Actions> = (state, actions) => {
             errorMessage: state.fumen.errorMessage,
             textAreaValue: state.fumen.value,
         }) : undefined as any,
-        state.modal.settings ? SettingsModal({
+        state.modal.menu ? MenuModal({
             actions,
             version: state.version,
             pages: state.fumen.pages,

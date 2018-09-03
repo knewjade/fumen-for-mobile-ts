@@ -17,7 +17,7 @@ interface Props {
     inferenceCount: number;
     actions: {
         openFumenModal: () => void;
-        openSettingsModal: () => void;
+        openMenuModal: () => void;
         startAnimation: () => void;
         pauseAnimation: () => void;
         backPage: () => void;
@@ -92,9 +92,9 @@ export const EditorTools: Component<Props> = (
                 {/*fontSize={29} colors={colors}*/}
                 {/*actions={{ onclick: () => actions.changeToPieceMode() }}/>*/}
 
-                <ToolButton iconName="settings" datatest="btn-open-settings" sticky={true}
-                            key="btn-open-settings" width={40} height={height - 10} fontSize={31.25} colors={colors}
-                            actions={{ onclick: () => actions.openSettingsModal() }}/>
+                <ToolButton iconName="menu" datatest="btn-open-menu" sticky={true}
+                            key="btn-open-menu" width={40} height={height - 10} fontSize={33} colors={colors}
+                            actions={{ onclick: () => actions.openMenuModal() }}/>
             </div>
         </nav>
     );

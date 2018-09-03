@@ -64,7 +64,7 @@ describe('Drawing Tools', () => {
         operations.mode.editor.backPage();
         operations.mode.tools.removePage();
 
-        operations.settings.copyToClipboard();
+        operations.menu.copyToClipboard();
 
         // データを取り出す
         {
@@ -186,7 +186,7 @@ describe('Drawing Tools', () => {
         cy.get(block(9, 0)).should('have.attr', 'color', Color.Normal.S);
 
         // New page
-        operations.settings.newPage();
+        operations.menu.newPage();
 
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 1');
         cy.get(block(6, 0)).should('not.have.attr', 'color', Color.Normal.I);
@@ -206,7 +206,7 @@ describe('Drawing Tools', () => {
 
         operations.mode.tools.undo();
 
-        operations.settings.copyToClipboard();
+        operations.menu.copyToClipboard();
 
         // データを取り出す
         {
@@ -237,7 +237,7 @@ describe('Drawing Tools', () => {
 
         visit({});
 
-        operations.settings.copyToClipboard();
+        operations.menu.copyToClipboard();
 
         // データを取り出す
         {

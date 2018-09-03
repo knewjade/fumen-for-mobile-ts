@@ -330,7 +330,7 @@ describe('Sent line', () => {
 
         // 設定を開く
         {
-            cy.get(datatest('btn-open-settings')).click();
+            cy.get(datatest('btn-open-menu')).click();
         }
 
         // テト譜をコピー

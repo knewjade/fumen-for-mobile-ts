@@ -85,7 +85,7 @@ describe('Key/Ref', () => {
         });
 
         // データを確認
-        operations.settings.copyToClipboard();
+        operations.menu.copyToClipboard();
         cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@9gh0hlDeR4g0RpglCeR4wwg0RpglBeBtxwzhCeBtww?JeAgH9gAPwSwhAtFeAPBeAtFeAPQaQpAtZeAgH+gRpHexhI?ehWZeAgH');
         rightTap();
 
@@ -95,7 +95,7 @@ describe('Key/Ref', () => {
         operations.mode.tools.undo();
 
         // データを確認
-        operations.settings.copyToClipboard();
+        operations.menu.copyToClipboard();
         cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@9gh0hlFeg0RpglFeg0RpglFezhPeAgH9gAPwSwhAtF?eAPBeAtFeAPQaQpAtZeAgH+gRpHexhIehWZeAgH');
         rightTap();
 
@@ -107,7 +107,7 @@ describe('Key/Ref', () => {
         operations.mode.tools.undo();
 
         // データを確認
-        operations.settings.copyToClipboard();
+        operations.menu.copyToClipboard();
         cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@9gh0hlFeg0RpglFeg0RpglFezhPeAgH9gAPwSwhAtF?eAPBeAtFeAPQaQpAtZeAgH9ggWxSgHFegWxSgHFehWhHZeA?gH');
         rightTap();
 
@@ -119,7 +119,7 @@ describe('Key/Ref', () => {
         operations.mode.tools.redo();
 
         // データを確認
-        operations.settings.copyToClipboard();
+        operations.menu.copyToClipboard();
         cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@9gh0hlFeg0RpglFeg0RpglFezhPeAgH9gAPwSwhAtF?eAPBeAtFeAPQaQpAtZeAgH+gRpHexhIehWZeAgH');
         rightTap();
 
@@ -129,7 +129,7 @@ describe('Key/Ref', () => {
         operations.mode.tools.redo();
 
         // データを確認
-        operations.settings.copyToClipboard();
+        operations.menu.copyToClipboard();
         cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@9gh0hlDeR4g0RpglCeR4wwg0RpglBeBtxwzhCeBtww?JeAgH9gAPwSwhAtFeAPBeAtFeAPQaQpAtZeAgH+gRpHexhI?ehWZeAgH');
         rightTap();
 
@@ -146,7 +146,7 @@ describe('Key/Ref', () => {
         });
 
         // データを確認
-        operations.settings.copyToClipboard();
+        operations.menu.copyToClipboard();
         cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@9gh0hlDeR4g0RpglCeR4wwg0RpglBeBtxwzhCeBtww?JeAgH9gAPwSwhAtFeAPBeAtFeAPQaQpAtZeAgH+gRpAewhF?exhAewhGehWwhIewhOeAgHvhAAgH');
         rightTap();
     });

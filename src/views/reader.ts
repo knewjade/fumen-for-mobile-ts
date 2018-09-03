@@ -1,7 +1,7 @@
 import { Coordinate, Size } from './commons';
 import { View } from 'hyperapp';
 import { resources, State } from '../states';
-import { OpenFumenModal, SettingsModal } from '../components/modals';
+import { MenuModal, OpenFumenModal } from '../components/modals';
 import { Actions } from '../actions';
 import { div } from '@hyperapp/html';
 import { KonvaCanvas } from '../components/konva_canvas';
@@ -239,7 +239,7 @@ export const view: View<State, Actions> = (state, actions) => {
             errorMessage: state.fumen.errorMessage,
             textAreaValue: state.fumen.value,
         }) : undefined as any,
-        state.modal.settings ? SettingsModal({
+        state.modal.menu ? MenuModal({
             actions,
             version: state.version,
             pages: state.fumen.pages,

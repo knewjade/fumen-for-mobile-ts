@@ -16,17 +16,17 @@ export const i18n = {
             Unexpected: (message: string) => t('OpenFumen.Errors.Unexpected', { message }),
         },
     },
-    Settings: {
-        Title: () => t('Settings.Title'),
-        Build: (version: string) => t('Settings.Build', { version }),
+    Menu: {
+        Title: () => t('Menu.Title'),
+        Build: (version: string) => t('Menu.Build', { version }),
         Buttons: {
-            Readonly: () => t('Settings.Buttons.Readonly'),
-            Writable: () => t('Settings.Buttons.Writable'),
-            Clipboard: () => t('Settings.Buttons.Clipboard'),
-            FirstPage: () => t('Settings.Buttons.FirstPage'),
-            LastPage: () => t('Settings.Buttons.LastPage'),
-            New: () => t('Settings.Buttons.New'),
-            Help: () => t('Settings.Buttons.Help'),
+            Readonly: () => t('Menu.Buttons.Readonly'),
+            Writable: () => t('Menu.Buttons.Writable'),
+            Clipboard: () => t('Menu.Buttons.Clipboard'),
+            FirstPage: () => t('Menu.Buttons.FirstPage'),
+            LastPage: () => t('Menu.Buttons.LastPage'),
+            New: () => t('Menu.Buttons.New'),
+            Help: () => t('Menu.Buttons.Help'),
         },
     },
     Domains: {

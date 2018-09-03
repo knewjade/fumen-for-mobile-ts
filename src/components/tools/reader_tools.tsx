@@ -12,7 +12,7 @@ interface Props {
     palette: ColorPalette;
     actions: {
         openFumenModal: () => void;
-        openSettingsModal: () => void;
+        openMenuModal: () => void;
         startAnimation: () => void;
         pauseAnimation: () => void;
     };
@@ -67,9 +67,9 @@ export const ReaderTools: Component<Props> = ({ height, animationState, pages, p
                                 },
                             }}/>
 
-                <ToolButton iconName="settings" datatest="btn-open-settings" sticky={true}
-                            key="btn-open-settings" width={40} height={height - 10} fontSize={31.25} colors={palette}
-                            actions={{ onclick: () => actions.openSettingsModal() }}/>
+                <ToolButton iconName="menu" datatest="btn-open-menu" sticky={true}
+                            key="btn-open-menu" width={40} height={height - 10} fontSize={33} colors={palette}
+                            actions={{ onclick: () => actions.openMenuModal() }}/>
             </div>
         </nav>
     );

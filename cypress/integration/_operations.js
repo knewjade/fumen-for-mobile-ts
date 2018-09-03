@@ -7,12 +7,12 @@ const py = (y) => 575 - 25.5 * y;
 export const operations = {
     screen: {
         writable: () => {
-            cy.get(datatest('btn-open-settings')).click();
+            cy.get(datatest('btn-open-menu')).click();
             cy.get(datatest('btn-writable')).click();
             cy.wait(500);
         },
         readonly: () => {
-            cy.get(datatest('btn-open-settings')).click();
+            cy.get(datatest('btn-open-menu')).click();
             cy.get(datatest('btn-readonly')).click();
             cy.wait(500);
         },
@@ -105,26 +105,26 @@ export const operations = {
             },
         },
     },
-    settings: {
+    menu: {
         open: () => {
-            cy.get(datatest('btn-open-settings')).click();
+            cy.get(datatest('btn-open-menu')).click();
         },
         newPage: () => {
-            operations.settings.open();
+            operations.menu.open();
             cy.get(datatest('btn-new-fumen')).click();
         },
         copyToClipboard: () => {
-            operations.settings.open();
+            operations.menu.open();
             cy.get(datatest('btn-copy-fumen')).click();
             cy.wait(100);
         },
         firstPage: () => {
-            operations.settings.open();
+            operations.menu.open();
             cy.get(datatest('btn-first-page')).click();
             cy.wait(100);
         },
         lastPage: () => {
-            operations.settings.open();
+            operations.menu.open();
             cy.get(datatest('btn-last-page')).click();
             cy.wait(100);
         },

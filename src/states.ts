@@ -40,7 +40,7 @@ export interface State {
     };
     modal: {
         fumen: boolean;
-        settings: boolean;
+        menu: boolean;
     };
     handlers: {
         animation?: number;
@@ -98,7 +98,7 @@ export const initState: Readonly<State> = {
     },
     modal: {
         fumen: false,
-        settings: false,
+        menu: false,
     },
     handlers: {
         animation: undefined,
@@ -125,7 +125,7 @@ export const initState: Readonly<State> = {
 
 export const resources = {
     modals: {
-        settings: undefined as any,
+        menu: undefined as any,
         fumen: undefined as any,
     },
     konva: createKonvaObjects(),

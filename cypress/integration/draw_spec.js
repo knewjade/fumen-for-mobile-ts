@@ -43,7 +43,7 @@ describe('Drawing', () => {
         operations.mode.block.dragToRight({ from: 1, to: 9 }, 0);
         operations.mode.block.dragToRight({ from: 1, to: 9 }, -1);
 
-        operations.settings.copyToClipboard();
+        operations.menu.copyToClipboard();
 
         cy.wait(100);
 
@@ -77,7 +77,7 @@ describe('Drawing', () => {
         operations.mode.block.O();
         operations.mode.block.dragToRight({ from: 0, to: 8 }, -1);
 
-        operations.settings.copyToClipboard();
+        operations.menu.copyToClipboard();
 
         // データを取り出す
         {
@@ -151,7 +151,7 @@ describe('Drawing', () => {
         // Go to next page
         cy.get(datatest('btn-next-page')).click();
 
-        operations.settings.copyToClipboard();
+        operations.menu.copyToClipboard();
 
         // データを取り出す
         {
@@ -286,7 +286,7 @@ describe('Drawing', () => {
             }
         }
 
-        operations.settings.copyToClipboard();
+        operations.menu.copyToClipboard();
 
         // データを取り出す
         {
@@ -376,7 +376,7 @@ describe('Drawing', () => {
         // sentBlockを置くかどうかの判定に、フィールドのブロックを参照してしまう問題に対するテスト
         visit({});
 
-        operations.settings.newPage();
+        operations.menu.newPage();
 
         operations.mode.block.open();
 
