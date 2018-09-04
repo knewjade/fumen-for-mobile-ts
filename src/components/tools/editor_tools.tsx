@@ -94,7 +94,7 @@ export const EditorTools: Component<Props> = (
                 {/*actions={{ onclick: () => actions.changeToPieceMode() }}/>*/}
 
                 <ToolButton iconName="menu" datatest="btn-open-menu" sticky={true}
-                            key="btn-open-menu" width={40} height={height - 10} fontSize={33} colors={colors}
+                            key="btn-open-menu" width={40} height={height - 10} fontSize={32} colors={colors}
                             actions={{ onclick: () => actions.openMenuModal() }}/>
             </div>
         </nav>

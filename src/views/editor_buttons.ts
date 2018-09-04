@@ -93,7 +93,34 @@ export const iconContents = (
         style: properties,
     }, iconName);
 
-    return [icon, span({ style: style({ fontSize: px(10) }) }, description)];
+    return [icon, ' ', span({ style: style({ fontSize: px(10) }) }, description)];
+};
+
+export const toolButton2 = (
+    { width, height, toolButtonMargin, keyPage, onclick }: {
+        width: number;
+        height: number;
+        toolButtonMargin: number;
+        keyPage: boolean;
+        onclick: (event: MouseEvent) => void;
+    }) => {
+    return toolButton({
+        onclick,
+        width,
+        borderWidth: 1,
+        margin: toolButtonMargin,
+        backgroundColorClass: keyPage ? 'red' : 'white',
+        textColor: keyPage ? '#fff' : '#333',
+        borderColor: keyPage ? '#f44336' : '#333',
+        datatest: keyPage ? 'btn-ref-page' : 'btn-key-page',
+        key: keyPage ? 'btn-ref-page' : 'btn-key-page',
+        contents: iconContents({
+            height,
+            description: 'key',
+            iconSize: 18,
+            iconName: keyPage ? 'radio_button_checked' : 'radio_button_unchecked',
+        }),
+    });
 };
 
 export const toolButton = (

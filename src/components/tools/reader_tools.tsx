@@ -68,7 +68,7 @@ export const ReaderTools: Component<Props> = ({ height, animationState, pages, p
                             }}/>
 
                 <ToolButton iconName="menu" datatest="btn-open-menu" sticky={true}
-                            key="btn-open-menu" width={40} height={height - 10} fontSize={33} colors={palette}
+                            key="btn-open-menu" width={40} height={height - 10} fontSize={32} colors={palette}
                             actions={{ onclick: () => actions.openMenuModal() }}/>
             </div>
         </nav>

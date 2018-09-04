@@ -11,7 +11,7 @@ import { KonvaCanvas } from '../components/konva_canvas';
 import { DrawingEventCanvas } from '../components/event/drawing_event_canvas';
 import { div } from '@hyperapp/html';
 import { px, style } from '../lib/types';
-import { colorButton, iconContents, inferenceButton, toolButton, toolSpace } from './editor_buttons';
+import { colorButton, iconContents, inferenceButton, toolButton, toolButton2, toolSpace } from './editor_buttons';
 
 export interface EditorLayout {
     canvas: {
@@ -130,22 +130,12 @@ const toolMode = ({ layout, currentIndex, keyPage, actions }: {
             width: px(layout.buttons.size.width),
         }),
     }, [
-        toolButton({
-            borderWidth: 1,
+        toolButton2({
+            toolButtonMargin,
+            keyPage,
             width: layout.buttons.size.width,
-            margin: toolButtonMargin,
-            backgroundColorClass: keyPage ? 'red' : 'white',
-            textColor: keyPage ? '#fff' : '#333',
-            borderColor: keyPage ? '#f44336' : '#333',
-            datatest: keyPage ? 'btn-ref-page' : 'btn-key-page',
-            key: keyPage ? 'btn-ref-page' : 'btn-key-page',
+            height: layout.buttons.size.height,
             onclick: keyOnclick,
-            contents: iconContents({
-                height: layout.buttons.size.height,
-                description: keyPage ? 'key' : 'ref',
-                iconSize: 22,
-                iconName: keyPage ? 'vpn_key' : 'insert_link',
-            }),
         }),
         toolSpace({
             flexGrow: 100,
@@ -191,7 +181,7 @@ const toolMode = ({ layout, currentIndex, keyPage, actions }: {
 };
 
 const blockMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
-    layout: any;
+    layout: EditorLayout;
     keyPage: boolean;
     currentIndex: number;
     modePiece: Piece | undefined;
@@ -224,22 +214,12 @@ const blockMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
             width: px(layout.buttons.size.width),
         }),
     }, [
-        toolButton({
-            borderWidth: 1,
+        toolButton2({
+            toolButtonMargin,
+            keyPage,
             width: layout.buttons.size.width,
-            margin: toolButtonMargin,
-            backgroundColorClass: keyPage ? 'red' : 'white',
-            textColor: keyPage ? '#fff' : '#333',
-            borderColor: keyPage ? '#f44336' : '#333',
-            datatest: keyPage ? 'btn-ref-page' : 'btn-key-page',
-            key: keyPage ? 'btn-ref-page' : 'btn-key-page',
+            height: layout.buttons.size.height,
             onclick: keyOnclick,
-            contents: iconContents({
-                height: layout.buttons.size.height,
-                description: keyPage ? 'key' : 'ref',
-                iconSize: 22,
-                iconName: keyPage ? 'vpn_key' : 'insert_link',
-            }),
         }),
         toolSpace({
             flexGrow: 100,
@@ -258,7 +238,7 @@ const blockMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
     ]));
 };
 
-const ScreenField = (state: State, actions: Actions, layout: any) => {
+const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
     const keyPage = state.fumen.pages[state.fumen.currentIndex].field.obj !== undefined;
 
     const getChildren = () => {
