@@ -36,10 +36,9 @@ export interface Page {
     };
     flags: {
         lock: boolean;
-        send: boolean;
-        mirrored: boolean;
+        mirror: boolean;
         colorize: boolean;
-        blockUp: boolean;
+        rise: boolean;
     };
 }
 
@@ -209,7 +208,7 @@ export async function innerDecode(
 
         // Parse comment
         let comment;
-        if (action.isComment) {
+        if (action.comment) {
             // コメントに更新があるとき
             const commentValues: number[] = [];
             const commentLength = values.poll(2);
@@ -249,7 +248,7 @@ export async function innerDecode(
         } | undefined = undefined;
 
         if (store.quiz !== undefined) {
-            if (action.isLock && isMinoPiece(action.piece.type) && store.quiz.canOperate()) {
+            if (action.lock && isMinoPiece(action.piece.type) && store.quiz.canOperate()) {
                 try {
                     const operation = store.quiz.getOperation(action.piece.type);
                     quiz = { operation };
@@ -298,11 +297,10 @@ export async function innerDecode(
             index: pageIndex,
             piece: currentPiece,
             flags: {
-                lock: action.isLock,
-                send: action.isBlockUp,
-                mirrored: action.isMirror,
-                colorize: action.isColor,
-                blockUp: action.isBlockUp,
+                lock: action.lock,
+                mirror: action.mirror,
+                colorize: action.colorize,
+                rise: action.rise,
             },
         };
         pages.push(page);
@@ -315,7 +313,7 @@ export async function innerDecode(
 
         pageIndex += 1;
 
-        if (action.isLock) {
+        if (action.lock) {
             if (isMinoPiece(action.piece.type)) {
                 currentFieldObj.field.put(action.piece);
             }
@@ -324,12 +322,12 @@ export async function innerDecode(
         }
 
         // 公式テト譜では接着フラグがオンでなければ、盛フラグをオンにできない
-        if (action.isBlockUp) {
+        if (action.rise) {
             currentFieldObj.field.up();
         }
 
         // 公式テト譜では接着フラグがオンでなければ、鏡フラグをオンにできない
-        if (action.isMirror) {
+        if (action.mirror) {
             currentFieldObj.field.mirror();
         }
 
@@ -406,12 +404,12 @@ export async function encode(inputPages: Page[], isAsync: boolean = false): Prom
             },
         };
         const action = {
-            isComment,
             piece,
-            isBlockUp: currentPage.flags.blockUp,
-            isMirror: currentPage.flags.mirrored,
-            isColor: currentPage.flags.colorize,
-            isLock: currentPage.flags.lock,
+            rise: currentPage.flags.rise,
+            mirror: currentPage.flags.mirror,
+            colorize: currentPage.flags.colorize,
+            lock: currentPage.flags.lock,
+            comment: isComment,
         };
 
         const actionNumber = encodeAction(action);
@@ -441,7 +439,7 @@ export async function encode(inputPages: Page[], isAsync: boolean = false): Prom
         }
 
         // 地形の更新
-        if (action.isLock) {
+        if (action.lock) {
             if (isMinoPiece(action.piece.type)) {
                 currentField.put(action.piece);
             }
@@ -450,12 +448,12 @@ export async function encode(inputPages: Page[], isAsync: boolean = false): Prom
         }
 
         // 公式テト譜では接着フラグがオンでなければ、盛フラグをオンにできない
-        if (action.isBlockUp) {
+        if (action.rise) {
             currentField.up();
         }
 
         // 公式テト譜では接着フラグがオンでなければ、鏡フラグをオンにできない
-        if (action.isMirror) {
+        if (action.mirror) {
             currentField.mirror();
         }
 

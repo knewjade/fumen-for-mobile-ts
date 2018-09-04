@@ -1,4 +1,4 @@
-import { block, Color, datatest, px, py, visit } from './_common';
+import { block, Color, datatest, expectFumen, px, py, visit } from './_common';
 import { operations } from './_operations';
 
 describe('Drawing Tools', () => {
@@ -206,12 +206,7 @@ describe('Drawing Tools', () => {
 
         operations.mode.tools.undo();
 
-        operations.menu.copyToClipboard();
-
-        // データを取り出す
-        {
-            cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@HhglIeglIehlAezhMeAgHihS4JeAgWAA');
-        }
+        expectFumen('v115@HhglIeglIehlAezhMeAgHihS4JeAgWAA');
     });
 
     it('Auto save', () => {
@@ -237,11 +232,77 @@ describe('Drawing Tools', () => {
 
         visit({});
 
-        operations.menu.copyToClipboard();
+        expectFumen('v115@HhglIeglIehlAezhMeAgHYhi0GeSpJeAgH');
+    });
 
-        // データを取り出す
-        {
-            cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@HhglIeglIehlAezhMeAgHYhi0GeSpJeAgH');
-        }
+    it('Flags', () => {
+        visit({ fumen: 'v115@lhwhglQpAtwwg0Q4CeAgH' });
+
+        operations.screen.writable();
+
+        operations.mode.block.open();
+
+        operations.mode.block.Gray();
+
+        operations.mode.block.click(7, -1);
+
+        operations.mode.block.click(0, 0);
+        operations.mode.block.click(1, 0);
+        operations.mode.block.click(0, 1);
+
+        operations.mode.tools.home();
+        operations.mode.flags.open();
+
+        operations.mode.flags.riseToOn();
+        operations.mode.flags.mirrorToOn();
+
+        operations.mode.editor.nextPage();
+
+        // 2ページ目
+        operations.mode.tools.home();
+        operations.mode.block.open();
+
+        operations.mode.block.T();
+
+        operations.mode.block.click(0, 0);
+        operations.mode.block.click(1, 0);
+
+        operations.mode.block.click(0, -1);
+
+        operations.mode.tools.home();
+        operations.mode.flags.open();
+
+        operations.mode.flags.riseToOn();
+        operations.mode.flags.mirrorToOn();
+
+        operations.mode.flags.lockToOff();
+        operations.mode.flags.riseToOff();
+        operations.mode.flags.mirrorToOff();
+
+        operations.mode.editor.nextPage();
+
+        // 3ページ目
+        operations.mode.flags.lockToOn();
+        operations.mode.flags.mirrorToOn();
+        operations.mode.editor.nextPage();
+
+        expectFumen('v115@RhA8IeB8HewhglQpAtwwg0Q4A8BeAINbhxwHewwIeA?glvhBAQLAgH');
+
+        // 3ページ目
+        operations.mode.flags.lockToOff();
+        operations.mode.flags.mirrorToOn();
+        operations.mode.flags.riseToOn();
+
+        operations.mode.tools.undo();
+        operations.mode.tools.undo();
+        operations.mode.tools.undo();
+
+        expectFumen('v115@RhA8IeB8HewhglQpAtwwg0Q4A8BeAINbhxwHewwIeA?glvhBAQLAgH');
+
+        operations.mode.tools.redo();
+        operations.mode.tools.redo();
+        operations.mode.tools.redo();
+
+        expectFumen('v115@RhA8IeB8HewhglQpAtwwg0Q4A8BeAINbhxwHewwIeA?glvhBAQLAIr');
     });
 });

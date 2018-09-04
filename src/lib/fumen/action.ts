@@ -14,11 +14,11 @@ export interface Action {
             y: number,
         };
     };
-    isBlockUp: boolean;
-    isMirror: boolean;
-    isColor: boolean;
-    isComment: boolean;
-    isLock: boolean;
+    rise: boolean;
+    mirror: boolean;
+    colorize: boolean;
+    comment: boolean;
+    lock: boolean;
 }
 
 export function decodeAction(v: number, fieldTop: number): Action {
@@ -42,11 +42,11 @@ export function decodeAction(v: number, fieldTop: number): Action {
     const isLock = !decodeBool(value % 2);
 
     return {
-        isBlockUp,
-        isMirror,
-        isColor,
-        isComment,
-        isLock,
+        rise: isBlockUp,
+        mirror: isMirror,
+        colorize: isColor,
+        comment: isComment,
+        lock: isLock,
         piece: {
             type,
             rotation,
@@ -127,17 +127,17 @@ function decodeBool(n: number) {
 }
 
 export function encodeAction(action: Action): number {
-    const { isLock, isComment, isColor, isMirror, isBlockUp, piece } = action;
+    const { lock, comment, colorize, mirror, rise, piece } = action;
 
-    let value = encodeBool(!isLock);
+    let value = encodeBool(!lock);
     value *= 2;
-    value += encodeBool(isComment);
+    value += encodeBool(comment);
     value *= 2;
-    value += (encodeBool(isColor));
+    value += (encodeBool(colorize));
     value *= 2;
-    value += encodeBool(isMirror);
+    value += encodeBool(mirror);
     value *= 2;
-    value += encodeBool(isBlockUp);
+    value += encodeBool(rise);
     value *= FIELD_BLOCKS;
     value += encodePosition(piece);
     value *= 4;

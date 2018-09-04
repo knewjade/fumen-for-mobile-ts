@@ -138,10 +138,9 @@ export interface PrimitivePage {
     };
     flags: {
         lock: boolean;
-        send: boolean;
-        mirrored: boolean;
+        mirror: boolean;
         colorize: boolean;
-        blockUp: boolean;
+        rise: boolean;
     };
 }
 
@@ -169,10 +168,9 @@ export const toPrimitivePage = (page: Page): PrimitivePage => {
         } : undefined,
         flags: {
             lock: page.flags.lock,
-            send: page.flags.send,
-            mirrored: page.flags.mirrored,
+            mirror: page.flags.mirror,
             colorize: page.flags.colorize,
-            blockUp: page.flags.blockUp,
+            rise: page.flags.rise,
         },
     };
 };
@@ -201,10 +199,9 @@ export const toPage = (page: PrimitivePage): Page => {
         } : undefined,
         flags: {
             lock: page.flags.lock,
-            send: page.flags.send,
-            mirrored: page.flags.mirrored,
+            mirror: page.flags.mirror,
             colorize: page.flags.colorize,
-            blockUp: page.flags.blockUp,
+            rise: page.flags.rise,
         },
     };
 };

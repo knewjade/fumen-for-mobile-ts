@@ -16,11 +16,11 @@ describe('action', () => {
                         y: 0,
                     },
                 },
-                isBlockUp: false,
-                isColor: true,
-                isComment: false,
-                isLock: true,
-                isMirror: false,
+                rise: false,
+                colorize: true,
+                comment: false,
+                lock: true,
+                mirror: false,
             } as Action);
         });
 
@@ -36,11 +36,11 @@ describe('action', () => {
                         y: 0,
                     },
                 },
-                isBlockUp: false,
-                isColor: true,
-                isComment: false,
-                isLock: true,
-                isMirror: true,
+                rise: false,
+                colorize: true,
+                comment: false,
+                lock: true,
+                mirror: true,
             } as Action);
         });
 
@@ -56,11 +56,11 @@ describe('action', () => {
                         y: 22,
                     },
                 },
-                isBlockUp: false,
-                isColor: true,
-                isComment: false,
-                isLock: false,
-                isMirror: false,
+                rise: false,
+                colorize: true,
+                comment: false,
+                lock: false,
+                mirror: false,
             } as Action);
         });
 
@@ -76,11 +76,11 @@ describe('action', () => {
                         y: 2,
                     },
                 },
-                isBlockUp: false,
-                isColor: false,
-                isComment: false,
-                isLock: false,
-                isMirror: false,
+                rise: false,
+                colorize: false,
+                comment: false,
+                lock: false,
+                mirror: false,
             } as Action);
         });
 
@@ -96,11 +96,11 @@ describe('action', () => {
                         y: 22,
                     },
                 },
-                isBlockUp: false,
-                isColor: true,
-                isComment: false,
-                isLock: true,
-                isMirror: false,
+                rise: false,
+                colorize: true,
+                comment: false,
+                lock: true,
+                mirror: false,
             } as Action);
         });
 
@@ -116,11 +116,11 @@ describe('action', () => {
                         y: 1,
                     },
                 },
-                isBlockUp: false,
-                isColor: true,
-                isComment: true,
-                isLock: true,
-                isMirror: false,
+                rise: false,
+                colorize: true,
+                comment: true,
+                lock: true,
+                mirror: false,
             } as Action);
         });
 
@@ -136,11 +136,11 @@ describe('action', () => {
                         y: 1,
                     },
                 },
-                isBlockUp: true,
-                isColor: true,
-                isComment: true,
-                isLock: true,
-                isMirror: false,
+                rise: true,
+                colorize: true,
+                comment: true,
+                lock: true,
+                mirror: false,
             } as Action);
         });
     });
@@ -158,11 +158,11 @@ describe('action', () => {
                         y: 0,
                     },
                 },
-                isBlockUp: false,
-                isColor: true,
-                isComment: false,
-                isLock: true,
-                isMirror: false,
+                rise: false,
+                colorize: true,
+                comment: false,
+                lock: true,
+                mirror: false,
             } as Action);
         });
 
@@ -178,11 +178,11 @@ describe('action', () => {
                         y: 1,
                     },
                 },
-                isBlockUp: false,
-                isColor: true,
-                isComment: false,
-                isLock: true,
-                isMirror: false,
+                rise: false,
+                colorize: true,
+                comment: false,
+                lock: true,
+                mirror: false,
             } as Action);
         });
 
@@ -198,11 +198,11 @@ describe('action', () => {
                         y: 2,
                     },
                 },
-                isBlockUp: false,
-                isColor: true,
-                isComment: false,
-                isLock: true,
-                isMirror: false,
+                rise: false,
+                colorize: true,
+                comment: false,
+                lock: true,
+                mirror: false,
             } as Action);
         });
 
@@ -218,11 +218,11 @@ describe('action', () => {
                         y: 1,
                     },
                 },
-                isBlockUp: false,
-                isColor: true,
-                isComment: false,
-                isLock: true,
-                isMirror: false,
+                rise: false,
+                colorize: true,
+                comment: false,
+                lock: true,
+                mirror: false,
             } as Action);
         });
 
@@ -238,11 +238,11 @@ describe('action', () => {
                         y: 1,
                     },
                 },
-                isBlockUp: false,
-                isColor: true,
-                isComment: false,
-                isLock: true,
-                isMirror: false,
+                rise: false,
+                colorize: true,
+                comment: false,
+                lock: true,
+                mirror: false,
             } as Action);
         });
 
@@ -258,11 +258,11 @@ describe('action', () => {
                         y: 0,
                     },
                 },
-                isBlockUp: false,
-                isColor: true,
-                isComment: false,
-                isLock: true,
-                isMirror: false,
+                rise: false,
+                colorize: true,
+                comment: false,
+                lock: true,
+                mirror: false,
             } as Action);
         });
 
@@ -278,11 +278,11 @@ describe('action', () => {
                         y: 1,
                     },
                 },
-                isBlockUp: false,
-                isColor: true,
-                isComment: false,
-                isLock: true,
-                isMirror: false,
+                rise: false,
+                colorize: true,
+                comment: false,
+                lock: true,
+                mirror: false,
             } as Action);
         });
 
@@ -298,11 +298,11 @@ describe('action', () => {
                         y: 0,
                     },
                 },
-                isBlockUp: false,
-                isColor: true,
-                isComment: false,
-                isLock: true,
-                isMirror: false,
+                rise: false,
+                colorize: true,
+                comment: false,
+                lock: true,
+                mirror: false,
             } as Action);
         });
     });

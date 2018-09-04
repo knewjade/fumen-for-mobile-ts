@@ -31,10 +31,10 @@ export const operations = {
                 cy.get(datatest('btn-back-page')).click();
             },
             toRef: () => {
-                cy.get(datatest('btn-ref-page')).click();
+                cy.get(datatest('btn-key-page-on')).click();
             },
             toKey: () => {
-                cy.get(datatest('btn-key-page')).click();
+                cy.get(datatest('btn-key-page-off')).click();
             },
         },
         block: {
@@ -90,6 +90,29 @@ export const operations = {
                 body.trigger('mouseup', px(to), py(y));
             },
         },
+        flags: {
+            open: () => {
+                cy.get(datatest('btn-flags-mode')).click();
+            },
+            lockToOn: () => {
+                cy.get(datatest('btn-lock-flag-off')).click();
+            },
+            lockToOff: () => {
+                cy.get(datatest('btn-lock-flag-on')).click();
+            },
+            riseToOn: () => {
+                cy.get(datatest('btn-rise-flag-off')).click();
+            },
+            riseToOff: () => {
+                cy.get(datatest('btn-rise-flag-on')).click();
+            },
+            mirrorToOn: () => {
+                cy.get(datatest('btn-mirror-flag-off')).click();
+            },
+            mirrorToOff: () => {
+                cy.get(datatest('btn-mirror-flag-on')).click();
+            },
+        },
         tools: {
             open: () => {
                 cy.get(datatest('btn-drawing-tool')).click();
@@ -102,6 +125,9 @@ export const operations = {
             },
             redo: () => {
                 cy.get(datatest('btn-redo')).click();
+            },
+            home: () => {
+                cy.get(datatest('btn-drawing-tool')).click();
             },
         },
     },

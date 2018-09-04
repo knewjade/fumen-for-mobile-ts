@@ -91,11 +91,10 @@ export class Pages {
             field: { ref: undefined },
             comment: { ref: undefined },
             flags: {
-                lock: true,
-                send: false,
-                mirrored: false,
+                lock: prev.flags.lock,
+                mirror: prev.flags.lock ? false : prev.flags.mirror,
                 colorize: prev.flags.colorize,
-                blockUp: false,
+                rise: prev.flags.lock ? false : prev.flags.rise,
             },
             piece: undefined,
             quiz: prev.quiz !== undefined ? { operation: undefined } : undefined,
@@ -141,11 +140,10 @@ export class Pages {
             field: { obj: currentField },
             comment: { ref: undefined },
             flags: {
-                lock: true,
-                send: false,
-                mirrored: false,
+                lock: prev.flags.lock,
+                mirror: prev.flags.lock ? false : prev.flags.mirror,
                 colorize: prev.flags.colorize,
-                blockUp: false,
+                rise: prev.flags.lock ? false : prev.flags.rise,
             },
             piece: undefined,
             quiz: prev.quiz !== undefined ? { operation: undefined } : undefined,
@@ -581,11 +579,11 @@ export class Pages {
                     field.clearLine();
                 }
 
-                if (flags.blockUp) {
+                if (flags.rise) {
                     field.up();
                 }
 
-                if (flags.mirrored) {
+                if (flags.mirror) {
                     field.mirror();
                 }
             }

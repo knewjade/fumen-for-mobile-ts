@@ -11,7 +11,17 @@ import { KonvaCanvas } from '../components/konva_canvas';
 import { DrawingEventCanvas } from '../components/event/drawing_event_canvas';
 import { div } from '@hyperapp/html';
 import { px, style } from '../lib/types';
-import { colorButton, iconContents, inferenceButton, toolButton, toolButton2, toolSpace } from './editor_buttons';
+import {
+    colorButton,
+    iconContents,
+    inferenceButton,
+    keyButton,
+    switchButton,
+    switchIconContents,
+    toolButton,
+    toolSpace,
+} from './editor_buttons';
+import { ViewError } from '../lib/errors';
 
 export interface EditorLayout {
     canvas: {
@@ -106,16 +116,13 @@ const toolMode = ({ layout, currentIndex, keyPage, actions }: {
     actions: {
         removePage: (data: { index: number }) => void;
         changeToDrawingMode: () => void;
+        changeToFlagsMode: () => void;
         changeToRef: (data: { index: number }) => void;
         changeToKey: (data: { index: number }) => void;
     };
 }) => {
     const toolButtonMargin = 5;
     const margin = (layout.canvas.size.height - layout.field.size.height) / 2;
-
-    const keyOnclick = keyPage ?
-        () => actions.changeToRef({ index: currentIndex })
-        : () => actions.changeToKey({ index: currentIndex });
 
     return div({
         style: style({
@@ -130,12 +137,13 @@ const toolMode = ({ layout, currentIndex, keyPage, actions }: {
             width: px(layout.buttons.size.width),
         }),
     }, [
-        toolButton2({
+        keyButton({
             toolButtonMargin,
             keyPage,
+            currentIndex,
+            actions,
             width: layout.buttons.size.width,
             height: layout.buttons.size.height,
-            onclick: keyOnclick,
         }),
         toolSpace({
             flexGrow: 100,
@@ -158,6 +166,23 @@ const toolMode = ({ layout, currentIndex, keyPage, actions }: {
                 description: 'remove',
                 iconSize: 22,
                 iconName: 'remove_circle_outline',
+            }),
+        }),
+        toolButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'red',
+            textColor: '#fff',
+            borderColor: '#f44336',
+            datatest: 'btn-flags-mode',
+            key: 'btn-flags-mode',
+            onclick: () => actions.changeToFlagsMode(),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: 'flags',
+                iconSize: 22,
+                iconName: 'flag',
             }),
         }),
         toolButton({
@@ -197,10 +222,6 @@ const blockMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
     const toolButtonMargin = 5;
     const margin = (layout.canvas.size.height - layout.field.size.height) / 2;
 
-    const keyOnclick = keyPage ?
-        () => actions.changeToRef({ index: currentIndex })
-        : () => actions.changeToKey({ index: currentIndex });
-
     return div({
         style: style({
             marginLeft: px(10),
@@ -214,12 +235,13 @@ const blockMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
             width: px(layout.buttons.size.width),
         }),
     }, [
-        toolButton2({
+        keyButton({
             toolButtonMargin,
             keyPage,
+            currentIndex,
+            actions,
             width: layout.buttons.size.width,
             height: layout.buttons.size.height,
-            onclick: keyOnclick,
         }),
         toolSpace({
             flexGrow: 100,
@@ -238,10 +260,148 @@ const blockMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
     ]));
 };
 
+const flagsMode = ({ layout, currentIndex, keyPage, flags, actions }: {
+    layout: EditorLayout;
+    currentIndex: number;
+    keyPage: boolean;
+    flags: {
+        lock: boolean;
+        mirror: boolean;
+        rise: boolean;
+    },
+    actions: {
+        removePage: (data: { index: number }) => void;
+        changeToDrawingMode: () => void;
+        changeToRef: (data: { index: number }) => void;
+        changeToKey: (data: { index: number }) => void;
+        changeLockFlag: (data: { index: number, enable: boolean }) => void;
+        changeRiseFlag: (data: { index: number, enable: boolean }) => void;
+        changeMirrorFlag: (data: { index: number, enable: boolean }) => void;
+    };
+}) => {
+    const toolButtonMargin = 5;
+    const margin = (layout.canvas.size.height - layout.field.size.height) / 2;
+
+    return div({
+        style: style({
+            marginLeft: px(10),
+            paddingTop: px(margin),
+            paddingBottom: px(margin),
+            display: 'flex',
+            justifyContent: 'flex-end',
+            flexDirection: 'column',
+            alignItems: 'center',
+            height: px(layout.canvas.size.height),
+            width: px(layout.buttons.size.width),
+        }),
+    }, [
+        keyButton({
+            toolButtonMargin,
+            keyPage,
+            currentIndex,
+            actions,
+            width: layout.buttons.size.width,
+            height: layout.buttons.size.height,
+        }),
+        toolSpace({
+            flexGrow: 100,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            key: 'div-space',
+        }),
+        switchButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'red',
+            textColor: '#333',
+            borderColor: '#f44336',
+            datatest: 'btn-lock-flag',
+            key: 'btn-lock-flag',
+            onclick: () => actions.changeLockFlag({ index: currentIndex, enable: !flags.lock }),
+            contents: switchIconContents({
+                height: layout.buttons.size.height,
+                description: 'lock',
+                iconSize: 22,
+                enable: flags.lock,
+            }),
+            enable: flags.lock,
+        }),
+        switchButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'red',
+            textColor: '#333',
+            borderColor: '#f44336',
+            datatest: 'btn-rise-flag',
+            key: 'btn-rise-flag',
+            onclick: () => actions.changeRiseFlag({ index: currentIndex, enable: !flags.rise }),
+            contents: switchIconContents({
+                height: layout.buttons.size.height,
+                description: 'rise',
+                iconSize: 22,
+                enable: flags.rise,
+            }),
+            enable: flags.rise,
+        }),
+        switchButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'red',
+            textColor: '#333',
+            borderColor: '#f44336',
+            datatest: 'btn-mirror-flag',
+            key: 'btn-mirror-flag',
+            onclick: () => actions.changeMirrorFlag({ index: currentIndex, enable: !flags.mirror }),
+            contents: switchIconContents({
+                height: layout.buttons.size.height,
+                description: 'mirror',
+                iconSize: 22,
+                enable: flags.mirror,
+            }),
+            enable: flags.mirror,
+        }),
+    ]);
+};
+
 const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
-    const keyPage = state.fumen.pages[state.fumen.currentIndex].field.obj !== undefined;
+    const pages = state.fumen.pages;
+    const page = pages[state.fumen.currentIndex];
+    const keyPage = page.field.obj !== undefined;
 
     const getChildren = () => {
+        const getMode = () => {
+            switch (state.mode.type) {
+            case ModeTypes.Drawing:
+                return blockMode({
+                    layout,
+                    actions,
+                    keyPage,
+                    currentIndex: state.fumen.currentIndex,
+                    modePiece: state.mode.piece,
+                });
+            case ModeTypes.DrawingTool:
+                return toolMode({
+                    layout,
+                    actions,
+                    keyPage,
+                    currentIndex: state.fumen.currentIndex,
+                });
+            case ModeTypes.Flags:
+                return flagsMode({
+                    layout,
+                    actions,
+                    keyPage,
+                    flags: page.flags,
+                    currentIndex: state.fumen.currentIndex,
+                });
+            }
+
+            throw new ViewError('Illegal mode');
+        };
+
         return [   // canvas:Field とのマッピング用仮想DOM
             KonvaCanvas({  // canvas空間のみ
                 actions,
@@ -257,20 +417,7 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                 sentLine: state.sentLine,
             }),
 
-            state.mode.type === ModeTypes.Drawing
-                ? blockMode({
-                    layout,
-                    actions,
-                    keyPage,
-                    currentIndex: state.fumen.currentIndex,
-                    modePiece: state.mode.piece,
-                })
-                : toolMode({
-                    layout,
-                    actions,
-                    keyPage,
-                    currentIndex: state.fumen.currentIndex,
-                }),
+            getMode(),
         ];
     };
 

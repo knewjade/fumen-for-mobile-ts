@@ -18,15 +18,14 @@ describe('fumen', () => {
                 quiz: undefined,
                 flags: {
                     lock: true,
-                    send: false,
-                    mirrored: false,
+                    mirror: false,
                     colorize: true,
-                    blockUp: false,
+                    rise: false,
                 },
                 field: {
                     obj: new Field({}),
                 },
-            } as Page);
+            });
         });
 
         test('last page', async () => {
@@ -48,7 +47,7 @@ describe('fumen', () => {
             expect(pages).toHaveLength(2);
             expect(pages[0]).toMatchObject({
                 flags: {
-                    mirrored: true,
+                    mirror: true,
                 },
                 field: {
                     obj: new Field({
@@ -60,16 +59,16 @@ describe('fumen', () => {
                         sentLine: PlayField.loadMinify('XXX_______'),
                     }),
                 },
-            } as Page);
+            });
 
             expect(pages[1]).toMatchObject({
                 flags: {
-                    mirrored: false,
+                    mirror: false,
                 },
                 field: {
                     ref: 0,
                 },
-            } as Page);
+            });
         });
 
         test('send', async () => {
@@ -78,7 +77,7 @@ describe('fumen', () => {
             expect(pages).toHaveLength(2);
             expect(pages[0]).toMatchObject({
                 flags: {
-                    send: true,
+                    rise: true,
                 },
                 field: {
                     obj: new Field({
@@ -90,16 +89,16 @@ describe('fumen', () => {
                         sentLine: PlayField.loadMinify('XXX_______'),
                     }),
                 },
-            } as Page);
+            });
 
             expect(pages[1]).toMatchObject({
                 flags: {
-                    send: false,
+                    rise: false,
                 },
                 field: {
                     ref: 0,
                 },
-            } as Page);
+            });
         });
 
         test('I-Spawn', async () => {
@@ -122,15 +121,14 @@ describe('fumen', () => {
                 quiz: undefined,
                 flags: {
                     lock: true,
-                    send: false,
-                    mirrored: false,
+                    mirror: false,
                     colorize: true,
-                    blockUp: false,
+                    rise: false,
                 },
                 field: {
                     obj: new Field({}),
                 },
-            } as Page);
+            });
         });
 
         test('Comment', async () => {

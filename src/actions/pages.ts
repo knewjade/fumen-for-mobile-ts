@@ -5,7 +5,14 @@ import { Move, Page, PreCommand } from '../lib/fumen/fumen';
 import { Field } from '../lib/fumen/field';
 import { Block } from '../state_types';
 import { Pages, QuizCommentResult, TextCommentResult } from '../lib/pages';
-import { toInsertPageTask, toKeyPageTask, toPrimitivePage, toRefPageTask, toRemovePageTask } from '../history_task';
+import {
+    toInsertPageTask,
+    toKeyPageTask,
+    toPrimitivePage,
+    toRefPageTask,
+    toRemovePageTask,
+    toSinglePageTask,
+} from '../history_task';
 
 export interface PageActions {
     openPage: (data: { index: number }) => action;
@@ -20,6 +27,9 @@ export interface PageActions {
     lastPage: () => action;
     changeToRef: (data: { index: number }) => action;
     changeToKey: (data: { index: number }) => action;
+    changeLockFlag: (data: { index: number, enable: boolean }) => action;
+    changeRiseFlag: (data: { index: number, enable: boolean }) => action;
+    changeMirrorFlag: (data: { index: number, enable: boolean }) => action;
 }
 
 export const pageActions: Readonly<PageActions> = {
@@ -181,7 +191,7 @@ export const pageActions: Readonly<PageActions> = {
             pageActions.openPage({ index: state.fumen.pages.length - 1 }),
         ]);
     },
-    changeToRef: ({ index }: { index: number }) => (state): NextState => {
+    changeToRef: ({ index }) => (state): NextState => {
         const task = toRefPageTask(index);
 
         return sequence(state, [
@@ -205,7 +215,7 @@ export const pageActions: Readonly<PageActions> = {
         ]);
 
     },
-    changeToKey: ({ index }: { index: number }) => (state): NextState => {
+    changeToKey: ({ index }) => (state): NextState => {
         const task = toKeyPageTask(index);
 
         return sequence(state, [
@@ -224,6 +234,81 @@ export const pageActions: Readonly<PageActions> = {
             },
             (newState) => {
                 return pageActions.openPage({ index: newState.fumen.currentIndex })(newState);
+            },
+        ]);
+    },
+    changeLockFlag: ({ index, enable }) => (state): NextState => {
+        const pages = state.fumen.pages;
+        if (index < 0 || pages.length <= index) {
+            return undefined;
+        }
+
+        const page = pages[index];
+        const primitivePrev = toPrimitivePage(page);
+
+        page.flags.lock = enable;
+
+        const task = toSinglePageTask(index, primitivePrev, page);
+
+        return sequence(state, [
+            actions.registerHistoryTask({ task }),
+            (newState) => {
+                return {
+                    fumen: {
+                        ...newState.fumen,
+                        pages,
+                    },
+                };
+            },
+        ]);
+    },
+    changeRiseFlag: ({ index, enable }) => (state): NextState => {
+        const pages = state.fumen.pages;
+        if (index < 0 || pages.length <= index) {
+            return undefined;
+        }
+
+        const page = pages[index];
+        const primitivePrev = toPrimitivePage(page);
+
+        page.flags.rise = enable;
+
+        const task = toSinglePageTask(index, primitivePrev, page);
+
+        return sequence(state, [
+            actions.registerHistoryTask({ task }),
+            (newState) => {
+                return {
+                    fumen: {
+                        ...newState.fumen,
+                        pages,
+                    },
+                };
+            },
+        ]);
+    },
+    changeMirrorFlag: ({ index, enable }) => (state): NextState => {
+        const pages = state.fumen.pages;
+        if (index < 0 || pages.length <= index) {
+            return undefined;
+        }
+
+        const page = pages[index];
+        const primitivePrev = toPrimitivePage(page);
+
+        page.flags.mirror = enable;
+
+        const task = toSinglePageTask(index, primitivePrev, page);
+
+        return sequence(state, [
+            actions.registerHistoryTask({ task }),
+            (newState) => {
+                return {
+                    fumen: {
+                        ...newState.fumen,
+                        pages,
+                    },
+                };
             },
         ]);
     },

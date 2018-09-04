@@ -1,4 +1,6 @@
 // TODO: 構造を色->状態に統一したい
+import { operations } from './_operations';
+
 export const Color = {
     Normal: {
         I: '#009999',
@@ -184,4 +186,11 @@ export const holdBox = () => {
 
 export const nextBox = (index) => {
     return datatest(`box-next-${index}`);
+};
+
+export const expectFumen = (fumen) => {
+    operations.menu.copyToClipboard();
+    cy.wait(100);
+    cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', fumen);
+    rightTap();
 };

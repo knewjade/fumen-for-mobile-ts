@@ -1,4 +1,4 @@
-import { block, Color, datatest, mino, minoPosition, Piece, Rotation, sentBlock, visit } from './_common';
+import { block, Color, datatest, expectFumen, mino, minoPosition, Piece, Rotation, sentBlock, visit } from './_common';
 import { operations } from './_operations';
 
 // テト譜を開く
@@ -43,14 +43,7 @@ describe('Drawing', () => {
         operations.mode.block.dragToRight({ from: 1, to: 9 }, 0);
         operations.mode.block.dragToRight({ from: 1, to: 9 }, -1);
 
-        operations.menu.copyToClipboard();
-
-        cy.wait(100);
-
-        // データを取り出す
-        {
-            cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@qeA8UeA8QeA8ceg0Jeg0Jeg0Jeg0Jeg0RfAgHygQpQ?eQpQeQpEeY4AeY4AgH');
-        }
+        expectFumen('v115@qeA8UeA8QeA8ceg0Jeg0Jeg0Jeg0Jeg0RfAgHygQpQ?eQpQeQpEeY4AeY4AgH');
     });
 
     it('Draw blocks 2', () => {
@@ -77,12 +70,7 @@ describe('Drawing', () => {
         operations.mode.block.O();
         operations.mode.block.dragToRight({ from: 0, to: 8 }, -1);
 
-        operations.menu.copyToClipboard();
-
-        // データを取り出す
-        {
-            cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@HewhJewhHewhuewhuewhuewhke4wAewhIeYpAeAgH');
-        }
+        expectFumen('v115@HewhJewhHewhuewhuewhuewhke4wAewhIeYpAeAgH');
     });
 
     it('Completion blocks', () => {
@@ -151,12 +139,7 @@ describe('Drawing', () => {
         // Go to next page
         cy.get(datatest('btn-next-page')).click();
 
-        operations.menu.copyToClipboard();
-
-        // データを取り出す
-        {
-            cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@ygwhh0BewwDewhg0BeywwhBewhg0ywR4whBtwhRpww?R4glwhg0BtRpAeilwhi0JeAgHvhAAgH');
-        }
+        expectFumen('v115@ygwhh0BewwDewhg0BeywwhBewhg0ywR4whBtwhRpww?R4glwhg0BtRpAeilwhi0JeAgHvhAAgH');
     });
 
     it('Completion blocks 2', () => {
@@ -286,12 +269,7 @@ describe('Drawing', () => {
             }
         }
 
-        operations.menu.copyToClipboard();
-
-        // データを取り出す
-        {
-            cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@AhG8CeG8BtAeH8BtG8JeAgHvhAAgH');
-        }
+        expectFumen('v115@AhG8CeG8BtAeH8BtG8JeAgHvhAAgH');
     });
 
     it('Completion blocks 3', () => {

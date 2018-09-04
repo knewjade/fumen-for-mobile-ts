@@ -1,6 +1,6 @@
 import { NextState, sequence } from './commons';
 import { action, actions, main } from '../actions';
-import { AnimationState, ModeTypes, Screens, TouchTypes } from '../lib/enums';
+import { ModeTypes, Screens, TouchTypes } from '../lib/enums';
 import { resources, State } from '../states';
 
 export interface ScreenActions {
@@ -8,6 +8,7 @@ export interface ScreenActions {
     changeToDrawerScreen: () => action;
     changeToDrawingMode: () => action;
     changeToDrawingToolMode: () => action;
+    changeToFlagsMode: () => action;
     changeMode: (mode: Partial<State['mode']>) => action;
 }
 
@@ -43,6 +44,14 @@ export const modeActions: Readonly<ScreenActions> = {
             mode: {
                 ...state.mode,
                 type: ModeTypes.DrawingTool,
+            },
+        };
+    },
+    changeToFlagsMode: () => (state): NextState => {
+        return {
+            mode: {
+                ...state.mode,
+                type: ModeTypes.Flags,
             },
         };
     },

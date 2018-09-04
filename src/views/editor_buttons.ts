@@ -96,30 +96,67 @@ export const iconContents = (
     return [icon, ' ', span({ style: style({ fontSize: px(10) }) }, description)];
 };
 
-export const toolButton2 = (
-    { width, height, toolButtonMargin, keyPage, onclick }: {
+export const switchIconContents = (
+    { height, description, iconSize, enable }: {
+        height: number;
+        description: string;
+        iconSize: number;
+        enable: boolean;
+    },
+) => {
+    const properties = style({
+        display: 'block',
+        height: px(height),
+        lineHeight: px(height),
+        fontSize: px(iconSize),
+        border: 'solid 0px #000',
+        marginRight: px(2),
+        cursor: 'pointer',
+    });
+
+    const className = 'material-icons';
+
+    const icon = i({
+        className,
+        style: properties,
+    }, enable ? 'radio_button_checked' : 'radio_button_unchecked');
+
+    return [icon, ' ', span({ style: style({ fontSize: px(9) }) }, description)];
+};
+
+export const keyButton = (
+    { width, height, toolButtonMargin, keyPage, currentIndex, actions }: {
         width: number;
         height: number;
         toolButtonMargin: number;
         keyPage: boolean;
-        onclick: (event: MouseEvent) => void;
+        currentIndex: number;
+        actions: {
+            changeToRef: (data: { index: number }) => void;
+            changeToKey: (data: { index: number }) => void;
+        };
     }) => {
-    return toolButton({
-        onclick,
+    const keyOnclick = keyPage ?
+        () => actions.changeToRef({ index: currentIndex })
+        : () => actions.changeToKey({ index: currentIndex });
+
+    return switchButton({
         width,
         borderWidth: 1,
         margin: toolButtonMargin,
-        backgroundColorClass: keyPage ? 'red' : 'white',
-        textColor: keyPage ? '#fff' : '#333',
-        borderColor: keyPage ? '#f44336' : '#333',
-        datatest: keyPage ? 'btn-ref-page' : 'btn-key-page',
-        key: keyPage ? 'btn-ref-page' : 'btn-key-page',
-        contents: iconContents({
+        backgroundColorClass: 'red',
+        textColor: '#333',
+        borderColor: '#f44336',
+        datatest: 'btn-key-page',
+        key: 'btn-key-ref-page',
+        contents: switchIconContents({
             height,
             description: 'key',
             iconSize: 18,
-            iconName: keyPage ? 'radio_button_checked' : 'radio_button_unchecked',
+            enable: keyPage,
         }),
+        onclick: keyOnclick,
+        enable: keyPage,
     });
 };
 
@@ -149,6 +186,58 @@ export const toolButton = (
             flexGrow,
             color: textColor,
             border: `solid ${borderWidth}px ${borderColor}`,
+            marginTop: px(margin),
+            marginBottom: px(margin),
+            width: px(width),
+            maxWidth: px(width),
+            textAlign: 'center',
+        }),
+        onclick: (event: MouseEvent) => {
+            onclick(event);
+            event.stopPropagation();
+            event.preventDefault();
+        },
+    }, [
+        div({
+            style: {
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                flexDirection: 'row',
+                alignItems: 'center',
+            },
+        }, contents),
+    ]);
+};
+
+export const switchButton = (
+    {
+        width, backgroundColorClass, textColor, borderColor, borderWidth = 1,
+        datatest, key, onclick, contents, flexGrow, margin, enable,
+    }: {
+        flexGrow?: number;
+        width: number;
+        margin: number;
+        backgroundColorClass: string;
+        textColor: string;
+        borderColor: string;
+        borderWidth?: number;
+        datatest: string;
+        key: string;
+        enable: boolean;
+        contents: string | number | (string | number | VNode<{}>)[];
+        onclick: (event: MouseEvent) => void;
+    }) => {
+    return a({
+        key,
+        href: '#',
+        class: `waves-effect z-depth-0 btn ${enable ? backgroundColorClass : 'white'}`,
+        datatest: `${datatest}-${enable ? 'on' : 'off'}`,
+        style: style({
+            flexGrow,
+            color: enable ? '#fff' : textColor,
+            border: `solid ${borderWidth}px ${enable ? borderColor : '#333'}`,
             marginTop: px(margin),
             marginBottom: px(margin),
             width: px(width),
