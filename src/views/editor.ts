@@ -225,7 +225,7 @@ const blockMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
     return div({
         style: style({
             marginLeft: px(10),
-            paddingTop: px(margin - toolButtonMargin),
+            paddingTop: px(margin),
             paddingBottom: px(margin),
             display: 'flex',
             justifyContent: 'flex-end',
