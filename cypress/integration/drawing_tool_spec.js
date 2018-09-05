@@ -134,7 +134,7 @@ describe('Drawing Tools', () => {
 
         // inference
 
-        operations.mode.block.Inference();
+        operations.mode.block.Completion();
         operations.mode.block.click(9, 0);
 
         operations.mode.tools.undo();

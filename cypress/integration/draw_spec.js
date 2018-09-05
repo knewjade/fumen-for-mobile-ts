@@ -337,7 +337,7 @@ describe('Drawing', () => {
         operations.mode.block.open();
 
         // inference
-        operations.mode.block.Inference();
+        operations.mode.block.Completion();
 
         operations.mode.block.click(9, 3);
         operations.mode.block.click(8, 3);

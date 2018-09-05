@@ -40,51 +40,46 @@ export const operations = {
         block: {
             open: () => {
                 cy.get(datatest('btn-block-mode')).click();
-                cy.wait(50);
             },
             Completion: () => {
                 cy.get(datatest('btn-piece-inference')).click();
-                cy.wait(50);
+                cy.wait(100);
             },
             J: () => {
                 cy.get(datatest('btn-piece-j')).click();
-                cy.wait(50);
+                cy.wait(100);
             },
             L: () => {
                 cy.get(datatest('btn-piece-l')).click();
-                cy.wait(50);
+                cy.wait(100);
             },
             O: () => {
                 cy.get(datatest('btn-piece-o')).click();
-                cy.wait(50);
+                cy.wait(100);
             },
             I: () => {
                 cy.get(datatest('btn-piece-i')).click();
-                cy.wait(50);
+                cy.wait(100);
             },
             T: () => {
                 cy.get(datatest('btn-piece-t')).click();
-                cy.wait(50);
+                cy.wait(100);
             },
             S: () => {
                 cy.get(datatest('btn-piece-s')).click();
-                cy.wait(50);
+                cy.wait(100);
             },
             Z: () => {
                 cy.get(datatest('btn-piece-z')).click();
-                cy.wait(50);
+                cy.wait(100);
             },
             Gray: () => {
                 cy.get(datatest('btn-piece-gray')).click();
-                cy.wait(50);
+                cy.wait(100);
             },
             Empty: () => {
                 cy.get(datatest('btn-piece-empty')).click();
-                cy.wait(50);
-            },
-            Inference: () => {
-                cy.get(datatest('btn-piece-inference')).click();
-                cy.wait(50);
+                cy.wait(100);
             },
             click: (x, y) => {
                 cy.get('body').click(px(x), py(y));
