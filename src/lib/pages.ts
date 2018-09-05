@@ -577,14 +577,14 @@ export class Pages {
                     }
 
                     field.clearLine();
-                }
 
-                if (flags.rise) {
-                    field.up();
-                }
+                    if (flags.rise) {
+                        field.up();
+                    }
 
-                if (flags.mirror) {
-                    field.mirror();
+                    if (flags.mirror) {
+                        field.mirror();
+                    }
                 }
             }
 

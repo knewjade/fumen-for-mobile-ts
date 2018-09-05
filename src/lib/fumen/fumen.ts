@@ -319,16 +319,14 @@ export async function innerDecode(
             }
 
             currentFieldObj.field.clearLine();
-        }
 
-        // 公式テト譜では接着フラグがオンでなければ、盛フラグをオンにできない
-        if (action.rise) {
-            currentFieldObj.field.up();
-        }
+            if (action.rise) {
+                currentFieldObj.field.up();
+            }
 
-        // 公式テト譜では接着フラグがオンでなければ、鏡フラグをオンにできない
-        if (action.mirror) {
-            currentFieldObj.field.mirror();
+            if (action.mirror) {
+                currentFieldObj.field.mirror();
+            }
         }
 
         prevField = currentFieldObj.field;
@@ -445,16 +443,14 @@ export async function encode(inputPages: Page[], isAsync: boolean = false): Prom
             }
 
             currentField.clearLine();
-        }
 
-        // 公式テト譜では接着フラグがオンでなければ、盛フラグをオンにできない
-        if (action.rise) {
-            currentField.up();
-        }
+            if (action.rise) {
+                currentField.up();
+            }
 
-        // 公式テト譜では接着フラグがオンでなければ、鏡フラグをオンにできない
-        if (action.mirror) {
-            currentField.mirror();
+            if (action.mirror) {
+                currentField.mirror();
+            }
         }
 
         prevField = currentField;

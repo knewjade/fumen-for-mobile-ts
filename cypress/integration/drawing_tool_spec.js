@@ -1,4 +1,4 @@
-import { block, Color, datatest, expectFumen, px, py, visit } from './_common';
+import { block, Color, datatest, expectFumen, minoPosition, Piece, px, py, Rotation, visit } from './_common';
 import { operations } from './_operations';
 
 describe('Drawing Tools', () => {
@@ -304,5 +304,37 @@ describe('Drawing Tools', () => {
         operations.mode.tools.redo();
 
         expectFumen('v115@RhA8IeB8HewhglQpAtwwg0Q4A8BeAINbhxwHewwIeA?glvhBAQLAIr');
+    });
+
+    it('Flags 2', () => {
+        visit({});
+
+        operations.screen.writable();
+
+        operations.mode.block.open();
+        operations.menu.newPage();
+
+        operations.mode.block.I();
+
+        minoPosition(Piece.I, Rotation.Spawn)(1, 0).forEach((block) => {
+            operations.mode.block.click(block[0], block[1]);
+        });
+
+        operations.mode.tools.home();
+        operations.mode.flags.open();
+
+        operations.mode.flags.lockToOff();
+        operations.mode.flags.riseToOn();
+        operations.mode.flags.mirrorToOn();
+
+        for (let i = 0; i < 10; i++) {
+            operations.mode.editor.nextPage();
+        }
+
+        minoPosition(Piece.I, Rotation.Spawn)(1, 0).forEach((p) => {
+            cy.get(block(p[0], p[1])).should('have.attr', 'color', Color.Normal.I);
+        });
+
+        expectFumen('v115@bhzhPeAIrvhJAIrAIrAIrAIrAIrAIrAIrAIrAIrAIr');
     });
 });

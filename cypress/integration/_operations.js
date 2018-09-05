@@ -1,8 +1,8 @@
 import { datatest } from './_common';
 
 // 中央少し下クリックを想定
-const px = (x) => 30 + 25.5 * x;
-const py = (y) => 575 - 25.5 * y;
+const px = (x) => 35 + 25.5 * x;
+const py = (y) => 570 - 25.5 * y;
 
 export const operations = {
     screen: {
@@ -40,39 +40,51 @@ export const operations = {
         block: {
             open: () => {
                 cy.get(datatest('btn-block-mode')).click();
+                cy.wait(50);
             },
             Completion: () => {
                 cy.get(datatest('btn-piece-inference')).click();
+                cy.wait(50);
             },
             J: () => {
                 cy.get(datatest('btn-piece-j')).click();
+                cy.wait(50);
             },
             L: () => {
                 cy.get(datatest('btn-piece-l')).click();
+                cy.wait(50);
             },
             O: () => {
                 cy.get(datatest('btn-piece-o')).click();
+                cy.wait(50);
             },
             I: () => {
                 cy.get(datatest('btn-piece-i')).click();
+                cy.wait(50);
             },
             T: () => {
                 cy.get(datatest('btn-piece-t')).click();
+                cy.wait(50);
             },
             S: () => {
                 cy.get(datatest('btn-piece-s')).click();
+                cy.wait(50);
             },
             Z: () => {
                 cy.get(datatest('btn-piece-z')).click();
+                cy.wait(50);
             },
             Gray: () => {
                 cy.get(datatest('btn-piece-gray')).click();
+                cy.wait(50);
             },
             Empty: () => {
                 cy.get(datatest('btn-piece-empty')).click();
+                cy.wait(50);
             },
             Inference: () => {
                 cy.get(datatest('btn-piece-inference')).click();
+                cy.wait(50);
             },
             click: (x, y) => {
                 cy.get('body').click(px(x), py(y));
