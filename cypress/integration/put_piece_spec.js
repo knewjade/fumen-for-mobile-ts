@@ -1,4 +1,4 @@
-import { expectFumen, minoPosition, Piece, Rotation, visit } from './_common';
+import { block, Color, expectFumen, minoPosition, Piece, Rotation, visit } from './_common';
 import { operations } from './_operations';
 
 // テト譜を開く
@@ -9,6 +9,12 @@ describe('Put pieces', () => {
         operations.screen.writable();
 
         operations.mode.piece.open();
+
+        operations.mode.block.click(0, 0);
+        cy.get(block(0, 0)).should('have.attr', 'color', Color.Highlight.Completion);
+
+        operations.mode.piece.resetPiece();
+        cy.get(block(0, 0)).should('not.have.attr', 'color', Color.Highlight.Completion);
 
         minoPosition(Piece.I, Rotation.Spawn)(4, 0).forEach(position => {
             operations.mode.block.click(position[0], position[1]);

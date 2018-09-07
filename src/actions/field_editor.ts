@@ -129,8 +129,12 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
     clearPiece: ({ pageIndex }) => (state): NextState => {
         const pages = state.fumen.pages;
         const page = pages[pageIndex];
-        if (page === undefined || page.piece === undefined) {
+        if (page === undefined) {
             return undefined;
+        }
+
+        if (page.piece === undefined) {
+            return fieldEditorActions.resetInferencePiece()(state);
         }
 
         const prevPage = toPrimitivePage(page);
