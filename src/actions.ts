@@ -8,7 +8,7 @@ import { resources as resourcesJa } from './locales/ja/translation';
 import { resources as resourcesEn } from './locales/en/translation';
 import { PageEnv } from './env';
 import { NextState } from './actions/commons';
-import { DrawBlockActions, drawBlockActions } from './actions/draw_block';
+import { fieldEditorActions, FieldEditorActions } from './actions/field_editor';
 import { animationActions, AnimationActions } from './actions/animation';
 import { modeActions, ScreenActions } from './actions/screen';
 import { modalActions, ModalActions } from './actions/modal';
@@ -19,17 +19,16 @@ import { mementoActions, MementoActions } from './actions/memento';
 
 export type action = (state: Readonly<State>) => NextState;
 
-export type Actions = DrawBlockActions
-    & AnimationActions
+export type Actions = AnimationActions
     & ScreenActions
     & ModalActions
     & PageActions
     & SetterActions
     & UtilsActions
-    & MementoActions;
+    & MementoActions
+    & FieldEditorActions;
 
 export const actions: Readonly<Actions> = {
-    ...drawBlockActions,
     ...animationActions,
     ...modeActions,
     ...modalActions,
@@ -37,6 +36,7 @@ export const actions: Readonly<Actions> = {
     ...setterActions,
     ...utilsActions,
     ...mementoActions,
+    ...fieldEditorActions,
 };
 
 // Mounting

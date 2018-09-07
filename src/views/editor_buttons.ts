@@ -4,13 +4,11 @@ import { EditorLayout } from './editor';
 import { VNode } from 'hyperapp';
 import { parsePieceName, Piece } from '../lib/enums';
 
-export const colorButton = ({ layout, piece, highlight, actions }: {
+export const colorButton = ({ layout, piece, highlight, onclick }: {
     layout: EditorLayout,
     piece: Piece,
     highlight: boolean,
-    actions: {
-        selectPieceColor: (data: { piece: Piece }) => void,
-    },
+    onclick: (data: { piece: Piece }) => void,
 }) => {
     const borderWidth = highlight ? 3 : 1;
     const pieceName = parsePieceName(piece);
@@ -32,10 +30,10 @@ export const colorButton = ({ layout, piece, highlight, actions }: {
         margin: 5,
         backgroundColorClass: 'white',
         textColor: '#333',
-        borderColor: highlight ? '#ff8a80' : '#333',
+        borderColor: highlight ? '#ff5252' : '#333',
         datatest: `btn-piece-${pieceName.toLowerCase()}`,
         key: `btn-piece-${pieceName.toLowerCase()}`,
-        onclick: () => actions.selectPieceColor({ piece }),
+        onclick: () => onclick({ piece }),
     });
 };
 
@@ -61,7 +59,7 @@ export const inferenceButton = ({ layout, highlight, actions }: {
         margin: 5,
         backgroundColorClass: 'white',
         textColor: '#333',
-        borderColor: highlight ? '#ff8a80' : '#333',
+        borderColor: highlight ? '#ff5252' : '#333',
         datatest: 'btn-piece-inference',
         key: 'btn-piece-inference',
         onclick: () => actions.selectInferencePieceColor(),
@@ -97,6 +95,34 @@ export const iconContents = (
 };
 
 export const switchIconContents = (
+    { height, description, iconSize, enable }: {
+        height: number;
+        description: string;
+        iconSize: number;
+        enable: boolean;
+    },
+) => {
+    const properties = style({
+        display: 'block',
+        height: px(height),
+        lineHeight: px(height),
+        fontSize: px(iconSize),
+        border: 'solid 0px #000',
+        marginRight: px(2),
+        cursor: 'pointer',
+    });
+
+    const className = 'material-icons';
+
+    const icon = i({
+        className,
+        style: properties,
+    }, enable ? 'check_box' : 'check_box_outline_blank');
+
+    return [icon, ' ', span({ style: style({ fontSize: px(9) }) }, description)];
+};
+
+export const radioIconContents = (
     { height, description, iconSize, enable }: {
         height: number;
         description: string;
@@ -162,7 +188,7 @@ export const keyButton = (
 
 export const toolButton = (
     {
-        width, backgroundColorClass, textColor, borderColor, borderWidth = 1,
+        width, backgroundColorClass, textColor, borderColor, borderWidth = 1, borderType = 'solid',
         datatest, key, onclick, contents, flexGrow, margin,
     }: {
         flexGrow?: number;
@@ -172,6 +198,7 @@ export const toolButton = (
         textColor: string;
         borderColor: string;
         borderWidth?: number;
+        borderType?: string;
         datatest: string;
         key: string;
         contents: string | number | (string | number | VNode<{}>)[];
@@ -185,7 +212,7 @@ export const toolButton = (
         style: style({
             flexGrow,
             color: textColor,
-            border: `solid ${borderWidth}px ${borderColor}`,
+            border: `${borderType} ${borderWidth}px ${borderColor}`,
             marginTop: px(margin),
             marginBottom: px(margin),
             width: px(width),
@@ -237,7 +264,7 @@ export const switchButton = (
         style: style({
             flexGrow,
             color: enable ? '#fff' : textColor,
-            border: `solid ${borderWidth}px ${enable ? borderColor : '#333'}`,
+            border: enable ? `solid ${borderWidth}px ${borderColor}` : `dashed 1px #333`,
             marginTop: px(margin),
             marginBottom: px(margin),
             width: px(width),

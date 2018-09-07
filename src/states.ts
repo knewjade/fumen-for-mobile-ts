@@ -51,6 +51,7 @@ export interface State {
         };
         inferences: number[];
         prevPage?: PrimitivePage;
+        updated: boolean;
     };
     mode: {
         screen: Screens;
@@ -109,6 +110,7 @@ export const initState: Readonly<State> = {
         },
         inferences: [],
         prevPage: undefined,
+        updated: false,
     },
     mode: {
         screen: Screens.Reader,

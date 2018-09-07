@@ -192,6 +192,10 @@ export const pageActions: Readonly<PageActions> = {
         ]);
     },
     changeToRef: ({ index }) => (state): NextState => {
+        if (index <= 0) {
+            return undefined;
+        }
+
         const task = toRefPageTask(index);
 
         return sequence(state, [
@@ -216,8 +220,10 @@ export const pageActions: Readonly<PageActions> = {
 
     },
     changeToKey: ({ index }) => (state): NextState => {
+        if (index <= 0) {
+            return undefined;
+        }
         const task = toKeyPageTask(index);
-
         return sequence(state, [
             actions.fixInferencePiece(),
             actions.clearInferencePiece(),

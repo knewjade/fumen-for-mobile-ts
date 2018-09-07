@@ -96,7 +96,7 @@ export class Pages {
                 colorize: prev.flags.colorize,
                 rise: prev.flags.lock ? false : prev.flags.rise,
             },
-            piece: undefined,
+            piece: prev.flags.lock ? undefined : prev.piece,
             quiz: prev.quiz !== undefined ? { operation: undefined } : undefined,
         };
 
@@ -145,7 +145,7 @@ export class Pages {
                 colorize: prev.flags.colorize,
                 rise: prev.flags.lock ? false : prev.flags.rise,
             },
-            piece: undefined,
+            piece: prev.flags.lock ? undefined : prev.piece,
             quiz: prev.quiz !== undefined ? { operation: undefined } : undefined,
         };
 

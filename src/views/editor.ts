@@ -109,14 +109,16 @@ const getLayout = (display: { width: number, height: number }): EditorLayout => 
     };
 };
 
-const toolMode = ({ layout, currentIndex, keyPage, actions }: {
+const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
     layout: EditorLayout;
     currentIndex: number;
     keyPage: boolean;
+    touchType: TouchTypes;
     actions: {
         removePage: (data: { index: number }) => void;
         changeToDrawingMode: () => void;
         changeToFlagsMode: () => void;
+        changeToPieceMode: () => void;
         changeToRef: (data: { index: number }) => void;
         changeToKey: (data: { index: number }) => void;
     };
@@ -186,12 +188,31 @@ const toolMode = ({ layout, currentIndex, keyPage, actions }: {
             }),
         }),
         toolButton({
-            borderWidth: 1,
+            borderWidth: 3,
             width: layout.buttons.size.width,
             margin: toolButtonMargin,
             backgroundColorClass: 'red',
             textColor: '#fff',
-            borderColor: '#f44336',
+            borderColor: touchType === TouchTypes.Piece ? '#fff' : '#f44336',
+            borderType: touchType === TouchTypes.Piece ? 'double' : undefined,
+            datatest: 'btn-piece-mode',
+            key: 'btn-piece-mode',
+            onclick: () => actions.changeToPieceMode(),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: 'piece',
+                iconSize: 22,
+                iconName: 'extension',
+            }),
+        }),
+        toolButton({
+            borderWidth: 3,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'red',
+            textColor: '#fff',
+            borderColor: touchType === TouchTypes.Drawing ? '#fff' : '#f44336',
+            borderType: touchType === TouchTypes.Drawing ? 'double' : undefined,
             datatest: 'btn-block-mode',
             key: 'btn-block-mode',
             onclick: () => actions.changeToDrawingMode(),
@@ -250,7 +271,7 @@ const blockMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
             key: 'div-space',
         }),
     ].concat(pieces.map(piece => (
-        colorButton({ layout, piece, actions, highlight: modePiece === piece })
+        colorButton({ layout, piece, onclick: actions.selectPieceColor, highlight: modePiece === piece })
     ))).concat([
         inferenceButton({
             layout,
@@ -258,6 +279,87 @@ const blockMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
             highlight: modePiece === undefined,
         }),
     ]));
+};
+
+const pieceMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
+    layout: EditorLayout;
+    keyPage: boolean;
+    currentIndex: number;
+    modePiece: Piece | undefined;
+    actions: {
+        selectPieceColor: (data: { piece: Piece }) => void;
+        selectInferencePieceColor: () => void;
+        changeToRef: (data: { index: number }) => void;
+        changeToKey: (data: { index: number }) => void;
+        clearPiece: (data: { pageIndex: number }) => void;
+    };
+}) => {
+    const toolButtonMargin = 5;
+    const margin = (layout.canvas.size.height - layout.field.size.height) / 2;
+
+    return div({
+        style: style({
+            marginLeft: px(10),
+            paddingTop: px(margin),
+            paddingBottom: px(margin),
+            display: 'flex',
+            justifyContent: 'flex-end',
+            flexDirection: 'column',
+            alignItems: 'center',
+            height: px(layout.canvas.size.height),
+            width: px(layout.buttons.size.width),
+        }),
+    }, [
+        keyButton({
+            toolButtonMargin,
+            keyPage,
+            currentIndex,
+            actions,
+            width: layout.buttons.size.width,
+            height: layout.buttons.size.height,
+        }),
+        toolSpace({
+            flexGrow: 100,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            key: 'div-space',
+        }),
+        toolButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'white',
+            textColor: '#333',
+            borderColor: '#333',
+            datatest: 'btn-reset-piece',
+            key: 'btn-reset-piece',
+            onclick: () => actions.clearPiece({ pageIndex: currentIndex }),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: 'reset',
+                iconSize: 22,
+                iconName: 'crop_free',
+            }),
+        }),
+        // switchButton({
+        //     borderWidth: 1,
+        //     width: layout.buttons.size.width,
+        //     margin: toolButtonMargin,
+        //     backgroundColorClass: 'red',
+        //     textColor: '#333',
+        //     borderColor: '#f44336',
+        //     datatest: 'btn-draw-piece',
+        //     key: 'btn-draw-piece',
+        //     onclick: () => {},
+        //     contents: radioIconContents({
+        //         height: layout.buttons.size.height,
+        //         description: 'draw',
+        //         iconSize: 22,
+        //         enable: true,
+        //     }),
+        //     enable: true,
+        // }),
+    ]);
 };
 
 const flagsMode = ({ layout, currentIndex, keyPage, flags, actions }: {
@@ -387,7 +489,16 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                     layout,
                     actions,
                     keyPage,
+                    touchType: state.mode.touch,
                     currentIndex: state.fumen.currentIndex,
+                });
+            case ModeTypes.Piece:
+                return pieceMode({
+                    layout,
+                    actions,
+                    keyPage,
+                    currentIndex: state.fumen.currentIndex,
+                    modePiece: state.mode.piece,
                 });
             case ModeTypes.Flags:
                 return flagsMode({
@@ -438,6 +549,7 @@ const Events = (state: State, actions: Actions) => {
     const mode = state.mode;
     switch (mode.touch) {
     case TouchTypes.Drawing:
+    case TouchTypes.Piece:
         return DrawingEventCanvas({
             actions,
             fieldBlocks: resources.konva.fieldBlocks,

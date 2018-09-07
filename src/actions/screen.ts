@@ -9,13 +9,14 @@ export interface ScreenActions {
     changeToDrawingMode: () => action;
     changeToDrawingToolMode: () => action;
     changeToFlagsMode: () => action;
-    changeMode: (mode: Partial<State['mode']>) => action;
+    changeToPieceMode: () => action;
+    changeScreen: (data: { screen: Screens }) => action;
 }
 
 export const modeActions: Readonly<ScreenActions> = {
     changeToReaderScreen: () => (state): NextState => {
         resources.konva.stage.reload((done) => {
-            main.changeMode({ screen: Screens.Reader });
+            main.changeScreen({ screen: Screens.Reader });
             done();
         });
         return sequence(state, [
@@ -25,42 +26,70 @@ export const modeActions: Readonly<ScreenActions> = {
     },
     changeToDrawerScreen: () => (): NextState => {
         resources.konva.stage.reload((done) => {
-            main.changeMode({ screen: Screens.Editor });
+            main.changeScreen({ screen: Screens.Editor });
             done();
         });
         return undefined;
     },
     changeToDrawingMode: () => (state): NextState => {
-        return {
-            mode: {
-                ...state.mode,
-                type: ModeTypes.Drawing,
-                touch: TouchTypes.Drawing,
-            },
-        };
+        return sequence(state, [
+            changeTouchType({ type: TouchTypes.Drawing }),
+            changeModeType({ type: ModeTypes.Drawing }),
+        ]);
     },
     changeToDrawingToolMode: () => (state): NextState => {
-        return {
-            mode: {
-                ...state.mode,
-                type: ModeTypes.DrawingTool,
-            },
-        };
+        return sequence(state, [
+            changeModeType({ type: ModeTypes.DrawingTool }),
+        ]);
     },
     changeToFlagsMode: () => (state): NextState => {
+        return sequence(state, [
+            changeTouchType({ type: TouchTypes.Drawing }),
+            changeModeType({ type: ModeTypes.Flags }),
+        ]);
+    },
+    changeToPieceMode: () => (state): NextState => {
+        return sequence(state, [
+            changeTouchType({ type: TouchTypes.Piece }),
+            changeModeType({ type: ModeTypes.Piece }),
+        ]);
+    },
+    changeScreen: ({ screen }) => (state): NextState => {
         return {
             mode: {
                 ...state.mode,
-                type: ModeTypes.Flags,
+                screen,
             },
         };
     },
-    changeMode: mode => (state): NextState => {
-        return {
+};
+
+const changeTouchType = ({ type }: { type: TouchTypes }) => (state: State): NextState => {
+    if (state.mode.touch === type) {
+        return undefined;
+    }
+
+    return sequence(state, [
+        actions.fixInferencePiece(),
+        actions.resetInferencePiece(),
+        () => ({
             mode: {
                 ...state.mode,
-                ...mode,
+                touch: type,
             },
-        };
-    },
+        }),
+    ]);
+};
+
+const changeModeType = ({ type }: { type: ModeTypes }) => (state: State): NextState => {
+    if (state.mode.type === type) {
+        return undefined;
+    }
+
+    return {
+        mode: {
+            ...state.mode,
+            type,
+        },
+    };
 };

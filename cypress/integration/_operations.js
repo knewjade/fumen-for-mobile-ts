@@ -120,6 +120,14 @@ export const operations = {
                 cy.get(datatest('btn-mirror-flag-on')).click();
             },
         },
+        piece: {
+            open: () => {
+                cy.get(datatest('btn-piece-mode')).click();
+            },
+            resetPiece: () => {
+                cy.get(datatest('btn-reset-piece')).click();
+            },
+        },
         tools: {
             open: () => {
                 cy.get(datatest('btn-drawing-tool')).click();

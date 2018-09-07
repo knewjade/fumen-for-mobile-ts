@@ -1,12 +1,12 @@
 import { State } from '../states';
-import { Piece } from '../lib/enums';
+import { getBlocks, Piece } from '../lib/enums';
 import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
 import { toPrimitivePage, toSinglePageTask } from '../history_task';
 import { fieldEditorActions } from './field_editor';
 import { inferPiece } from '../lib/inference';
 
-export interface DrawBlockActions {
+export interface PutPieceActions {
     fixInferencePiece(): action;
 
     clearInferencePiece(): action;
@@ -24,7 +24,7 @@ export interface DrawBlockActions {
     ontouchMoveSentLine(data: { index: number }): action;
 }
 
-export const drawBlockActions: Readonly<DrawBlockActions> = {
+export const putPieceActions: Readonly<PutPieceActions> = {
     fixInferencePiece: () => (state): NextState => {
         const inferences = state.events.inferences;
         if (inferences.length < 4) {
@@ -34,7 +34,7 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
         // InferencePieceが揃っているとき
         let piece;
         try {
-            piece = inferPiece(inferences).piece;
+            piece = inferPiece(inferences);
         } catch (e) {
             return undefined;
         }
@@ -44,28 +44,11 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
         const page = pages[currentPageIndex];
         const prevPage = toPrimitivePage(page);
 
-        if (!page.commands) {
-            page.commands = {
-                pre: {},
-            };
-        }
-
-        // Blockを追加
-        for (const index of inferences) {
-            const x = index % 10;
-            const y = Math.floor(index / 10);
-            const type = 'block';
-            const key = `${type}-${index}`;
-
-            // フィールドのみ
-            if (state.cache.currentInitField.getAtIndex(index) !== piece) {
-                // 操作の結果、最初のフィールドの状態から変化するとき
-                page.commands.pre[key] = { x, y, piece, type };
-            } else {
-                // 操作の結果、最初のフィールドの状態に戻るとき
-                delete page.commands.pre[key];
-            }
-        }
+        page.piece = {
+            type: piece.piece,
+            rotation: piece.rotate,
+            coordinate: piece.coordinate,
+        };
 
         // 4つ以上あるとき
         return sequence(state, [
@@ -91,18 +74,27 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
         ]);
     },
     ontouchStartField: ({ index }) => (state): NextState => {
-        if (state.mode.piece !== undefined) {
-            return sequence(state, [
-                actions.fixInferencePiece(),
-                newState => startDrawingField(newState, index, true),
-                actions.ontouchMoveField({ index }),
-            ]);
-        }
-
-        const inferences = state.events.inferences;
+        const pages = state.fumen.pages;
+        const page = pages[state.fumen.currentIndex];
+        const piece = page.piece;
 
         return sequence(state, [
-            inferences.find(e => e === index) === undefined ? actions.fixInferencePiece() : undefined,
+            piece !== undefined ? (newState) => {
+                const blocks = getBlocks(piece.type, piece.rotation);
+                const indexes = blocks
+                    .map(value => value[0] + piece.coordinate.x + 10 * (value[1] + piece.coordinate.y));
+                page.piece = undefined;
+                return {
+                    fumen: {
+                        ...newState.fumen,
+                        pages,
+                    },
+                    events: {
+                        ...newState.events,
+                        inferences: indexes,
+                    },
+                };
+            } : undefined,
             newState => ({
                 events: {
                     ...newState.events,
@@ -118,12 +110,17 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
         ]);
     },
     ontouchMoveField: ({ index }) => (state): NextState => {
-        if (state.mode.piece !== undefined) {
-            return moveDrawingField(state, index, true);
-        }
-
         const piece = state.events.touch.piece;
         if (piece === undefined) {
+            return undefined;
+        }
+
+        const page = state.fumen.pages[state.fumen.currentIndex];
+        if (page === undefined) {
+            return undefined;
+        }
+
+        if (page.piece !== undefined) {
             return undefined;
         }
 
@@ -173,14 +170,8 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
         return undefined;
     },
     ontouchEnd: () => (state): NextState => {
-        const currentIndex = state.fumen.currentIndex;
-        const page = state.fumen.pages[currentIndex];
-        const updated = state.events.updated;
         return sequence(state, [
-            updated && state.events.prevPage !== undefined ? actions.saveToMemento() : undefined,
-            updated && state.events.prevPage !== undefined
-                ? actions.registerHistoryTask({ task: toSinglePageTask(currentIndex, state.events.prevPage, page) })
-                : undefined,
+            putPieceActions.fixInferencePiece(),
             endDrawingField,
         ]);
     },
