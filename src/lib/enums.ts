@@ -55,6 +55,7 @@ export enum ModeTypes {
 export enum TouchTypes {
     Drawing = 'Drawing',
     Piece = 'Piece',
+    MovePiece = 'MovePiece',
 }
 
 export function parsePieceName(piece: Piece) {
@@ -108,6 +109,18 @@ export function parsePiece(piece: string) {
 
 export function isMinoPiece(b: Piece) {
     return b !== Piece.Empty && b !== Piece.Gray;
+}
+
+export function toPositionIndex(position: number[]): number {
+    return position[0] + position[1];
+}
+
+export function getBlockPositions(piece: Piece, rotation: Rotation, x: number, y: number): number[][] {
+    return getBlocks(piece, rotation).map((position) => {
+        position[0] += x;
+        position[1] += y;
+        return position;
+    });
 }
 
 export function getBlocks(piece: Piece, rotation: Rotation): number[][] {

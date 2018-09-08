@@ -16,6 +16,7 @@ import {
     iconContents,
     inferenceButton,
     keyButton,
+    radioIconContents,
     switchButton,
     switchIconContents,
     toolButton,
@@ -118,7 +119,7 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
         removePage: (data: { index: number }) => void;
         changeToDrawingMode: () => void;
         changeToFlagsMode: () => void;
-        changeToPieceMode: () => void;
+        changeToDrawPieceMode: () => void;
         changeToRef: (data: { index: number }) => void;
         changeToKey: (data: { index: number }) => void;
     };
@@ -197,7 +198,7 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
             borderType: touchType === TouchTypes.Piece ? 'double' : undefined,
             datatest: 'btn-piece-mode',
             key: 'btn-piece-mode',
-            onclick: () => actions.changeToPieceMode(),
+            onclick: () => actions.changeToDrawPieceMode(),
             contents: iconContents({
                 height: layout.buttons.size.height,
                 description: 'piece',
@@ -281,16 +282,18 @@ const blockMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
     ]));
 };
 
-const pieceMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
+const pieceMode = ({ layout, keyPage, currentIndex, touchType, actions }: {
     layout: EditorLayout;
     keyPage: boolean;
     currentIndex: number;
-    modePiece: Piece | undefined;
+    touchType: TouchTypes;
     actions: {
         selectPieceColor: (data: { piece: Piece }) => void;
         selectInferencePieceColor: () => void;
         changeToRef: (data: { index: number }) => void;
         changeToKey: (data: { index: number }) => void;
+        changeToDrawPieceMode: () => void;
+        changeToMovePieceMode: () => void;
         clearPiece: (data: { pageIndex: number }) => void;
     };
 }) => {
@@ -341,24 +344,42 @@ const pieceMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
                 iconName: 'crop_free',
             }),
         }),
-        // switchButton({
-        //     borderWidth: 1,
-        //     width: layout.buttons.size.width,
-        //     margin: toolButtonMargin,
-        //     backgroundColorClass: 'red',
-        //     textColor: '#333',
-        //     borderColor: '#f44336',
-        //     datatest: 'btn-draw-piece',
-        //     key: 'btn-draw-piece',
-        //     onclick: () => {},
-        //     contents: radioIconContents({
-        //         height: layout.buttons.size.height,
-        //         description: 'draw',
-        //         iconSize: 22,
-        //         enable: true,
-        //     }),
-        //     enable: true,
-        // }),
+        switchButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'red',
+            textColor: '#333',
+            borderColor: '#f44336',
+            datatest: 'btn-move-piece',
+            key: 'btn-move-piece',
+            onclick: () => actions.changeToMovePieceMode(),
+            contents: radioIconContents({
+                height: layout.buttons.size.height,
+                description: 'move',
+                iconSize: 22,
+                enable: touchType === TouchTypes.MovePiece,
+            }),
+            enable: touchType === TouchTypes.MovePiece,
+        }),
+        switchButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'red',
+            textColor: '#333',
+            borderColor: '#f44336',
+            datatest: 'btn-draw-piece',
+            key: 'btn-draw-piece',
+            onclick: () => actions.changeToDrawPieceMode(),
+            contents: radioIconContents({
+                height: layout.buttons.size.height,
+                description: 'draw',
+                iconSize: 22,
+                enable: touchType === TouchTypes.Piece,
+            }),
+            enable: touchType === TouchTypes.Piece,
+        }),
     ]);
 };
 
@@ -498,7 +519,7 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                     actions,
                     keyPage,
                     currentIndex: state.fumen.currentIndex,
-                    modePiece: state.mode.piece,
+                    touchType: state.mode.touch,
                 });
             case ModeTypes.Flags:
                 return flagsMode({
@@ -547,18 +568,16 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
 
 const Events = (state: State, actions: Actions) => {
     const mode = state.mode;
-    switch (mode.touch) {
-    case TouchTypes.Drawing:
-    case TouchTypes.Piece:
-        return DrawingEventCanvas({
-            actions,
-            fieldBlocks: resources.konva.fieldBlocks,
-            sentBlocks: resources.konva.sentBlocks,
-            fieldLayer: resources.konva.layers.field,
-        });
+    if (mode === undefined) {
+        return undefined;
     }
 
-    return undefined as any;
+    return DrawingEventCanvas({
+        actions,
+        fieldBlocks: resources.konva.fieldBlocks,
+        sentBlocks: resources.konva.sentBlocks,
+        fieldLayer: resources.konva.layers.field,
+    });
 };
 
 const Tools = (state: State, actions: Actions, height: number) => {

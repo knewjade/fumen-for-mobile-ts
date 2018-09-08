@@ -87,4 +87,37 @@ describe('Put pieces', () => {
 
         expectFumen('v115@vhKRQJUGJKJJTNJvMJFEmFdmF2mFKnFKJAgH');
     });
+
+    it('Move piece', () => {
+        visit({});
+
+        operations.screen.writable();
+
+        operations.mode.piece.open();
+
+        minoPosition(Piece.O, Rotation.Spawn)(4, 0).forEach(position => {
+            operations.mode.block.click(position[0], position[1]);
+        });
+
+        operations.mode.piece.moveOn();
+
+        operations.mode.block.click(0, 10);
+        operations.mode.block.click(4, 10);
+
+        operations.mode.tools.undo();
+
+        operations.mode.editor.nextPage();
+
+        operations.mode.piece.drawOn();
+
+        minoPosition(Piece.O, Rotation.Spawn)(4, 0).forEach(position => {
+            operations.mode.block.click(position[0], position[1]);
+        });
+
+        operations.mode.tools.undo();
+
+        operations.mode.editor.nextPage();
+
+        expectFumen('v115@vhCTXIAgHAgH');
+    });
 });

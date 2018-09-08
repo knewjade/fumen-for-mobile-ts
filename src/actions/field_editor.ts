@@ -4,6 +4,7 @@ import { NextState, sequence } from './commons';
 import { putPieceActions } from './put_piece';
 import { drawBlockActions } from './draw_block';
 import { toPrimitivePage, toSinglePageTask } from '../history_task';
+import { movePieceActions } from './move_piece';
 
 export interface FieldEditorActions {
     fixInferencePiece(): action;
@@ -63,6 +64,8 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return drawBlockActions.ontouchStartField({ index })(state);
         case TouchTypes.Piece:
             return putPieceActions.ontouchStartField({ index })(state);
+        case TouchTypes.MovePiece:
+            return movePieceActions.ontouchStartField({ index })(state);
         }
         return undefined;
     },
@@ -72,6 +75,8 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return drawBlockActions.ontouchMoveField({ index })(state);
         case TouchTypes.Piece:
             return putPieceActions.ontouchMoveField({ index })(state);
+        case TouchTypes.MovePiece:
+            return movePieceActions.ontouchMoveField({ index })(state);
         }
         return undefined;
     },
@@ -81,6 +86,8 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return drawBlockActions.ontouchEnd()(state);
         case TouchTypes.Piece:
             return putPieceActions.ontouchEnd()(state);
+        case TouchTypes.MovePiece:
+            return movePieceActions.ontouchEnd()(state);
         }
         return undefined;
     },
@@ -88,8 +95,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
         switch (state.mode.touch) {
         case TouchTypes.Drawing:
             return drawBlockActions.ontouchStartSentLine({ index })(state);
-        case TouchTypes.Piece:
-            return putPieceActions.ontouchStartSentLine({ index })(state);
         }
         return undefined;
     },
@@ -97,8 +102,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
         switch (state.mode.touch) {
         case TouchTypes.Drawing:
             return drawBlockActions.ontouchMoveSentLine({ index })(state);
-        case TouchTypes.Piece:
-            return putPieceActions.ontouchMoveSentLine({ index })(state);
         }
         return undefined;
     },
@@ -144,6 +147,7 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             fieldEditorActions.resetInferencePiece(),
             actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
+            actions.reopenCurrentPage(),
         ]);
     },
 };

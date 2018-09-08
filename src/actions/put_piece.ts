@@ -1,5 +1,5 @@
 import { State } from '../states';
-import { getBlocks, Piece } from '../lib/enums';
+import { getBlockPositions, Piece, toPositionIndex } from '../lib/enums';
 import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
 import { toPrimitivePage, toSinglePageTask } from '../history_task';
@@ -18,10 +18,6 @@ export interface PutPieceActions {
     ontouchMoveField(data: { index: number }): action;
 
     ontouchEnd(): action;
-
-    ontouchStartSentLine(data: { index: number }): action;
-
-    ontouchMoveSentLine(data: { index: number }): action;
 }
 
 export const putPieceActions: Readonly<PutPieceActions> = {
@@ -80,9 +76,8 @@ export const putPieceActions: Readonly<PutPieceActions> = {
 
         return sequence(state, [
             piece !== undefined ? (newState) => {
-                const blocks = getBlocks(piece.type, piece.rotation);
-                const indexes = blocks
-                    .map(value => value[0] + piece.coordinate.x + 10 * (value[1] + piece.coordinate.y));
+                const blocks = getBlockPositions(piece.type, piece.rotation, piece.coordinate.x, piece.coordinate.y);
+                const indexes = blocks.map(toPositionIndex);
                 page.piece = undefined;
                 return {
                     fumen: {
@@ -175,102 +170,6 @@ export const putPieceActions: Readonly<PutPieceActions> = {
             endDrawingField,
         ]);
     },
-    ontouchStartSentLine: ({ index }) => (state): NextState => {
-        if (state.mode.piece !== undefined) {
-            return sequence(state, [
-                () => startDrawingField(state, index, false),
-                actions.ontouchMoveSentLine({ index }),
-            ]);
-        }
-
-        return undefined;
-    },
-    ontouchMoveSentLine: ({ index }) => (state): NextState => {
-        if (state.mode.piece !== undefined) {
-            return moveDrawingField(state, index, false);
-        }
-
-        return undefined;
-    },
-};
-
-const startDrawingField = (state: State, index: number, isField: boolean): NextState => {
-    const currentPageIndex = state.fumen.currentIndex;
-
-    // 塗りつぶすpieceを決める
-    const block = isField ? state.field[index] : state.sentLine[index];
-    const piece = block.piece !== state.mode.piece ? state.mode.piece : Piece.Empty;
-    if (piece === undefined) {
-        return undefined;
-    }
-
-    return sequence(state, [
-        () => ({
-            events: {
-                ...state.events,
-                touch: { piece },
-                prevPage: toPrimitivePage(state.fumen.pages[state.fumen.currentIndex]),
-                updated: false,
-            },
-        }),
-        actions.openPage({ index: currentPageIndex }),
-    ]);
-};
-
-const moveDrawingField = (state: State, index: number, isField: boolean): NextState => {
-    const pages = state.fumen.pages;
-    const currentPageIndex = state.fumen.currentIndex;
-
-    // 塗りつぶすpieceを決める
-    const piece = state.events.touch.piece;
-    if (piece === undefined) {
-        return undefined;
-    }
-
-    // pieceに変化がないときは、表示を更新しない
-    const block = isField ? state.field[index] : state.sentLine[index];
-    if (block.piece === piece) {
-        return undefined;
-    }
-
-    const page = pages[currentPageIndex];
-    if (!page.commands) {
-        page.commands = {
-            pre: {},
-        };
-    }
-
-    // Blockを追加
-    {
-        const x = index % 10;
-        const y = Math.floor(index / 10);
-        const type = isField ? 'block' : 'sentBlock';
-        const key = `${type}-${index}`;
-
-        const initPiece = state.cache.currentInitField.getAtIndex(isField ? index : -index);
-        if (initPiece !== piece) {
-            // 操作の結果、最初のフィールドの状態から変化するとき
-            page.commands.pre[key] = { x, y, piece, type };
-        } else {
-            // 操作の結果、最初のフィールドの状態に戻るとき
-            delete page.commands.pre[key];
-        }
-    }
-
-    return sequence(state, [
-        () => ({
-            fumen: {
-                ...state.fumen,
-                pages,
-            },
-            events: {
-                ...state.events,
-                touch: { piece },
-                updated: true,
-            },
-        }),
-        actions.openPage({ index: currentPageIndex }),
-    ]);
 };
 
 const endDrawingField = (state: State): NextState => {

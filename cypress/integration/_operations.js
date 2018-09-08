@@ -127,6 +127,12 @@ export const operations = {
             resetPiece: () => {
                 cy.get(datatest('btn-reset-piece')).click();
             },
+            moveOn: () => {
+                cy.get(datatest('btn-move-piece-off')).click();
+            },
+            drawOn: () => {
+                cy.get(datatest('btn-draw-piece-off')).click();
+            },
         },
         tools: {
             open: () => {

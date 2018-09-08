@@ -15,6 +15,7 @@ import {
 } from '../history_task';
 
 export interface PageActions {
+    reopenCurrentPage: () => action;
     openPage: (data: { index: number }) => action;
     insertRefPage: (data: { index: number }) => action;
     insertKeyPage: (data: { index: number }) => action;
@@ -33,6 +34,9 @@ export interface PageActions {
 }
 
 export const pageActions: Readonly<PageActions> = {
+    reopenCurrentPage: () => (state): NextState => {
+        return pageActions.openPage({ index: state.fumen.currentIndex })(state);
+    },
     openPage: ({ index }) => (state): NextState => {
         const pages = new Pages(state.fumen.pages);
 
