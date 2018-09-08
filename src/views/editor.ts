@@ -294,7 +294,10 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, actions }: {
         changeToKey: (data: { index: number }) => void;
         changeToDrawPieceMode: () => void;
         changeToMovePieceMode: () => void;
-        clearPiece: (data: { pageIndex: number }) => void;
+        clearPiece: () => void;
+        rotateToLeft: () => void;
+        rotateToRight: () => void;
+        harddrop: () => void;
     };
 }) => {
     const toolButtonMargin = 5;
@@ -334,9 +337,60 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, actions }: {
             backgroundColorClass: 'white',
             textColor: '#333',
             borderColor: '#333',
+            datatest: 'btn-harddrop',
+            key: 'btn-harddrop',
+            onclick: () => actions.harddrop(),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: 'drop',
+                iconSize: 22,
+                iconName: 'vertical_align_bottom',
+            }),
+        }),
+        toolButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'white',
+            textColor: '#333',
+            borderColor: '#333',
+            datatest: 'btn-rotate-to-left',
+            key: 'btn-rotate-to-left',
+            onclick: () => actions.rotateToLeft(),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: 'left',
+                iconSize: 22,
+                iconName: 'rotate_left',
+            }),
+        }),
+        toolButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'white',
+            textColor: '#333',
+            borderColor: '#333',
+            datatest: 'btn-rotate-to-right',
+            key: 'btn-rotate-to-right',
+            onclick: () => actions.rotateToRight(),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: 'right',
+                iconSize: 22,
+                iconName: 'rotate_right',
+            }),
+        }),
+        toolButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'white',
+            textColor: '#333',
+            borderColor: '#333',
             datatest: 'btn-reset-piece',
             key: 'btn-reset-piece',
-            onclick: () => actions.clearPiece({ pageIndex: currentIndex }),
+            onclick: () => actions.clearPiece(),
             contents: iconContents({
                 height: layout.buttons.size.height,
                 description: 'reset',
@@ -518,8 +572,8 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                     layout,
                     actions,
                     keyPage,
-                    currentIndex: state.fumen.currentIndex,
                     touchType: state.mode.touch,
+                    currentIndex: state.fumen.currentIndex,
                 });
             case ModeTypes.Flags:
                 return flagsMode({

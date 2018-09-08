@@ -2,6 +2,7 @@ import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
 import { getBlockPositions, isMinoPiece, Piece, toPositionIndex } from '../lib/enums';
 import { toPrimitivePage, toSinglePageTask } from '../history_task';
+import { PageFieldOperation, Pages } from '../lib/pages';
 
 export interface MovePieceActions {
     ontouchStartField(data: { index: number }): action;
@@ -26,8 +27,8 @@ export const movePieceActions: Readonly<MovePieceActions> = {
     },
     ontouchMoveField: ({ index }) => (state): NextState => {
         const pages = state.fumen.pages;
-        const page = pages[state.fumen.currentIndex];
-        console.log(page);
+        const pageIndex = state.fumen.currentIndex;
+        const page = pages[pageIndex];
 
         if (page === undefined) {
             return undefined;
@@ -50,8 +51,9 @@ export const movePieceActions: Readonly<MovePieceActions> = {
             return undefined;
         }
 
-        const field = state.field;
-        const isConflicted = positions.map(toPositionIndex).some(i => field[i].piece !== Piece.Empty);
+        const pagesObj = new Pages(pages);
+        const field = pagesObj.getField(pageIndex, PageFieldOperation.Command);
+        const isConflicted = positions.map(toPositionIndex).some(i => field.getAtIndex(i) !== Piece.Empty);
 
         if (isConflicted) {
             return undefined;

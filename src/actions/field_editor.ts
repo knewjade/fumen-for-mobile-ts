@@ -1,10 +1,13 @@
-import { Piece, TouchTypes } from '../lib/enums';
+import { getBlockPositions, Piece, Rotation, toPositionIndex, TouchTypes, } from '../lib/enums';
 import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
 import { putPieceActions } from './put_piece';
 import { drawBlockActions } from './draw_block';
 import { toPrimitivePage, toSinglePageTask } from '../history_task';
 import { movePieceActions } from './move_piece';
+import { PageFieldOperation, Pages } from '../lib/pages';
+import { testLeftRotation, testRightRotation } from '../lib/srs';
+import { Field } from '../lib/fumen/field';
 
 export interface FieldEditorActions {
     fixInferencePiece(): action;
@@ -27,7 +30,13 @@ export interface FieldEditorActions {
 
     selectInferencePieceColor(): action;
 
-    clearPiece(data: { pageIndex: number }): action;
+    clearPiece(): action;
+
+    rotateToLeft(): action;
+
+    rotateToRight(): action;
+
+    harddrop(): action;
 }
 
 export const fieldEditorActions: Readonly<FieldEditorActions> = {
@@ -129,8 +138,9 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             }),
         ]);
     },
-    clearPiece: ({ pageIndex }) => (state): NextState => {
+    clearPiece: () => (state): NextState => {
         const pages = state.fumen.pages;
+        const pageIndex = state.fumen.currentIndex;
         const page = pages[pageIndex];
         if (page === undefined) {
             return undefined;
@@ -150,4 +160,164 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             actions.reopenCurrentPage(),
         ]);
     },
+    rotateToLeft: () => (state): NextState => {
+        const pages = state.fumen.pages;
+        const pageIndex = state.fumen.currentIndex;
+        const page = pages[pageIndex];
+        if (page === undefined) {
+            return undefined;
+        }
+
+        const piece = page.piece;
+        if (piece === undefined) {
+            return undefined;
+        }
+
+        const pagesObj = new Pages(pages);
+        const field = pagesObj.getField(pageIndex, PageFieldOperation.Command);
+
+        const testObj = testLeftRotation(piece.type, piece.rotation);
+        const nextRotation = testObj.rotation;
+        const test = testCallback(field, piece.type, nextRotation);
+
+        const coordinate = piece.coordinate;
+        const testPositions = testObj.test.map((value) => {
+            value[0] += coordinate.x;
+            value[1] += coordinate.y;
+            return value;
+        });
+
+        const element = testPositions.find(position => test(position[0], position[1]));
+        if (element === undefined) {
+            return undefined;
+        }
+
+        const prevPage = toPrimitivePage(page);
+        page.piece = {
+            ...piece,
+            rotation: nextRotation,
+            coordinate: {
+                x: element[0],
+                y: element[1],
+            },
+        };
+
+        return sequence(state, [
+            fieldEditorActions.resetInferencePiece(),
+            actions.saveToMemento(),
+            actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
+            actions.reopenCurrentPage(),
+        ]);
+    },
+    rotateToRight: () => (state): NextState => {
+        const pages = state.fumen.pages;
+        const pageIndex = state.fumen.currentIndex;
+        const page = pages[pageIndex];
+        if (page === undefined) {
+            return undefined;
+        }
+
+        const piece = page.piece;
+        if (piece === undefined) {
+            return undefined;
+        }
+
+        const pagesObj = new Pages(pages);
+        const field = pagesObj.getField(pageIndex, PageFieldOperation.Command);
+
+        const testObj = testRightRotation(piece.type, piece.rotation);
+        const nextRotation = testObj.rotation;
+        const test = testCallback(field, piece.type, nextRotation);
+
+        const coordinate = piece.coordinate;
+        const testPositions = testObj.test.map((value) => {
+            value[0] += coordinate.x;
+            value[1] += coordinate.y;
+            return value;
+        });
+
+        const element = testPositions.find(position => test(position[0], position[1]));
+        if (element === undefined) {
+            return undefined;
+        }
+
+        const prevPage = toPrimitivePage(page);
+        page.piece = {
+            ...piece,
+            rotation: nextRotation,
+            coordinate: {
+                x: element[0],
+                y: element[1],
+            },
+        };
+
+        return sequence(state, [
+            fieldEditorActions.resetInferencePiece(),
+            actions.saveToMemento(),
+            actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
+            actions.reopenCurrentPage(),
+        ]);
+    },
+    harddrop: () => (state): NextState => {
+        const pages = state.fumen.pages;
+        const pageIndex = state.fumen.currentIndex;
+        const page = pages[pageIndex];
+        if (page === undefined) {
+            return undefined;
+        }
+
+        const piece = page.piece;
+        if (piece === undefined) {
+            return undefined;
+        }
+
+        const pagesObj = new Pages(pages);
+        const field = pagesObj.getField(pageIndex, PageFieldOperation.Command);
+
+        const test = testCallback(field, piece.type, piece.rotation);
+        let currentY = piece.coordinate.y;
+        for (let y = piece.coordinate.y - 1; 0 <= y; y -= 1) {
+            if (!test(piece.coordinate.x, y)) {
+                break;
+            }
+            currentY = y;
+        }
+
+        if (currentY === piece.coordinate.y) {
+            return undefined;
+        }
+
+        const prevPage = toPrimitivePage(page);
+        page.piece = {
+            ...piece,
+            coordinate: {
+                ...piece.coordinate,
+                y: currentY,
+            },
+        };
+
+        return sequence(state, [
+            fieldEditorActions.resetInferencePiece(),
+            actions.saveToMemento(),
+            actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
+            actions.reopenCurrentPage(),
+        ]);
+    },
+};
+
+const testCallback = (field: Field, piece: Piece, rotation: Rotation) => {
+    return (x: number, y: number) => {
+        const positions = getBlockPositions(piece, rotation, x, y);
+        const isGroundOver = positions.some(pos => pos[0] < 0 || 10 <= pos[0] || pos[1] < 0 || 24 <= pos[1]);
+        if (isGroundOver) {
+            return false;
+        }
+
+        const isConflicted = positions.map(toPositionIndex).some(i => field.getAtIndex(i) !== Piece.Empty);
+        if (isConflicted) {
+            return false;
+        }
+
+        return true;
+    };
 };

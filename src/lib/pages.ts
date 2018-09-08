@@ -70,8 +70,8 @@ export class Pages {
     }
 
     // 指定したページのフィールドを取得する
-    getField(index: number, isOperation: boolean = false): Field {
-        return this.restructureField(index, isOperation);
+    getField(index: number, operation: PageFieldOperation = PageFieldOperation.None): Field {
+        return this.restructureField(index, operation);
     }
 
     // TODO: Add test
@@ -133,7 +133,7 @@ export class Pages {
             throw new FumenError('Not found prev page: ' + index);
         }
 
-        const currentField = this.restructureField(index - 1, true);
+        const currentField = this.restructureField(index - 1, PageFieldOperation.All);
 
         const page: Page = {
             index,
@@ -206,8 +206,8 @@ export class Pages {
         }
 
         // 現在のフィールドを取得
-        const prevField = this.getField(index - 1, true);
-        const currentField = this.getField(index, false);
+        const prevField = this.getField(index - 1, PageFieldOperation.All);
+        const currentField = this.getField(index, PageFieldOperation.None);
 
         // 前のページで最も近いobjのインデックスを取得
         let ref = 0;
@@ -281,7 +281,7 @@ export class Pages {
 
         // 現在のフィールドを取得
         const pagesObj = new Pages(pages);
-        const currentField = pagesObj.getField(index, false);
+        const currentField = pagesObj.getField(index, PageFieldOperation.None);
 
         // 次のページ以降で、現在のページより前をrefにしているページの参照先を置き換える
         for (let i = index + 1; i < pages.length; i += 1) {
@@ -329,8 +329,8 @@ export class Pages {
         if (next.field.obj === undefined) {
             // 次のページが参照のときは統合する
             // 現ページにobjがあって、
-            const currentFieldObj = this.restructureField(index, true);
-            const nextFieldObj = this.restructureField(index + 1, false);
+            const currentFieldObj = this.restructureField(index, PageFieldOperation.All);
+            const nextFieldObj = this.restructureField(index + 1, PageFieldOperation.None);
             if (currentFieldObj !== nextFieldObj) {
                 next.field = { obj: currentFieldObj };
             }
@@ -500,7 +500,7 @@ export class Pages {
         };
     }
 
-    private restructureField(index: number, isOperation: boolean): Field {
+    private restructureField(index: number, operation: PageFieldOperation): Field {
         const currentPage = this.pages[index];
 
         const getField = () => {
@@ -547,6 +547,12 @@ export class Pages {
             const { field, startIndex } = state;
             let cache: Field | undefined;
             for (let i = startIndex; i <= index; i += 1) {
+                const isLast = i === index;
+
+                if (isLast && operation === PageFieldOperation.None) {
+                    return field;
+                }
+
                 // フィールドをキャッシュする
                 cache = field.copy();
 
@@ -571,6 +577,10 @@ export class Pages {
                         });
                 }
 
+                if (isLast && operation === PageFieldOperation.Command) {
+                    return field;
+                }
+
                 if (flags.lock) {
                     if (piece !== undefined && isMinoPiece(piece.type)) {
                         field.put(piece);
@@ -588,9 +598,15 @@ export class Pages {
                 }
             }
 
-            return isOperation ? field : cache!;
+            return field;
         };
 
         return getField();
     }
+}
+
+export enum PageFieldOperation {
+    None = 'None',
+    Command = 'Command',
+    All = 'All',
 }

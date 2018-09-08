@@ -133,6 +133,15 @@ export const operations = {
             drawOn: () => {
                 cy.get(datatest('btn-draw-piece-off')).click();
             },
+            rotateToRight: () => {
+                cy.get(datatest('btn-rotate-to-right')).click();
+            },
+            rotateToLeft: () => {
+                cy.get(datatest('btn-rotate-to-left')).click();
+            },
+            harddrop: () => {
+                cy.get(datatest('btn-harddrop')).click();
+            },
         },
         tools: {
             open: () => {

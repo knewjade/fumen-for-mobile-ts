@@ -112,7 +112,7 @@ export function isMinoPiece(b: Piece) {
 }
 
 export function toPositionIndex(position: number[]): number {
-    return position[0] + position[1];
+    return position[0] + position[1] * 10;
 }
 
 export function getBlockPositions(piece: Piece, rotation: Rotation, x: number, y: number): number[][] {
@@ -168,4 +168,32 @@ function rotateLeft(positions: number[][]): number[][] {
 
 function rotateReverse(positions: number[][]): number[][] {
     return positions.map(current => [-current[0], -current[1]]);
+}
+
+export function nextRotationToLeft(rotation: Rotation): Rotation {
+    switch (rotation) {
+    case Rotation.Spawn:
+        return Rotation.Left;
+    case Rotation.Left:
+        return Rotation.Reverse;
+    case Rotation.Reverse:
+        return Rotation.Right;
+    case Rotation.Right:
+        return Rotation.Spawn;
+    }
+    throw new FumenError('Unsupported rotation');
+}
+
+export function nextRotationToRight(rotation: Rotation): Rotation {
+    switch (rotation) {
+    case Rotation.Spawn:
+        return Rotation.Right;
+    case Rotation.Right:
+        return Rotation.Reverse;
+    case Rotation.Reverse:
+        return Rotation.Left;
+    case Rotation.Left:
+        return Rotation.Spawn;
+    }
+    throw new FumenError('Unsupported rotation');
 }
