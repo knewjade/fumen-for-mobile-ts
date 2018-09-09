@@ -226,9 +226,11 @@ export const view: View<State, Actions> = (state, actions) => {
         }, [
             comment({
                 dataTest: `text-comment`,
-                highlight: state.comment.isChanged,
+                textColor: state.comment.isChanged ? '#fff' : '#333',
+                backgroundColorClass: state.comment.isChanged ? 'green darken-1' : 'white',
                 height: layout.comment.size.height,
                 text: state.comment.text,
+                readonly: true,
             }),
 
             Tools(state, actions, layout.tools.size.height),
@@ -245,6 +247,7 @@ export const view: View<State, Actions> = (state, actions) => {
             pages: state.fumen.pages,
             screen: state.mode.screen,
             currentIndex: state.fumen.currentIndex,
+            commentEnable: state.mode.comment,
         }) : undefined as any,
     ]);
 };

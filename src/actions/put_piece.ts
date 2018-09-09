@@ -83,12 +83,7 @@ export const putPieceActions: Readonly<PutPieceActions> = {
         const nextPageIndex = state.fumen.currentIndex + 1;
         return sequence(state, [
             actions.insertPage({ index: nextPageIndex }),
-            newState => ({
-                fumen: {
-                    ...newState.fumen,
-                    currentIndex: nextPageIndex,
-                },
-            }),
+            actions.openPage({ index: nextPageIndex }),
             newState => ontouchStartField(newState, index),
             actions.ontouchMoveField({ index }),
         ]);

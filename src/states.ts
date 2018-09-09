@@ -52,12 +52,14 @@ export interface State {
         inferences: number[];
         prevPage?: PrimitivePage;
         updated: boolean;
+        comment?: string;
     };
     mode: {
         screen: Screens;
         type: ModeTypes;
         touch: TouchTypes;
         piece: Piece | undefined;
+        comment: boolean;
     };
     history: {
         undoCount: number;
@@ -111,12 +113,14 @@ export const initState: Readonly<State> = {
         inferences: [],
         prevPage: undefined,
         updated: false,
+        comment: undefined,
     },
     mode: {
         screen: Screens.Reader,
         type: ModeTypes.DrawingTool,
         touch: TouchTypes.Drawing,
         piece: undefined,
+        comment: true,
     },
     history: {
         undoCount: 0,

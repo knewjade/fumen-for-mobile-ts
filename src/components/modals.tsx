@@ -13,7 +13,7 @@ interface OpenFumenModalProps {
     textAreaValue?: string;
     actions: {
         closeFumenModal: () => void;
-        inputFumenData(data: { value: string }): void;
+        inputFumenData(data: { value?: string }): void;
         clearFumenData: () => void;
         loadFumen(data: { fumen: string }): void;
     };
@@ -51,8 +51,26 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
         border: errorMessage !== undefined ? 'solid 1px #ff5252' : undefined,
     });
 
-    const oninput = (e: any) => {
-        const value = e.target.value !== '' ? e.target.value : undefined;
+    const isEmptyTextArea = textAreaValue === undefined;
+    const oninput = (e: TextEvent) => {
+        if (e.target === null) {
+            return;
+        }
+
+        const target = e.target as HTMLTextAreaElement;
+        const isEmptyTextAreaNow = target.value === '';
+        if (errorMessage !== undefined || isEmptyTextArea !== isEmptyTextAreaNow) {
+            onblur(e);
+        }
+    };
+
+    const onblur = (e: TextEvent) => {
+        if (e.target === null) {
+            return;
+        }
+
+        const target = e.target as HTMLTextAreaElement;
+        const value = target.value !== '' ? target.value : undefined;
         actions.inputFumenData({ value });
     };
 
@@ -62,13 +80,19 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
     };
 
     const open = () => {
-        if (textAreaValue !== undefined) {
-            actions.loadFumen({ fumen: textAreaValue });
+        const selector = document.body.querySelector('#input-fumen');
+        if (!selector) {
+            return;
+        }
+
+        const target = selector as HTMLTextAreaElement;
+        if (target.value !== undefined && target.value !== '') {
+            actions.loadFumen({ fumen: target.value });
         }
     };
 
     const openClassName = 'waves-effect waves-teal btn-flat' + (
-        textAreaValue === undefined || errorMessage !== undefined ? ' disabled' : ''
+        isEmptyTextArea || errorMessage !== undefined ? ' disabled' : ''
     );
 
     return (
@@ -78,7 +102,8 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
 
                     <h4 dataTest="open-fumen-label">{i18n.OpenFumen.Title()}</h4>
 
-                    <textarea dataTest="input-fumen" rows={3} style={textAreaStyle} oninput={oninput}
+                    <textarea dataTest="input-fumen" id="input-fumen" rows={3} style={textAreaStyle}
+                              oninput={oninput} onblur={onblur}
                               value={textAreaValue} placeholder={i18n.OpenFumen.PlaceHolder()}/>
 
                     <span datatest="text-message" id="text-fumen-modal-error" className="red-text text-accent-2"
@@ -108,10 +133,12 @@ interface MenuProps {
     pages: Page[];
     screen: Screens;
     currentIndex: number;
+    commentEnable: boolean;
     actions: {
         closeMenuModal: () => void;
         changeToReaderScreen: () => void;
         changeToDrawerScreen: () => void;
+        changeCommentMode: (data: { enable: boolean }) => void;
         fixInferencePiece: () => void;
         clearInferencePiece: () => void;
         loadNewFumen: () => void;
@@ -120,7 +147,7 @@ interface MenuProps {
     };
 }
 
-export const MenuModal: Component<MenuProps> = ({ version, pages, screen, currentIndex, actions }) => {
+export const MenuModal: Component<MenuProps> = ({ version, pages, screen, currentIndex, commentEnable, actions }) => {
     const oncreate = (element: HTMLDivElement) => {
         const instance = M.Modal.init(element, {
             onOpenEnd: () => {
@@ -254,6 +281,23 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                             {i18n.Menu.Buttons.LastPage()}
                         </SettingButton>
 
+                        <SettingButton datatest={commentEnable ? 'btn-comment-readonly' : 'btn-comment-writable'}
+                                       href="#" iconName="text_fields" fontSize={32.3}
+                                       enable={screen === Screens.Editor}
+                                       onclick={screen === Screens.Editor ? () => {
+                                           actions.changeCommentMode({ enable: !commentEnable });
+                                           actions.closeMenuModal();
+                                       } : () => {
+                                           M.toast({
+                                               html: i18n.Menu.Messages.NoAvailableCommentButton(),
+                                               classes: 'mytoast',
+                                               displayLength: 3000,
+                                           });
+                                       }}>
+
+                            {commentEnable ? i18n.Menu.Buttons.ReadonlyComment() : i18n.Menu.Buttons.WritableComment()}
+                        </SettingButton>
+
                         <SettingButton href="./help.html" iconName="help_outline" fontSize={31.25}>
                             {i18n.Menu.Buttons.Help()}
                         </SettingButton>
@@ -272,32 +316,34 @@ interface SettingButtonProps {
     iconName: string;
     datatest?: string;
     fontSize: number;
+    enable?: boolean;
 }
 
 export const SettingButton: ComponentWithText<SettingButtonProps> = (
-    { href = '#', onclick, iconName, datatest, fontSize }, showName,
-) => (
-    <a href={href} onclick={onclick !== undefined ? (event: MouseEvent) => {
-        onclick(event);
-        event.stopPropagation();
-        event.preventDefault();
-    } : undefined}>
-        <i className="material-icons z-depth-1" style={style({
-            width: px(50),
-            height: px(40),
-            lineHeight: px(40),
-            fontSize: px(fontSize),
-            display: 'block',
-            color: '#333',
-            margin: px(5),
-            border: 'solid 1px #999',
-            boxSizing: 'border-box',
-            textAlign: 'center',
-            cursor: 'pointer',
-        })}>{iconName}</i>
+    { href = '#', onclick, iconName, datatest, fontSize, enable = true }, showName,
+    ) => (
+        <a href={href} onclick={onclick !== undefined ? (event: MouseEvent) => {
+            onclick(event);
+            event.stopPropagation();
+            event.preventDefault();
+        } : undefined}>
+            <i className={`material-icons z-depth-1${enable ? ' ' : 'disable'}`} style={style({
+                width: px(50),
+                height: px(40),
+                lineHeight: px(40),
+                fontSize: px(fontSize),
+                display: 'block',
+                color: enable ? '#333' : '#bdbdbd',
+                margin: px(5),
+                border: 'solid 1px #999',
+                boxSizing: 'border-box',
+                textAlign: 'center',
+                cursor: 'pointer',
+            })}>{iconName}</i>
 
-        <div datatest={datatest} style={style({ textAlign: 'center', color: '#333' })}>
-            {showName}
-        </div>
-    </a>
-);
+            <div datatest={datatest} style={style({ textAlign: 'center', color: enable ? '#333' : '#bdbdbd' })}>
+                {showName}
+            </div>
+        </a>
+    )
+;

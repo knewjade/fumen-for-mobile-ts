@@ -1,8 +1,8 @@
 import { datatest } from './_common';
 
 // 中央少し下クリックを想定
-const px = (x) => 35 + 25.5 * x;
-const py = (y) => 570 - 25.5 * y;
+const px = (x) => 35 + 24 * x;
+const py = (y) => 540 - 24 * y;
 
 export const operations = {
     screen: {
@@ -182,6 +182,16 @@ export const operations = {
         lastPage: () => {
             operations.menu.open();
             cy.get(datatest('btn-last-page')).click();
+            cy.wait(100);
+        },
+        commentReadonly: () => {
+            operations.menu.open();
+            cy.get(datatest('btn-comment-readonly')).click();
+            cy.wait(100);
+        },
+        commentWritable: () => {
+            operations.menu.open();
+            cy.get(datatest('btn-comment-writable')).click();
             cy.wait(100);
         },
     },

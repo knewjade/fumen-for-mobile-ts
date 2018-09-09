@@ -22,6 +22,11 @@ export const resources = {
             LastPage: 'lastpage',
             New: 'new',
             Help: 'help',
+            ReadonlyComment: 'readonly',
+            WritableComment: 'writable',
+        },
+        Messages: {
+            NoAvailableCommentButton: 'Available only when writable mode',
         },
     },
     Domains: {

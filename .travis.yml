@@ -1,7 +1,7 @@
 stages:
-  - test
   - name: deploy-dev
     if: branch != master
+  - test
   - name: deploy-prod
     if: branch = master
 

@@ -13,6 +13,7 @@ import {
     toRemovePageTask,
     toSinglePageTask,
 } from '../history_task';
+import { State } from '../states';
 
 export interface PageActions {
     reopenCurrentPage: () => action;
@@ -69,6 +70,9 @@ export const pageActions: Readonly<PageActions> = {
 
         return sequence(state, [
             state.play.status === AnimationState.Play ? actions.startAnimation() : undefined,
+            state.fumen.currentIndex !== index ? actions.fixInferencePiece() : undefined,
+            state.fumen.currentIndex !== index ? actions.clearInferencePiece() : undefined,
+            state.fumen.currentIndex !== index ? actions.commitCommentText() : undefined,
             actions.setComment({ comment: text }),
             actions.setField({
                 field: blocks.playField,
@@ -105,61 +109,30 @@ export const pageActions: Readonly<PageActions> = {
         return insert({ index })(state);
     },
     insertRefPage: ({ index }) => (state): NextState => {
-        const pages = new Pages(state.fumen.pages);
-        pages.insertRefPage(index);
-        const newPages = pages.pages;
-
-        const task = toInsertPageTask(index, toPrimitivePage(newPages[index]));
         return sequence(state, [
-            actions.registerHistoryTask({ task }),
-            () => ({
-                fumen: {
-                    ...state.fumen,
-                    pages: newPages,
-                    maxPage: newPages.length,
-                },
-            }),
+            actions.fixInferencePiece(),
+            actions.clearInferencePiece(),
+            actions.commitCommentText(),
+            insertRefPage({ index }),
+            actions.reopenCurrentPage(),
         ]);
     },
     insertKeyPage: ({ index }) => (state): NextState => {
-        const pages = new Pages(state.fumen.pages);
-        pages.insertKeyPage(index);
-        const newPages = pages.pages;
-
-        const task = toInsertPageTask(index, toPrimitivePage(newPages[index]));
         return sequence(state, [
-            actions.registerHistoryTask({ task }),
-            () => ({
-                fumen: {
-                    ...state.fumen,
-                    pages: newPages,
-                    maxPage: newPages.length,
-                },
-            }),
+            actions.fixInferencePiece(),
+            actions.clearInferencePiece(),
+            actions.commitCommentText(),
+            insertKeyPage({ index }),
+            actions.reopenCurrentPage(),
         ]);
     },
     removePage: ({ index }) => (state): NextState => {
-        const fumen = state.fumen.pages;
-        const primitivePrev = toPrimitivePage(fumen[index]);
-
-        const pages = new Pages(fumen);
-        pages.deletePage(index);
-
-        const newPages = pages.pages;
-        const nextIndex = index < newPages.length ? index : newPages.length - 1;
-        const task = toRemovePageTask(index, primitivePrev);
-
         return sequence(state, [
-            actions.registerHistoryTask({ task }),
-            () => ({
-                fumen: {
-                    ...state.fumen,
-                    pages: newPages,
-                    maxPage: newPages.length,
-                    currentIndex: nextIndex,
-                },
-            }),
-            actions.openPage({ index: nextIndex }),
+            actions.fixInferencePiece(),
+            actions.clearInferencePiece(),
+            actions.commitCommentText(),
+            removePage({ index }),
+            actions.reopenCurrentPage(),
         ]);
     },
     backLoopPage: () => (state): NextState => {
@@ -185,8 +158,6 @@ export const pageActions: Readonly<PageActions> = {
         const nextPage = fumen.currentIndex + 1;
 
         return sequence(state, [
-            actions.fixInferencePiece(),
-            actions.clearInferencePiece(),
             fumen.maxPage <= nextPage ? pageActions.insertPage({ index: nextPage }) : undefined,
             pageActions.openPage({ index: nextPage }),
         ]);
@@ -372,4 +343,64 @@ export const parseToBlocks = (field: Field, move?: Move, commands?: Page['comman
     }
 
     return { playField, sentLine };
+};
+
+const insertRefPage = ({ index }: { index: number }) => (state: Readonly<State>): NextState => {
+    const pages = new Pages(state.fumen.pages);
+    pages.insertRefPage(index);
+    const newPages = pages.pages;
+
+    const task = toInsertPageTask(index, toPrimitivePage(newPages[index]));
+    return sequence(state, [
+        actions.registerHistoryTask({ task }),
+        () => ({
+            fumen: {
+                ...state.fumen,
+                pages: newPages,
+                maxPage: newPages.length,
+            },
+        }),
+    ]);
+};
+
+const insertKeyPage = ({ index }: { index: number }) => (state: Readonly<State>): NextState => {
+    const pages = new Pages(state.fumen.pages);
+    pages.insertKeyPage(index);
+    const newPages = pages.pages;
+
+    const task = toInsertPageTask(index, toPrimitivePage(newPages[index]));
+    return sequence(state, [
+        actions.registerHistoryTask({ task }),
+        () => ({
+            fumen: {
+                ...state.fumen,
+                pages: newPages,
+                maxPage: newPages.length,
+            },
+        }),
+    ]);
+};
+
+const removePage = ({ index }: { index: number }) => (state: Readonly<State>): NextState => {
+    const fumen = state.fumen.pages;
+    const primitivePrev = toPrimitivePage(fumen[index]);
+
+    const pages = new Pages(fumen);
+    pages.deletePage(index);
+
+    const newPages = pages.pages;
+    const nextIndex = index < newPages.length ? index : newPages.length - 1;
+    const task = toRemovePageTask(index, primitivePrev);
+
+    return sequence(state, [
+        actions.registerHistoryTask({ task }),
+        () => ({
+            fumen: {
+                ...state.fumen,
+                pages: newPages,
+                maxPage: newPages.length,
+                currentIndex: nextIndex,
+            },
+        }),
+    ]);
 };

@@ -3,7 +3,7 @@ import { action, actions, main } from '../actions';
 import { decode, Page } from '../lib/fumen/fumen';
 import { i18n } from '../locales/keys';
 import { ViewError } from '../lib/errors';
-import { toFumenTask, toPrimitivePage } from "../history_task";
+import { toFumenTask, toPrimitivePage } from '../history_task';
 
 export interface UtilsActions {
     resize: (data: { width: number, height: number }) => action;

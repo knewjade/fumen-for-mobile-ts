@@ -26,7 +26,12 @@ export const i18n = {
             FirstPage: () => t('Menu.Buttons.FirstPage'),
             LastPage: () => t('Menu.Buttons.LastPage'),
             New: () => t('Menu.Buttons.New'),
+            ReadonlyComment: () => t('Menu.Buttons.ReadonlyComment'),
+            WritableComment: () => t('Menu.Buttons.WritableComment'),
             Help: () => t('Menu.Buttons.Help'),
+        },
+        Messages: {
+            NoAvailableCommentButton: () => t('Menu.Messages.NoAvailableCommentButton'),
         },
     },
     Domains: {

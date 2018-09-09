@@ -16,6 +16,7 @@ import { pageActions, PageActions } from './actions/pages';
 import { setterActions, SetterActions } from './actions/setter';
 import { UtilsActions, utilsActions } from './actions/utils';
 import { mementoActions, MementoActions } from './actions/memento';
+import { CommentActions, commentActions } from './actions/comment';
 
 export type action = (state: Readonly<State>) => NextState;
 
@@ -26,7 +27,8 @@ export type Actions = AnimationActions
     & SetterActions
     & UtilsActions
     & MementoActions
-    & FieldEditorActions;
+    & FieldEditorActions
+    & CommentActions;
 
 export const actions: Readonly<Actions> = {
     ...animationActions,
@@ -37,6 +39,7 @@ export const actions: Readonly<Actions> = {
     ...utilsActions,
     ...mementoActions,
     ...fieldEditorActions,
+    ...commentActions,
 };
 
 // Mounting

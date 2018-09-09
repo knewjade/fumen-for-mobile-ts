@@ -1,42 +1,71 @@
-import { Component, style } from '../lib/types';
+import { Component, px, style } from '../lib/types';
 import { div, input } from '@hyperapp/html';
 
 interface Props {
     dataTest: string;
-    highlight: boolean;
+    textColor: string;
+    backgroundColorClass: string;
     height: number;
     text: string;
+    readonly: boolean;
+    placeholder?: string;
+    actions?: {
+        oninput: (data: { text?: string }) => void;
+        onblur: (data: { text?: string }) => void;
+    };
 }
 
-export const comment: Component<Props> = (props) => {
+export const comment: Component<Props> = (
+    { height, textColor, backgroundColorClass, dataTest, text, readonly, placeholder, actions },
+) => {
     const commentStyle = style({
         width: '100%',
-        height: props.height + 'px',
-        lineHeight: props.height + 'px',
-        fontSize: props.height * 0.6 + 'px',
+        height: px(height),
+        lineHeight: px(height),
+        fontSize: px(height * 0.6),
         boxSizing: 'border-box',
         textAlign: 'center',
         border: 'none',
+        color: textColor,
     });
 
-    if (props.highlight) {
-        commentStyle.color = '#fff';
-    }
+    const oninput = actions !== undefined ? (e: TextEvent) => {
+        if (e.target === null) {
+            return;
+        }
+
+        const target = e.target as HTMLTextAreaElement;
+        const value = target.value !== '' ? target.value : '';
+        actions.oninput({ text: value });
+    } : undefined;
+
+    const onblur = actions !== undefined ? (e: TextEvent) => {
+        if (e.target === null) {
+            return;
+        }
+
+        const target = e.target as HTMLTextAreaElement;
+        const value = target.value !== '' ? target.value : '';
+        actions.onblur({ text: value });
+    } : undefined;
 
     return div({
         style: style({
             width: '100%',
-            height: props.height + 'px',
+            height: px(height),
             whiteSpace: 'nowrap',
         }),
     }, [
         input({
-            dataTest: props.dataTest,
+            dataTest,
+            placeholder,
+            oninput,
+            onblur,
             type: 'text',
-            className: props.highlight ? 'green darken-1' : '',
+            className: backgroundColorClass,
             style: commentStyle,
-            value: props.text,
-            readonly: 'readonly',
+            value: text,
+            readonly: readonly ? 'readonly' : undefined,
         }),
     ]);
 };

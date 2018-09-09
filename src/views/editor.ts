@@ -23,6 +23,7 @@ import {
     toolSpace,
 } from './editor_buttons';
 import { ViewError } from '../lib/errors';
+import { comment } from '../components/comment';
 
 export interface EditorLayout {
     canvas: {
@@ -38,6 +39,10 @@ export interface EditorLayout {
     buttons: {
         size: Size;
     };
+    comment: {
+        topLeft: Coordinate;
+        size: Size;
+    };
     tools: {
         topLeft: Coordinate;
         size: Size;
@@ -45,12 +50,13 @@ export interface EditorLayout {
 }
 
 const getLayout = (display: { width: number, height: number }): EditorLayout => {
+    const commentHeight = 35;
     const toolsHeight = 50;
     const borderWidthBottomField = 2.4;
 
     const canvasSize = {
         width: display.width,
-        height: display.height - (toolsHeight),
+        height: display.height - (toolsHeight + commentHeight),
     };
 
     const blockSize = Math.min(
@@ -96,6 +102,16 @@ const getLayout = (display: { width: number, height: number }): EditorLayout => 
         },
         buttons: {
             size: pieceButtonsSize,
+        },
+        comment: {
+            topLeft: {
+                x: 0,
+                y: display.height - commentHeight - toolsHeight,
+            },
+            size: {
+                width: display.width,
+                height: commentHeight,
+            },
         },
         tools: {
             topLeft: {
@@ -655,6 +671,10 @@ export const view: View<State, Actions> = (state, actions) => {
 
     const batchDraw = () => resources.konva.stage.batchDraw();
 
+    const currentPage = state.fumen.pages[state.fumen.currentIndex];
+    const isCommentKey = state.events.comment !== undefined
+        || (currentPage !== undefined && currentPage.comment.text !== undefined);
+
     return div({ oncreate: batchDraw, onupdate: batchDraw }, [ // Hyperappでは最上位のノードが最後に実行される
         resources.konva.stage.isReady ? Events(state, actions) : undefined,
 
@@ -663,6 +683,25 @@ export const view: View<State, Actions> = (state, actions) => {
         div({
             key: 'menu-top',
         }, [
+            comment({
+                dataTest: `text-comment`,
+                textColor: isCommentKey ? '#333' : '#757575',
+                backgroundColorClass: 'white',
+                height: layout.comment.size.height,
+                text: state.events.comment !== undefined ? state.events.comment : state.comment.text,
+                placeholder: state.mode.comment ? 'comment' : undefined,
+                readonly: !state.mode.comment,
+                actions: {
+                    oninput: ({ text }) => {
+                        actions.updateCommentText({ text });
+                    },
+                    onblur: ({}) => {
+                        actions.commitCommentText();
+                        actions.reopenCurrentPage();
+                    },
+                },
+            }),
+
             Tools(state, actions, layout.tools.size.height),
         ]),
 
@@ -677,6 +716,7 @@ export const view: View<State, Actions> = (state, actions) => {
             pages: state.fumen.pages,
             screen: state.mode.screen,
             currentIndex: state.fumen.currentIndex,
+            commentEnable: state.mode.comment,
         }) : undefined as any,
     ]);
 };

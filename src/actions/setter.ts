@@ -1,5 +1,5 @@
 import { NextState } from './commons';
-import { action, actions, main } from '../actions';
+import { action, main } from '../actions';
 import { FieldConstants, Piece } from '../lib/enums';
 import { Block } from '../state_types';
 import { Page } from '../lib/fumen/fumen';
@@ -46,7 +46,7 @@ export const setterActions: Readonly<SetterActions> = {
         };
     },
     clearFumenData: () => (state): NextState => {
-        return actions.inputFumenData({ value: undefined })(state);
+        return setterActions.inputFumenData({ value: undefined })(state);
     },
     setComment: ({ comment }) => (state): NextState => {
         return {

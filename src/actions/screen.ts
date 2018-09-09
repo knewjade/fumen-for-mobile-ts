@@ -12,6 +12,7 @@ export interface ScreenActions {
     changeToDrawPieceMode: () => action;
     changeToMovePieceMode: () => action;
     changeScreen: (data: { screen: Screens }) => action;
+    changeCommentMode: (data: { enable: boolean }) => action;
 }
 
 export const modeActions: Readonly<ScreenActions> = {
@@ -66,6 +67,14 @@ export const modeActions: Readonly<ScreenActions> = {
             mode: {
                 ...state.mode,
                 screen,
+            },
+        };
+    },
+    changeCommentMode: ({ enable }) => (state): NextState => {
+        return {
+            mode: {
+                ...state.mode,
+                comment: enable,
             },
         };
     },
