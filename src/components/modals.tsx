@@ -262,6 +262,7 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                                            actions.clearInferencePiece();
                                            actions.loadNewFumen();
                                            actions.changeToDrawerScreen();
+                                           actions.changeToDrawingToolMode();
                                            actions.closeMenuModal();
                                        }}>
                             {i18n.Menu.Buttons.New()}
