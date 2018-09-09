@@ -138,6 +138,7 @@ interface MenuProps {
         closeMenuModal: () => void;
         changeToReaderScreen: () => void;
         changeToDrawerScreen: () => void;
+        changeToDrawingToolMode: () => void;
         changeCommentMode: (data: { enable: boolean }) => void;
         fixInferencePiece: () => void;
         clearInferencePiece: () => void;
@@ -245,6 +246,7 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                             <SettingButton datatest="btn-writable" href="#" iconName="mode_edit" fontSize={31.25}
                                            onclick={() => {
                                                actions.changeToDrawerScreen();
+                                               actions.changeToDrawingToolMode();
                                                actions.closeMenuModal();
                                            }}>{i18n.Menu.Buttons.Writable()}</SettingButton>
                             : undefined}
