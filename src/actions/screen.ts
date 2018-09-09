@@ -2,6 +2,7 @@ import { NextState, sequence } from './commons';
 import { action, actions, main } from '../actions';
 import { ModeTypes, Screens, TouchTypes } from '../lib/enums';
 import { resources, State } from '../states';
+import { animationActions } from './animation';
 
 export interface ScreenActions {
     changeToReaderScreen: () => action;
@@ -26,12 +27,14 @@ export const modeActions: Readonly<ScreenActions> = {
             actions.resetInferencePiece(),
         ]);
     },
-    changeToDrawerScreen: () => (): NextState => {
+    changeToDrawerScreen: () => (state): NextState => {
         resources.konva.stage.reload((done) => {
             main.changeScreen({ screen: Screens.Editor });
             done();
         });
-        return undefined;
+        return sequence(state, [
+            animationActions.pauseAnimation(),
+        ]);
     },
     changeToDrawingMode: () => (state): NextState => {
         return sequence(state, [

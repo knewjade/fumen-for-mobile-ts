@@ -10,7 +10,7 @@ export interface AnimationActions {
 export const animationActions: Readonly<AnimationActions> = {
     startAnimation: () => (state): NextState => {
         return sequence(state, [
-            state.handlers.animation !== undefined ? animationActions.pauseAnimation() : undefined,
+            animationActions.pauseAnimation(),
             () => ({
                 play: {
                     ...state.play,
@@ -25,9 +25,11 @@ export const animationActions: Readonly<AnimationActions> = {
         ]);
     },
     pauseAnimation: () => (state): NextState => {
-        if (state.handlers.animation !== undefined) {
-            clearInterval(state.handlers.animation);
+        if (state.handlers.animation === undefined) {
+            return undefined;
         }
+
+        clearInterval(state.handlers.animation);
 
         return {
             play: {
