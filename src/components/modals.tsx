@@ -335,7 +335,7 @@ export const SettingButton: ComponentWithText<SettingButtonProps> = (
                 display: 'block',
                 color: enable ? '#333' : '#bdbdbd',
                 margin: px(5),
-                border: 'solid 1px #999',
+                border: `solid 1px ${enable ? '#999' : '#bdbdbd'}`,
                 boxSizing: 'border-box',
                 textAlign: 'center',
                 cursor: 'pointer',
