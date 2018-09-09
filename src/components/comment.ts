@@ -3,6 +3,7 @@ import { div, input } from '@hyperapp/html';
 
 interface Props {
     dataTest: string;
+    id: string;
     textColor: string;
     backgroundColorClass: string;
     height: number;
@@ -10,13 +11,13 @@ interface Props {
     readonly: boolean;
     placeholder?: string;
     actions?: {
-        oninput: (data: { text?: string }) => void;
-        onblur: (data: { text?: string }) => void;
+        onkeyup: (event: KeyboardEvent) => void;
+        onblur: (event: TextEvent) => void;
     };
 }
 
 export const comment: Component<Props> = (
-    { height, textColor, backgroundColorClass, dataTest, text, readonly, placeholder, actions },
+    { height, textColor, backgroundColorClass, dataTest, id, text, readonly, placeholder, actions },
 ) => {
     const commentStyle = style({
         width: '100%',
@@ -29,26 +30,6 @@ export const comment: Component<Props> = (
         color: textColor,
     });
 
-    const oninput = actions !== undefined ? (e: TextEvent) => {
-        if (e.target === null) {
-            return;
-        }
-
-        const target = e.target as HTMLTextAreaElement;
-        const value = target.value !== '' ? target.value : '';
-        actions.oninput({ text: value });
-    } : undefined;
-
-    const onblur = actions !== undefined ? (e: TextEvent) => {
-        if (e.target === null) {
-            return;
-        }
-
-        const target = e.target as HTMLTextAreaElement;
-        const value = target.value !== '' ? target.value : '';
-        actions.onblur({ text: value });
-    } : undefined;
-
     return div({
         style: style({
             width: '100%',
@@ -58,9 +39,10 @@ export const comment: Component<Props> = (
     }, [
         input({
             dataTest,
+            id,
             placeholder,
-            oninput,
-            onblur,
+            onkeyup: actions !== undefined ? actions.onkeyup : undefined,
+            onblur: actions !== undefined ? actions.onblur : undefined,
             type: 'text',
             className: backgroundColorClass,
             style: commentStyle,

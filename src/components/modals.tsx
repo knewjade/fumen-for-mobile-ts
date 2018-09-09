@@ -23,9 +23,10 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
     const oncreate = (element: HTMLDivElement) => {
         const instance = M.Modal.init(element, {
             onOpenEnd: () => {
-                const element = document.getElementById('textarea-fumen');
+                // Focus用のボタンをクリック
+                const element = document.getElementById('trigger-focus-fumen');
                 if (element !== null) {
-                    element.focus();
+                    element.click();
                 }
             },
             onCloseStart: () => {
@@ -53,6 +54,15 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
 
     const isEmptyTextArea = textAreaValue === undefined;
     const oninput = (e: TextEvent) => {
+        const inputType = (e as any).inputType;
+        if (inputType === 'insertLineBreak') {
+            const element = document.getElementById('btn-open');
+            if (element !== null) {
+                element.click();
+            }
+            return;
+        }
+
         if (e.target === null) {
             return;
         }
@@ -99,7 +109,6 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
         <div key="fumen-modal-top">
             <div datatest="mdl-open-fumen" className="modal" oncreate={oncreate} ondestroy={ondestroy}>
                 <div className="modal-content">
-
                     <h4 dataTest="open-fumen-label">{i18n.OpenFumen.Title()}</h4>
 
                     <textarea dataTest="input-fumen" id="input-fumen" rows={3} style={textAreaStyle}
@@ -112,17 +121,29 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
                     </span>
 
                 </div>
-                <div className="modal-footer">
 
-                    <a href="#" datatest="btn-cancel" className="waves-effect waves-teal btn-flat"
+                <div className="modal-footer">
+                    <a href="#" datatest="btn-cancel" id="btn-cancel" className="waves-effect waves-teal btn-flat"
                        onclick={cancel}>
                         {i18n.OpenFumen.Buttons.Cancel()}
                     </a>
 
-                    <a href="#" datatest="btn-open" className={openClassName} onclick={open}>
+                    <a href="#" datatest="btn-open" id="btn-open" className={openClassName} onclick={open}>
                         {i18n.OpenFumen.Buttons.Open()}
                     </a>
                 </div>
+
+                {/*
+                    Focus用のボタンを用意する。ボタンは display: none で表示せず、Javascriptからtriggerされる
+                  */}
+                <a href="#" id="trigger-focus-fumen" style={style({ display: 'none' })}
+                   onclick={() => {
+                       const element = document.getElementById('input-fumen');
+                       if (element !== null) {
+                           element.focus();
+                       }
+                   }}>
+                </a>
             </div>
         </div>
     );

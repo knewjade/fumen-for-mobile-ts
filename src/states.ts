@@ -52,7 +52,6 @@ export interface State {
         inferences: number[];
         prevPage?: PrimitivePage;
         updated: boolean;
-        comment?: string;
     };
     mode: {
         screen: Screens;
@@ -113,7 +112,6 @@ export const initState: Readonly<State> = {
         inferences: [],
         prevPage: undefined,
         updated: false,
-        comment: undefined,
     },
     mode: {
         screen: Screens.Reader,
@@ -135,6 +133,7 @@ export const resources = {
         fumen: undefined as any,
     },
     konva: createKonvaObjects(),
+    comment: undefined as (string | undefined),
 };
 
 interface Box {

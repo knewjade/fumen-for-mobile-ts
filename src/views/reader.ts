@@ -225,7 +225,8 @@ export const view: View<State, Actions> = (state, actions) => {
             key: 'menu-top',
         }, [
             comment({
-                dataTest: `text-comment`,
+                dataTest: 'text-comment',
+                id: 'text-comment',
                 textColor: state.comment.isChanged ? '#fff' : '#333',
                 backgroundColorClass: state.comment.isChanged ? 'green darken-1' : 'white',
                 height: layout.comment.size.height,
@@ -241,6 +242,7 @@ export const view: View<State, Actions> = (state, actions) => {
             errorMessage: state.fumen.errorMessage,
             textAreaValue: state.fumen.value,
         }) : undefined as any,
+
         state.modal.menu ? MenuModal({
             actions,
             version: state.version,

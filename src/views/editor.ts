@@ -672,8 +672,10 @@ export const view: View<State, Actions> = (state, actions) => {
     const batchDraw = () => resources.konva.stage.batchDraw();
 
     const currentPage = state.fumen.pages[state.fumen.currentIndex];
-    const isCommentKey = state.events.comment !== undefined
+    const isCommentKey = resources.comment !== undefined
         || (currentPage !== undefined && currentPage.comment.text !== undefined);
+
+    const element = document.querySelector('#text-comment') as HTMLInputElement;
 
     return div({ oncreate: batchDraw, onupdate: batchDraw }, [ // Hyperappでは最上位のノードが最後に実行される
         resources.konva.stage.isReady ? Events(state, actions) : undefined,
@@ -684,18 +686,33 @@ export const view: View<State, Actions> = (state, actions) => {
             key: 'menu-top',
         }, [
             comment({
-                dataTest: `text-comment`,
+                dataTest: 'text-comment',
+                id: 'text-comment',
                 textColor: isCommentKey ? '#333' : '#757575',
                 backgroundColorClass: 'white',
                 height: layout.comment.size.height,
-                text: state.events.comment !== undefined ? state.events.comment : state.comment.text,
+                text: resources.comment !== undefined ? resources.comment : state.comment.text,
                 placeholder: state.mode.comment ? 'comment' : undefined,
                 readonly: !state.mode.comment,
                 actions: {
-                    oninput: ({ text }) => {
+                    onkeyup: (event) => {
+                        if (!element) {
+                            return;
+                        }
+
+                        const text = element.value ? element.value : '';
                         actions.updateCommentText({ text });
+
+                        if (event.key === 'Enter') {
+                            element.blur();
+                        }
                     },
-                    onblur: ({}) => {
+                    onblur: () => {
+                        if (element) {
+                            const text = element.value ? element.value : '';
+                            actions.updateCommentText({ text });
+                        }
+
                         actions.commitCommentText();
                         actions.reopenCurrentPage();
                     },
@@ -710,6 +727,7 @@ export const view: View<State, Actions> = (state, actions) => {
             errorMessage: state.fumen.errorMessage,
             textAreaValue: state.fumen.value,
         }) : undefined as any,
+
         state.modal.menu ? MenuModal({
             actions,
             version: state.version,

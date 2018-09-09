@@ -1,6 +1,7 @@
 import { NextState, sequence } from './commons';
 import { action, actions } from '../actions';
 import { toPrimitivePage, toSinglePageTask } from '../history_task';
+import { resources } from '../states';
 
 export interface CommentActions {
     updateCommentText: (data: { text?: string }) => action;
@@ -10,23 +11,14 @@ export interface CommentActions {
 export const commentActions: Readonly<CommentActions> = {
     updateCommentText: ({ text }) => (state): NextState => {
         if (state.comment.text === text) {
-            return {
-                events: {
-                    ...state.events,
-                    comment: undefined,
-                },
-            };
+            resources.comment = undefined;
+        } else {
+            resources.comment = text !== undefined ? text : '';
         }
-
-        return {
-            events: {
-                ...state.events,
-                comment: text !== undefined ? text : '',
-            },
-        };
+        return undefined;
     },
     commitCommentText: () => (state): NextState => {
-        const text = state.events.comment;
+        const text = resources.comment;
         if (text === undefined) {
             return undefined;
         }
@@ -56,7 +48,6 @@ export const commentActions: Readonly<CommentActions> = {
             () => ({
                 events: {
                     ...state.events,
-                    comment: undefined,
                 },
                 fumen: {
                     ...state.fumen,

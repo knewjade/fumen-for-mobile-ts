@@ -309,10 +309,9 @@ describe('Drawing Tools', () => {
     it('Flags 2', () => {
         visit({});
 
-        operations.screen.writable();
+        operations.menu.newPage();
 
         operations.mode.block.open();
-        operations.menu.newPage();
 
         operations.mode.block.I();
 
