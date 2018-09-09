@@ -65,25 +65,17 @@ describe('Put pieces', () => {
             operations.mode.block.click(position[0], position[1]);
         });
 
-        operations.mode.editor.nextPage();
-
         minoPosition(Piece.L, Rotation.Right)(0, 1).forEach(position => {
             operations.mode.block.click(position[0], position[1]);
         });
-
-        operations.mode.editor.nextPage();
 
         minoPosition(Piece.O, Rotation.Spawn)(8, 0).forEach(position => {
             operations.mode.block.click(position[0], position[1]);
         });
 
-        operations.mode.editor.nextPage();
-
         minoPosition(Piece.S, Rotation.Right)(6, 1).forEach(position => {
             operations.mode.block.click(position[0], position[1]);
         });
-
-        operations.mode.editor.nextPage();
 
         minoPosition(Piece.T, Rotation.Reverse)(2, 15).forEach(position => {
             operations.mode.block.click(position[0], position[1]);

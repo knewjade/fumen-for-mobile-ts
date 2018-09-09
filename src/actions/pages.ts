@@ -17,6 +17,7 @@ import {
 export interface PageActions {
     reopenCurrentPage: () => action;
     openPage: (data: { index: number }) => action;
+    insertPage: (data: { index: number }) => action;
     insertRefPage: (data: { index: number }) => action;
     insertKeyPage: (data: { index: number }) => action;
     removePage: (data: { index: number }) => action;
@@ -87,6 +88,21 @@ export const pageActions: Readonly<PageActions> = {
                 },
             }),
         ]);
+    },
+    insertPage: ({ index }) => (state): NextState => {
+        const fumen = state.fumen;
+        const pages = fumen.pages;
+
+        if (pages.length < index) {
+            return undefined;
+        }
+
+        const prevPage = pages[(index - 1)];
+        const insert = prevPage !== undefined && prevPage.field.obj === undefined
+            ? pageActions.insertRefPage
+            : pageActions.insertKeyPage;
+
+        return insert({ index })(state);
     },
     insertRefPage: ({ index }) => (state): NextState => {
         const pages = new Pages(state.fumen.pages);
@@ -168,16 +184,10 @@ export const pageActions: Readonly<PageActions> = {
         const fumen = state.fumen;
         const nextPage = fumen.currentIndex + 1;
 
-        let insert = undefined;
-        if (fumen.maxPage <= nextPage) {
-            const field = fumen.pages[fumen.currentIndex].field;
-            insert = field.obj !== undefined ? pageActions.insertKeyPage : pageActions.insertRefPage;
-        }
-
         return sequence(state, [
             actions.fixInferencePiece(),
             actions.clearInferencePiece(),
-            insert !== undefined ? insert({ index: nextPage }) : undefined,
+            fumen.maxPage <= nextPage ? pageActions.insertPage({ index: nextPage }) : undefined,
             pageActions.openPage({ index: nextPage }),
         ]);
     },

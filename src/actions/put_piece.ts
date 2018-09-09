@@ -70,37 +70,26 @@ export const putPieceActions: Readonly<PutPieceActions> = {
         ]);
     },
     ontouchStartField: ({ index }) => (state): NextState => {
-        const pages = state.fumen.pages;
-        const page = pages[state.fumen.currentIndex];
-        const piece = page.piece;
+        const nextState = ontouchStartField(state, index);
 
+        if (nextState !== undefined) {
+            return sequence(state, [
+                () => nextState,
+                actions.ontouchMoveField({ index }),
+            ]);
+        }
+
+        // inferences以外をタップしたとき and pieceがすでにあるとき
+        const nextPageIndex = state.fumen.currentIndex + 1;
         return sequence(state, [
-            piece !== undefined ? (newState) => {
-                const blocks = getBlockPositions(piece.type, piece.rotation, piece.coordinate.x, piece.coordinate.y);
-                const indexes = blocks.map(toPositionIndex);
-                page.piece = undefined;
-                return {
-                    fumen: {
-                        ...newState.fumen,
-                        pages,
-                    },
-                    events: {
-                        ...newState.events,
-                        inferences: indexes,
-                    },
-                };
-            } : undefined,
+            actions.insertPage({ index: nextPageIndex }),
             newState => ({
-                events: {
-                    ...newState.events,
-                    touch: {
-                        piece: newState.events.inferences.find(e => e === index) === undefined
-                            ? Piece.Gray
-                            : Piece.Empty,
-                    },
-                    updated: false,
+                fumen: {
+                    ...newState.fumen,
+                    currentIndex: nextPageIndex,
                 },
             }),
+            newState => ontouchStartField(newState, index),
             actions.ontouchMoveField({ index }),
         ]);
     },
@@ -170,6 +159,43 @@ export const putPieceActions: Readonly<PutPieceActions> = {
             endDrawingField,
         ]);
     },
+};
+
+const ontouchStartField = (state: State, index: number): NextState => {
+    const pages = state.fumen.pages;
+    const page = pages[state.fumen.currentIndex];
+    const piece = page.piece;
+
+    let inferences;
+    if (piece === undefined) {
+        inferences = state.events.inferences;
+    } else {
+        const blocks = getBlockPositions(piece.type, piece.rotation, piece.coordinate.x, piece.coordinate.y);
+        inferences = blocks.map(toPositionIndex);
+    }
+
+    const isTappedOnInferences = inferences.find(e => e === index) !== undefined;
+    if (piece !== undefined && !isTappedOnInferences) {
+        return undefined;
+    }
+
+    // pieceがまだない or inferencesの上をタップしたとき
+    page.piece = undefined;
+
+    return {
+        fumen: {
+            ...state.fumen,
+            pages,
+        },
+        events: {
+            ...state.events,
+            inferences,
+            touch: {
+                piece: isTappedOnInferences ? Piece.Empty : Piece.Gray,
+            },
+            updated: false,
+        },
+    };
 };
 
 const endDrawingField = (state: State): NextState => {
