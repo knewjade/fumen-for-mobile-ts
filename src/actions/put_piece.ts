@@ -48,6 +48,12 @@ export const putPieceActions: Readonly<PutPieceActions> = {
 
         // 4つ以上あるとき
         return sequence(state, [
+            newState => ({
+                fumen: {
+                    ...newState.fumen,
+                    pages,
+                },
+            }),
             fieldEditorActions.resetInferencePiece(),
             actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(currentPageIndex, prevPage, page) }),
