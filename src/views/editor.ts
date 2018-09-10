@@ -13,6 +13,7 @@ import { div } from '@hyperapp/html';
 import { px, style } from '../lib/types';
 import {
     colorButton,
+    dualButton,
     iconContents,
     inferenceButton,
     keyButton,
@@ -126,6 +127,23 @@ const getLayout = (display: { width: number, height: number }): EditorLayout => 
     };
 };
 
+const toolStyle = (layout: EditorLayout) => {
+    const margin = (layout.canvas.size.height - layout.field.size.height) / 2;
+    return style({
+        marginTop: '0px',
+        marginBottom: '0px',
+        marginLeft: '10px',
+        marginRight: '0px',
+        padding: `${px(margin)} 0px`,
+        display: 'flex',
+        justifyContent: 'flex-end',
+        flexDirection: 'column',
+        alignItems: 'center',
+        height: px(layout.canvas.size.height),
+        width: px(layout.buttons.size.width),
+    });
+};
+
 const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
     layout: EditorLayout;
     currentIndex: number;
@@ -141,21 +159,8 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
     };
 }) => {
     const toolButtonMargin = 5;
-    const margin = (layout.canvas.size.height - layout.field.size.height) / 2;
 
-    return div({
-        style: style({
-            marginLeft: px(10),
-            paddingTop: px(margin),
-            paddingBottom: px(margin),
-            display: 'flex',
-            justifyContent: 'flex-end',
-            flexDirection: 'column',
-            alignItems: 'center',
-            height: px(layout.canvas.size.height),
-            width: px(layout.buttons.size.width),
-        }),
-    }, [
+    return div({ style: toolStyle(layout) }, [
         keyButton({
             toolButtonMargin,
             keyPage,
@@ -258,21 +263,8 @@ const blockMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
     const pieces = [Piece.I, Piece.L, Piece.O, Piece.Z, Piece.T, Piece.J, Piece.S, Piece.Empty, Piece.Gray];
 
     const toolButtonMargin = 5;
-    const margin = (layout.canvas.size.height - layout.field.size.height) / 2;
 
-    return div({
-        style: style({
-            marginLeft: px(10),
-            paddingTop: px(margin),
-            paddingBottom: px(margin),
-            display: 'flex',
-            justifyContent: 'flex-end',
-            flexDirection: 'column',
-            alignItems: 'center',
-            height: px(layout.canvas.size.height),
-            width: px(layout.buttons.size.width),
-        }),
-    }, [
+    return div({ style: toolStyle(layout) }, [
         keyButton({
             toolButtonMargin,
             keyPage,
@@ -317,21 +309,8 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, actions }: {
     };
 }) => {
     const toolButtonMargin = 5;
-    const margin = (layout.canvas.size.height - layout.field.size.height) / 2;
 
-    return div({
-        style: style({
-            marginLeft: px(10),
-            paddingTop: px(margin),
-            paddingBottom: px(margin),
-            display: 'flex',
-            justifyContent: 'flex-end',
-            flexDirection: 'column',
-            alignItems: 'center',
-            height: px(layout.canvas.size.height),
-            width: px(layout.buttons.size.width),
-        }),
-    }, [
+    return div({ style: toolStyle(layout) }, [
         keyButton({
             toolButtonMargin,
             keyPage,
@@ -363,36 +342,30 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, actions }: {
                 iconName: 'vertical_align_bottom',
             }),
         }),
-        toolButton({
+        dualButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
             margin: toolButtonMargin,
             backgroundColorClass: 'white',
             textColor: '#333',
             borderColor: '#333',
+        }, {
             datatest: 'btn-rotate-to-left',
             key: 'btn-rotate-to-left',
             onclick: () => actions.rotateToLeft(),
             contents: iconContents({
                 height: layout.buttons.size.height,
-                description: 'left',
+                description: '',
                 iconSize: 22,
                 iconName: 'rotate_left',
             }),
-        }),
-        toolButton({
-            borderWidth: 1,
-            width: layout.buttons.size.width,
-            margin: toolButtonMargin,
-            backgroundColorClass: 'white',
-            textColor: '#333',
-            borderColor: '#333',
+        }, {
             datatest: 'btn-rotate-to-right',
             key: 'btn-rotate-to-right',
             onclick: () => actions.rotateToRight(),
             contents: iconContents({
                 height: layout.buttons.size.height,
-                description: 'right',
+                description: '',
                 iconSize: 22,
                 iconName: 'rotate_right',
             }),
@@ -473,21 +446,8 @@ const flagsMode = ({ layout, currentIndex, keyPage, flags, actions }: {
     };
 }) => {
     const toolButtonMargin = 5;
-    const margin = (layout.canvas.size.height - layout.field.size.height) / 2;
 
-    return div({
-        style: style({
-            marginLeft: px(10),
-            paddingTop: px(margin),
-            paddingBottom: px(margin),
-            display: 'flex',
-            justifyContent: 'flex-end',
-            flexDirection: 'column',
-            alignItems: 'center',
-            height: px(layout.canvas.size.height),
-            width: px(layout.buttons.size.width),
-        }),
-    }, [
+    return div({ style: toolStyle(layout) }, [
         keyButton({
             toolButtonMargin,
             keyPage,
