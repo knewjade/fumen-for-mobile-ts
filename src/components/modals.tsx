@@ -26,7 +26,7 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
                 // Focus用のボタンをクリック
                 const element = document.getElementById('trigger-focus-fumen');
                 if (element !== null) {
-                    element.click();
+                    element.focus();
                 }
             },
             onCloseStart: () => {
@@ -56,9 +56,9 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
     const oninput = (e: TextEvent) => {
         const inputType = (e as any).inputType;
         if (inputType === 'insertLineBreak') {
-            const element = document.getElementById('btn-open');
+            const element = document.getElementById('#input-fumen');
             if (element !== null) {
-                element.click();
+                element.focus();
             }
             return;
         }
@@ -132,18 +132,6 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
                         {i18n.OpenFumen.Buttons.Open()}
                     </a>
                 </div>
-
-                {/*
-                    Focus用のボタンを用意する。ボタンは display: none で表示せず、Javascriptからtriggerされる
-                  */}
-                <a href="#" id="trigger-focus-fumen" style={style({ display: 'none' })}
-                   onclick={() => {
-                       const element = document.getElementById('input-fumen');
-                       if (element !== null) {
-                           element.focus();
-                       }
-                   }}>
-                </a>
             </div>
         </div>
     );
