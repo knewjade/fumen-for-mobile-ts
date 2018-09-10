@@ -339,7 +339,7 @@ export const SettingButton: ComponentWithText<SettingButtonProps> = (
             event.stopPropagation();
             event.preventDefault();
         } : undefined}>
-            <i className={`material-icons z-depth-1${enable ? ' ' : 'disable'}`} style={style({
+            <i className={`material-icons z-depth-1 ${enable ? ' ' : 'disable'}`} style={style({
                 width: px(50),
                 height: px(40),
                 lineHeight: px(40),

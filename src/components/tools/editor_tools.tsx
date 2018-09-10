@@ -57,7 +57,7 @@ export const EditorTools: Component<Props> = (
     const themeColor = 'page-footer tools ' + palette.baseClass;
 
     const pages = `${currentPage} / ${maxPage}`;
-    const rightIconName = currentPage < maxPage ? 'keyboard_arrow_right' : 'add';
+    const rightIconName = currentPage < maxPage ? 'navigate_next' : 'add';
 
     return (
         <nav datatest="tools" className={themeColor} style={navProperties}>
@@ -71,7 +71,7 @@ export const EditorTools: Component<Props> = (
                             key="btn-redo" fontSize={33.75} marginRight={15} colors={colors}
                             actions={{ onclick: () => actions.redo() }} enable={0 < redoCount}/>
 
-                <ToolButton iconName="keyboard_arrow_left" datatest="btn-back-page" width={35} height={height - 10}
+                <ToolButton iconName="navigate_before" datatest="btn-back-page" width={35} height={height - 10}
                             key="btn-back-page" fontSize={33.75} marginRight={5} colors={colors}
                             actions={{ onclick: () => actions.backPage() }} enable={1 < currentPage}/>
 

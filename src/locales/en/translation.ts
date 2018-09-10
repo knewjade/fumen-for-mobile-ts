@@ -22,8 +22,8 @@ export const resources = {
             LastPage: 'lastpage',
             New: 'new',
             Help: 'help',
-            ReadonlyComment: 'readonly',
-            WritableComment: 'writable',
+            ReadonlyComment: 'readtext',
+            WritableComment: 'writetext',
         },
         Messages: {
             NoAvailableCommentButton: 'Available only when writable mode',

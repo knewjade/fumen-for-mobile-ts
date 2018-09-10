@@ -36,6 +36,10 @@ export interface FieldEditorActions {
 
     rotateToRight(): action;
 
+    moveToLeft(): action;
+
+    moveToRight(): action;
+
     harddrop(): action;
 }
 
@@ -248,6 +252,84 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             coordinate: {
                 x: element[0],
                 y: element[1],
+            },
+        };
+
+        return sequence(state, [
+            fieldEditorActions.resetInferencePiece(),
+            actions.saveToMemento(),
+            actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
+            actions.reopenCurrentPage(),
+        ]);
+    },
+    moveToLeft: () => (state): NextState => {
+        const pages = state.fumen.pages;
+        const pageIndex = state.fumen.currentIndex;
+        const page = pages[pageIndex];
+        if (page === undefined) {
+            return undefined;
+        }
+
+        const piece = page.piece;
+        if (piece === undefined) {
+            return undefined;
+        }
+
+        const pagesObj = new Pages(pages);
+        const field = pagesObj.getField(pageIndex, PageFieldOperation.Command);
+
+        const test = testCallback(field, piece.type, piece.rotation);
+
+        const coordinate = piece.coordinate;
+        if (!test(coordinate.x - 1, coordinate.y)) {
+            return undefined;
+        }
+
+        const prevPage = toPrimitivePage(page);
+        page.piece = {
+            ...piece,
+            coordinate: {
+                x: coordinate.x - 1,
+                y: coordinate.y,
+            },
+        };
+
+        return sequence(state, [
+            fieldEditorActions.resetInferencePiece(),
+            actions.saveToMemento(),
+            actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
+            actions.reopenCurrentPage(),
+        ]);
+    },
+    moveToRight: () => (state): NextState => {
+        const pages = state.fumen.pages;
+        const pageIndex = state.fumen.currentIndex;
+        const page = pages[pageIndex];
+        if (page === undefined) {
+            return undefined;
+        }
+
+        const piece = page.piece;
+        if (piece === undefined) {
+            return undefined;
+        }
+
+        const pagesObj = new Pages(pages);
+        const field = pagesObj.getField(pageIndex, PageFieldOperation.Command);
+
+        const test = testCallback(field, piece.type, piece.rotation);
+
+        const coordinate = piece.coordinate;
+        if (!test(coordinate.x + 1, coordinate.y)) {
+            return undefined;
+        }
+
+        const prevPage = toPrimitivePage(page);
+        page.piece = {
+            ...piece,
+            coordinate: {
+                x: coordinate.x + 1,
+                y: coordinate.y,
             },
         };
 

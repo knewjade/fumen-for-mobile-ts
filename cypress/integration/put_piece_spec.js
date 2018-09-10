@@ -1,8 +1,9 @@
-import { block, Color, expectFumen, mino, minoPosition, Piece, Rotation, visit } from './_common';
+import { expectFumen, minoPosition, Piece, Rotation, visit } from './_common';
 import { operations } from './_operations';
 
 // テト譜を開く
 describe('Put pieces', () => {
+    /*
     it('Move piece', () => {
         visit({});
 
@@ -223,5 +224,66 @@ describe('Put pieces', () => {
         }
 
         expectFumen('v115@zgB8EeD8HeB8AeE8AeC8BeC8BeC8AeE8AeB8Je9MJz?gBAEeDAHeBAAeEAQLBAAeA8AeAABeRLDeAADeQLAAKekMJ0?gB8DeB8AeB8FeD8AeD8AeB8CeA8BeAtAPCeA8AeAABeAAAP?AtKe+MJ0gBAD8BeA8BAAeE8BeBAEeglBeBAEeglBeBADehl?LehOJ');
+    });
+*/
+    it('Move pieces 2', () => {
+        visit({});
+
+        operations.screen.writable();
+
+        operations.mode.piece.open();
+
+        // T
+        minoPosition(Piece.T, Rotation.Spawn)(3, 3).forEach(position => {
+            operations.mode.block.click(position[0], position[1]);
+        });
+
+        operations.mode.piece.harddrop();
+        operations.mode.piece.moveToLeft();
+        operations.mode.piece.moveToLeft();
+        operations.mode.piece.moveToLeft();
+        operations.mode.piece.moveToLeft();
+        operations.mode.piece.moveToLeft();
+
+        operations.mode.tools.undo();
+        operations.mode.tools.undo();
+        operations.mode.tools.redo();
+
+        operations.mode.editor.nextPage();
+
+        // I
+        minoPosition(Piece.I, Rotation.Spawn)(4, 4).forEach(position => {
+            operations.mode.block.click(position[0], position[1]);
+        });
+
+        operations.mode.piece.harddrop();
+
+        operations.mode.piece.moveToRight();
+        operations.mode.piece.moveToRight();
+        operations.mode.piece.moveToRight();
+
+        operations.mode.tools.undo();
+        operations.mode.tools.redo();
+
+        operations.mode.editor.nextPage();
+
+        // O
+        minoPosition(Piece.O, Rotation.Spawn)(3, 10).forEach(position => {
+            operations.mode.block.click(position[0], position[1]);
+        });
+
+        operations.mode.piece.harddrop();
+
+        operations.mode.piece.moveToRight();
+        operations.mode.piece.moveToRight();
+        operations.mode.piece.moveToRight();
+
+        operations.mode.piece.harddrop();
+
+        operations.mode.piece.moveToLeft();
+        operations.mode.piece.moveToLeft();
+        operations.mode.piece.moveToLeft();
+
+        expectFumen('v115@vhCVPJxMJTLJ');
     });
 });

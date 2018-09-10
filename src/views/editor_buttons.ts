@@ -16,7 +16,7 @@ export const colorButton = ({ layout, piece, highlight, onclick }: {
     const contents = [
         img({
             src: `img/${pieceName}.svg`,
-            height: (0.6 * layout.buttons.size.height) + '',
+            height: (0.55 * layout.buttons.size.height) + '',
             style: style({
                 margin: 'auto',
             }),
@@ -91,7 +91,7 @@ export const iconContents = (
         style: properties,
     }, iconName);
 
-    return [icon, ' ', span({ style: style({ fontSize: px(10) }) }, description)];
+    return [icon, ' ', span({ style: style({ fontSize: px(11) }) }, description)];
 };
 
 export const switchIconContents = (
@@ -119,7 +119,7 @@ export const switchIconContents = (
         style: properties,
     }, enable ? 'check_box' : 'check_box_outline_blank');
 
-    return [icon, ' ', span({ style: style({ fontSize: px(9) }) }, description)];
+    return [icon, ' ', span({ style: style({ fontSize: px(11) }) }, description)];
 };
 
 export const radioIconContents = (
@@ -147,7 +147,7 @@ export const radioIconContents = (
         style: properties,
     }, enable ? 'radio_button_checked' : 'radio_button_unchecked');
 
-    return [icon, ' ', span({ style: style({ fontSize: px(9) }) }, description)];
+    return [icon, ' ', span({ style: style({ fontSize: px(11) }) }, description)];
 };
 
 export const keyButton = (
@@ -189,7 +189,7 @@ export const keyButton = (
 export const toolButton = (
     {
         width, backgroundColorClass, textColor, borderColor, borderWidth = 1, borderType = 'solid',
-        datatest, key, onclick, contents, flexGrow, margin,
+        datatest, key, onclick, contents, flexGrow, margin, enable = true,
     }: {
         flexGrow?: number;
         width: number;
@@ -201,6 +201,7 @@ export const toolButton = (
         borderType?: string;
         datatest: string;
         key: string;
+        enable?: boolean;
         contents: string | number | (string | number | VNode<{}>)[];
         onclick: (event: MouseEvent) => void;
     }) => {
@@ -208,11 +209,11 @@ export const toolButton = (
         datatest,
         key,
         href: '#',
-        class: `waves-effect z-depth-0 btn ${backgroundColorClass}`,
+        class: `waves-effect z-depth-0 btn-flat ${backgroundColorClass} ${enable ? '' : 'disabled'}`,
         style: style({
             flexGrow,
-            color: textColor,
-            border: `${borderType} ${borderWidth}px ${borderColor}`,
+            color: enable ? textColor : '#9e9e9e',
+            border: enable ? `${borderType} ${borderWidth}px ${borderColor}` : 'solid 1px #9e9e9e',
             margin: `${px(margin)} 0px`,
             padding: px(0),
             width: px(width),
@@ -254,21 +255,22 @@ export const dualButton = (
     left: {
         datatest: string;
         key: string;
+        enable?: boolean;
         contents: string | number | (string | number | VNode<{}>)[];
         onclick: (event: MouseEvent) => void;
     },
     right: typeof left) => {
 
-    const b = ({ datatest, key, contents, onclick, margin }: typeof left & { margin: string }) => {
+    const button = ({ datatest, key, contents, onclick, enable = true, margin }: typeof left & { margin: string }) => {
         return a({
             datatest,
             key,
             href: '#',
-            class: `waves-effect z-depth-0 btn ${backgroundColorClass}`,
+            class: `waves-effect z-depth-0 btn-flat ${backgroundColorClass} ${enable ? '' : 'disabled'}`,
             style: style({
                 margin,
-                color: textColor,
-                border: `${borderType} ${borderWidth}px ${borderColor}`,
+                color: enable ? textColor : '#9e9e9e',
+                border: enable ? `${borderType} ${borderWidth}px ${borderColor}` : 'solid 1px #9e9e9e',
                 padding: px(0),
                 width: '50%',
                 maxWidth: '50%',
@@ -305,8 +307,8 @@ export const dualButton = (
             padding: px(0),
         }),
     }, [
-        b({ ...left, margin: '0px 2px 0px 0px' }),
-        b({ ...right, margin: '0px 0px 0px 2px' }),
+        button({ ...left, margin: '0px 2px 0px 0px' }),
+        button({ ...right, margin: '0px 0px 0px 2px' }),
     ]);
 };
 
@@ -331,7 +333,7 @@ export const switchButton = (
     return a({
         key,
         href: '#',
-        class: `waves-effect z-depth-0 btn ${enable ? backgroundColorClass : 'white'}`,
+        class: `waves-effect z-depth-0 btn-flat ${enable ? backgroundColorClass : 'white'}`,
         datatest: `${datatest}-${enable ? 'on' : 'off'}`,
         style: style({
             flexGrow,

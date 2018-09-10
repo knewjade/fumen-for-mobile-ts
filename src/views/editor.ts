@@ -290,11 +290,12 @@ const blockMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
     ]));
 };
 
-const pieceMode = ({ layout, keyPage, currentIndex, touchType, actions }: {
+const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePiece, actions }: {
     layout: EditorLayout;
     keyPage: boolean;
     currentIndex: number;
     touchType: TouchTypes;
+    operatePiece: boolean;
     actions: {
         selectPieceColor: (data: { piece: Piece }) => void;
         selectInferencePieceColor: () => void;
@@ -305,6 +306,8 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, actions }: {
         clearPiece: () => void;
         rotateToLeft: () => void;
         rotateToRight: () => void;
+        moveToLeft: () => void;
+        moveToRight: () => void;
         harddrop: () => void;
     };
 }) => {
@@ -325,6 +328,36 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, actions }: {
             margin: toolButtonMargin,
             key: 'div-space',
         }),
+        dualButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'white',
+            textColor: '#333',
+            borderColor: '#333',
+        }, {
+            datatest: 'btn-move-to-left',
+            key: 'btn-move-to-left',
+            enable: operatePiece,
+            onclick: () => actions.moveToLeft(),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: '',
+                iconSize: 24,
+                iconName: 'keyboard_arrow_left',
+            }),
+        }, {
+            datatest: 'btn-move-to-right',
+            key: 'btn-move-to-right',
+            enable: operatePiece,
+            onclick: () => actions.moveToRight(),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: '',
+                iconSize: 24,
+                iconName: 'keyboard_arrow_right',
+            }),
+        }),
         toolButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
@@ -334,6 +367,7 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, actions }: {
             borderColor: '#333',
             datatest: 'btn-harddrop',
             key: 'btn-harddrop',
+            enable: operatePiece,
             onclick: () => actions.harddrop(),
             contents: iconContents({
                 height: layout.buttons.size.height,
@@ -352,21 +386,23 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, actions }: {
         }, {
             datatest: 'btn-rotate-to-left',
             key: 'btn-rotate-to-left',
+            enable: operatePiece,
             onclick: () => actions.rotateToLeft(),
             contents: iconContents({
                 height: layout.buttons.size.height,
                 description: '',
-                iconSize: 22,
+                iconSize: 23,
                 iconName: 'rotate_left',
             }),
         }, {
             datatest: 'btn-rotate-to-right',
             key: 'btn-rotate-to-right',
+            enable: operatePiece,
             onclick: () => actions.rotateToRight(),
             contents: iconContents({
                 height: layout.buttons.size.height,
                 description: '',
-                iconSize: 22,
+                iconSize: 23,
                 iconName: 'rotate_right',
             }),
         }),
@@ -527,7 +563,7 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
     const getChildren = () => {
         const getMode = () => {
             switch (state.mode.type) {
-            case ModeTypes.Drawing:
+            case ModeTypes.Drawing: {
                 return blockMode({
                     layout,
                     actions,
@@ -535,7 +571,8 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                     currentIndex: state.fumen.currentIndex,
                     modePiece: state.mode.piece,
                 });
-            case ModeTypes.DrawingTool:
+            }
+            case ModeTypes.DrawingTool: {
                 return toolMode({
                     layout,
                     actions,
@@ -543,15 +580,19 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                     touchType: state.mode.touch,
                     currentIndex: state.fumen.currentIndex,
                 });
-            case ModeTypes.Piece:
+            }
+            case ModeTypes.Piece: {
+                const page = state.fumen.pages[state.fumen.currentIndex];
                 return pieceMode({
                     layout,
                     actions,
                     keyPage,
+                    operatePiece: page !== undefined && page.piece !== undefined,
                     touchType: state.mode.touch,
                     currentIndex: state.fumen.currentIndex,
                 });
-            case ModeTypes.Flags:
+            }
+            case ModeTypes.Flags: {
                 return flagsMode({
                     layout,
                     actions,
@@ -559,6 +600,7 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                     flags: page.flags,
                     currentIndex: state.fumen.currentIndex,
                 });
+            }
             }
 
             throw new ViewError('Illegal mode');

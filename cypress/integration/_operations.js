@@ -139,6 +139,12 @@ export const operations = {
             rotateToLeft: () => {
                 cy.get(datatest('btn-rotate-to-left')).click();
             },
+            moveToRight: () => {
+                cy.get(datatest('btn-move-to-right')).click();
+            },
+            moveToLeft: () => {
+                cy.get(datatest('btn-move-to-left')).click();
+            },
             harddrop: () => {
                 cy.get(datatest('btn-harddrop')).click();
             },
