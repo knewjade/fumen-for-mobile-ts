@@ -10,21 +10,21 @@ interface TaskResult {
     index: number;
 }
 
-interface OperationTask {
-    reply: (pages: Page[]) => TaskResult;
+export interface OperationTask {
+    replay: (pages: Page[]) => TaskResult;
     revert: (pages: Page[]) => TaskResult;
     fixed: false;
 }
 
 interface FixedTask {
-    reply: () => Promise<TaskResult>;
+    replay: () => Promise<TaskResult>;
     revert: () => Promise<TaskResult>;
     fixed: true;
 }
 
 export const toFumenTask = (primitivePrev: PrimitivePage[], fumen: string, prevIndex: number): FixedTask => {
     return {
-        reply: async () => {
+        replay: async () => {
             return { pages: await decode(fumen), index: 0 };
         },
         revert: async () => {
@@ -37,7 +37,7 @@ export const toFumenTask = (primitivePrev: PrimitivePage[], fumen: string, prevI
 export const toSinglePageTask = (index: number, primitivePrev: PrimitivePage, next: Page): OperationTask => {
     const primitiveNext = toPrimitivePage(next);
     return {
-        reply: (pages: Page[]) => {
+        replay: (pages: Page[]) => {
             pages[index] = toPage(primitiveNext);
             return { pages, index };
         },
@@ -51,7 +51,7 @@ export const toSinglePageTask = (index: number, primitivePrev: PrimitivePage, ne
 
 export const toRemovePageTask = (removeIndex: number, primitivePrev: PrimitivePage): OperationTask => {
     return {
-        reply: (pages: Page[]) => {
+        replay: (pages: Page[]) => {
             const pagesObj = new Pages(pages);
             pagesObj.deletePage(removeIndex);
             const newPages = pagesObj.pages;
@@ -68,7 +68,7 @@ export const toRemovePageTask = (removeIndex: number, primitivePrev: PrimitivePa
 
 export const toInsertPageTask = (insertIndex: number, primitiveNext: PrimitivePage): OperationTask => {
     return {
-        reply: (pages: Page[]) => {
+        replay: (pages: Page[]) => {
             const pagesObj = new Pages(pages);
             pagesObj.insertPage(insertIndex, toPage(primitiveNext));
             return { pages: pagesObj.pages, index: insertIndex };
@@ -84,7 +84,7 @@ export const toInsertPageTask = (insertIndex: number, primitiveNext: PrimitivePa
 
 export const toKeyPageTask = (index: number): OperationTask => {
     return {
-        reply: (pages: Page[]) => {
+        replay: (pages: Page[]) => {
             const pagesObj = new Pages(pages);
             pagesObj.toKeyPage(index);
             return { index, pages: pagesObj.pages };
@@ -100,7 +100,7 @@ export const toKeyPageTask = (index: number): OperationTask => {
 
 export const toRefPageTask = (index: number): OperationTask => {
     return {
-        reply: (pages: Page[]) => {
+        replay: (pages: Page[]) => {
             const pagesObj = new Pages(pages);
             pagesObj.toRefPage(index);
             return { index, pages: pagesObj.pages };
@@ -109,6 +109,42 @@ export const toRefPageTask = (index: number): OperationTask => {
             const pagesObj = new Pages(pages);
             pagesObj.toKeyPage(index);
             return { index, pages: pagesObj.pages };
+        },
+        fixed: false,
+    };
+};
+
+export const toFreezeCommentTask = (index: number): OperationTask => {
+    return {
+        replay: (pages: Page[]) => {
+            const pagesObj = new Pages(pages);
+            pagesObj.freezeComment(index);
+            return { index, pages: pagesObj.pages };
+        },
+        revert: (pages: Page[]) => {
+            const pagesObj = new Pages(pages);
+            pagesObj.unfreezeComment(index);
+            return { index, pages: pagesObj.pages };
+        },
+        fixed: false,
+    };
+};
+
+export const toPageTaskStack = (tasks: OperationTask[], pageIndexAfterReverting: number): OperationTask => {
+    return {
+        replay: (pages: Page[]) => {
+            let result: TaskResult = { pages, index: 0 };
+            for (const task of tasks) {
+                result = task.replay(result.pages);
+            }
+            return result;
+        },
+        revert: (pages: Page[]) => {
+            let result: TaskResult = { pages, index: 0 };
+            for (const task of tasks.concat().reverse()) {
+                result = task.revert(result.pages);
+            }
+            return { pages: result.pages, index: pageIndexAfterReverting };
         },
         fixed: false,
     };

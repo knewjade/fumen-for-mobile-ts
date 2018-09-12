@@ -73,6 +73,10 @@ export class Field {
     toSentLintPieces(): Piece[] {
         return this.sentLine.toArray();
     }
+
+    equals(other: Field): boolean {
+        return this.playField.equals(other.playField) && this.sentLine.equals(other.sentLine);
+    }
 }
 
 export class PlayField {
@@ -188,5 +192,19 @@ export class PlayField {
 
     clearAll() {
         this.pieces = this.pieces.map(() => Piece.Empty);
+    }
+
+    equals(other: PlayField): boolean {
+        if (this.pieces.length !== other.pieces.length) {
+            return false;
+        }
+
+        for (let index = 0; index < this.pieces.length; index++) {
+            if (this.pieces[index] !== other.pieces[index]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

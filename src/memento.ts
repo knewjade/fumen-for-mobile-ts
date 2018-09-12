@@ -119,7 +119,7 @@ export const memento = (() => {
 
             undoQueue.push(lastTask);
 
-            const result = lastTask.fixed ? (await lastTask.reply()) : lastTask.reply(pages);
+            const result = lastTask.fixed ? (await lastTask.replay()) : lastTask.replay(pages);
             return {
                 pages: result.pages,
                 index: result.index,

@@ -131,4 +131,57 @@ describe('History', () => {
 
         play('v115@vhAAgH', testCases);
     });
+
+    it('Remove', () => {
+        const testCases = [
+            {
+                callback: () => {
+                    operations.mode.piece.open();
+                    minoPosition(Piece.I, Rotation.Left)(9, 3).forEach(([x, y]) => {
+                        operations.mode.block.click(x, y);
+                    });
+                },
+                fumen: 'v115@3gwwHeywwhGeR4whBtAeRpAeR4glwhg0BtRpAeilwh?i0JeO/IvhBp+I6WB',
+                count: 2,
+            },
+            {
+                callback: () => {
+                    operations.menu.lastPage();
+                    operations.mode.piece.open();
+                    minoPosition(Piece.T, Rotation.Reverse)(2, 2).forEach(([x, y]) => {
+                        operations.mode.block.click(x, y);
+                    });
+                },
+                fumen: 'v115@3gwwHeywwhGeR4whBtAeRpAeR4glwhg0BtRpAeilwh?i0JeO/IvhCp+I6WBFlB',
+                count: 2,
+            },
+            {
+                callback: () => {
+                    operations.menu.firstPage();
+                    operations.mode.editor.nextPage();
+                    operations.mode.tools.removePage();
+                },
+                fumen: 'v115@3gwwHeywwhGeR4whBtAeRpAeR4glwhg0BtRpAeilwh?i0JeO/IygwhIewhIewhIewhde6WQAAvhAFlB',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.menu.firstPage();
+                    operations.mode.tools.removePage();
+                },
+                fumen: 'v115@ygwhh0BewwDewhg0BeywwhBewhg0CeR4whBtwhRpAe?R4glwhg0BtRpAeilwhi0Je62IvhAFlB',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.menu.lastPage();
+                    operations.mode.tools.removePage();
+                },
+                fumen: 'v115@ygwhh0BewwDewhg0BeywwhBewhg0CeR4whBtwhRpAe?R4glwhg0BtRpAeilwhi0Je62I',
+                count: 1,
+            },
+        ];
+
+        play('v115@3gwwHeywwhGeR4whBtAeRpAeR4glwhg0BtRpAeilwh?i0JeO/IvhA6WB', testCases);
+    });
 });

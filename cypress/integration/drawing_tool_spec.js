@@ -64,12 +64,7 @@ describe('Drawing Tools', () => {
         operations.mode.editor.backPage();
         operations.mode.tools.removePage();
 
-        operations.menu.copyToClipboard();
-
-        // データを取り出す
-        {
-            cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@QhwwFeBtxwGeBtwwJeXDYaAFLDmClcJSAVDEHBEooR?BUoAVBa9aPCM+AAAvhA2uBIhRpHeRpaeifQXAFLDmClcJSA?VjiSAVG88AYP88AZSdBAvhAplBLhwwFeRpAewwAeAPAeQaA?egHhlQ4C8BtQpJeHiuFA3XaDEEBAAA9giWQaDexDwwBtg0Q?LAewhRLwSQahWQaQLwwwhhlwhA8HeAAJeHmB9gV4Del0Del?lNeFtDeAAA');
-        }
+        expectFumen('v115@QhwwFeBtxwGeBtwwJeXDYYAFLDmClcJSAVDEHBEooR?BToAVBv/7LCvhA2uBIhRpHeRpaeifQVAFLDmClcJSAVzbSA?VG88A4N88AZAAAAvhAplBLhwwFeRpAewwAeAPAeQaAegHhl?Q4C8BtQpJeHiuFA3XaDEEBAAA9giWQaDexDwwBtg0QLAewh?RLwSQahWQaQLwwwhhlwhA8HeAAJeHmQFA3XaDEEBAAA9gV4?Del0DellNeFtDeAAPFA3XaDEEBAAA');
     });
 
     it('Undo/Redo', () => {
@@ -206,7 +201,8 @@ describe('Drawing Tools', () => {
 
         operations.mode.tools.undo();
 
-        expectFumen('v115@HhglIeglIehlAezhMeAgHihS4JeAgWAA');
+        // http://harddrop.com/fumen/?
+        expectFumen('v115@HhglIeglIehlAezhMeAgHihS4JeAgH');
     });
 
     it('Auto save', () => {

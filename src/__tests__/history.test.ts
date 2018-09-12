@@ -8,7 +8,7 @@ describe('history', () => {
 
         // replay
         {
-            const { pages, index } = await task.reply();
+            const { pages, index } = await task.replay();
             const data = await encode(pages);
             expect(data).toEqual('vhAVQJ');
             expect(index).toEqual(0);

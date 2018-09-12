@@ -6,14 +6,18 @@ import { Field } from '../lib/fumen/field';
 import { Block } from '../state_types';
 import { Pages, QuizCommentResult, TextCommentResult } from '../lib/pages';
 import {
+    OperationTask,
+    toFreezeCommentTask,
     toInsertPageTask,
     toKeyPageTask,
+    toPageTaskStack,
     toPrimitivePage,
     toRefPageTask,
     toRemovePageTask,
     toSinglePageTask,
 } from '../history_task';
 import { State } from '../states';
+import { FumenError } from '../lib/errors';
 
 export interface PageActions {
     reopenCurrentPage: () => action;
@@ -97,10 +101,6 @@ export const pageActions: Readonly<PageActions> = {
         const fumen = state.fumen;
         const pages = fumen.pages;
 
-        if (pages.length < index) {
-            return undefined;
-        }
-
         const prevPage = pages[(index - 1)];
         const insert = prevPage !== undefined && prevPage.field.obj === undefined
             ? pageActions.insertRefPage
@@ -109,6 +109,12 @@ export const pageActions: Readonly<PageActions> = {
         return insert({ index })(state);
     },
     insertRefPage: ({ index }) => (state): NextState => {
+        const fumen = state.fumen;
+        const pages = fumen.pages;
+        if (pages.length < index) {
+            return undefined;
+        }
+
         return sequence(state, [
             actions.fixInferencePiece(),
             actions.clearInferencePiece(),
@@ -118,6 +124,12 @@ export const pageActions: Readonly<PageActions> = {
         ]);
     },
     insertKeyPage: ({ index }) => (state): NextState => {
+        const fumen = state.fumen;
+        const pages = fumen.pages;
+        if (pages.length < index) {
+            return undefined;
+        }
+
         return sequence(state, [
             actions.fixInferencePiece(),
             actions.clearInferencePiece(),
@@ -382,18 +394,54 @@ const insertKeyPage = ({ index }: { index: number }) => (state: Readonly<State>)
 };
 
 const removePage = ({ index }: { index: number }) => (state: Readonly<State>): NextState => {
-    const fumen = state.fumen.pages;
-    const primitivePrev = toPrimitivePage(fumen[index]);
+    const fumen = state.fumen;
+    const pages = fumen.pages;
 
-    const pages = new Pages(fumen);
-    pages.deletePage(index);
+    if (index < 0) {
+        throw new FumenError('Illegal index: ' + index);
+    }
 
-    const newPages = pages.pages;
+    if (pages.length <= 1) {
+        return;
+    }
+
+    const currentPage = pages[index];
+    const nextPageIndex = index + 1;
+    const nextPage = pages[nextPageIndex];
+    const pagesObj = new Pages(pages);
+    const tasks: OperationTask[] = [];
+
+    // 次のページがあるときはKeyにする
+    if (nextPage !== undefined) {
+        if (nextPage.field.obj === undefined) {
+            pagesObj.toKeyPage(nextPageIndex);
+            tasks.push(toKeyPageTask(nextPageIndex));
+        }
+
+        if (nextPage.comment.ref !== undefined) {
+            pagesObj.freezeComment(nextPageIndex);
+            tasks.push(toFreezeCommentTask(nextPageIndex));
+        }
+
+        if (index === 0 && currentPage.flags.colorize !== nextPage.flags.colorize) {
+            const primitiveNextPage = toPrimitivePage(nextPage);
+            nextPage.flags.colorize = currentPage.flags.colorize;
+            tasks.push(toSinglePageTask(nextPageIndex, primitiveNextPage, nextPage));
+        }
+    }
+
+    // 現ページの削除
+    {
+        const primitiveCurrentPage = toPrimitivePage(currentPage);
+        pagesObj.deletePage(index);
+        tasks.push(toRemovePageTask(index, primitiveCurrentPage));
+    }
+
+    const newPages = pagesObj.pages;
     const nextIndex = index < newPages.length ? index : newPages.length - 1;
-    const task = toRemovePageTask(index, primitivePrev);
 
     return sequence(state, [
-        actions.registerHistoryTask({ task }),
+        actions.registerHistoryTask({ task: toPageTaskStack(tasks, index) }),
         () => ({
             fumen: {
                 ...state.fumen,

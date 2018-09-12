@@ -22,7 +22,7 @@ export interface QuizCommentResult {
     quizAfterOperation: Quiz;
 }
 
-function isQuizCommentResult(result: CommentResult): result is QuizCommentResult {
+export function isQuizCommentResult(result: CommentResult): result is QuizCommentResult {
     return (result as QuizCommentResult).quiz !== undefined;
 }
 
@@ -174,10 +174,60 @@ export class Pages {
 
                 if (page.field.ref !== undefined) {
                     const currentRef = page.field.ref;
+                    if (currentRef < index) {
+                        page.field.ref = ref.field;
+                    } else if (index <= currentRef) {
+                        page.field.ref += 1;
+                    }
+                }
+
+                if (page.comment.ref !== undefined) {
+                    const currentRef = page.comment.ref;
+                    if (currentRef < index) {
+                        page.comment.ref = ref.comment;
+                    } else if (index <= currentRef) {
+                        page.comment.ref += 1;
+                    }
+                }
+                return page;
+            }));
+    }
+
+    // TODO: Add unit test
+    deletePage(index: number) {
+        const page = this.pages[index];
+        const nextPage = this.pages[index + 1];
+
+        const ref = {
+            field: 0,
+            comment: 0,
+        };
+
+        const reversedHeadPages = this.pages.slice(0, index).reverse();
+        if (nextPage !== undefined && nextPage.field.obj !== undefined) {
+            ref.field = index;
+        } else {
+            const lastKeyIndex = reversedHeadPages.findIndex(page => page.field.obj !== undefined);
+            ref.field = 0 <= lastKeyIndex ? index - lastKeyIndex - 1 : 0;
+        }
+
+        if (nextPage !== undefined && nextPage.comment.text !== undefined) {
+            ref.comment = index;
+        } else {
+            const lastKeyIndex = reversedHeadPages.findIndex(page => page.comment.text !== undefined);
+            ref.comment = 0 <= lastKeyIndex ? index - lastKeyIndex - 1 : 0;
+        }
+
+        this.pages = this.pages.slice(0, index)
+            .concat(this.pages.slice(index + 1).map((page) => {
+                page.index -= 1;
+
+                if (page.field.ref !== undefined) {
+                    const currentRef = page.field.ref;
                     if (currentRef <= index) {
                         page.field.ref = ref.field;
                     } else if (index < currentRef) {
-                        page.field.ref += 1;
+                        page.field.ref -= 1;
                     }
                 }
 
@@ -186,7 +236,7 @@ export class Pages {
                     if (currentRef <= index) {
                         page.comment.ref = ref.comment;
                     } else if (index < currentRef) {
-                        page.comment.ref += 1;
+                        page.comment.ref -= 1;
                     }
                 }
                 return page;
@@ -280,8 +330,7 @@ export class Pages {
         }
 
         // 現在のフィールドを取得
-        const pagesObj = new Pages(pages);
-        const currentField = pagesObj.getField(index, PageFieldOperation.None);
+        const currentField = this.getField(index, PageFieldOperation.None);
 
         // 次のページ以降で、現在のページより前をrefにしているページの参照先を置き換える
         for (let i = index + 1; i < pages.length; i += 1) {
@@ -297,89 +346,86 @@ export class Pages {
         };
     }
 
-    // TODO: Add unit test
-    deletePage(index: number) {
-        if (index < 0) {
-            throw new FumenError('Illegal index: ' + index);
-        }
+    // TODO: Add test
+    freezeComment(index: number) {
+        const pages = this.pages;
 
-        if (this.pages.length <= 1) {
+        if (index <= 0 || pages.length <= index) {
             return;
         }
 
-        // 最後のページのときはそのまま削除
-        if (index === this.pages.length - 1) {
-            this.pages = this.pages.slice(0, index);
+        const page = pages[index];
+        if (page === undefined) {
+            throw new FumenError('Not found page');
+        }
+
+        if (page.comment.text !== undefined) {
             return;
         }
 
-        // 現在のページがないときはエラー
-        const current = this.pages[index];
-        if (current === undefined) {
-            throw new FumenError('Not found current page: ' + index);
+        const ref = page.comment.ref;
+        if (ref === undefined) {
+            return;
         }
 
-        // 次のページがないときはエラー
-        const next = this.pages[index + 1];
-        if (next === undefined) {
-            throw new FumenError('Not found next page: ' + index + 1);
+        // 現在のコメントを取得
+        const currentCommentResult = this.getComment(index);
+        if (isTextCommentResult(currentCommentResult)) {
+            page.comment = { text: currentCommentResult.text };
+        } else {
+            page.comment = { text: currentCommentResult.quiz };
         }
 
-        // フィールドの参照
-        if (next.field.obj === undefined) {
-            // 次のページが参照のときは統合する
-            // 現ページにobjがあって、
-            const currentFieldObj = this.restructureField(index, PageFieldOperation.All);
-            const nextFieldObj = this.restructureField(index + 1, PageFieldOperation.None);
-            if (currentFieldObj !== nextFieldObj) {
-                next.field = { obj: currentFieldObj };
+        // 次のページ以降で、現在のページより前をrefにしているページの参照先を置き換える
+        for (let i = index + 1; i < pages.length; i += 1) {
+            const commentRef = pages[i].comment.ref;
+            if (commentRef !== undefined && commentRef < index) {
+                pages[i].comment.ref = index;
+            }
+        }
+    }
+
+    // TODO: Add test
+    unfreezeComment(index: number) {
+        const pages = this.pages;
+
+        if (index <= 0 || pages.length <= index) {
+            return;
+        }
+
+        const page = pages[index];
+        if (page === undefined) {
+            throw new FumenError('Not found page');
+        }
+
+        if (page.comment.ref !== undefined) {
+            return;
+        }
+
+        const text = page.comment.text;
+        if (text === undefined) {
+            return;
+        }
+
+        // 参照させるページを取得
+        let ref = 0;
+        for (let i = index - 1; 0 <= i; i -= 1) {
+            if (pages[i].comment.ref === undefined) {
+                ref = i;
+                break;
             }
         }
 
-        // コメントの参照
-        if (current.comment.text !== undefined && next.comment.text === undefined) {
-            // コメント参照
-            // 現ページにtextがあって、次のページが参照のときは統合する
-            next.comment = { text: current.comment.text };
-        } else if (current.quiz !== undefined && next.quiz !== undefined) {
-            // Quizの参照
-            // 現ページにquizがあって、次のページもquizのときは統合する
-            const comment = this.restructureQuiz(index);
-            if (!isQuizCommentResult(comment)) {
-                throw new ViewError('Unexpected quiz comment');
-            }
-            next.comment = { text: comment.quizAfterOperation.format().toString() };
-        }
-
-        // 色の参照
-        if (index === 0 && current.flags.colorize !== next.flags.colorize) {
-            next.flags.colorize = current.flags.colorize;
-        }
-
-        const slidedPages = [next].concat(this.pages.slice(index + 2));
-        const newFieldRef = next.field.ref !== undefined ? next.field.ref : index;
-        const newCommentRef = next.comment.ref !== undefined ? next.comment.ref : index;
-        for (const page of slidedPages) {
-            page.index -= 1;
-
-            if (page.field.ref !== undefined) {
-                if (page.field.ref < index) {
-                    page.field.ref = newFieldRef;
-                } else if (index < page.field.ref) {
-                    page.field.ref -= 1;
-                }
-            }
-
-            if (page.comment.ref !== undefined) {
-                if (page.comment.ref < index) {
-                    page.comment.ref = newCommentRef;
-                } else if (index < page.comment.ref) {
-                    page.comment.ref -= 1;
-                }
+        // 次のページ以降で、現在のページをrefにしているページの参照先を置き換える
+        for (let i = index + 1; i < pages.length; i += 1) {
+            const commentRef = pages[i].comment.ref;
+            if (commentRef !== undefined && commentRef === index) {
+                pages[i].comment.ref = ref;
             }
         }
 
-        this.pages = this.pages.slice(0, index).concat(slidedPages);
+        // 反映
+        pages[index].comment = { ref };
     }
 
     private restructureQuiz(index: number): TextCommentResult | QuizCommentResult {
