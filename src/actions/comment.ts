@@ -44,6 +44,8 @@ export const commentActions: Readonly<CommentActions> = {
             page.comment = { ref: prevPageIndex };
         }
 
+        resources.comment = undefined;
+
         return sequence(state, [
             () => ({
                 events: {

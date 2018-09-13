@@ -2,6 +2,28 @@ import { datatest, expectFumen, minoPosition, Piece, Rotation, visit } from './_
 import { operations } from './_operations';
 
 describe('Comments', () => {
+    it('Should not apply comment to other pages', () => {
+        visit({});
+
+        operations.screen.writable();
+
+        operations.mode.editor.nextPage();
+        operations.mode.editor.nextPage();
+
+        cy.get(datatest('text-comment')).type('こんにちは');
+        cy.get(datatest('text-comment')).should('have.value', 'こんにちは');
+
+        operations.mode.editor.backPage();
+
+        cy.get(datatest('text-comment')).should('have.value', '');
+
+        operations.mode.editor.backPage();
+
+        cy.get(datatest('text-comment')).should('have.value', '');
+
+        expectFumen('v115@vhCAgHAgHAgWeAlvs2A1sDfEToABBlvs2AWDEfET4J?6Alvs2AW5AAA');
+    });
+
     it('Comment readonly/writable', () => {
         visit({});
 
