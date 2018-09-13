@@ -1,4 +1,4 @@
-import { datatest, holdBox, leftTap, nextBox, pages, Piece, visit } from './_common';
+import { block, Color, datatest, holdBox, leftTap, nextBox, pages, Piece, rightTap, visit } from './_common';
 import { operations } from './_operations';
 
 // テト譜を開く
@@ -102,6 +102,22 @@ describe('Open fumen', () => {
                 cy.get(nextBox(index)).should('have.attr', 'type', piece);
             });
         });
+    });
+
+    it('Highlight when lock is on/off', () => {
+        visit({ fumen: 'v115@pgI8AeI8AeI8AeI8AeI8AeJ8Jep5mvhApjB' });
+
+        cy.get(block(0, 0)).should('have.attr', 'color', Color.Gray.Field);
+        cy.get(block(0, 1)).should('have.attr', 'color', Color.Gray.Field);
+        cy.get(block(0, 4)).should('have.attr', 'color', Color.Gray.Field);
+        cy.get(block(0, 5)).should('have.attr', 'color', Color.Gray.Field);
+
+        rightTap();
+
+        cy.get(block(0, 0)).should('have.attr', 'color', Color.Gray.Highlight);
+        cy.get(block(0, 1)).should('have.attr', 'color', Color.Gray.Highlight);
+        cy.get(block(0, 4)).should('have.attr', 'color', Color.Gray.Highlight);
+        cy.get(block(0, 5)).should('have.attr', 'color', Color.Gray.Field);
     });
 });
 
