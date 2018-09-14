@@ -1,4 +1,4 @@
-import { Operation, Piece, Rotation } from '../enums';
+import { Piece, Rotation } from '../enums';
 import { Quiz } from '../fumen/quiz';
 import { Field } from '../fumen/field';
 import { Move } from '../fumen/fumen';
@@ -7,34 +7,47 @@ import { Pages } from '../pages';
 describe('comment', () => {
     const commentText = (text: string) => ({
         comment: { text },
+        flags: { quiz: false },
     });
 
     const commentRef = (ref: number) => ({
         comment: { ref },
+        flags: { quiz: false },
     });
 
-    const quizText = (quiz: Quiz, operation?: Operation) => ({
+    const quizText = (quiz: Quiz, piece?: Piece) => ({
         comment: { text: quiz.toString() },
-        quiz: { operation },
+        piece: piece !== undefined ? { type: piece } : undefined,
+        flags: {
+            lock: true,
+            quiz: true,
+        },
     });
 
-    const quizRef = (ref: number, operation?: Operation) => ({
+    const quizRef = (ref: number, piece?: Piece) => ({
         comment: { ref },
-        quiz: { operation },
+        piece: piece !== undefined ? { type: piece } : undefined,
+        flags: {
+            lock: true,
+            quiz: true,
+        },
     });
 
     const quizRefWithPiece = (ref: number, piece?: Piece) => ({
         comment: { ref },
-        quiz: {},
         piece: { type: piece },
         flags: {
+            quiz: true,
             lock: piece !== undefined,
         },
     });
 
     const pieceRef = (piece: Move, lock: boolean = true) => ({
         piece,
-        flags: { lock },
+        flags: {
+            lock,
+            quiz: true,
+        },
     });
 
     test('comment text only', () => {
@@ -71,7 +84,7 @@ describe('comment', () => {
     });
 
     test('quiz ref', () => {
-        const pages = new Pages([quizText(Quiz.create('IOT'), Operation.Direct), quizRef(0, Operation.Stock)] as any);
+        const pages = new Pages([quizText(Quiz.create('IOT'), Piece.I), quizRef(0, Piece.T)] as any);
         expect(pages.getComment(1)).toEqual({
             quiz: Quiz.create('OT').toString(),
             quizAfterOperation: Quiz.create('O', ''),
@@ -104,9 +117,9 @@ describe('comment', () => {
 
     test('last hold', () => {
         const pages = new Pages([
-            quizText(Quiz.create('O', 'L'), Operation.Direct),
+            quizText(Quiz.create('O', 'L'), Piece.L),
             quizRef(0),
-            quizRef(0, Operation.Swap),
+            quizRef(0, Piece.O),
             quizRef(0),
             quizRefWithPiece(0, Piece.Z),
             quizRefWithPiece(0, Piece.Z),

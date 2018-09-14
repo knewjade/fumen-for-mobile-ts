@@ -1,4 +1,4 @@
-import { FieldConstants, isMinoPiece, Operation, Piece, Rotation } from '../enums';
+import { FieldConstants, isMinoPiece, Piece, Rotation } from '../enums';
 import { Quiz } from './quiz';
 import { Field } from './field';
 import { decodeAction, encodeAction } from './action';
@@ -26,9 +26,6 @@ export interface Page {
         text?: string;
         ref?: number;
     };
-    quiz?: {
-        operation?: Operation;
-    };
     commands?: {
         pre: {
             [key in string]: PreCommand;
@@ -39,6 +36,7 @@ export interface Page {
         mirror: boolean;
         colorize: boolean;
         rise: boolean;
+        quiz: boolean;
     };
 }
 
@@ -243,25 +241,18 @@ export async function innerDecode(
         }
 
         // Quiz用の操作を取得し、次ページ開始時点のQuizに1手進める
-        let quiz: {
-            operation?: Operation;
-        } | undefined = undefined;
-
+        let quiz = false;
         if (store.quiz !== undefined) {
+            quiz = true;
+
             if (action.lock && isMinoPiece(action.piece.type) && store.quiz.canOperate()) {
                 try {
                     const operation = store.quiz.getOperation(action.piece.type);
-                    quiz = { operation };
                     store.quiz = store.quiz.operate(operation);
                 } catch (e) {
                     // Not operate
                     console.error(e.message);
-                    quiz = { operation: undefined };
                 }
-            } else {
-                quiz = {
-                    operation: undefined,
-                };
             }
         }
 
@@ -293,10 +284,10 @@ export async function innerDecode(
         const page = {
             field,
             comment,
-            quiz,
             index: pageIndex,
             piece: currentPiece,
             flags: {
+                quiz,
                 lock: action.lock,
                 mirror: action.mirror,
                 colorize: action.colorize,

@@ -76,6 +76,10 @@ export const putPieceActions: Readonly<PutPieceActions> = {
         ]);
     },
     ontouchStartField: ({ index }) => (state): NextState => {
+        if (state.events.touch.piece !== undefined) {
+            return undefined;
+        }
+
         const nextState = ontouchStartField(state, index);
 
         if (nextState !== undefined) {

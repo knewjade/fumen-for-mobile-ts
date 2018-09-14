@@ -65,8 +65,7 @@ export class Pages {
     // 指定したページのコメントを取得する
     getComment(index: number): CommentResult {
         const currentPage = this.pages[index];
-        const quiz = currentPage.quiz !== undefined;
-        return quiz ? this.restructureQuiz(index) : this.getDescription(index);
+        return currentPage.flags.quiz ? this.restructureQuiz(index) : this.getDescription(index);
     }
 
     // 指定したページのフィールドを取得する
@@ -77,13 +76,13 @@ export class Pages {
     // TODO: Add test
     insertRefPage(index: number) {
         if (index < 0) {
-            throw new FumenError('Illegal index: ' + index);
+            throw new FumenError(`Illegal index: ${index}`);
         }
 
         // ひとつ前のページがないときはエラー
         const prev = this.pages[index - 1];
         if (prev === undefined) {
-            throw new FumenError('Not found prev page: ' + index);
+            throw new FumenError(`Not found prev page: ${index}`);
         }
 
         const page: Page = {
@@ -95,9 +94,9 @@ export class Pages {
                 mirror: prev.flags.lock ? false : prev.flags.mirror,
                 colorize: prev.flags.colorize,
                 rise: prev.flags.lock ? false : prev.flags.rise,
+                quiz: prev.flags.quiz,
             },
             piece: prev.flags.lock ? undefined : prev.piece,
-            quiz: prev.quiz !== undefined ? { operation: undefined } : undefined,
         };
 
         // フィールドの参照
@@ -106,7 +105,7 @@ export class Pages {
         } else if (prev.field.obj !== undefined) {
             page.field.ref = index - 1;
         } else {
-            throw new FumenError('Unexpected field: ' + prev.field);
+            throw new FumenError(`Unexpected field: ${prev.field}`);
         }
 
         // コメントの参照
@@ -115,7 +114,7 @@ export class Pages {
         } else if (prev.comment.text !== undefined) {
             page.comment.ref = index - 1;
         } else {
-            throw new FumenError('Unexpected comment: ' + prev.comment);
+            throw new FumenError(`Unexpected comment: ${prev.comment}`);
         }
 
         this.insertPage(index, page);
@@ -124,13 +123,13 @@ export class Pages {
     // TODO: Add test
     insertKeyPage(index: number) {
         if (index < 0) {
-            throw new FumenError('Illegal index: ' + index);
+            throw new FumenError(`Illegal index: ${index}`);
         }
 
         // ひとつ前のページがないときはエラー
         const prev = this.pages[index - 1];
         if (prev === undefined) {
-            throw new FumenError('Not found prev page: ' + index);
+            throw new FumenError(`Not found prev page: ${index}`);
         }
 
         const currentField = this.restructureField(index - 1, PageFieldOperation.All);
@@ -144,9 +143,9 @@ export class Pages {
                 mirror: prev.flags.lock ? false : prev.flags.mirror,
                 colorize: prev.flags.colorize,
                 rise: prev.flags.lock ? false : prev.flags.rise,
+                quiz: prev.flags.quiz,
             },
             piece: prev.flags.lock ? undefined : prev.piece,
-            quiz: prev.quiz !== undefined ? { operation: undefined } : undefined,
         };
 
         // コメントの参照
@@ -155,7 +154,7 @@ export class Pages {
         } else if (prev.comment.text !== undefined) {
             page.comment.ref = index - 1;
         } else {
-            throw new FumenError('Unexpected comment: ' + prev.comment);
+            throw new FumenError(`Unexpected comment: ${prev.comment}`);
         }
 
         this.insertPage(index, page);
@@ -248,11 +247,11 @@ export class Pages {
         const pages = this.pages;
 
         if (index <= 0 || pages.length <= index) {
-            throw new FumenError('Illegal index: ' + index);
+            throw new FumenError(`Illegal index: ${index}`);
         }
 
         if (pages[index].field.obj === undefined) {
-            throw new FumenError('Not found field obj: ' + index);
+            throw new FumenError(`Not found field obj: ${index}`);
         }
 
         // 現在のフィールドを取得
@@ -428,10 +427,8 @@ export class Pages {
         pages[index].comment = { ref };
     }
 
-    private restructureQuiz(index: number): TextCommentResult | QuizCommentResult {
-        const currentPage = this.pages[index];
-
-        const toCache = (quiz: string, quizAfterOperation: Quiz) => ({ quiz, quizAfterOperation });
+    private restructureQuiz(pageIndex: number): TextCommentResult | QuizCommentResult {
+        const currentPage = this.pages[pageIndex];
 
         const getQuiz = (): TextCommentResult | QuizCommentResult => {
             let state: undefined | {
@@ -446,7 +443,7 @@ export class Pages {
                 state = {
                     comment,
                     quiz: new Quiz(comment),
-                    startIndex: index,
+                    startIndex: pageIndex,
                 };
             } else {
                 // 参照先から持ってくる
@@ -476,38 +473,42 @@ export class Pages {
             }
 
             // 参照ページから現在のページまで操作を再現する
-            let { quiz, comment } = state;
-            let cache: TextCommentResult | QuizCommentResult | undefined;
-            for (let i = state.startIndex; i <= index; i += 1) {
-                const quizPage = this.pages[i];
-                if (quizPage.quiz === undefined) {
+            let cache = { quiz: state.quiz, comment: state.comment };
+            let result: QuizCommentResult = { quizAfterOperation: cache.quiz, quiz: cache.comment };
+            for (let index = state.startIndex; index <= pageIndex; index += 1) {
+                const quizPage = this.pages[index];
+
+                if (!quizPage.flags.quiz) {
                     throw new ViewError('Unexpected quiz operation');
                 }
 
-                if (quiz.canOperate()) {
-                    // ミノを操作をする
-                    let quizAfterOperation = quiz;
-                    if (quizPage.quiz.operation !== undefined) {
-                        quizAfterOperation = quiz.operate(quizPage.quiz.operation);
+                const currentQuiz = cache.quiz;
+                if (currentQuiz.canOperate()) {
+                    if (quizPage.piece !== undefined && quizPage.flags.lock) {
+                        try {
+                            // ミノを操作をする
+                            const operation = currentQuiz.getOperation(quizPage.piece.type);
+                            const quizAfterOperation = currentQuiz.operate(operation);
+
+                            result = { quizAfterOperation, quiz: cache.comment };
+                            cache = { quiz: quizAfterOperation, comment: quizAfterOperation.format().toString() };
+                        } catch (e) {
+                            // Quizの解釈ができない
+                            result = { quizAfterOperation: cache.quiz, quiz: cache.comment };
+                        }
+                    } else {
+                        result = { quizAfterOperation: cache.quiz, quiz: cache.comment };
                     }
-
-                    // コメントをキャッシュする
-                    cache = toCache(comment, quizAfterOperation);
-
-                    quiz = quizAfterOperation;
-                    comment = quiz.format().toString();
                 } else {
-                    // Next, Holdを算出
-                    const next = Pages.extractNext(this.pages.slice(i));
-
-                    cache = {
-                        next,
-                        text: comment,
+                    // Quizが終了した後、変化することはないため、目的のページのNext, Holdを直接算出
+                    return {
+                        text: cache.comment,
+                        next: Pages.extractNext(this.pages.slice(pageIndex)),
                     };
                 }
             }
 
-            return cache!;
+            return result;
         };
 
         return getQuiz();

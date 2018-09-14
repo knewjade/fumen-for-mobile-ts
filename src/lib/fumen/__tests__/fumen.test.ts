@@ -1,6 +1,6 @@
 import { decode, encode, extract, Page } from '../fumen';
 import { Field, PlayField } from '../field';
-import { Operation, Piece, Rotation } from '../../enums';
+import { Piece, Rotation } from '../../enums';
 import { FumenError } from '../../errors';
 
 describe('fumen', () => {
@@ -15,12 +15,12 @@ describe('fumen', () => {
                 comment: {
                     text: '',
                 },
-                quiz: undefined,
                 flags: {
                     lock: true,
                     mirror: false,
                     colorize: true,
                     rise: false,
+                    quiz: false,
                 },
                 field: {
                     obj: new Field({}),
@@ -48,6 +48,7 @@ describe('fumen', () => {
             expect(pages[0]).toMatchObject({
                 flags: {
                     mirror: true,
+                    quiz: false,
                 },
                 field: {
                     obj: new Field({
@@ -64,6 +65,7 @@ describe('fumen', () => {
             expect(pages[1]).toMatchObject({
                 flags: {
                     mirror: false,
+                    quiz: false,
                 },
                 field: {
                     ref: 0,
@@ -78,6 +80,7 @@ describe('fumen', () => {
             expect(pages[0]).toMatchObject({
                 flags: {
                     rise: true,
+                    quiz: false,
                 },
                 field: {
                     obj: new Field({
@@ -94,6 +97,7 @@ describe('fumen', () => {
             expect(pages[1]).toMatchObject({
                 flags: {
                     rise: false,
+                    quiz: false,
                 },
                 field: {
                     ref: 0,
@@ -118,12 +122,12 @@ describe('fumen', () => {
                 comment: {
                     text: '',
                 },
-                quiz: undefined,
                 flags: {
                     lock: true,
                     mirror: false,
                     colorize: true,
                     rise: false,
+                    quiz: false,
                 },
                 field: {
                     obj: new Field({}),
@@ -176,11 +180,9 @@ describe('fumen', () => {
                         y: 0,
                     },
                 },
-                quiz: {
-                    operation: Operation.Direct,
-                },
                 flags: {
                     lock: true,
+                    quiz: true,
                 },
             } as Page);
 
@@ -196,11 +198,9 @@ describe('fumen', () => {
                         y: 0,
                     },
                 },
-                quiz: {
-                    operation: Operation.Stock,
-                },
                 flags: {
                     lock: true,
+                    quiz: true,
                 },
             } as Page);
 
@@ -209,8 +209,8 @@ describe('fumen', () => {
                     ref: 0,
                 },
                 piece: undefined,
-                quiz: {
-                    operation: undefined,
+                flags: {
+                    quiz: true,
                 },
             } as Page);
 
@@ -226,11 +226,9 @@ describe('fumen', () => {
                         y: 1,
                     },
                 },
-                quiz: {
-                    operation: Operation.Swap,
-                },
                 flags: {
                     lock: true,
+                    quiz: true,
                 },
             } as Page);
 
@@ -246,11 +244,9 @@ describe('fumen', () => {
                         y: 2,
                     },
                 },
-                quiz: {
-                    operation: Operation.Swap,
-                },
                 flags: {
                     lock: true,
+                    quiz: true,
                 },
             } as Page);
 
@@ -259,11 +255,9 @@ describe('fumen', () => {
                     ref: 0,
                 },
                 piece: undefined,
-                quiz: {
-                    operation: undefined,
-                },
                 flags: {
                     lock: true,
+                    quiz: true,
                 },
             } as Page);
 
@@ -272,11 +266,9 @@ describe('fumen', () => {
                     ref: 0,
                 },
                 piece: undefined,
-                quiz: {
-                    operation: undefined,
-                },
                 flags: {
                     lock: true,
+                    quiz: true,
                 },
             } as Page);
         });
@@ -308,11 +300,9 @@ describe('fumen', () => {
                         y: 0,
                     },
                 },
-                quiz: {
-                    operation: Operation.Direct,
-                },
                 flags: {
                     lock: true,
+                    quiz: true,
                 },
             } as Page);
 
@@ -328,11 +318,9 @@ describe('fumen', () => {
                         y: 1,
                     },
                 },
-                quiz: {
-                    operation: Operation.Direct,
-                },
                 flags: {
                     lock: true,
+                    quiz: true,
                 },
             } as Page);
 
@@ -348,11 +336,9 @@ describe('fumen', () => {
                         y: 0,
                     },
                 },
-                quiz: {
-                    operation: undefined,
-                },
                 flags: {
                     lock: true,
+                    quiz: true,
                 },
             } as Page);
         });
@@ -493,11 +479,11 @@ describe('fumen', () => {
             comment: {
                 text: quiz,
             },
-            quiz: {
-                operation: Operation.Direct,
-            },
             field: {
                 obj: new Field({}),
+            },
+            flags: {
+                quiz: true,
             },
         } as Page);
 
@@ -512,9 +498,6 @@ describe('fumen', () => {
             },
             comment: {
                 ref: 0,
-            },
-            quiz: {
-                operation: Operation.Direct,
             },
             field: {
                 obj: new Field({
@@ -536,6 +519,9 @@ describe('fumen', () => {
                     sentLine: PlayField.loadMinify('__________'),
                 }),
             },
+            flags: {
+                quiz: true,
+            },
         } as Page);
 
         expect(pages[1824]).toMatchObject({
@@ -550,11 +536,11 @@ describe('fumen', () => {
             comment: {
                 ref: 0,
             },
-            quiz: {
-                operation: Operation.Direct,
-            },
             field: {
                 ref: 560,
+            },
+            flags: {
+                quiz: true,
             },
         } as Page);
 
@@ -563,11 +549,11 @@ describe('fumen', () => {
             comment: {
                 ref: 0,
             },
-            quiz: {
-                operation: undefined,
-            },
             field: {
                 ref: 560,
+            },
+            flags: {
+                quiz: true,
             },
         } as Page);
 
@@ -649,8 +635,8 @@ describe('fumen', () => {
                         y: 0,
                     },
                 },
-                quiz: {
-                    operation: undefined,
+                flags: {
+                    quiz: true,
                 },
             } as Page);
 
@@ -659,8 +645,8 @@ describe('fumen', () => {
                     ref: 0,
                 },
                 piece: undefined,
-                quiz: {
-                    operation: undefined,
+                flags: {
+                    quiz: true,
                 },
             } as Page);
         });

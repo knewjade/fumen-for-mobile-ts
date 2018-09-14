@@ -673,7 +673,8 @@ export const view: View<State, Actions> = (state, actions) => {
 
     const batchDraw = () => resources.konva.stage.batchDraw();
 
-    const currentPage = state.fumen.pages[state.fumen.currentIndex];
+    const currentIndex = state.fumen.currentIndex;
+    const currentPage = state.fumen.pages[currentIndex];
     const isCommentKey = resources.comment !== undefined
         || (currentPage !== undefined && currentPage.comment.text !== undefined);
 
@@ -693,7 +694,7 @@ export const view: View<State, Actions> = (state, actions) => {
                 textColor: isCommentKey ? '#333' : '#757575',
                 backgroundColorClass: 'white',
                 height: layout.comment.size.height,
-                text: resources.comment !== undefined ? resources.comment : state.comment.text,
+                text: resources.comment !== undefined ? resources.comment.text : state.comment.text,
                 placeholder: state.mode.comment ? 'comment' : undefined,
                 readonly: !state.mode.comment,
                 actions: {
@@ -703,7 +704,7 @@ export const view: View<State, Actions> = (state, actions) => {
                         }
 
                         const text = element.value ? element.value : '';
-                        actions.updateCommentText({ text });
+                        actions.updateCommentText({ text, pageIndex: currentIndex });
 
                         if (event.key === 'Enter') {
                             element.blur();
@@ -712,11 +713,10 @@ export const view: View<State, Actions> = (state, actions) => {
                     onblur: () => {
                         if (element) {
                             const text = element.value ? element.value : '';
-                            actions.updateCommentText({ text });
+                            actions.updateCommentText({ text, pageIndex: currentIndex });
                         }
 
                         actions.commitCommentText();
-                        actions.reopenCurrentPage();
                     },
                 },
             }),
@@ -732,10 +732,10 @@ export const view: View<State, Actions> = (state, actions) => {
 
         state.modal.menu ? MenuModal({
             actions,
+            currentIndex,
             version: state.version,
             pages: state.fumen.pages,
             screen: state.mode.screen,
-            currentIndex: state.fumen.currentIndex,
             commentEnable: state.mode.comment,
         }) : undefined as any,
     ]);

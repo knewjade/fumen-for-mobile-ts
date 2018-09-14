@@ -1,5 +1,5 @@
 import { decode, Move, Page, PreCommand } from './lib/fumen/fumen';
-import { Operation, Piece } from './lib/enums';
+import { Piece } from './lib/enums';
 import { Field, PlayField } from './lib/fumen/field';
 import { Pages } from './lib/pages';
 
@@ -164,9 +164,6 @@ export interface PrimitivePage {
         text?: string;
         ref?: number;
     };
-    quiz?: {
-        operation?: Operation;
-    };
     commands?: {
         pre: {
             [key in string]: PreCommand;
@@ -177,6 +174,7 @@ export interface PrimitivePage {
         mirror: boolean;
         colorize: boolean;
         rise: boolean;
+        quiz: boolean;
     };
 }
 
@@ -207,6 +205,7 @@ export const toPrimitivePage = (page: Page): PrimitivePage => {
             mirror: page.flags.mirror,
             colorize: page.flags.colorize,
             rise: page.flags.rise,
+            quiz: page.flags.quiz,
         },
     };
 };
@@ -238,6 +237,7 @@ export const toPage = (page: PrimitivePage): Page => {
             mirror: page.flags.mirror,
             colorize: page.flags.colorize,
             rise: page.flags.rise,
+            quiz: page.flags.quiz,
         },
     };
 };

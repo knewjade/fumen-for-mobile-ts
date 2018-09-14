@@ -133,7 +133,7 @@ export const resources = {
         fumen: undefined as any,
     },
     konva: createKonvaObjects(),
-    comment: undefined as (string | undefined),
+    comment: undefined as ({ text: string, pageIndex: number } | undefined),
 };
 
 interface Box {

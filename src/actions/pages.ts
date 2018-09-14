@@ -398,7 +398,7 @@ const removePage = ({ index }: { index: number }) => (state: Readonly<State>): N
     const pages = fumen.pages;
 
     if (index < 0) {
-        throw new FumenError('Illegal index: ' + index);
+        throw new FumenError(`Illegal index: ${index}`);
     }
 
     if (pages.length <= 1) {

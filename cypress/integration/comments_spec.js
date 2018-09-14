@@ -117,4 +117,52 @@ describe('Comments', () => {
 
         expectFumen('v115@vhIzKYFAooMDEPBAAACMJmHYKAooMDEvzjXEMnBAAp?IYTAooMDEvzjXEM388AxnA6AFrmAAUBJvJYlAlvs2A1sDfE?To3ABlvs2A3HEfET4ZOBxX3JBEIfRA1Dq9BlAAAAFFYDAUN?SBAAgWAAAgWlAlvs2A1sDfETo3ABlvs2AUDEfETYOVByX3J?BEIfRA1Dq9BlAAAA');
     });
+
+    it('Quiz', () => {
+        visit({});
+
+        operations.screen.writable();
+
+        operations.mode.piece.open();
+
+        // 1ページ目
+        minoPosition(Piece.T, Rotation.Spawn)(1, 0).forEach(([x, y]) => {
+            operations.mode.block.click(x, y);
+        });
+
+        cy.get(datatest('text-comment')).type('#Q=[](T)ZSIOLJ');
+
+        operations.mode.editor.nextPage();
+
+        // 2ページ目
+        minoPosition(Piece.Z, Rotation.Spawn)(3, 0).forEach(([x, y]) => {
+            operations.mode.block.click(x, y);
+        });
+
+        // 3ページ目
+        minoPosition(Piece.S, Rotation.Spawn)(4, 2).forEach(([x, y]) => {
+            operations.mode.block.click(x, y);
+        });
+
+        expectFumen('v115@vhC1OYaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AA?A0KJXBJ');
+
+        // 4ページ目
+        minoPosition(Piece.Z, Rotation.Spawn)(5, 0).forEach(([x, y]) => {
+            operations.mode.block.click(x, y);
+        });
+
+        cy.get(datatest('text-comment')).clear().type('#Q=[](T)ZSIOLJ');
+
+        // 5ページ目
+        minoPosition(Piece.T, Rotation.Left)(6, 2).forEach(([x, y]) => {
+            operations.mode.block.click(x, y);
+        });
+
+        // 6ページ目
+        minoPosition(Piece.I, Rotation.Left)(9, 1).forEach(([x, y]) => {
+            operations.mode.block.click(x, y);
+        });
+
+        expectFumen('v115@vhF1OYaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AA?A0KJXBJ0LYaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AAA?dHJpIJ');
+    });
 });
