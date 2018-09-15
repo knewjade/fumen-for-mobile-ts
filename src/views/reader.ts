@@ -233,7 +233,7 @@ export const view: View<State, Actions> = (state, actions) => {
                 dataTest: 'text-comment',
                 id: 'text-comment',
                 textColor: state.comment.isChanged ? '#fff' : '#333',
-                backgroundColorClass: state.comment.isChanged ? 'green darken-1' : 'white',
+                backgroundColorClass: state.comment.text !== '' && state.comment.isChanged ? 'green darken-1' : 'white',
                 height: layout.comment.size.height,
                 text: state.comment.text,
                 readonly: true,

@@ -36,17 +36,19 @@ describe('Open fumen', () => {
     });
 
     it('First page/Last page', () => {
-        cy.visit('./public/index.html?lng=ja&d=v115@vhF2OYaAFLDmClcJSAVDEHBEooRBKoAVBU3TWCpXBA?AVqBTfBSwBJnBMmB');
+        visit({ fumen: 'v115@vhG2OYaAFLDmClcJSAVDEHBEooRBKoAVBU3TWCpXBA?AVqBTfBSwBJnBMmBAAPAA' });
 
         operations.menu.lastPage();
 
         // Assertion: ページ番号の確認
-        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '6 / 6');
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '7 / 7');
+        cy.get(datatest('text-comment')).should('not.have.class', 'green darken-1');
 
         operations.menu.firstPage();
 
         // Assertion: ページ番号の確認
-        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 6');
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 7');
+        cy.get(datatest('text-comment')).should('have.class', 'green darken-1');
     });
 
     it('Empty v110', () => {
