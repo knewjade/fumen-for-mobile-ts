@@ -37,7 +37,7 @@ export const ReaderTools: Component<Props> = ({ height, animationState, pages, p
         alignItems: 'center',
     });
 
-    const themeColor = 'page-footer tools ' + palette.baseClass;
+    const themeColor = `page-footer tools ${palette.baseClass}`;
 
     return (
         <nav datatest="tools" className={themeColor} style={navProperties}>

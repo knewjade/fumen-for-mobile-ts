@@ -1,4 +1,4 @@
-import { getBlockPositions, Piece, Rotation, toPositionIndex, TouchTypes, } from '../lib/enums';
+import { getBlockPositions, Piece, Rotation, toPositionIndex, TouchTypes } from '../lib/enums';
 import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
 import { putPieceActions } from './put_piece';

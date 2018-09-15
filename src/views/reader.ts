@@ -181,7 +181,7 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
             ...(state.nexts !== undefined ? state.nexts : []).map((value, index) => {
                 return Box({
                     size: layout.hold.size,
-                    key: 'box-next-' + index,
+                    key: `box-next-${index}`,
                     rects: resources.konva.nexts[index],
                     topLeft: layout.nexts.topLeft(index),
                     piece: isMinoPiece(value) ? {
@@ -206,7 +206,7 @@ const Tools = (state: State, actions: Actions, height: number) => {
         height,
         palette: Palette(Screens.Reader),
         animationState: state.play.status,
-        pages: state.fumen.currentIndex + 1 + ' / ' + state.fumen.maxPage,
+        pages: `${state.fumen.currentIndex + 1} / ${state.fumen.maxPage}`,
     });
 };
 
@@ -216,7 +216,11 @@ export const view: View<State, Actions> = (state, actions) => {
 
     const batchDraw = () => resources.konva.stage.batchDraw();
 
-    return div({ oncreate: batchDraw, onupdate: batchDraw }, [ // Hyperappでは最上位のノードが最後に実行される
+    return div({
+        oncreate: batchDraw,
+        onupdate: batchDraw,
+        key: 'view',
+    }, [ // Hyperappでは最上位のノードが最後に実行される
         resources.konva.stage.isReady ? Events(state, actions, layout) : undefined,
 
         ScreenField(state, actions, layout),
@@ -225,6 +229,7 @@ export const view: View<State, Actions> = (state, actions) => {
             key: 'menu-top',
         }, [
             comment({
+                key: 'text-comment',
                 dataTest: 'text-comment',
                 id: 'text-comment',
                 textColor: state.comment.isChanged ? '#fff' : '#333',

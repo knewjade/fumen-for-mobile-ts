@@ -199,7 +199,7 @@ export class PlayField {
             return false;
         }
 
-        for (let index = 0; index < this.pieces.length; index++) {
+        for (let index = 0; index < this.pieces.length; index += 1) {
             if (this.pieces[index] !== other.pieces[index]) {
                 return false;
             }

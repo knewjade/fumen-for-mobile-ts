@@ -101,34 +101,36 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
         }
     };
 
-    const openClassName = 'waves-effect waves-teal btn-flat' + (
-        isEmptyTextArea || errorMessage !== undefined ? ' disabled' : ''
-    );
+    const openClassVisibility = isEmptyTextArea || errorMessage !== undefined ? ' disabled' : '';
+    const openClassName = `waves-effect waves-teal btn-flat${openClassVisibility}`;
 
     return (
         <div key="fumen-modal-top">
-            <div datatest="mdl-open-fumen" className="modal" oncreate={oncreate} ondestroy={ondestroy}>
-                <div className="modal-content">
-                    <h4 dataTest="open-fumen-label">{i18n.OpenFumen.Title()}</h4>
+            <div key="mdl-open-fumen" datatest="mdl-open-fumen"
+                 className="modal" oncreate={oncreate} ondestroy={ondestroy}>
+                <div key="modal-content" className="modal-content">
+                    <h4 key="open-fumen-label" dataTest="open-fumen-label">{i18n.OpenFumen.Title()}</h4>
 
-                    <textarea dataTest="input-fumen" id="input-fumen" rows={3} style={textAreaStyle}
+                    <textarea key="input-fumen" dataTest="input-fumen" id="input-fumen" rows={3} style={textAreaStyle}
                               oninput={oninput} onblur={onblur}
                               value={textAreaValue} placeholder={i18n.OpenFumen.PlaceHolder()}/>
 
-                    <span datatest="text-message" id="text-fumen-modal-error" className="red-text text-accent-2"
+                    <span key="text-message" datatest="text-message" id="text-fumen-modal-error"
+                          className="red-text text-accent-2"
                           style={style({ display: errorMessage !== undefined ? undefined : 'none' })}>
                         {errorMessage}
                     </span>
 
                 </div>
 
-                <div className="modal-footer">
-                    <a href="#" datatest="btn-cancel" id="btn-cancel" className="waves-effect waves-teal btn-flat"
-                       onclick={cancel}>
+                <div key="modal-footer" className="modal-footer">
+                    <a href="#" key="btn-cancel" datatest="btn-cancel" id="btn-cancel"
+                       className="waves-effect waves-teal btn-flat" onclick={cancel}>
                         {i18n.OpenFumen.Buttons.Cancel()}
                     </a>
 
-                    <a href="#" datatest="btn-open" id="btn-open" className={openClassName} onclick={open}>
+                    <a href="#" key="btn-open" datatest="btn-open" id="btn-open"
+                       className={openClassName} onclick={open}>
                         {i18n.OpenFumen.Buttons.Open()}
                     </a>
                 </div>
@@ -198,7 +200,8 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
         actions.fixInferencePiece();
 
         // テト譜の変換
-        const data = 'v115@' + await encode(pages);
+        const encoded = await encode(pages);
+        const data = `v115@${encoded}`;
 
         // コピー用のelementを作成
         const domain = i18n.Domains.Fumen();
@@ -234,17 +237,19 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
 
     return (
         <div key="menu-modal-top">
-            <div datatest="mdl-open-fumen" className="modal bottom-sheet" oncreate={oncreate} ondestroy={ondestroy}>
-                <div className="modal-content">
+            <div key="mdl-open-fumen" datatest="mdl-open-fumen"
+                 className="modal bottom-sheet" oncreate={oncreate} ondestroy={ondestroy}>
+                <div key="modal-content" className="modal-content">
 
-                    <h4>
+                    <h4 key="memu-title">
                         {i18n.Menu.Title()}&nbsp;
                         <span style={style({ color: '#999', fontSize: '50%' })}>[{i18n.Menu.Build(version)}]</span>
                     </h4>
 
-                    <div style={divProperties}>
+                    <div key="menu-top" style={divProperties}>
                         {screen === Screens.Editor ?
-                            <SettingButton datatest="btn-readonly" href="#" iconName="visibility" fontSize={31.25}
+                            <SettingButton key="btn-readonly" datatest="btn-readonly"
+                                           href="#" iconName="visibility" fontSize={31.25}
                                            onclick={() => {
                                                actions.changeToReaderScreen();
                                                actions.closeMenuModal();
@@ -252,7 +257,8 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                             : undefined}
 
                         {screen === Screens.Reader ?
-                            <SettingButton datatest="btn-writable" href="#" iconName="mode_edit" fontSize={31.25}
+                            <SettingButton key="btn-writable" datatest="btn-writable"
+                                           href="#" iconName="mode_edit" fontSize={31.25}
                                            onclick={() => {
                                                actions.changeToDrawerScreen();
                                                actions.changeToDrawingToolMode();
@@ -260,12 +266,14 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                                            }}>{i18n.Menu.Buttons.Writable()}</SettingButton>
                             : undefined}
 
-                        <SettingButton datatest="btn-copy-fumen" href="#" iconName="content_copy"
+                        <SettingButton key="btn-copy-fumen" datatest="btn-copy-fumen"
+                                       href="#" iconName="content_copy"
                                        fontSize={29.3} onclick={copyOnClick}>
                             {i18n.Menu.Buttons.Clipboard()}
                         </SettingButton>
 
-                        <SettingButton datatest="btn-new-fumen" href="#" iconName="insert_drive_file" fontSize={32.3}
+                        <SettingButton key="btn-new-fumen" datatest="btn-new-fumen"
+                                       href="#" iconName="insert_drive_file" fontSize={32.3}
                                        onclick={() => {
                                            actions.fixInferencePiece();
                                            actions.clearInferencePiece();
@@ -277,7 +285,8 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                             {i18n.Menu.Buttons.New()}
                         </SettingButton>
 
-                        <SettingButton datatest="btn-first-page" href="#" iconName="fast_rewind" fontSize={32.3}
+                        <SettingButton key="btn-first-page" datatest="btn-first-page"
+                                       href="#" iconName="fast_rewind" fontSize={32.3}
                                        onclick={() => {
                                            actions.firstPage();
                                            actions.closeMenuModal();
@@ -285,7 +294,8 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                             {i18n.Menu.Buttons.FirstPage()}
                         </SettingButton>
 
-                        <SettingButton datatest="btn-last-page" href="#" iconName="fast_forward" fontSize={32.3}
+                        <SettingButton key="btn-last-page" datatest="btn-last-page"
+                                       href="#" iconName="fast_forward" fontSize={32.3}
                                        onclick={() => {
                                            actions.lastPage();
                                            actions.closeMenuModal();
@@ -293,7 +303,8 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                             {i18n.Menu.Buttons.LastPage()}
                         </SettingButton>
 
-                        <SettingButton datatest={commentEnable ? 'btn-comment-readonly' : 'btn-comment-writable'}
+                        <SettingButton key="btn-comment"
+                                       datatest={commentEnable ? 'btn-comment-readonly' : 'btn-comment-writable'}
                                        href="#" iconName="text_fields" fontSize={32.3}
                                        enable={screen === Screens.Editor}
                                        onclick={screen === Screens.Editor ? () => {
@@ -310,7 +321,8 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                             {commentEnable ? i18n.Menu.Buttons.ReadonlyComment() : i18n.Menu.Buttons.WritableComment()}
                         </SettingButton>
 
-                        <SettingButton href="./help.html" iconName="help_outline" fontSize={31.25}>
+                        <SettingButton key="btn-help" datatest="btn-help"
+                                       href="./help.html" iconName="help_outline" fontSize={31.25}>
                             {i18n.Menu.Buttons.Help()}
                         </SettingButton>
 
@@ -326,20 +338,21 @@ interface SettingButtonProps {
     href?: string;
     onclick?: (event: MouseEvent) => void;
     iconName: string;
-    datatest?: string;
+    key: string;
+    datatest: string;
     fontSize: number;
     enable?: boolean;
 }
 
 export const SettingButton: ComponentWithText<SettingButtonProps> = (
-    { href = '#', onclick, iconName, datatest, fontSize, enable = true }, showName,
+    { href = '#', key, onclick, iconName, datatest, fontSize, enable = true }, showName,
     ) => (
-        <a href={href} onclick={onclick !== undefined ? (event: MouseEvent) => {
+    <a key={key} href={href} onclick={onclick !== undefined ? (event: MouseEvent) => {
             onclick(event);
             event.stopPropagation();
             event.preventDefault();
         } : undefined}>
-            <i className={`material-icons z-depth-1 ${enable ? ' ' : 'disable'}`} style={style({
+        <i key={`${key}-icon`} className={`material-icons z-depth-1 ${enable ? ' ' : 'disable'}`} style={style({
                 width: px(50),
                 height: px(40),
                 lineHeight: px(40),
@@ -353,7 +366,8 @@ export const SettingButton: ComponentWithText<SettingButtonProps> = (
                 cursor: 'pointer',
             })}>{iconName}</i>
 
-            <div datatest={datatest} style={style({ textAlign: 'center', color: enable ? '#333' : '#bdbdbd' })}>
+        <div key={`${key}-text`} datatest={datatest}
+             style={style({ textAlign: 'center', color: enable ? '#333' : '#bdbdbd' })}>
                 {showName}
             </div>
         </a>

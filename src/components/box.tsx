@@ -78,7 +78,7 @@ export const Box: Component<Props> = ({ key, size, topLeft, piece, rects }) => {
         const pieceSizeObj = { width: pieceSize, height: pieceSize };
 
         positions = getPiecePositions(topLeft, piece.type, size, pieceSize, 1).map((position, index) => {
-            const positionKey = key + '-' + index;
+            const positionKey = `${key}-${index}`;
             return <BoxRect key={positionKey} dataTest={positionKey} rect={rects.pieces[index]} size={pieceSizeObj}
                             fillColor={piece.color} strokeColor="#333" strokeWidth={0} position={position}/>;
         });
@@ -94,7 +94,6 @@ export const Box: Component<Props> = ({ key, size, topLeft, piece, rects }) => {
         </div>
     );
 };
-
 
 interface BoxRectProps {
     rect: konva.Rect;

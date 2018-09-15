@@ -104,7 +104,7 @@ export function parsePiece(piece: string) {
     case '_':
         return Piece.Empty;
     }
-    throw new FumenError('Unexpected piece: ' + piece);
+    throw new FumenError(`Unexpected piece: ${piece}`);
 }
 
 export function isMinoPiece(b: Piece) {

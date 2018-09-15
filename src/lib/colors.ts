@@ -63,7 +63,7 @@ export function getHighlightColor(piece: Piece = Piece.Empty): string {
     case Piece.Empty:
         return '#000000';
     }
-    throw new ViewError('Not found highlight color: ' + piece);
+    throw new ViewError(`Not found highlight color: ${piece}`);
 }
 
 export function getNormalColor(piece: Piece = Piece.Empty): string {
@@ -87,5 +87,5 @@ export function getNormalColor(piece: Piece = Piece.Empty): string {
     case Piece.Empty:
         return '#000000';
     }
-    throw new ViewError('Not found normal color: ' + piece);
+    throw new ViewError(`Not found normal color: ${piece}`);
 }

@@ -54,7 +54,7 @@ export const EditorTools: Component<Props> = (
         baseCode: palette.baseCode,
         darkCode: palette.darkCode,
     };
-    const themeColor = 'page-footer tools ' + palette.baseClass;
+    const themeColor = `page-footer tools ${palette.baseClass}`;
 
     const pages = `${currentPage} / ${maxPage}`;
     const rightIconName = currentPage < maxPage ? 'navigate_next' : 'add';

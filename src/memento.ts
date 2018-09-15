@@ -28,7 +28,7 @@ const saver = (() => {
         saverState.isWorking = true;
         const data = await encode(pages, true);
         saverState.isWorking = false;
-        return 'v115@' + data;
+        return `v115@${data}`;
     };
 
     const toSaver = ({ saveKey, pages }: SaverProp, saveCallback: (data: string) => void) => {

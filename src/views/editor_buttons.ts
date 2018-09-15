@@ -16,7 +16,7 @@ export const colorButton = ({ layout, piece, highlight, onclick }: {
     const contents = [
         img({
             src: `img/${pieceName}.svg`,
-            height: (0.55 * layout.buttons.size.height) + '',
+            height: `${0.55 * layout.buttons.size.height}`,
             style: style({
                 margin: 'auto',
             }),
@@ -338,7 +338,7 @@ export const switchButton = (
         style: style({
             flexGrow,
             color: enable ? '#fff' : textColor,
-            border: enable ? `solid ${borderWidth}px ${borderColor}` : `dashed 1px #333`,
+            border: enable ? `solid ${borderWidth}px ${borderColor}` : 'dashed 1px #333',
             margin: `${px(margin)} 0px`,
             padding: px(0),
             width: px(width),
@@ -377,7 +377,7 @@ export const toolSpace = (
         style: style({
             flexGrow,
             color: '#fff',
-            border: `solid 0px #fff`,
+            border: 'solid 0px #fff',
             margin: `${px(margin)} 0px`,
             padding: px(0),
             width: px(width),

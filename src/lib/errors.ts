@@ -7,7 +7,7 @@ abstract class BaseError implements Error {
     }
 
     toString() {
-        return this.name + ': ' + this.message;
+        return `${this.name}: ${this.message}`;
     }
 }
 

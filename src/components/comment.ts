@@ -3,6 +3,7 @@ import { div, input } from '@hyperapp/html';
 
 interface Props {
     dataTest: string;
+    key: string;
     id: string;
     textColor: string;
     backgroundColorClass: string;
@@ -11,13 +12,14 @@ interface Props {
     readonly: boolean;
     placeholder?: string;
     actions?: {
-        onkeyup: (event: KeyboardEvent) => void;
+        onkeypress: (event: KeyboardEvent) => void;
+        onfocus: (event: TextEvent) => void;
         onblur: (event: TextEvent) => void;
     };
 }
 
 export const comment: Component<Props> = (
-    { height, textColor, backgroundColorClass, dataTest, id, text, readonly, placeholder, actions },
+    { height, textColor, backgroundColorClass, dataTest, key, id, text, readonly, placeholder, actions },
 ) => {
     const commentStyle = style({
         width: '100%',
@@ -31,6 +33,7 @@ export const comment: Component<Props> = (
     });
 
     return div({
+        key,
         style: style({
             width: '100%',
             height: px(height),
@@ -38,11 +41,13 @@ export const comment: Component<Props> = (
         }),
     }, [
         input({
+            key,
             dataTest,
             id,
             placeholder,
-            onkeyup: actions !== undefined ? actions.onkeyup : undefined,
+            onkeypress: actions !== undefined ? actions.onkeypress : undefined,
             onblur: actions !== undefined ? actions.onblur : undefined,
+            onfocus: actions !== undefined ? actions.onfocus : undefined,
             type: 'text',
             className: backgroundColorClass,
             style: commentStyle,

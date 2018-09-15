@@ -4,6 +4,7 @@ import { decode, Page } from '../lib/fumen/fumen';
 import { i18n } from '../locales/keys';
 import { ViewError } from '../lib/errors';
 import { toFumenTask, toPrimitivePage } from '../history_task';
+import { resources } from '../states';
 
 export interface UtilsActions {
     resize: (data: { width: number, height: number }) => action;
@@ -14,7 +15,16 @@ export interface UtilsActions {
 }
 
 export const utilsActions: Readonly<UtilsActions> = {
-    resize: ({ width, height }) => (): NextState => {
+    resize: ({ width, height }) => (state): NextState => {
+        // Androidのキーボードがしまわれたことを検知して、blurするためのWorkaround
+        const elementId = resources.focussedElement;
+        if (state.display.height < height && elementId !== undefined) {
+            const element: any = document.querySelector(`#${elementId}`);
+            if (element !== null && typeof element.blur === 'function') {
+                element.blur();
+            }
+        }
+
         return {
             display: { width, height },
         };

@@ -680,7 +680,11 @@ export const view: View<State, Actions> = (state, actions) => {
 
     const element = document.querySelector('#text-comment') as HTMLInputElement;
 
-    return div({ oncreate: batchDraw, onupdate: batchDraw }, [ // Hyperappでは最上位のノードが最後に実行される
+    return div({
+        oncreate: batchDraw,
+        onupdate: batchDraw,
+        key: 'view',
+    }, [ // Hyperappでは最上位のノードが最後に実行される
         resources.konva.stage.isReady ? Events(state, actions) : undefined,
 
         ScreenField(state, actions, layout),
@@ -689,6 +693,7 @@ export const view: View<State, Actions> = (state, actions) => {
             key: 'menu-top',
         }, [
             comment({
+                key: 'text-comment',
                 dataTest: 'text-comment',
                 id: 'text-comment',
                 textColor: isCommentKey ? '#333' : '#757575',
@@ -698,7 +703,7 @@ export const view: View<State, Actions> = (state, actions) => {
                 placeholder: state.mode.comment ? 'comment' : undefined,
                 readonly: !state.mode.comment,
                 actions: {
-                    onkeyup: (event) => {
+                    onkeypress: (event) => {
                         if (!element) {
                             return;
                         }
@@ -710,7 +715,12 @@ export const view: View<State, Actions> = (state, actions) => {
                             element.blur();
                         }
                     },
+                    onfocus: () => {
+                        actions.focusTextBox({ id: 'text-comment' });
+                    },
                     onblur: () => {
+                        actions.blurTextBox({ id: 'text-comment' });
+
                         if (element) {
                             const text = element.value ? element.value : '';
                             actions.updateCommentText({ text, pageIndex: currentIndex });

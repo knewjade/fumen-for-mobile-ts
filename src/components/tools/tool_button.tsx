@@ -64,13 +64,14 @@ export const ToolButton: Component<Props & IconProps> = (
 };
 
 const Icon: Component<IconProps> = ({ height, fontSize, colors, enable }, children) => {
+    const colorCode = enable ? colors.darkCode : colors.baseCode;
     const properties = style({
         display: 'block',
         fontSize: px(fontSize),
         height: px(height),
         lineHeight: px(height),
         width: '100%',
-        border: 'solid 1px ' + (enable ? colors.darkCode : colors.baseCode),
+        border: `solid 1px ${colorCode}`,
         boxSizing: 'border-box',
         textAlign: 'center',
         cursor: 'pointer',
