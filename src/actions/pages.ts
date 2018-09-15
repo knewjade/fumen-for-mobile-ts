@@ -185,8 +185,17 @@ export const pageActions: Readonly<PageActions> = {
         const fumen = state.fumen;
         const nextPage = fumen.currentIndex + 1;
 
+        if (fumen.maxPage <= nextPage) {
+            return sequence(state, [
+                pageActions.insertPage({ index: nextPage }),
+                pageActions.openPage({ index: nextPage }),
+            ]);
+        }
+
         return sequence(state, [
-            fumen.maxPage <= nextPage ? pageActions.insertPage({ index: nextPage }) : undefined,
+            actions.fixInferencePiece(),
+            actions.clearInferencePiece(),
+            actions.commitCommentText(),
             pageActions.openPage({ index: nextPage }),
         ]);
     },
