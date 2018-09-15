@@ -2,6 +2,25 @@ import { block, Color, datatest, expectFumen, minoPosition, Piece, px, py, Rotat
 import { operations } from './_operations';
 
 describe('Drawing Tools', () => {
+    it('Update by lock flag', () => {
+        visit({
+            fumen: 'v115@bhJ8JeAgH',
+        });
+
+        operations.screen.writable();
+
+        cy.get(block(0, 0)).should('have.attr', 'color', Color.Gray.Highlight);
+
+        operations.mode.flags.open();
+        operations.mode.flags.lockToOff();
+
+        cy.get(block(0, 0)).should('have.attr', 'color', Color.Gray.Field);
+
+        operations.mode.flags.lockToOn();
+
+        cy.get(block(0, 0)).should('have.attr', 'color', Color.Gray.Highlight);
+    });
+
     it('Remove', () => {
         visit({
             fumen: 'v115@vhG9NYaAFLDmClcJSAVDEHBEooRBUoAVBa9aPCM+AA?A0sBXjB2uBzkBifBplBmhI8NjSFAooMDEPBAAAvhEHiuFA3?XaDEEBAAAHiBAwDHmBAAA',

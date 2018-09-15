@@ -263,6 +263,7 @@ export const pageActions: Readonly<PageActions> = {
                     },
                 };
             },
+            actions.reopenCurrentPage(),
         ]);
     },
     changeRiseFlag: ({ index, enable }) => (state): NextState => {
