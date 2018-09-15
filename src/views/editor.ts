@@ -151,6 +151,8 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
     touchType: TouchTypes;
     actions: {
         removePage: (data: { index: number }) => void;
+        duplicatePage: (data: { index: number }) => void;
+        openPage: (data: { index: number }) => void;
         changeToDrawingMode: () => void;
         changeToFlagsMode: () => void;
         changeToDrawPieceMode: () => void;
@@ -174,6 +176,27 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
             width: layout.buttons.size.width,
             margin: toolButtonMargin,
             key: 'div-space',
+        }),
+        toolButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'white',
+            textColor: '#333',
+            borderColor: '#333',
+            datatest: 'btn-duplicate-page',
+            key: 'btn-duplicate-page',
+            onclick: () => {
+                const nextPage = currentIndex + 1;
+                actions.duplicatePage({ index: nextPage });
+                actions.openPage({ index: nextPage });
+            },
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: 'copy',
+                iconSize: 22,
+                iconName: 'content_copy',
+            }),
         }),
         toolButton({
             borderWidth: 1,
@@ -715,12 +738,7 @@ export const view: View<State, Actions> = (state, actions) => {
                             element.blur();
                         }
                     },
-                    onfocus: () => {
-                        actions.focusTextBox({ id: 'text-comment' });
-                    },
                     onblur: () => {
-                        actions.blurTextBox({ id: 'text-comment' });
-
                         if (element) {
                             const text = element.value ? element.value : '';
                             actions.updateCommentText({ text, pageIndex: currentIndex });

@@ -153,6 +153,9 @@ export const operations = {
             open: () => {
                 cy.get(datatest('btn-drawing-tool')).click();
             },
+            duplicatePage: () => {
+                cy.get(datatest('btn-duplicate-page')).click();
+            },
             removePage: () => {
                 cy.get(datatest('btn-remove-page')).click();
             },

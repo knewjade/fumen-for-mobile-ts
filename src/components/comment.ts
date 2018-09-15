@@ -13,7 +13,6 @@ interface Props {
     placeholder?: string;
     actions?: {
         onkeypress: (event: KeyboardEvent) => void;
-        onfocus: (event: TextEvent) => void;
         onblur: (event: TextEvent) => void;
     };
 }
@@ -47,7 +46,6 @@ export const comment: Component<Props> = (
             placeholder,
             onkeypress: actions !== undefined ? actions.onkeypress : undefined,
             onblur: actions !== undefined ? actions.onblur : undefined,
-            onfocus: actions !== undefined ? actions.onfocus : undefined,
             type: 'text',
             className: backgroundColorClass,
             style: commentStyle,

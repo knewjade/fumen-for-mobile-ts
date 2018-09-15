@@ -26,6 +26,7 @@ export interface PageActions {
     insertRefPage: (data: { index: number }) => action;
     insertKeyPage: (data: { index: number }) => action;
     removePage: (data: { index: number }) => action;
+    duplicatePage: (data: { index: number }) => action;
     backLoopPage: () => action;
     nextLoopPage: () => action;
     backPage: () => action;
@@ -101,7 +102,7 @@ export const pageActions: Readonly<PageActions> = {
         const fumen = state.fumen;
         const pages = fumen.pages;
 
-        const prevPage = pages[(index - 1)];
+        const prevPage = pages[index - 1];
         const insert = prevPage !== undefined && prevPage.field.obj === undefined
             ? pageActions.insertRefPage
             : pageActions.insertKeyPage;
@@ -135,6 +136,21 @@ export const pageActions: Readonly<PageActions> = {
             actions.clearInferencePiece(),
             actions.commitCommentText(),
             insertKeyPage({ index }),
+            actions.reopenCurrentPage(),
+        ]);
+    },
+    duplicatePage: ({ index }) => (state): NextState => {
+        const fumen = state.fumen;
+        const pages = fumen.pages;
+        if (pages.length < index) {
+            return undefined;
+        }
+
+        return sequence(state, [
+            actions.fixInferencePiece(),
+            actions.clearInferencePiece(),
+            actions.commitCommentText(),
+            duplicatePage({ index }),
             actions.reopenCurrentPage(),
         ]);
     },
@@ -379,6 +395,24 @@ const insertRefPage = ({ index }: { index: number }) => (state: Readonly<State>)
 const insertKeyPage = ({ index }: { index: number }) => (state: Readonly<State>): NextState => {
     const pages = new Pages(state.fumen.pages);
     pages.insertKeyPage(index);
+    const newPages = pages.pages;
+
+    const task = toInsertPageTask(index, toPrimitivePage(newPages[index]));
+    return sequence(state, [
+        actions.registerHistoryTask({ task }),
+        () => ({
+            fumen: {
+                ...state.fumen,
+                pages: newPages,
+                maxPage: newPages.length,
+            },
+        }),
+    ]);
+};
+
+const duplicatePage = ({ index }: { index: number }) => (state: Readonly<State>): NextState => {
+    const pages = new Pages(state.fumen.pages);
+    pages.duplicatePage(index);
     const newPages = pages.pages;
 
     const task = toInsertPageTask(index, toPrimitivePage(newPages[index]));

@@ -192,6 +192,48 @@ export class Pages {
             }));
     }
 
+    // TODO: Add test
+    duplicatePage(index: number) {
+        if (index < 0) {
+            throw new FumenError(`Illegal index: ${index}`);
+        }
+
+        // ひとつ前のページがないときはエラー
+        const prev = this.pages[index - 1];
+        if (prev === undefined) {
+            throw new FumenError(`Not found prev page: ${index}`);
+        }
+
+        const currentField = this.restructureField(index - 1, PageFieldOperation.All);
+
+        const page: Page = {
+            index,
+            field: { obj: currentField },
+            comment: { ref: undefined },
+            flags: {
+                ...prev.flags,
+            },
+            piece: prev.piece !== undefined ? {
+                type: prev.piece.type,
+                rotation: prev.piece.rotation,
+                coordinate: {
+                    ...prev.piece.coordinate,
+                },
+            } : undefined,
+        };
+
+        // コメントの参照
+        if (prev.comment.ref !== undefined) {
+            page.comment.ref = prev.comment.ref;
+        } else if (prev.comment.text !== undefined) {
+            page.comment.ref = index - 1;
+        } else {
+            throw new FumenError(`Unexpected comment: ${prev.comment}`);
+        }
+
+        this.insertPage(index, page);
+    }
+
     // TODO: Add unit test
     deletePage(index: number) {
         const page = this.pages[index];

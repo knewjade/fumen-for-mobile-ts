@@ -5,25 +5,11 @@ import { resources, State } from '../states';
 import { isQuizCommentResult, Pages } from '../lib/pages';
 
 export interface CommentActions {
-    focusTextBox: (data: { id: string }) => action;
-    blurTextBox: (data: { id: string }) => action;
     updateCommentText: (data: { text?: string, pageIndex: number }) => action;
     commitCommentText: () => action;
 }
 
 export const commentActions: Readonly<CommentActions> = {
-    focusTextBox: ({ id }) => (): NextState => {
-        // Androidのキーボードがしまわれたことを検知して、blurするためのWorkaround
-        resources.focussedElement = id;
-        return undefined;
-    },
-    blurTextBox: ({ id }) => (): NextState => {
-        // Androidのキーボードがしまわれたことを検知して、blurするためのWorkaround
-        if (resources.focussedElement === id) {
-            resources.focussedElement = undefined;
-        }
-        return undefined;
-    },
     updateCommentText: ({ text, pageIndex }) => (state): NextState => {
         if (state.fumen.currentIndex !== pageIndex) {
             resources.comment = undefined;

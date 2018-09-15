@@ -351,4 +351,38 @@ describe('Drawing Tools', () => {
 
         expectFumen('v115@bhzhPeAIrvhJAIrAIrAIrAIrAIrAIrAIrAIrAIrAIr');
     });
+
+    it('Duplicate page', () => {
+        visit({
+            fumen: 'v115@vhF2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDsOBA?A3rBzkBsqBifBAAA',
+        });
+
+        operations.screen.writable();
+        operations.mode.tools.open();
+        operations.mode.editor.nextPage();
+        operations.mode.editor.nextPage();
+        operations.mode.tools.duplicatePage();
+        operations.mode.editor.toRef();
+        operations.menu.lastPage();
+        operations.mode.tools.duplicatePage();
+        operations.menu.firstPage();
+        operations.mode.block.open();
+        operations.mode.block.Gray();
+        operations.mode.block.click(9, 0);
+
+        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAAvhF3rBzkBzkBsqBifBAAAkhAAJeAAA');
+
+        operations.mode.tools.home();
+        operations.mode.tools.duplicatePage();
+
+        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAAvhG2OJ3rBzkBzkBsqBifBAAAkhAAJeAAA');
+
+        operations.mode.tools.undo();
+
+        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAAvhF3rBzkBzkBsqBifBAAAkhAAJeAAA');
+
+        operations.mode.tools.redo();
+
+        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAAvhG2OJ3rBzkBzkBsqBifBAAAkhAAJeAAA');
+    });
 });
