@@ -204,7 +204,7 @@ export class Pages {
             throw new FumenError(`Not found prev page: ${index}`);
         }
 
-        const currentField = this.restructureField(index - 1, PageFieldOperation.All);
+        const currentField = this.restructureField(index - 1, PageFieldOperation.Command);
 
         const page: Page = {
             index,

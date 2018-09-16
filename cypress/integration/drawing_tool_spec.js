@@ -2,6 +2,59 @@ import { block, Color, datatest, expectFumen, minoPosition, Piece, px, py, Rotat
 import { operations } from './_operations';
 
 describe('Drawing Tools', () => {
+    it('Duplicate page', () => {
+        visit({
+            fumen: 'v115@vhF2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDsOBA?A3rBzkBsqBifBAAA',
+        });
+
+        operations.screen.writable();
+
+        operations.mode.tools.open();
+        operations.mode.editor.nextPage();
+        operations.mode.editor.nextPage();
+        operations.mode.tools.duplicatePage();
+        operations.mode.editor.toRef();
+
+        operations.menu.lastPage();
+        operations.mode.tools.duplicatePage();
+
+        operations.menu.firstPage();
+
+        operations.mode.block.open();
+        operations.mode.block.Gray();
+        operations.mode.block.click(9, 0);
+
+        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAAvhB3rBzkBIhxSHexSaezkBvhCsqBifBAAAkhAAJeAAA');
+
+        operations.mode.tools.home();
+        operations.mode.tools.duplicatePage();
+
+        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAARhgHIeiHQe2OJvhB3rBzkBIhxSHexSaezkBvhCsqBif?BAAAkhAAJeAAA');
+
+        operations.mode.tools.undo();
+
+        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAAvhB3rBzkBIhxSHexSaezkBvhCsqBifBAAAkhAAJeAAA');
+
+        operations.mode.tools.redo();
+
+        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAARhgHIeiHQe2OJvhB3rBzkBIhxSHexSaezkBvhCsqBif?BAAAkhAAJeAAA');
+
+        operations.menu.lastPage();
+        operations.mode.editor.backPage();
+
+        operations.mode.tools.home();
+        operations.mode.piece.open();
+
+        minoPosition(Piece.T, Rotation.Spawn)(8, 1).forEach((block) => {
+            operations.mode.block.click(block[0], block[1]);
+        });
+
+        operations.mode.tools.home();
+        operations.mode.tools.duplicatePage();
+
+        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAARhgHIeiHQe2OJvhB3rBzkBIhxSHexSaezkBvhCsqBif?BVtB9gilHexhAeAtEeAtBeAtAeR4AeQLUeVtB9gilHexhAe?AtEeAtBeAtAeR4AeQLJeAAJeAAA');
+    });
+
     it('Update by lock flag', () => {
         visit({
             fumen: 'v115@bhJ8JeAgH',
@@ -350,39 +403,5 @@ describe('Drawing Tools', () => {
         });
 
         expectFumen('v115@bhzhPeAIrvhJAIrAIrAIrAIrAIrAIrAIrAIrAIrAIr');
-    });
-
-    it('Duplicate page', () => {
-        visit({
-            fumen: 'v115@vhF2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDsOBA?A3rBzkBsqBifBAAA',
-        });
-
-        operations.screen.writable();
-        operations.mode.tools.open();
-        operations.mode.editor.nextPage();
-        operations.mode.editor.nextPage();
-        operations.mode.tools.duplicatePage();
-        operations.mode.editor.toRef();
-        operations.menu.lastPage();
-        operations.mode.tools.duplicatePage();
-        operations.menu.firstPage();
-        operations.mode.block.open();
-        operations.mode.block.Gray();
-        operations.mode.block.click(9, 0);
-
-        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAAvhF3rBzkBzkBsqBifBAAAkhAAJeAAA');
-
-        operations.mode.tools.home();
-        operations.mode.tools.duplicatePage();
-
-        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAAvhG2OJ3rBzkBzkBsqBifBAAAkhAAJeAAA');
-
-        operations.mode.tools.undo();
-
-        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAAvhF3rBzkBzkBsqBifBAAAkhAAJeAAA');
-
-        operations.mode.tools.redo();
-
-        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAAvhG2OJ3rBzkBzkBsqBifBAAAkhAAJeAAA');
     });
 });
