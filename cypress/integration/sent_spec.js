@@ -1,4 +1,16 @@
-import { block, Color, datatest, leftTap, mino, pages, Piece, rightTap, Rotation, sentBlock, visit } from './_common';
+import {
+    block,
+    ClassicColor,
+    datatest,
+    leftTap,
+    mino,
+    pages,
+    Piece,
+    rightTap,
+    Rotation,
+    sentBlock,
+    visit
+} from './_common';
 
 // テト譜を開く
 describe('Sent line', () => {
@@ -15,49 +27,49 @@ describe('Sent line', () => {
 
             // Lミノの確認
             mino(Piece.L, Rotation.Spawn)(4, 0).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.L);
+                cy.get(block).should('have.attr', 'color', ClassicColor.L.Highlight2);
             });
         }
 
         rightTap(() => {
             // Jミノの確認
             mino(Piece.J, Rotation.Spawn)(8, 0).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.J);
+                cy.get(block).should('have.attr', 'color', ClassicColor.J.Highlight2);
             });
         });
 
         rightTap(() => {
             // Zミノの確認
             mino(Piece.Z, Rotation.Spawn)(8, 1).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.Z);
+                cy.get(block).should('have.attr', 'color', ClassicColor.Z.Highlight2);
             });
         });
 
         rightTap(() => {
             // Oミノの確認
             mino(Piece.O, Rotation.Spawn)(0, 0).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.O);
+                cy.get(block).should('have.attr', 'color', ClassicColor.O.Highlight2);
             });
         });
 
         rightTap(() => {
             // Sミノの確認
             mino(Piece.S, Rotation.Spawn)(4, 1).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', ClassicColor.S.Highlight2);
             });
         });
 
         rightTap(() => {
             // Iミノの確認
             mino(Piece.I, Rotation.Left)(6, 1).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.I);
+                cy.get(block).should('have.attr', 'color', ClassicColor.I.Highlight2);
             });
         });
 
         rightTap(() => {
             // Tミノの確認
             mino(Piece.T, Rotation.Spawn)(4, 3).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.T);
+                cy.get(block).should('have.attr', 'color', ClassicColor.T.Highlight2);
             });
         });
     });
@@ -76,118 +88,118 @@ describe('Sent line', () => {
 
         // フィールド下の確認
         rightTap(13, () => {
-            cy.get(sentBlock(1)).should('have.attr', 'color', Color.Empty.Field);
+            cy.get(sentBlock(1)).should('have.attr', 'color', ClassicColor.Empty.Normal);
             [0, 2, 3, 4, 5, 6, 7, 8, 9].forEach((x) => {
-                cy.get(sentBlock(x)).should('have.attr', 'color', Color.Gray.Field);
+                cy.get(sentBlock(x)).should('have.attr', 'color', ClassicColor.Gray.Normal);
             });
 
             // フィールド左下
-            cy.get(block(0, 0)).should('have.attr', 'color', Color.Normal.O);
-            cy.get(block(0, 1)).should('have.attr', 'color', Color.Normal.O);
+            cy.get(block(0, 0)).should('have.attr', 'color', ClassicColor.O.Normal);
+            cy.get(block(0, 1)).should('have.attr', 'color', ClassicColor.O.Normal);
         });
 
         // せり上がり＆反転後の確認
         rightTap(() => {
-            cy.get(block(8, 0)).should('have.attr', 'color', Color.Empty.Field);
+            cy.get(block(8, 0)).should('have.attr', 'color', ClassicColor.Empty.Normal);
             [0, 1, 2, 3, 4, 5, 6, 7, 9].forEach((x) => {
-                cy.get(block(x, 0)).should('have.attr', 'color', Color.Gray.Field);
+                cy.get(block(x, 0)).should('have.attr', 'color', ClassicColor.Gray.Normal);
             });
 
             // フィールド右下
-            cy.get(block(9, 1)).should('have.attr', 'color', Color.Normal.O);
-            cy.get(block(9, 2)).should('have.attr', 'color', Color.Highlight.O);
+            cy.get(block(9, 1)).should('have.attr', 'color', ClassicColor.O.Normal);
+            cy.get(block(9, 2)).should('have.attr', 'color', ClassicColor.O.Highlight1);
         });
 
         // Tスピンx2後の確認
         rightTap(2, () => {
             // フィールド右下
-            cy.get(block(9, 1)).should('have.attr', 'color', Color.Empty.Field);
-            cy.get(block(9, 2)).should('have.attr', 'color', Color.Empty.Field);
+            cy.get(block(9, 1)).should('have.attr', 'color', ClassicColor.Empty.Normal);
+            cy.get(block(9, 2)).should('have.attr', 'color', ClassicColor.Empty.Normal);
         });
 
         // Tスピン後の確認・Hightlightなしの確認
         rightTap(2, () => {
             // 残っている全てのブロック
-            cy.get(block(2, 0)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(block(3, 0)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(block(5, 0)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(5, 1)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(6, 0)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(7, 0)).should('have.attr', 'color', Color.Normal.J);
-            cy.get(block(7, 1)).should('have.attr', 'color', Color.Normal.J);
+            cy.get(block(2, 0)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(block(3, 0)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(block(5, 0)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(5, 1)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(6, 0)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(7, 0)).should('have.attr', 'color', ClassicColor.J.Normal);
+            cy.get(block(7, 1)).should('have.attr', 'color', ClassicColor.J.Normal);
 
             // フィールド下の確認
-            cy.get(sentBlock(2)).should('have.attr', 'color', Color.Gray.Field);
-            cy.get(sentBlock(3)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(sentBlock(4)).should('have.attr', 'color', Color.Normal.J);
-            cy.get(sentBlock(5)).should('have.attr', 'color', Color.Normal.T);
-            cy.get(sentBlock(6)).should('have.attr', 'color', Color.Normal.Z);
-            cy.get(sentBlock(7)).should('have.attr', 'color', Color.Normal.O);
-            cy.get(sentBlock(8)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(sentBlock(9)).should('have.attr', 'color', Color.Normal.I);
+            cy.get(sentBlock(2)).should('have.attr', 'color', ClassicColor.Gray.Normal);
+            cy.get(sentBlock(3)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(sentBlock(4)).should('have.attr', 'color', ClassicColor.J.Normal);
+            cy.get(sentBlock(5)).should('have.attr', 'color', ClassicColor.T.Normal);
+            cy.get(sentBlock(6)).should('have.attr', 'color', ClassicColor.Z.Normal);
+            cy.get(sentBlock(7)).should('have.attr', 'color', ClassicColor.O.Normal);
+            cy.get(sentBlock(8)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(sentBlock(9)).should('have.attr', 'color', ClassicColor.I.Normal);
         });
 
         // せり上がりしない・ライン削除されないことの確認
         rightTap(() => {
             // 残っている全てのブロック
-            cy.get(block(2, 0)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(block(3, 0)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(block(5, 0)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(5, 1)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(6, 0)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(7, 0)).should('have.attr', 'color', Color.Normal.J);
-            cy.get(block(7, 1)).should('have.attr', 'color', Color.Normal.J);
+            cy.get(block(2, 0)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(block(3, 0)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(block(5, 0)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(5, 1)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(6, 0)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(7, 0)).should('have.attr', 'color', ClassicColor.J.Normal);
+            cy.get(block(7, 1)).should('have.attr', 'color', ClassicColor.J.Normal);
 
             // フィールド下の確認
-            cy.get(sentBlock(2)).should('have.attr', 'color', Color.Gray.Field);
-            cy.get(sentBlock(3)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(sentBlock(4)).should('have.attr', 'color', Color.Normal.J);
-            cy.get(sentBlock(5)).should('have.attr', 'color', Color.Normal.T);
-            cy.get(sentBlock(6)).should('have.attr', 'color', Color.Normal.Z);
-            cy.get(sentBlock(7)).should('have.attr', 'color', Color.Normal.O);
-            cy.get(sentBlock(8)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(sentBlock(9)).should('have.attr', 'color', Color.Normal.I);
+            cy.get(sentBlock(2)).should('have.attr', 'color', ClassicColor.Gray.Normal);
+            cy.get(sentBlock(3)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(sentBlock(4)).should('have.attr', 'color', ClassicColor.J.Normal);
+            cy.get(sentBlock(5)).should('have.attr', 'color', ClassicColor.T.Normal);
+            cy.get(sentBlock(6)).should('have.attr', 'color', ClassicColor.Z.Normal);
+            cy.get(sentBlock(7)).should('have.attr', 'color', ClassicColor.O.Normal);
+            cy.get(sentBlock(8)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(sentBlock(9)).should('have.attr', 'color', ClassicColor.I.Normal);
         });
 
         // せり上がり・Highlightなし・ライン削除されないことの確認
         rightTap(() => {
-            cy.get(block(2, 0)).should('have.attr', 'color', Color.Gray.Field);
-            cy.get(block(3, 0)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(4, 0)).should('have.attr', 'color', Color.Normal.J);
-            cy.get(block(5, 0)).should('have.attr', 'color', Color.Normal.T);
-            cy.get(block(6, 0)).should('have.attr', 'color', Color.Normal.Z);
-            cy.get(block(7, 0)).should('have.attr', 'color', Color.Normal.O);
-            cy.get(block(8, 0)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(block(9, 0)).should('have.attr', 'color', Color.Normal.I);
+            cy.get(block(2, 0)).should('have.attr', 'color', ClassicColor.Gray.Normal);
+            cy.get(block(3, 0)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(4, 0)).should('have.attr', 'color', ClassicColor.J.Normal);
+            cy.get(block(5, 0)).should('have.attr', 'color', ClassicColor.T.Normal);
+            cy.get(block(6, 0)).should('have.attr', 'color', ClassicColor.Z.Normal);
+            cy.get(block(7, 0)).should('have.attr', 'color', ClassicColor.O.Normal);
+            cy.get(block(8, 0)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(block(9, 0)).should('have.attr', 'color', ClassicColor.I.Normal);
 
             // フィールド下の確認
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach((x) => {
-                cy.get(sentBlock(x)).should('have.attr', 'color', Color.Empty.Field);
+                cy.get(sentBlock(x)).should('have.attr', 'color', ClassicColor.Empty.Normal);
             });
         });
 
         // Highlightされることの確認
         rightTap(() => {
-            cy.get(block(2, 0)).should('have.attr', 'color', Color.Gray.Highlight);
-            cy.get(block(3, 0)).should('have.attr', 'color', Color.Highlight.S);
-            cy.get(block(4, 0)).should('have.attr', 'color', Color.Highlight.J);
-            cy.get(block(5, 0)).should('have.attr', 'color', Color.Highlight.T);
-            cy.get(block(6, 0)).should('have.attr', 'color', Color.Highlight.Z);
-            cy.get(block(7, 0)).should('have.attr', 'color', Color.Highlight.O);
-            cy.get(block(8, 0)).should('have.attr', 'color', Color.Highlight.L);
-            cy.get(block(9, 0)).should('have.attr', 'color', Color.Highlight.I);
+            cy.get(block(2, 0)).should('have.attr', 'color', ClassicColor.Gray.Highlight1);
+            cy.get(block(3, 0)).should('have.attr', 'color', ClassicColor.S.Highlight1);
+            cy.get(block(4, 0)).should('have.attr', 'color', ClassicColor.J.Highlight1);
+            cy.get(block(5, 0)).should('have.attr', 'color', ClassicColor.T.Highlight1);
+            cy.get(block(6, 0)).should('have.attr', 'color', ClassicColor.Z.Highlight1);
+            cy.get(block(7, 0)).should('have.attr', 'color', ClassicColor.O.Highlight1);
+            cy.get(block(8, 0)).should('have.attr', 'color', ClassicColor.L.Highlight1);
+            cy.get(block(9, 0)).should('have.attr', 'color', ClassicColor.I.Highlight1);
         });
 
         // ライン削除されることの確認
         rightTap(() => {
             // 残っている全てのブロック
-            cy.get(block(2, 0)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(block(3, 0)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(block(5, 0)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(5, 1)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(6, 0)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(7, 0)).should('have.attr', 'color', Color.Normal.J);
-            cy.get(block(7, 1)).should('have.attr', 'color', Color.Normal.J);
+            cy.get(block(2, 0)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(block(3, 0)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(block(5, 0)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(5, 1)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(6, 0)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(7, 0)).should('have.attr', 'color', ClassicColor.J.Normal);
+            cy.get(block(7, 1)).should('have.attr', 'color', ClassicColor.J.Normal);
         });
     });
 
@@ -208,118 +220,118 @@ describe('Sent line', () => {
 
         // フィールド下の確認
         rightTap(13, () => {
-            cy.get(sentBlock(1)).should('have.attr', 'color', Color.Empty.Field);
+            cy.get(sentBlock(1)).should('have.attr', 'color', ClassicColor.Empty.Normal);
             [0, 2, 3, 4, 5, 6, 7, 8, 9].forEach((x) => {
-                cy.get(sentBlock(x)).should('have.attr', 'color', Color.Gray.Field);
+                cy.get(sentBlock(x)).should('have.attr', 'color', ClassicColor.Gray.Normal);
             });
 
             // フィールド左下
-            cy.get(block(0, 0)).should('have.attr', 'color', Color.Normal.O);
-            cy.get(block(0, 1)).should('have.attr', 'color', Color.Normal.O);
+            cy.get(block(0, 0)).should('have.attr', 'color', ClassicColor.O.Normal);
+            cy.get(block(0, 1)).should('have.attr', 'color', ClassicColor.O.Normal);
         });
 
         // せり上がり＆反転後の確認
         rightTap(() => {
-            cy.get(block(8, 0)).should('have.attr', 'color', Color.Empty.Field);
+            cy.get(block(8, 0)).should('have.attr', 'color', ClassicColor.Empty.Normal);
             [0, 1, 2, 3, 4, 5, 6, 7, 9].forEach((x) => {
-                cy.get(block(x, 0)).should('have.attr', 'color', Color.Gray.Field);
+                cy.get(block(x, 0)).should('have.attr', 'color', ClassicColor.Gray.Normal);
             });
 
             // フィールド右下
-            cy.get(block(9, 1)).should('have.attr', 'color', Color.Normal.O);
-            cy.get(block(9, 2)).should('have.attr', 'color', Color.Highlight.O);
+            cy.get(block(9, 1)).should('have.attr', 'color', ClassicColor.O.Normal);
+            cy.get(block(9, 2)).should('have.attr', 'color', ClassicColor.O.Highlight1);
         });
 
         // Tスピンx2後の確認
         rightTap(2, () => {
             // フィールド右下
-            cy.get(block(9, 1)).should('have.attr', 'color', Color.Empty.Field);
-            cy.get(block(9, 2)).should('have.attr', 'color', Color.Empty.Field);
+            cy.get(block(9, 1)).should('have.attr', 'color', ClassicColor.Empty.Normal);
+            cy.get(block(9, 2)).should('have.attr', 'color', ClassicColor.Empty.Normal);
         });
 
-        // Tスピン後の確認・Hightlightなしの確認
+        // Tスピン後の確認・Highlightなしの確認
         rightTap(2, () => {
             // 残っている全てのブロック
-            cy.get(block(2, 0)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(block(3, 0)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(block(5, 0)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(5, 1)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(6, 0)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(7, 0)).should('have.attr', 'color', Color.Normal.J);
-            cy.get(block(7, 1)).should('have.attr', 'color', Color.Normal.J);
+            cy.get(block(2, 0)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(block(3, 0)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(block(5, 0)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(5, 1)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(6, 0)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(7, 0)).should('have.attr', 'color', ClassicColor.J.Normal);
+            cy.get(block(7, 1)).should('have.attr', 'color', ClassicColor.J.Normal);
 
             // フィールド下の確認
-            cy.get(sentBlock(2)).should('have.attr', 'color', Color.Gray.Field);
-            cy.get(sentBlock(3)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(sentBlock(4)).should('have.attr', 'color', Color.Normal.J);
-            cy.get(sentBlock(5)).should('have.attr', 'color', Color.Normal.T);
-            cy.get(sentBlock(6)).should('have.attr', 'color', Color.Normal.Z);
-            cy.get(sentBlock(7)).should('have.attr', 'color', Color.Normal.O);
-            cy.get(sentBlock(8)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(sentBlock(9)).should('have.attr', 'color', Color.Normal.I);
+            cy.get(sentBlock(2)).should('have.attr', 'color', ClassicColor.Gray.Normal);
+            cy.get(sentBlock(3)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(sentBlock(4)).should('have.attr', 'color', ClassicColor.J.Normal);
+            cy.get(sentBlock(5)).should('have.attr', 'color', ClassicColor.T.Normal);
+            cy.get(sentBlock(6)).should('have.attr', 'color', ClassicColor.Z.Normal);
+            cy.get(sentBlock(7)).should('have.attr', 'color', ClassicColor.O.Normal);
+            cy.get(sentBlock(8)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(sentBlock(9)).should('have.attr', 'color', ClassicColor.I.Normal);
         });
 
         // せり上がりしない・ライン削除されないことの確認
         rightTap(() => {
             // 残っている全てのブロック
-            cy.get(block(2, 0)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(block(3, 0)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(block(5, 0)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(5, 1)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(6, 0)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(7, 0)).should('have.attr', 'color', Color.Normal.J);
-            cy.get(block(7, 1)).should('have.attr', 'color', Color.Normal.J);
+            cy.get(block(2, 0)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(block(3, 0)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(block(5, 0)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(5, 1)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(6, 0)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(7, 0)).should('have.attr', 'color', ClassicColor.J.Normal);
+            cy.get(block(7, 1)).should('have.attr', 'color', ClassicColor.J.Normal);
 
             // フィールド下の確認
-            cy.get(sentBlock(2)).should('have.attr', 'color', Color.Gray.Field);
-            cy.get(sentBlock(3)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(sentBlock(4)).should('have.attr', 'color', Color.Normal.J);
-            cy.get(sentBlock(5)).should('have.attr', 'color', Color.Normal.T);
-            cy.get(sentBlock(6)).should('have.attr', 'color', Color.Normal.Z);
-            cy.get(sentBlock(7)).should('have.attr', 'color', Color.Normal.O);
-            cy.get(sentBlock(8)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(sentBlock(9)).should('have.attr', 'color', Color.Normal.I);
+            cy.get(sentBlock(2)).should('have.attr', 'color', ClassicColor.Gray.Normal);
+            cy.get(sentBlock(3)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(sentBlock(4)).should('have.attr', 'color', ClassicColor.J.Normal);
+            cy.get(sentBlock(5)).should('have.attr', 'color', ClassicColor.T.Normal);
+            cy.get(sentBlock(6)).should('have.attr', 'color', ClassicColor.Z.Normal);
+            cy.get(sentBlock(7)).should('have.attr', 'color', ClassicColor.O.Normal);
+            cy.get(sentBlock(8)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(sentBlock(9)).should('have.attr', 'color', ClassicColor.I.Normal);
         });
 
         // せり上がり・Highlightなし・ライン削除されないことの確認
         rightTap(() => {
-            cy.get(block(2, 0)).should('have.attr', 'color', Color.Gray.Field);
-            cy.get(block(3, 0)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(4, 0)).should('have.attr', 'color', Color.Normal.J);
-            cy.get(block(5, 0)).should('have.attr', 'color', Color.Normal.T);
-            cy.get(block(6, 0)).should('have.attr', 'color', Color.Normal.Z);
-            cy.get(block(7, 0)).should('have.attr', 'color', Color.Normal.O);
-            cy.get(block(8, 0)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(block(9, 0)).should('have.attr', 'color', Color.Normal.I);
+            cy.get(block(2, 0)).should('have.attr', 'color', ClassicColor.Gray.Normal);
+            cy.get(block(3, 0)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(4, 0)).should('have.attr', 'color', ClassicColor.J.Normal);
+            cy.get(block(5, 0)).should('have.attr', 'color', ClassicColor.T.Normal);
+            cy.get(block(6, 0)).should('have.attr', 'color', ClassicColor.Z.Normal);
+            cy.get(block(7, 0)).should('have.attr', 'color', ClassicColor.O.Normal);
+            cy.get(block(8, 0)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(block(9, 0)).should('have.attr', 'color', ClassicColor.I.Normal);
 
             // フィールド下の確認
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach((x) => {
-                cy.get(sentBlock(x)).should('have.attr', 'color', Color.Empty.Field);
+                cy.get(sentBlock(x)).should('have.attr', 'color', ClassicColor.Empty.Normal);
             });
         });
 
         // Highlightされることの確認
         rightTap(() => {
-            cy.get(block(2, 0)).should('have.attr', 'color', Color.Gray.Highlight);
-            cy.get(block(3, 0)).should('have.attr', 'color', Color.Highlight.S);
-            cy.get(block(4, 0)).should('have.attr', 'color', Color.Highlight.J);
-            cy.get(block(5, 0)).should('have.attr', 'color', Color.Highlight.T);
-            cy.get(block(6, 0)).should('have.attr', 'color', Color.Highlight.Z);
-            cy.get(block(7, 0)).should('have.attr', 'color', Color.Highlight.O);
-            cy.get(block(8, 0)).should('have.attr', 'color', Color.Highlight.L);
-            cy.get(block(9, 0)).should('have.attr', 'color', Color.Highlight.I);
+            cy.get(block(2, 0)).should('have.attr', 'color', ClassicColor.Gray.Highlight1);
+            cy.get(block(3, 0)).should('have.attr', 'color', ClassicColor.S.Highlight1);
+            cy.get(block(4, 0)).should('have.attr', 'color', ClassicColor.J.Highlight1);
+            cy.get(block(5, 0)).should('have.attr', 'color', ClassicColor.T.Highlight1);
+            cy.get(block(6, 0)).should('have.attr', 'color', ClassicColor.Z.Highlight1);
+            cy.get(block(7, 0)).should('have.attr', 'color', ClassicColor.O.Highlight1);
+            cy.get(block(8, 0)).should('have.attr', 'color', ClassicColor.L.Highlight1);
+            cy.get(block(9, 0)).should('have.attr', 'color', ClassicColor.I.Highlight1);
         });
 
         // ライン削除されることの確認
         rightTap(() => {
             // 残っている全てのブロック
-            cy.get(block(2, 0)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(block(3, 0)).should('have.attr', 'color', Color.Normal.L);
-            cy.get(block(5, 0)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(5, 1)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(6, 0)).should('have.attr', 'color', Color.Normal.S);
-            cy.get(block(7, 0)).should('have.attr', 'color', Color.Normal.J);
-            cy.get(block(7, 1)).should('have.attr', 'color', Color.Normal.J);
+            cy.get(block(2, 0)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(block(3, 0)).should('have.attr', 'color', ClassicColor.L.Normal);
+            cy.get(block(5, 0)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(5, 1)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(6, 0)).should('have.attr', 'color', ClassicColor.S.Normal);
+            cy.get(block(7, 0)).should('have.attr', 'color', ClassicColor.J.Normal);
+            cy.get(block(7, 1)).should('have.attr', 'color', ClassicColor.J.Normal);
         });
     });
 

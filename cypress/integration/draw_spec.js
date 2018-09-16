@@ -159,17 +159,17 @@ describe('Drawing', () => {
 
         // Zミノの確認
         mino(Piece.Z, Rotation.Spawn)(1, 0).forEach((block) => {
-            cy.get(block).should('have.attr', 'color', Color.Highlight.Z);
+            cy.get(block).should('have.attr', 'color', Color.Z.Highlight2);
         });
 
         // 確定
         operations.mode.block.T();
 
         // Iミノの確認
-        cy.get(block(0, 1)).should('have.attr', 'color', Color.Normal.Z);
-        cy.get(block(1, 1)).should('have.attr', 'color', Color.Normal.Z);
-        cy.get(block(1, 0)).should('have.attr', 'color', Color.Highlight.Z);
-        cy.get(block(2, 0)).should('have.attr', 'color', Color.Highlight.Z);
+        cy.get(block(0, 1)).should('have.attr', 'color', Color.Z.Normal);
+        cy.get(block(1, 1)).should('have.attr', 'color', Color.Z.Normal);
+        cy.get(block(1, 0)).should('have.attr', 'color', Color.Z.Highlight1);
+        cy.get(block(2, 0)).should('have.attr', 'color', Color.Z.Highlight1);
 
         {
             // 補完ボタン
@@ -182,10 +182,10 @@ describe('Drawing', () => {
 
             // 補完ミノの確認
             {
-                cy.get(block(2, 3)).should('have.attr', 'color', Color.Highlight.Completion);
-                cy.get(block(2, 2)).should('have.attr', 'color', Color.Highlight.Completion);
-                cy.get(block(2, 1)).should('have.attr', 'color', Color.Highlight.Completion);
-                cy.get(block(1, 1)).should('have.attr', 'color', Color.Normal.Z);
+                cy.get(block(2, 3)).should('have.attr', 'color', Color.Completion.Highlight2);
+                cy.get(block(2, 2)).should('have.attr', 'color', Color.Completion.Highlight2);
+                cy.get(block(2, 1)).should('have.attr', 'color', Color.Completion.Highlight2);
+                cy.get(block(1, 1)).should('have.attr', 'color', Color.Z.Normal);
             }
 
             // 補完ボタン // リセット
@@ -193,10 +193,10 @@ describe('Drawing', () => {
 
             // 補完が消えている
             {
-                cy.get(block(2, 3)).should('have.attr', 'color', Color.Empty.Field);
-                cy.get(block(2, 2)).should('have.attr', 'color', Color.Empty.Field);
-                cy.get(block(2, 1)).should('have.attr', 'color', Color.Empty.Field);
-                cy.get(block(1, 1)).should('have.attr', 'color', Color.Normal.Z);
+                cy.get(block(2, 3)).should('have.attr', 'color', Color.Empty.Normal);
+                cy.get(block(2, 2)).should('have.attr', 'color', Color.Empty.Normal);
+                cy.get(block(2, 1)).should('have.attr', 'color', Color.Empty.Normal);
+                cy.get(block(1, 1)).should('have.attr', 'color', Color.Z.Normal);
             }
         }
 
@@ -208,7 +208,7 @@ describe('Drawing', () => {
 
             // 補完ミノの確認
             {
-                cy.get(block(2, 2)).should('have.attr', 'color', Color.Highlight.Completion);
+                cy.get(block(2, 2)).should('have.attr', 'color', Color.Completion.Highlight2);
             }
 
             // 次のボタン
@@ -216,7 +216,7 @@ describe('Drawing', () => {
 
             // 補完が消えている
             {
-                cy.get(block(2, 2)).should('have.attr', 'color', Color.Empty.Field);
+                cy.get(block(2, 2)).should('have.attr', 'color', Color.Empty.Normal);
             }
         }
 
@@ -228,7 +228,7 @@ describe('Drawing', () => {
 
             // 補完ミノの確認
             {
-                cy.get(block(2, 2)).should('have.attr', 'color', Color.Highlight.Completion);
+                cy.get(block(2, 2)).should('have.attr', 'color', Color.Completion.Highlight2);
             }
 
             // 戻るボタン
@@ -236,7 +236,7 @@ describe('Drawing', () => {
 
             // 補完が消えている
             {
-                cy.get(block(2, 2)).should('have.attr', 'color', Color.Empty.Field);
+                cy.get(block(2, 2)).should('have.attr', 'color', Color.Empty.Normal);
             }
         }
 
@@ -251,10 +251,10 @@ describe('Drawing', () => {
 
             // 補完ミノの確認
             {
-                cy.get(block(2, 3)).should('have.attr', 'color', Color.Highlight.Completion);
-                cy.get(block(2, 2)).should('have.attr', 'color', Color.Highlight.Completion);
-                cy.get(block(2, 1)).should('have.attr', 'color', Color.Highlight.Completion);
-                cy.get(block(1, 1)).should('have.attr', 'color', Color.Normal.Z);
+                cy.get(block(2, 3)).should('have.attr', 'color', Color.Completion.Highlight2);
+                cy.get(block(2, 2)).should('have.attr', 'color', Color.Completion.Highlight2);
+                cy.get(block(2, 1)).should('have.attr', 'color', Color.Completion.Highlight2);
+                cy.get(block(1, 1)).should('have.attr', 'color', Color.Z.Normal);
             }
 
             // 補完ボタン
@@ -262,10 +262,10 @@ describe('Drawing', () => {
 
             // 補完が消えている
             {
-                cy.get(block(2, 3)).should('have.attr', 'color', Color.Empty.Field);
-                cy.get(block(2, 2)).should('have.attr', 'color', Color.Empty.Field);
-                cy.get(block(2, 1)).should('have.attr', 'color', Color.Empty.Field);
-                cy.get(block(1, 1)).should('have.attr', 'color', Color.Normal.Z);
+                cy.get(block(2, 3)).should('have.attr', 'color', Color.Empty.Normal);
+                cy.get(block(2, 2)).should('have.attr', 'color', Color.Empty.Normal);
+                cy.get(block(2, 1)).should('have.attr', 'color', Color.Empty.Normal);
+                cy.get(block(1, 1)).should('have.attr', 'color', Color.Z.Normal);
             }
         }
 
@@ -322,7 +322,7 @@ describe('Drawing', () => {
 
         // Iミノの確認
         mino(Piece.I, Rotation.Spawn)(4, 0).forEach((block) => {
-            cy.get(block).should('have.attr', 'color', Color.Normal.I);
+            cy.get(block).should('have.attr', 'color', Color.I.Normal);
         });
     });
 
@@ -345,10 +345,10 @@ describe('Drawing', () => {
         operations.mode.block.click(6, 3);
 
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 1');
-        cy.get(block(9, 3)).should('not.have.attr', 'color', Color.Highlight.Completion);
-        cy.get(block(8, 3)).should('not.have.attr', 'color', Color.Highlight.Completion);
-        cy.get(block(7, 3)).should('not.have.attr', 'color', Color.Highlight.Completion);
-        cy.get(block(6, 3)).should('not.have.attr', 'color', Color.Highlight.Completion);
+        cy.get(block(9, 3)).should('not.have.attr', 'color', Color.Completion.Highlight2);
+        cy.get(block(8, 3)).should('not.have.attr', 'color', Color.Completion.Highlight2);
+        cy.get(block(7, 3)).should('not.have.attr', 'color', Color.Completion.Highlight2);
+        cy.get(block(6, 3)).should('not.have.attr', 'color', Color.Completion.Highlight2);
     });
 
     it('Sent block', () => {
@@ -368,7 +368,7 @@ describe('Drawing', () => {
         operations.mode.block.dragToRight({ from: 0, to: 9 }, -1);
 
         for (let x = 0; x < 9; x++) {
-            cy.get(sentBlock(x)).should('have.attr', 'color', Color.Gray.Field);
+            cy.get(sentBlock(x)).should('have.attr', 'color', Color.Gray.Normal);
         }
     });
 
@@ -382,12 +382,12 @@ describe('Drawing', () => {
         operations.mode.block.click(0, 0);
         operations.mode.block.click(0, 1);
 
-        cy.get(block(0, 0)).should('have.attr', 'color', Color.Highlight.Completion);
-        cy.get(block(0, 1)).should('have.attr', 'color', Color.Highlight.Completion);
+        cy.get(block(0, 0)).should('have.attr', 'color', Color.Completion.Highlight2);
+        cy.get(block(0, 1)).should('have.attr', 'color', Color.Completion.Highlight2);
 
         operations.menu.newPage();
 
-        cy.get(block(0, 0)).should('have.attr', 'color', Color.Empty.Field);
-        cy.get(block(0, 1)).should('have.attr', 'color', Color.Empty.Field);
+        cy.get(block(0, 0)).should('have.attr', 'color', Color.Empty.Normal);
+        cy.get(block(0, 1)).should('have.attr', 'color', Color.Empty.Normal);
     });
 });

@@ -34,6 +34,7 @@ export interface State {
         pages: Page[];
         value?: string;
         errorMessage?: string;
+        guideLineColor: boolean;
     };
     cache: {
         currentInitField: Field;
@@ -94,6 +95,7 @@ export const initState: Readonly<State> = {
         pages: [],
         value: undefined,
         errorMessage: undefined,
+        guideLineColor: true,
     },
     cache: {
         currentInitField: new Field({}),

@@ -1,5 +1,5 @@
-import { ViewError } from './errors';
 import { Piece, Screens } from './enums';
+import { Block, HighlightType } from '../state_types';
 
 export interface ColorPalette {
     baseClass: string;
@@ -42,50 +42,77 @@ export const Palette = (screen: Screens): ColorPalette => {
     };
 };
 
-export function getHighlightColor(piece: Piece = Piece.Empty): string {
-    switch (piece) {
-    case Piece.Gray:
-        return '#CCCCCC';
-    case Piece.I:
-        return '#24CCCD';
-    case Piece.T:
-        return '#CE27CE';
-    case Piece.S:
-        return '#26CE22';
-    case Piece.Z:
-        return '#CE312D';
-    case Piece.L:
-        return '#CD9A24';
-    case Piece.J:
-        return '#3229CF';
-    case Piece.O:
-        return '#CCCE19';
-    case Piece.Empty:
-        return '#000000';
-    }
-    throw new ViewError(`Not found highlight color: ${piece}`);
+export function decidePieceColor(piece: Block['piece'], highlight: HighlightType | undefined, isGuideLine: boolean) {
+    const colors = isGuideLine ? guideLineColors : classicColors;
+    return colors[piece][highlight !== undefined ? highlight : HighlightType.Normal];
 }
 
-export function getNormalColor(piece: Piece = Piece.Empty): string {
-    switch (piece) {
-    case Piece.Gray:
-        return '#999999';
-    case Piece.I:
-        return '#009999';
-    case Piece.T:
-        return '#9B009B';
-    case Piece.S:
-        return '#009B00';
-    case Piece.Z:
-        return '#9B0000';
-    case Piece.L:
-        return '#9A6700';
-    case Piece.J:
-        return '#0000BE';
-    case Piece.O:
-        return '#999900';
-    case Piece.Empty:
-        return '#000000';
-    }
-    throw new ViewError(`Not found normal color: ${piece}`);
-}
+const guideLineColors = {
+    ['inference']: {
+        [HighlightType.Normal]: '#ffffff',
+        [HighlightType.Highlight1]: '#ffffff',
+        [HighlightType.Highlight2]: '#ffffff',
+    },
+    [Piece.Gray]: {
+        [HighlightType.Normal]: '#999999',
+        [HighlightType.Highlight1]: '#cccccc',
+        [HighlightType.Highlight2]: '#ffffff',
+    },
+    [Piece.I]: {
+        [HighlightType.Normal]: '#009999',
+        [HighlightType.Highlight1]: '#33cccc',
+        [HighlightType.Highlight2]: '#00ffff',
+    },
+    [Piece.T]: {
+        [HighlightType.Normal]: '#990099',
+        [HighlightType.Highlight1]: '#cc33cc',
+        [HighlightType.Highlight2]: '#ff00ff',
+    },
+    [Piece.S]: {
+        [HighlightType.Normal]: '#009900',
+        [HighlightType.Highlight1]: '#33cc33',
+        [HighlightType.Highlight2]: '#00ff00',
+    },
+    [Piece.Z]: {
+        [HighlightType.Normal]: '#990000',
+        [HighlightType.Highlight1]: '#cc3333',
+        [HighlightType.Highlight2]: '#ff0000',
+    },
+    [Piece.L]: {
+        [HighlightType.Normal]: '#996600',
+        [HighlightType.Highlight1]: '#cc9933',
+        [HighlightType.Highlight2]: '#ff9900',
+    },
+    [Piece.J]: {
+        [HighlightType.Normal]: '#0000BB',
+        [HighlightType.Highlight1]: '#3333cc',
+        [HighlightType.Highlight2]: '#0000ff',
+    },
+    [Piece.O]: {
+        [HighlightType.Normal]: '#999900',
+        [HighlightType.Highlight1]: '#cccc33',
+        [HighlightType.Highlight2]: '#ffff00',
+    },
+    [Piece.Empty]: {
+        [HighlightType.Normal]: '#000000',
+        [HighlightType.Highlight1]: '#000000',
+        [HighlightType.Highlight2]: '#000000',
+    },
+};
+
+const classicColors = {
+    ['inference']: guideLineColors['inference'],
+    [Piece.Gray]: guideLineColors[Piece.Gray],
+    [Piece.I]: guideLineColors[Piece.Z],
+    [Piece.T]: guideLineColors[Piece.I],
+    [Piece.S]: guideLineColors[Piece.T],
+    [Piece.Z]: guideLineColors[Piece.S],
+    [Piece.L]: guideLineColors[Piece.L],
+    [Piece.J]: guideLineColors[Piece.J],
+    [Piece.O]: guideLineColors[Piece.O],
+    [Piece.Empty]: guideLineColors[Piece.Empty],
+};
+
+export const decideBackgroundColor = (yIndex: number) => {
+    return yIndex < 20 ? '#000000' : '#333333';
+};

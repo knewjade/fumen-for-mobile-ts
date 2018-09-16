@@ -15,7 +15,7 @@ describe('No lock', () => {
 
             // Sミノの確認
             mino(Piece.S, Rotation.Spawn)(1, 0).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
         }
 
@@ -24,7 +24,7 @@ describe('No lock', () => {
 
             // 右向きの確認
             mino(Piece.S, Rotation.Right)(0, 1).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
         });
 
@@ -32,7 +32,7 @@ describe('No lock', () => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(5));
 
             mino(Piece.S, Rotation.Spawn)(1, 3).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
         });
 
@@ -40,7 +40,7 @@ describe('No lock', () => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(9));
 
             mino(Piece.S, Rotation.Spawn)(1, 6).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
         });
 
@@ -48,7 +48,7 @@ describe('No lock', () => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(13));
 
             mino(Piece.S, Rotation.Spawn)(1, 9).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
         });
 
@@ -56,7 +56,7 @@ describe('No lock', () => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(17));
 
             mino(Piece.S, Rotation.Spawn)(1, 12).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
         });
 
@@ -64,7 +64,7 @@ describe('No lock', () => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(21));
 
             mino(Piece.S, Rotation.Spawn)(1, 15).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
         });
 
@@ -72,7 +72,7 @@ describe('No lock', () => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(25));
 
             mino(Piece.S, Rotation.Spawn)(1, 18).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
         });
 
@@ -81,7 +81,7 @@ describe('No lock', () => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(31));
 
             mino(Piece.S, Rotation.Spawn)(1, 15).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
         });
 
@@ -89,7 +89,7 @@ describe('No lock', () => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(35));
 
             mino(Piece.S, Rotation.Spawn)(1, 12).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
         });
 
@@ -97,7 +97,7 @@ describe('No lock', () => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(39));
 
             mino(Piece.S, Rotation.Spawn)(1, 9).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
         });
 
@@ -105,7 +105,7 @@ describe('No lock', () => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(43));
 
             mino(Piece.S, Rotation.Spawn)(1, 6).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
         });
 
@@ -113,7 +113,7 @@ describe('No lock', () => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(47));
 
             mino(Piece.S, Rotation.Spawn)(1, 3).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
         });
 
@@ -121,7 +121,7 @@ describe('No lock', () => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(51));
 
             mino(Piece.S, Rotation.Spawn)(1, 0).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
         });
 
@@ -130,7 +130,7 @@ describe('No lock', () => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1));
 
             mino(Piece.S, Rotation.Spawn)(1, 0).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
         });
 
@@ -139,7 +139,7 @@ describe('No lock', () => {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(5));
 
             mino(Piece.S, Rotation.Spawn)(1, 3).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
         });
     });

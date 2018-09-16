@@ -28,7 +28,7 @@ describe('Quiz', () => {
 
             // Jミノの確認
             mino(Piece.J, Rotation.Spawn)(8, 0).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.J);
+                cy.get(block).should('have.attr', 'color', Color.J.Highlight2);
             });
         }
 
@@ -42,7 +42,7 @@ describe('Quiz', () => {
 
             // Jミノの確認
             mino(Piece.Z, Rotation.Spawn)(8, 1).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.Z);
+                cy.get(block).should('have.attr', 'color', Color.Z.Highlight2);
             });
         });
 
@@ -56,7 +56,7 @@ describe('Quiz', () => {
 
             // Jミノの確認
             mino(Piece.O, Rotation.Spawn)(0, 0).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.O);
+                cy.get(block).should('have.attr', 'color', Color.O.Highlight2);
             });
         });
     });

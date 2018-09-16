@@ -642,6 +642,7 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                 blockSize: layout.field.blockSize,
                 field: state.field,
                 sentLine: state.sentLine,
+                guideLineColor: state.fumen.guideLineColor,
             }),
 
             getMode(),

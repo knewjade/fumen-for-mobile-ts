@@ -1,33 +1,75 @@
-// TODO: 構造を色->状態に統一したい
 import { operations } from './_operations';
 
+export const HighlightType = {
+    Normal: 'Normal',
+    Highlight1: 'Highlight1',
+    Highlight2: 'Highlight2',
+};
+
 export const Color = {
-    Normal: {
-        I: '#009999',
-        J: '#0000BE',
-        L: '#9A6700',
-        Z: '#9B0000',
-        S: '#009B00',
-        O: '#999900',
-        T: '#9B009B',
-    },
-    Highlight: {
-        I: '#24CCCD',
-        J: '#3229CF',
-        L: '#CD9A24',
-        Z: '#CE312D',
-        S: '#26CE22',
-        O: '#CCCE19',
-        T: '#CE27CE',
-        Completion: '#fff',
-    },
-    Empty: {
-        Field: '#000',
+    Completion: {
+        [HighlightType.Normal]: '#ffffff',
+        [HighlightType.Highlight1]: '#ffffff',
+        [HighlightType.Highlight2]: '#ffffff',
     },
     Gray: {
-        Field: '#999999',
-        Highlight: '#CCCCCC',
+        [HighlightType.Normal]: '#999999',
+        [HighlightType.Highlight1]: '#cccccc',
+        [HighlightType.Highlight2]: '#ffffff',
     },
+    I: {
+        [HighlightType.Normal]: '#009999',
+        [HighlightType.Highlight1]: '#33cccc',
+        [HighlightType.Highlight2]: '#00ffff',
+    },
+    T: {
+        [HighlightType.Normal]: '#990099',
+        [HighlightType.Highlight1]: '#cc33cc',
+        [HighlightType.Highlight2]: '#ff00ff',
+    },
+    S: {
+        [HighlightType.Normal]: '#009900',
+        [HighlightType.Highlight1]: '#33cc33',
+        [HighlightType.Highlight2]: '#00ff00',
+    },
+    Z: {
+        [HighlightType.Normal]: '#990000',
+        [HighlightType.Highlight1]: '#cc3333',
+        [HighlightType.Highlight2]: '#ff0000',
+    },
+    L: {
+        [HighlightType.Normal]: '#996600',
+        [HighlightType.Highlight1]: '#cc9933',
+        [HighlightType.Highlight2]: '#ff9900',
+    },
+    J: {
+        [HighlightType.Normal]: '#0000BB',
+        [HighlightType.Highlight1]: '#3333cc',
+        [HighlightType.Highlight2]: '#0000ff',
+    },
+    O: {
+        [HighlightType.Normal]: '#999900',
+        [HighlightType.Highlight1]: '#cccc33',
+        [HighlightType.Highlight2]: '#ffff00',
+    },
+    Empty: {
+        [HighlightType.Normal]: '#000000',
+        [HighlightType.Highlight1]: '#000000',
+        [HighlightType.Highlight2]: '#000000',
+    },
+};
+
+export const ClassicColor = {
+    Completion: Color.Completion,
+    Gray: Color.Gray,
+    I: Color.Z,
+    T: Color.I,
+    S: Color.T,
+    Z: Color.S,
+    L: Color.L,
+    J: Color.J,
+    O: Color.O,
+    Empty: Color.Empty,
 };
 
 export const Piece = {

@@ -9,9 +9,10 @@ import { comment } from '../components/comment';
 import { isMinoPiece, Screens } from '../lib/enums';
 import { EventCanvas } from '../components/event/event_canvas';
 import { Box } from '../components/box';
-import { getHighlightColor, Palette } from '../lib/colors';
+import { decidePieceColor, Palette } from '../lib/colors';
 import { Field } from '../components/field';
 import { ReaderTools } from '../components/tools/reader_tools';
+import { HighlightType } from '../state_types';
 
 interface ReaderLayout {
     canvas: {
@@ -162,6 +163,7 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
                 blockSize: layout.field.blockSize,
                 field: state.field,
                 sentLine: state.sentLine,
+                guideLineColor: state.fumen.guideLineColor,
             }),
 
             // Hold
@@ -172,7 +174,7 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
                 topLeft: layout.hold.topLeft,
                 piece: isMinoPiece(state.hold) ? {
                     type: state.hold,
-                    color: getHighlightColor(state.hold),
+                    color: decidePieceColor(state.hold, HighlightType.Highlight2, state.fumen.guideLineColor),
                     size: layout.hold.boxSize / 4 - 1,
                 } : undefined,
             }) : undefined as any,
@@ -186,7 +188,7 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
                     topLeft: layout.nexts.topLeft(index),
                     piece: isMinoPiece(value) ? {
                         type: value,
-                        color: getHighlightColor(value),
+                        color: decidePieceColor(value, HighlightType.Highlight2, state.fumen.guideLineColor),
                         size: layout.nexts.boxSize / 4 - 1,
                     } : undefined,
                 });

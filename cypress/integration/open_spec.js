@@ -109,17 +109,17 @@ describe('Open fumen', () => {
     it('Highlight when lock is on/off', () => {
         visit({ fumen: 'v115@pgI8AeI8AeI8AeI8AeI8AeJ8Jep5mvhApjB' });
 
-        cy.get(block(0, 0)).should('have.attr', 'color', Color.Gray.Field);
-        cy.get(block(0, 1)).should('have.attr', 'color', Color.Gray.Field);
-        cy.get(block(0, 4)).should('have.attr', 'color', Color.Gray.Field);
-        cy.get(block(0, 5)).should('have.attr', 'color', Color.Gray.Field);
+        cy.get(block(0, 0)).should('have.attr', 'color', Color.Gray.Normal);
+        cy.get(block(0, 1)).should('have.attr', 'color', Color.Gray.Normal);
+        cy.get(block(0, 4)).should('have.attr', 'color', Color.Gray.Normal);
+        cy.get(block(0, 5)).should('have.attr', 'color', Color.Gray.Normal);
 
         rightTap();
 
-        cy.get(block(0, 0)).should('have.attr', 'color', Color.Gray.Highlight);
-        cy.get(block(0, 1)).should('have.attr', 'color', Color.Gray.Highlight);
-        cy.get(block(0, 4)).should('have.attr', 'color', Color.Gray.Highlight);
-        cy.get(block(0, 5)).should('have.attr', 'color', Color.Gray.Field);
+        cy.get(block(0, 0)).should('have.attr', 'color', Color.Gray.Highlight1);
+        cy.get(block(0, 1)).should('have.attr', 'color', Color.Gray.Highlight1);
+        cy.get(block(0, 4)).should('have.attr', 'color', Color.Gray.Highlight1);
+        cy.get(block(0, 5)).should('have.attr', 'color', Color.Gray.Normal);
     });
 });
 

@@ -3,7 +3,7 @@ import { NextState, sequence } from './commons';
 import { AnimationState, getBlocks, isMinoPiece, Piece } from '../lib/enums';
 import { Move, Page, PreCommand } from '../lib/fumen/fumen';
 import { Field } from '../lib/fumen/field';
-import { Block } from '../state_types';
+import { Block, HighlightType } from '../state_types';
 import { Pages, QuizCommentResult, TextCommentResult } from '../lib/pages';
 import {
     OperationTask,
@@ -73,6 +73,9 @@ export const pageActions: Readonly<PageActions> = {
         const page = state.fumen.pages[index];
         const blocks = parseToBlocks(field, page.piece, page.commands);
 
+        // テト譜の仕様により、最初のページのフラグが全体に反映される
+        const guideLineColor = state.fumen.pages[0] !== undefined ? state.fumen.pages[0].flags.colorize : true;
+
         return sequence(state, [
             state.play.status === AnimationState.Play ? actions.startAnimation() : undefined,
             state.fumen.currentIndex !== index ? actions.fixInferencePiece() : undefined,
@@ -84,12 +87,13 @@ export const pageActions: Readonly<PageActions> = {
                 filledHighlight: page.flags.lock,
                 inferences: state.events.inferences,
             }),
+            actions.setFieldColor({ guideLineColor }),
             actions.setSentLine({ sentLine: blocks.sentLine }),
             actions.setHold({ hold }),
             actions.setNext({ next }),
-            () => ({
+            newState => ({
                 fumen: {
-                    ...state.fumen,
+                    ...newState.fumen,
                     currentIndex: index,
                 },
                 cache: {
@@ -356,12 +360,12 @@ export const parseToBlocks = (field: Field, move?: Move, commands?: Page['comman
                 switch (command.type) {
                 case 'block': {
                     const { x, y, piece } = command;
-                    playField[x + y * 10] = { piece, highlight: false };
+                    playField[x + y * 10] = { piece };
                     return;
                 }
                 case 'sentBlock': {
                     const { x, y, piece } = command;
-                    sentLine[x + y * 10] = { piece, highlight: false };
+                    sentLine[x + y * 10] = { piece };
                     return;
                 }
                 }
@@ -375,7 +379,7 @@ export const parseToBlocks = (field: Field, move?: Move, commands?: Page['comman
             const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
             playField[x + y * 10] = {
                 piece: move.type,
-                highlight: true,
+                highlight: HighlightType.Highlight2,
             };
         }
     }

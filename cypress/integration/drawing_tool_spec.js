@@ -9,16 +9,16 @@ describe('Drawing Tools', () => {
 
         operations.screen.writable();
 
-        cy.get(block(0, 0)).should('have.attr', 'color', Color.Gray.Highlight);
+        cy.get(block(0, 0)).should('have.attr', 'color', Color.Gray.Highlight1);
 
         operations.mode.flags.open();
         operations.mode.flags.lockToOff();
 
-        cy.get(block(0, 0)).should('have.attr', 'color', Color.Gray.Field);
+        cy.get(block(0, 0)).should('have.attr', 'color', Color.Gray.Normal);
 
         operations.mode.flags.lockToOn();
 
-        cy.get(block(0, 0)).should('have.attr', 'color', Color.Gray.Highlight);
+        cy.get(block(0, 0)).should('have.attr', 'color', Color.Gray.Highlight1);
     });
 
     it('Remove', () => {
@@ -109,42 +109,42 @@ describe('Drawing Tools', () => {
         operations.mode.block.dragToRight({ from: 7, to: 9 }, 2);
 
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '2 / 2');
-        cy.get(block(9, 0)).should('have.attr', 'color', Color.Normal.S);
-        cy.get(block(9, 1)).should('have.attr', 'color', Color.Normal.Z);
-        cy.get(block(9, 2)).should('have.attr', 'color', Color.Normal.T);
+        cy.get(block(9, 0)).should('have.attr', 'color', Color.S.Normal);
+        cy.get(block(9, 1)).should('have.attr', 'color', Color.Z.Normal);
+        cy.get(block(9, 2)).should('have.attr', 'color', Color.T.Normal);
 
         // Undo
         operations.mode.tools.undo();
 
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '2 / 2');
-        cy.get(block(9, 0)).should('have.attr', 'color', Color.Normal.S);
-        cy.get(block(9, 1)).should('have.attr', 'color', Color.Normal.Z);
-        cy.get(block(9, 2)).should('not.have.attr', 'color', Color.Normal.T);
+        cy.get(block(9, 0)).should('have.attr', 'color', Color.S.Normal);
+        cy.get(block(9, 1)).should('have.attr', 'color', Color.Z.Normal);
+        cy.get(block(9, 2)).should('not.have.attr', 'color', Color.T.Normal);
 
         operations.mode.tools.undo();
 
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '2 / 2');
-        cy.get(block(9, 0)).should('have.attr', 'color', Color.Normal.S);
-        cy.get(block(9, 1)).should('not.have.attr', 'color', Color.Normal.Z);
-        cy.get(block(9, 2)).should('not.have.attr', 'color', Color.Normal.T);
+        cy.get(block(9, 0)).should('have.attr', 'color', Color.S.Normal);
+        cy.get(block(9, 1)).should('not.have.attr', 'color', Color.Z.Normal);
+        cy.get(block(9, 2)).should('not.have.attr', 'color', Color.T.Normal);
 
         operations.mode.tools.undo();
 
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '2 / 2');
-        cy.get(block(9, 0)).should('not.have.attr', 'color', Color.Normal.S);
-        cy.get(block(9, 1)).should('not.have.attr', 'color', Color.Normal.Z);
-        cy.get(block(9, 2)).should('not.have.attr', 'color', Color.Normal.T);
+        cy.get(block(9, 0)).should('not.have.attr', 'color', Color.S.Normal);
+        cy.get(block(9, 1)).should('not.have.attr', 'color', Color.Z.Normal);
+        cy.get(block(9, 2)).should('not.have.attr', 'color', Color.T.Normal);
 
         operations.mode.tools.undo();
 
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 1');
-        cy.get(block(9, 0)).should('not.have.attr', 'color', Color.Normal.S);
-        cy.get(block(9, 1)).should('not.have.attr', 'color', Color.Normal.Z);
-        cy.get(block(9, 2)).should('not.have.attr', 'color', Color.Normal.T);
+        cy.get(block(9, 0)).should('not.have.attr', 'color', Color.S.Normal);
+        cy.get(block(9, 1)).should('not.have.attr', 'color', Color.Z.Normal);
+        cy.get(block(9, 2)).should('not.have.attr', 'color', Color.T.Normal);
 
         operations.mode.tools.undo();
 
-        cy.get(block(6, 0)).should('have.attr', 'color', Color.Normal.I);
+        cy.get(block(6, 0)).should('have.attr', 'color', Color.I.Normal);
 
         // inference
 
@@ -154,24 +154,24 @@ describe('Drawing Tools', () => {
         operations.mode.tools.undo();
 
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 1');
-        cy.get(block(9, 0)).should('not.have.attr', 'color', Color.Normal.S);
-        cy.get(block(9, 1)).should('not.have.attr', 'color', Color.Normal.Z);
-        cy.get(block(9, 2)).should('not.have.attr', 'color', Color.Normal.T);
+        cy.get(block(9, 0)).should('not.have.attr', 'color', Color.S.Normal);
+        cy.get(block(9, 1)).should('not.have.attr', 'color', Color.Z.Normal);
+        cy.get(block(9, 2)).should('not.have.attr', 'color', Color.T.Normal);
 
         // Redo
         operations.mode.tools.redo();
 
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '2 / 2');
-        cy.get(block(9, 0)).should('not.have.attr', 'color', Color.Normal.S);
-        cy.get(block(9, 1)).should('not.have.attr', 'color', Color.Normal.Z);
-        cy.get(block(9, 2)).should('not.have.attr', 'color', Color.Normal.T);
+        cy.get(block(9, 0)).should('not.have.attr', 'color', Color.S.Normal);
+        cy.get(block(9, 1)).should('not.have.attr', 'color', Color.Z.Normal);
+        cy.get(block(9, 2)).should('not.have.attr', 'color', Color.T.Normal);
 
         operations.mode.tools.redo();
 
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '2 / 2');
-        cy.get(block(9, 0)).should('have.attr', 'color', Color.Normal.S);
-        cy.get(block(9, 1)).should('not.have.attr', 'color', Color.Normal.Z);
-        cy.get(block(9, 2)).should('not.have.attr', 'color', Color.Normal.T);
+        cy.get(block(9, 0)).should('have.attr', 'color', Color.S.Normal);
+        cy.get(block(9, 1)).should('not.have.attr', 'color', Color.Z.Normal);
+        cy.get(block(9, 2)).should('not.have.attr', 'color', Color.T.Normal);
 
         // Remove page
         operations.mode.tools.open();
@@ -184,8 +184,8 @@ describe('Drawing Tools', () => {
         operations.mode.tools.undo();
 
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 2');
-        cy.get(block(6, 0)).should('have.attr', 'color', Color.Normal.I);
-        cy.get(block(9, 0)).should('not.have.attr', 'color', Color.Normal.S);
+        cy.get(block(6, 0)).should('have.attr', 'color', Color.I.Normal);
+        cy.get(block(9, 0)).should('not.have.attr', 'color', Color.S.Normal);
 
         operations.mode.tools.redo();
 
@@ -196,27 +196,27 @@ describe('Drawing Tools', () => {
         operations.mode.editor.nextPage();
 
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '2 / 2');
-        cy.get(block(6, 0)).should('have.attr', 'color', Color.Normal.I);
-        cy.get(block(9, 0)).should('have.attr', 'color', Color.Normal.S);
+        cy.get(block(6, 0)).should('have.attr', 'color', Color.I.Normal);
+        cy.get(block(9, 0)).should('have.attr', 'color', Color.S.Normal);
 
         // New page
         operations.menu.newPage();
 
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 1');
-        cy.get(block(6, 0)).should('not.have.attr', 'color', Color.Normal.I);
-        cy.get(block(9, 0)).should('not.have.attr', 'color', Color.Normal.S);
+        cy.get(block(6, 0)).should('not.have.attr', 'color', Color.I.Normal);
+        cy.get(block(9, 0)).should('not.have.attr', 'color', Color.S.Normal);
 
         operations.mode.tools.undo();
 
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '2 / 2');
-        cy.get(block(6, 0)).should('have.attr', 'color', Color.Normal.I);
-        cy.get(block(9, 0)).should('have.attr', 'color', Color.Normal.S);
+        cy.get(block(6, 0)).should('have.attr', 'color', Color.I.Normal);
+        cy.get(block(9, 0)).should('have.attr', 'color', Color.S.Normal);
 
         operations.mode.tools.redo();
 
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 1');
-        cy.get(block(6, 0)).should('not.have.attr', 'color', Color.Normal.I);
-        cy.get(block(9, 0)).should('not.have.attr', 'color', Color.Normal.S);
+        cy.get(block(6, 0)).should('not.have.attr', 'color', Color.I.Normal);
+        cy.get(block(9, 0)).should('not.have.attr', 'color', Color.S.Normal);
 
         operations.mode.tools.undo();
 
@@ -346,7 +346,7 @@ describe('Drawing Tools', () => {
         }
 
         minoPosition(Piece.I, Rotation.Spawn)(1, 0).forEach((p) => {
-            cy.get(block(p[0], p[1])).should('have.attr', 'color', Color.Normal.I);
+            cy.get(block(p[0], p[1])).should('have.attr', 'color', Color.I.Normal);
         });
 
         expectFumen('v115@bhzhPeAIrvhJAIrAIrAIrAIrAIrAIrAIrAIrAIrAIr');

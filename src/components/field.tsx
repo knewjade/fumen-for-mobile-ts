@@ -2,7 +2,7 @@ import { Component } from '../lib/types';
 import { h } from 'hyperapp';
 import { Block } from '../state_types';
 import { Piece } from '../lib/enums';
-import { getHighlightColor, getNormalColor } from '../lib/colors';
+import { decideBackgroundColor, decidePieceColor } from '../lib/colors';
 import { resources } from '../states';
 import konva = require('konva');
 
@@ -15,20 +15,10 @@ interface Props {
     sentLine: Block[];
     blockSize: number;
     fieldMarginWidth: number;
+    guideLineColor: boolean;
 }
 
-const decidePieceColor = (piece: Block['piece'], highlight: boolean) => {
-    if (piece === 'inference') {
-        return '#fff';
-    }
-    return highlight ? getHighlightColor(piece) : getNormalColor(piece);
-};
-
-const decideBackgroundColor = (yIndex: number) => {
-    return yIndex < 20 ? '#000' : '#333';
-};
-
-export const Field: Component<Props> = ({ topLeft, field, sentLine, blockSize, fieldMarginWidth }) => {
+export const Field: Component<Props> = ({ topLeft, field, sentLine, blockSize, fieldMarginWidth, guideLineColor }) => {
     const fieldBottomLeft = topLeft.y + (blockSize + 1) * 22.5 + 1;
 
     // プレイフィールドの描画
@@ -48,7 +38,7 @@ export const Field: Component<Props> = ({ topLeft, field, sentLine, blockSize, f
         };
         const color = blockValue.piece === Piece.Empty ?
             decideBackgroundColor(yIndex) :
-            decidePieceColor(blockValue.piece, blockValue.highlight || false);
+            decidePieceColor(blockValue.piece, blockValue.highlight, guideLineColor);
 
         return <Block key={key} dataTest={key} size={size} position={position} color={color} rect={rect}/>;
     });
@@ -64,9 +54,7 @@ export const Field: Component<Props> = ({ topLeft, field, sentLine, blockSize, f
             x: topLeft.x + xIndex * blockSize + xIndex + 1,
             y: fieldBottomLeft + fieldMarginWidth,
         };
-        const color = blockValue.piece === Piece.Empty ?
-            '#000' :
-            decidePieceColor(blockValue.piece, blockValue.highlight || false);
+        const color = decidePieceColor(blockValue.piece, blockValue.highlight, guideLineColor);
 
         return <Block key={key} dataTest={key} size={size} position={position} color={color} rect={rect}/>;
     });

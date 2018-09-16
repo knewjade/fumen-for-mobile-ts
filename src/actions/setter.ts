@@ -1,7 +1,7 @@
 import { NextState } from './commons';
 import { action, main } from '../actions';
 import { FieldConstants, Piece } from '../lib/enums';
-import { Block } from '../state_types';
+import { Block, HighlightType } from '../state_types';
 import { Page } from '../lib/fumen/fumen';
 import { inferPiece } from '../lib/inference';
 
@@ -11,6 +11,7 @@ export interface SetterActions {
     clearFumenData: () => action;
     setComment: (data: { comment: string }) => action;
     setField: (data: { field: Block[], filledHighlight: boolean, inferences: number[] }) => action;
+    setFieldColor: (data: { guideLineColor: boolean }) => action;
     setSentLine: (data: { sentLine: Block[] }) => action;
     setHold: (data: { hold?: Piece }) => action;
     setNext: (data: { next?: Piece[] }) => action;
@@ -68,9 +69,18 @@ export const setterActions: Readonly<SetterActions> = {
                 const filled = line.every(block => block.piece !== Piece.Empty);
                 if (filled) {
                     for (let index = start; index < end; index += 1) {
+                        let nextHighlight;
+                        const currentBlock = drawnField[index];
+                        if (currentBlock !== undefined) {
+                            const highlight = currentBlock.highlight;
+                            nextHighlight = highlight !== undefined && HighlightType.Highlight1 < highlight
+                                ? highlight
+                                : HighlightType.Highlight1;
+                        }
+
                         drawnField[index] = {
                             ...field[index],
-                            highlight: true,
+                            highlight: nextHighlight,
                         };
                     }
                 }
@@ -84,7 +94,7 @@ export const setterActions: Readonly<SetterActions> = {
                 drawnField[inference] = {
                     ...field[inference],
                     piece,
-                    highlight: true,
+                    highlight: HighlightType.Highlight2,
                 };
             }
         } catch (e) {
@@ -93,11 +103,20 @@ export const setterActions: Readonly<SetterActions> = {
                 drawnField[inference] = {
                     ...field[inference],
                     piece: 'inference',
+                    highlight: HighlightType.Highlight2,
                 };
             }
         }
 
         return { field: drawnField };
+    },
+    setFieldColor: ({ guideLineColor }) => (state): NextState => {
+        return {
+            fumen: {
+                ...state.fumen,
+                guideLineColor,
+            },
+        };
     },
     setSentLine: ({ sentLine }) => (): NextState => {
         return { sentLine };

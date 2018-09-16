@@ -51,10 +51,10 @@ describe('Put pieces', () => {
         operations.mode.piece.open();
 
         operations.mode.block.click(0, 0);
-        cy.get(block(0, 0)).should('have.attr', 'color', Color.Highlight.Completion);
+        cy.get(block(0, 0)).should('have.attr', 'color', Color.Completion.Highlight2);
 
         operations.mode.piece.resetPiece();
-        cy.get(block(0, 0)).should('not.have.attr', 'color', Color.Highlight.Completion);
+        cy.get(block(0, 0)).should('not.have.attr', 'color', Color.Completion.Highlight2);
 
         minoPosition(Piece.I, Rotation.Spawn)(4, 0).forEach(position => {
             operations.mode.block.click(position[0], position[1]);
@@ -136,7 +136,7 @@ describe('Put pieces', () => {
             operations.mode.piece.rotateToRight();
 
             mino(Piece.T, Rotation.Right)(1, 1).forEach(block => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.T);
+                cy.get(block).should('have.attr', 'color', Color.T.Highlight2);
             });
 
             operations.mode.piece.resetPiece();
@@ -148,7 +148,7 @@ describe('Put pieces', () => {
             operations.mode.piece.rotateToLeft();
 
             mino(Piece.T, Rotation.Left)(7, 1).forEach(block => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.T);
+                cy.get(block).should('have.attr', 'color', Color.T.Highlight2);
             });
         }
 
@@ -163,7 +163,7 @@ describe('Put pieces', () => {
             operations.mode.piece.rotateToRight();
 
             mino(Piece.S, Rotation.Reverse)(2, 1).forEach(block => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.S);
+                cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
 
             operations.mode.piece.resetPiece();
@@ -177,7 +177,7 @@ describe('Put pieces', () => {
             operations.mode.piece.rotateToLeft();
 
             mino(Piece.Z, Rotation.Reverse)(7, 1).forEach(block => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.Z);
+                cy.get(block).should('have.attr', 'color', Color.Z.Highlight2);
             });
         }
 
@@ -192,7 +192,7 @@ describe('Put pieces', () => {
             operations.mode.piece.rotateToRight();
 
             mino(Piece.L, Rotation.Right)(2, 1).forEach(block => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.L);
+                cy.get(block).should('have.attr', 'color', Color.L.Highlight2);
             });
 
             operations.mode.piece.resetPiece();
@@ -204,7 +204,7 @@ describe('Put pieces', () => {
             operations.mode.piece.rotateToLeft();
 
             mino(Piece.J, Rotation.Left)(7, 1).forEach(block => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.J);
+                cy.get(block).should('have.attr', 'color', Color.J.Highlight2);
             });
         }
 
@@ -219,7 +219,7 @@ describe('Put pieces', () => {
             operations.mode.piece.rotateToRight();
 
             mino(Piece.I, Rotation.Reverse)(2, 0).forEach(block => {
-                cy.get(block).should('have.attr', 'color', Color.Highlight.I);
+                cy.get(block).should('have.attr', 'color', Color.I.Highlight2);
             });
         }
 
