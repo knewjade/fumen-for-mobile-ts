@@ -249,6 +249,7 @@ export const pageActions: Readonly<PageActions> = {
         if (index <= 0) {
             return undefined;
         }
+
         const task = toKeyPageTask(index);
         return sequence(state, [
             actions.fixInferencePiece(),

@@ -236,7 +236,6 @@ export class Pages {
 
     // TODO: Add unit test
     deletePage(index: number) {
-        const page = this.pages[index];
         const nextPage = this.pages[index + 1];
 
         const ref = {
@@ -296,9 +295,11 @@ export class Pages {
             throw new FumenError(`Not found field obj: ${index}`);
         }
 
-        // 現在のフィールドを取得
+        // フィールドの差分をコマンドにする
         const prevField = this.getField(index - 1, PageFieldOperation.All);
-        const currentField = this.getField(index, PageFieldOperation.None);
+        const currentField = this.getField(index, PageFieldOperation.Command);
+
+        pages[index].commands = parseToCommands(prevField, currentField);
 
         // 前のページで最も近いobjのインデックスを取得
         let ref = 0;
@@ -317,44 +318,8 @@ export class Pages {
             }
         }
 
-        const page = pages[index];
-        const currentCommands = page.commands ? page.commands : { pre: {} };
-        const newCommands: Page['commands'] = {
-            pre: {},
-        };
-
-        // 前ページとの差をコマンドに変換
-        for (let y = -1; y < 24; y += 1) {
-            for (let x = 0; x < 10; x += 1) {
-                const currentPiece = currentField.get(x, y);
-                const prevPiece = prevField.get(x, y);
-
-                const isField = 0 <= y;
-                const i = isField ? x + y * 10 : -x;
-                const type = isField ? 'block' : 'sentBlock';
-                const key = `${type}-${i}`;
-
-                if (currentPiece !== prevPiece) {
-                    // 操作の結果、最初のフィールドの状態から変化するとき
-                    newCommands.pre[key] = { x, y, type, piece: currentPiece };
-                } else {
-                    // 操作の結果、最初のフィールドの状態に戻るとき
-                    delete newCommands.pre[key];
-                }
-            }
-        }
-
-        // 現ページの操作を引き継ぐ
-        Object.keys(currentCommands.pre).forEach((key) => {
-            newCommands.pre[key] = currentCommands.pre[key];
-        });
-
-        // 反映
-        page.commands = newCommands;
-
-        pages[index].field = {
-            ref,
-        };
+        // 現在のフィールドを参照に置き換える
+        pages[index].field = { ref };
     }
 
     // TODO: Add test
@@ -699,3 +664,30 @@ export enum PageFieldOperation {
     Command = 'Command',
     All = 'All',
 }
+
+// targetと同じ地形になるようなコマンドに変換
+const parseToCommands = (current: Field, goal: Field): Page['commands'] => {
+    const commands: Page['commands'] = {
+        pre: {},
+    };
+
+    // 地形の差をコマンドに変換
+    for (let y = -1; y < 24; y += 1) {
+        for (let x = 0; x < 10; x += 1) {
+            const currentPiece = current.get(x, y);
+            const goalPiece = goal.get(x, y);
+
+            const isField = 0 <= y;
+            const i = isField ? x + y * 10 : -x;
+            const type = isField ? 'block' : 'sentBlock';
+            const key = `${type}-${i}`;
+
+            if (currentPiece !== goalPiece) {
+                // 操作の結果、最初のフィールドの状態から変化するとき
+                commands.pre[key] = { x, y, type, piece: goalPiece };
+            }
+        }
+    }
+
+    return commands;
+};
