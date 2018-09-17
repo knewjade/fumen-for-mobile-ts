@@ -50,9 +50,11 @@ export enum ModeTypes {
     Piece = 'Piece',
     DrawingTool = 'DrawingTool',
     Flags = 'Flags',
+    Shift = 'Shift',
 }
 
 export enum TouchTypes {
+    None = 'None',
     Drawing = 'Drawing',
     Piece = 'Piece',
     MovePiece = 'MovePiece',

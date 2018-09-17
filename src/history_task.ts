@@ -190,7 +190,13 @@ export const toPrimitivePage = (page: Page): PrimitivePage => {
             } : undefined,
             ref: page.field.ref,
         },
-        piece: page.piece,
+        piece: page.piece !== undefined ? {
+            type: page.piece.type,
+            coordinate: {
+                ...page.piece.coordinate,
+            },
+            rotation: page.piece.rotation,
+        } : undefined,
         comment: {
             text: page.comment.text,
             ref: page.comment.ref,

@@ -17,6 +17,7 @@ import { setterActions, SetterActions } from './actions/setter';
 import { UtilsActions, utilsActions } from './actions/utils';
 import { mementoActions, MementoActions } from './actions/memento';
 import { CommentActions, commentActions } from './actions/comment';
+import { shiftActions, ShiftActions } from './actions/shift';
 
 export type action = (state: Readonly<State>) => NextState;
 
@@ -28,7 +29,8 @@ export type Actions = AnimationActions
     & UtilsActions
     & MementoActions
     & FieldEditorActions
-    & CommentActions;
+    & CommentActions
+    & ShiftActions;
 
 export const actions: Readonly<Actions> = {
     ...animationActions,
@@ -40,6 +42,7 @@ export const actions: Readonly<Actions> = {
     ...mementoActions,
     ...fieldEditorActions,
     ...commentActions,
+    ...shiftActions,
 };
 
 // Mounting

@@ -288,4 +288,55 @@ describe('History', () => {
 
         play('v115@vhAAgH', testCases);
     });
+
+    it('Quiz', () => {
+        const testCases = [
+            {
+                callback: () => {
+                    operations.mode.piece.open();
+                    minoPosition(Piece.I, Rotation.Spawn)(4, 0).forEach((block) => {
+                        operations.mode.block.click(block[0], block[1]);
+                    });
+                },
+                fumen: 'v115@hlFexhhlFexh9gRpFeBtRpFeBtg0HewwRQJ',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.mode.shift.open();
+                    operations.mode.shift.right();
+                },
+                fumen: 'v115@AehlFewhAehlFewh+gRpFeAtAeRpFeAtg0HewwxQJ',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.mode.shift.open();
+                    operations.mode.shift.up();
+                },
+                fumen: 'v115@AehlFewh+gRpFeAtAeRpFeAtJeg0HewwxLJ',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.mode.shift.open();
+                    operations.mode.shift.left();
+                    operations.mode.shift.left();
+                },
+                fumen: 'v115@glFewh/gQpFeAtBeQpFeAtLeg0HewwxKJ',
+                count: 2,
+            },
+            {
+                callback: () => {
+                    operations.mode.shift.open();
+                    operations.mode.shift.down();
+                    operations.mode.shift.down();
+                },
+                fumen: 'v115@TeglFewh/gQpFeAtBeg0HewwAgH',
+                count: 2,
+            },
+        ];
+
+        play('v115@hlFexhhlFexh9gRpFeBtRpFeBtg0HewwAgH', testCases);
+    });
 });

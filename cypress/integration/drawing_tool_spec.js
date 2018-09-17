@@ -404,4 +404,44 @@ describe('Drawing Tools', () => {
 
         expectFumen('v115@bhzhPeAIrvhJAIrAIrAIrAIrAIrAIrAIrAIrAIrAIr');
     });
+
+    it('Shift', () => {
+        visit({
+            fumen: 'v115@heB8GeD8FeD8GeB8hfB8GeD8FeD8GeB8rexyHjeTaH?hxwIfgTaLfJHJDhQaIeQaIeQaIeQaMepmH',
+            mode: 'writable',
+        });
+
+        operations.mode.shift.open();
+
+        operations.mode.shift.right();
+        operations.mode.shift.left();
+
+        operations.mode.editor.nextPage();
+
+        operations.mode.shift.left();
+        operations.mode.shift.right();
+
+        operations.mode.editor.nextPage();
+
+        operations.mode.shift.down();
+        operations.mode.shift.up();
+
+        operations.mode.editor.nextPage();
+
+        operations.mode.shift.up();
+        operations.mode.shift.down();
+
+        expectFumen('v115@heB8GeD8FeD8GeB8hfB8GeD8FeD8GeB8reAgHvhCAg?HAgHAgH');
+
+        operations.mode.editor.nextPage();
+        operations.mode.editor.nextPage();
+
+        operations.mode.editor.backPage();
+        operations.mode.editor.toRef();
+
+        operations.mode.editor.backPage();
+        operations.mode.shift.down();
+
+        expectFumen('v115@heB8GeD8FeD8GeB8hfB8GeD8FeD8GeB8reAgHvhBAg?HAgHheBAGeAABeAAPeA8BeA8GeB8XfBAGeAABeAAPeA8BeA?8GeB8heAgHvhAAgHheB8GeA8BeA8PeAABeAAGeBAXfB8GeA?8BeA8PeAABeAAGeBAheAgH');
+    });
 });

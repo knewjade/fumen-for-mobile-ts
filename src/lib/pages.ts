@@ -666,7 +666,7 @@ export enum PageFieldOperation {
 }
 
 // targetと同じ地形になるようなコマンドに変換
-const parseToCommands = (current: Field, goal: Field): Page['commands'] => {
+export const parseToCommands = (current: Field, goal: Field): Page['commands'] => {
     const commands: Page['commands'] = {
         pre: {},
     };

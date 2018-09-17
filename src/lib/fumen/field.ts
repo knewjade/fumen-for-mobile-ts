@@ -54,6 +54,22 @@ export class Field {
         this.playField.mirror();
     }
 
+    shiftToLeft(): void {
+        this.playField.shiftToLeft();
+    }
+
+    shiftToRight(): void {
+        this.playField.shiftToRight();
+    }
+
+    shiftToUp(): void {
+        this.playField.shiftToUp();
+    }
+
+    shiftToBottom(): void {
+        this.playField.shiftToBottom();
+    }
+
     get(x: number, y: number): Piece {
         return 0 <= y ? this.playField.get(x, y) : this.sentLine.get(x, -(y + 1));
     }
@@ -172,6 +188,36 @@ export class PlayField {
             }
         }
         this.pieces = newField;
+    }
+
+    shiftToLeft(): void {
+        const height = this.pieces.length / 10;
+        for (let y = 0; y < height; y += 1) {
+            for (let x = 0; x < FIELD_WIDTH - 1; x += 1) {
+                this.pieces[x + y * FIELD_WIDTH] = this.pieces[x + 1 + y * FIELD_WIDTH];
+            }
+            this.pieces[9 + y * FIELD_WIDTH] = Piece.Empty;
+        }
+    }
+
+    shiftToRight(): void {
+        const height = this.pieces.length / 10;
+        for (let y = 0; y < height; y += 1) {
+            for (let x = FIELD_WIDTH - 1; 1 <= x; x -= 1) {
+                this.pieces[x + y * FIELD_WIDTH] = this.pieces[x - 1 + y * FIELD_WIDTH];
+            }
+            this.pieces[y * FIELD_WIDTH] = Piece.Empty;
+        }
+    }
+
+    shiftToUp(): void {
+        const blanks = Array.from({ length: 10 }).map(() => Piece.Empty);
+        this.pieces = blanks.concat(this.pieces).slice(0, this.length);
+    }
+
+    shiftToBottom(): void {
+        const blanks = Array.from({ length: 10 }).map(() => Piece.Empty);
+        this.pieces = this.pieces.slice(10, this.length).concat(blanks);
     }
 
     toArray(): Piece[] {

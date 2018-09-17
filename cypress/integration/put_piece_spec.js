@@ -1,9 +1,8 @@
-import { expectFumen, minoPosition, Piece, Rotation, visit } from './_common';
+import { block, Color, expectFumen, mino, minoPosition, Piece, Rotation, visit } from './_common';
 import { operations } from './_operations';
 
 // テト譜を開く
 describe('Put pieces', () => {
-    /*
     it('Move piece', () => {
         visit({});
 
@@ -225,7 +224,7 @@ describe('Put pieces', () => {
 
         expectFumen('v115@zgB8EeD8HeB8AeE8AeC8BeC8BeC8AeE8AeB8Je9MJz?gBAEeDAHeBAAeEAQLBAAeA8AeAABeRLDeAADeQLAAKekMJ0?gB8DeB8AeB8FeD8AeD8AeB8CeA8BeAtAPCeA8AeAABeAAAP?AtKe+MJ0gBAD8BeA8BAAeE8BeBAEeglBeBAEeglBeBADehl?LehOJ');
     });
-*/
+
     it('Move pieces 2', () => {
         visit({});
 

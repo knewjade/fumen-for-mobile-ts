@@ -155,6 +155,7 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
         openPage: (data: { index: number }) => void;
         changeToDrawingMode: () => void;
         changeToFlagsMode: () => void;
+        changeToShiftMode: () => void;
         changeToDrawPieceMode: () => void;
         changeToRef: (data: { index: number }) => void;
         changeToKey: (data: { index: number }) => void;
@@ -213,6 +214,23 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
                 description: 'remove',
                 iconSize: 22,
                 iconName: 'remove_circle_outline',
+            }),
+        }),
+        toolButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'red',
+            textColor: '#fff',
+            borderColor: '#f44336',
+            datatest: 'btn-shift-mode',
+            key: 'btn-shift-mode',
+            onclick: () => actions.changeToShiftMode(),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: 'shift',
+                iconSize: 24,
+                iconName: 'swap_vert',
             }),
         }),
         toolButton({
@@ -578,6 +596,106 @@ const flagsMode = ({ layout, currentIndex, keyPage, flags, actions }: {
     ]);
 };
 
+const shiftMode = ({ layout, currentIndex, keyPage, flags, actions }: {
+    layout: EditorLayout;
+    currentIndex: number;
+    keyPage: boolean;
+    flags: {
+        lock: boolean;
+        mirror: boolean;
+        rise: boolean;
+    },
+    actions: {
+        changeToRef: (data: { index: number }) => void;
+        changeToKey: (data: { index: number }) => void;
+        shiftToLeft: () => void;
+        shiftToRight: () => void;
+        shiftToUp: () => void;
+        shiftToBottom: () => void;
+    };
+}) => {
+    const toolButtonMargin = 5;
+
+    return div({ style: toolStyle(layout) }, [
+        keyButton({
+            toolButtonMargin,
+            keyPage,
+            currentIndex,
+            actions,
+            width: layout.buttons.size.width,
+            height: layout.buttons.size.height,
+        }),
+        toolSpace({
+            flexGrow: 100,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            key: 'div-space',
+        }),
+        toolButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'white',
+            textColor: '#333',
+            borderColor: '#333',
+            datatest: 'btn-shift-to-up',
+            key: 'btn-shift-to-up',
+            onclick: () => actions.shiftToUp(),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: '',
+                iconSize: 22,
+                iconName: 'keyboard_arrow_up',
+            }),
+        }),
+        dualButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'white',
+            textColor: '#333',
+            borderColor: '#333',
+        }, {
+            datatest: 'btn-shift-to-left',
+            key: 'btn-shift-to-left',
+            onclick: () => actions.shiftToLeft(),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: '',
+                iconSize: 23,
+                iconName: 'keyboard_arrow_left',
+            }),
+        }, {
+            datatest: 'btn-shift-to-right',
+            key: 'btn-shift-to-right',
+            onclick: () => actions.shiftToRight(),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: '',
+                iconSize: 23,
+                iconName: 'keyboard_arrow_right',
+            }),
+        }),
+        toolButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'white',
+            textColor: '#333',
+            borderColor: '#333',
+            datatest: 'btn-shift-to-down',
+            key: 'btn-shift-to-down',
+            onclick: () => actions.shiftToBottom(),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: '',
+                iconSize: 22,
+                iconName: 'keyboard_arrow_down',
+            }),
+        }),
+    ]);
+};
+
 const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
     const pages = state.fumen.pages;
     const page = pages[state.fumen.currentIndex];
@@ -617,6 +735,15 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
             }
             case ModeTypes.Flags: {
                 return flagsMode({
+                    layout,
+                    actions,
+                    keyPage,
+                    flags: page.flags,
+                    currentIndex: state.fumen.currentIndex,
+                });
+            }
+            case ModeTypes.Shift: {
+                return shiftMode({
                     layout,
                     actions,
                     keyPage,

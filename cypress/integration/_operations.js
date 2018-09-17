@@ -169,6 +169,23 @@ export const operations = {
                 cy.get(datatest('btn-drawing-tool')).click();
             },
         },
+        shift: {
+            open: () => {
+                cy.get(datatest('btn-shift-mode')).click();
+            },
+            right: () => {
+                cy.get(datatest('btn-shift-to-right')).click();
+            },
+            left: () => {
+                cy.get(datatest('btn-shift-to-left')).click();
+            },
+            up: () => {
+                cy.get(datatest('btn-shift-to-up')).click();
+            },
+            down: () => {
+                cy.get(datatest('btn-shift-to-down')).click();
+            },
+        },
     },
     menu: {
         open: () => {
