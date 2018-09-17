@@ -699,7 +699,7 @@ const shiftMode = ({ layout, currentIndex, keyPage, flags, actions }: {
 const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
     const pages = state.fumen.pages;
     const page = pages[state.fumen.currentIndex];
-    const keyPage = page.field.obj !== undefined;
+    const keyPage = page === undefined || page.field.obj !== undefined;
 
     const getChildren = () => {
         const getMode = () => {

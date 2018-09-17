@@ -3,9 +3,7 @@ import { operations } from './_operations';
 
 describe('Comments', () => {
     it('Should not apply comment to other pages', () => {
-        visit({});
-
-        operations.screen.writable();
+        visit({ mode: 'writable' });
 
         operations.mode.editor.nextPage();
         operations.mode.editor.nextPage();
@@ -25,9 +23,7 @@ describe('Comments', () => {
     });
 
     it('Comment readonly/writable', () => {
-        visit({});
-
-        operations.screen.writable();
+        visit({ mode: 'writable' });
 
         operations.mode.piece.open();
 
@@ -43,9 +39,7 @@ describe('Comments', () => {
     });
 
     it('Write comments', () => {
-        visit({});
-
-        operations.screen.writable();
+        visit({ mode: 'writable' });
 
         operations.mode.piece.open();
 
@@ -119,9 +113,7 @@ describe('Comments', () => {
     });
 
     it('Quiz', () => {
-        visit({});
-
-        operations.screen.writable();
+        visit({ mode: 'writable' });
 
         operations.mode.piece.open();
 

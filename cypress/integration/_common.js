@@ -158,7 +158,13 @@ const getPieces = (piece) => {
 };
 
 export const visit = ({ fumen, sleepInMill = 500, lng = 'en', mode = 'readonly' }) => {
-    const baseUrl = './public/index.html';
+    let baseUrl;
+
+    if (mode === 'writable') {
+        baseUrl = './public/#/writable';
+    } else {
+        baseUrl = './public/index.html';
+    }
 
     const params = {};
 
@@ -178,10 +184,6 @@ export const visit = ({ fumen, sleepInMill = 500, lng = 'en', mode = 'readonly' 
     }
 
     cy.wait(sleepInMill);
-
-    if (mode === 'writable') {
-        operations.screen.writable();
-    }
 };
 
 export const rightTap = (first, second) => {

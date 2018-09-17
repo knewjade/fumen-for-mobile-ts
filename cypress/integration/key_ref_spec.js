@@ -3,9 +3,7 @@ import { operations } from './_operations';
 
 describe('Key/Ref', () => {
     it('key/ref undo/redo', () => {
-        visit({});
-
-        operations.screen.writable();
+        visit({ mode: 'writable' });
 
         operations.mode.block.open();
 

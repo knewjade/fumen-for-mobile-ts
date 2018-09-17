@@ -4,9 +4,7 @@ import { operations } from './_operations';
 // テト譜を開く
 describe('Put pieces', () => {
     it('Move piece', () => {
-        visit({});
-
-        operations.screen.writable();
+        visit({ mode: 'writable' });
 
         operations.mode.piece.open();
 
@@ -43,9 +41,7 @@ describe('Put pieces', () => {
     });
 
     it('Put pieces', () => {
-        visit({});
-
-        operations.screen.writable();
+        visit({ mode: 'writable' });
 
         operations.mode.piece.open();
 
@@ -120,9 +116,10 @@ describe('Put pieces', () => {
     });
 
     it('Move pieces', () => {
-        visit({ fumen: 'v115@zgB8EeD8HeB8AeE8AeC8BeC8BeC8AeE8AeB8JeAgHz?gBAEeDAHeBAAeEAAeBAAeA8AeAAHeAAEeAAKeAgH0gB8DeB?8AeB8FeD8AeD8AeB8CeA8BeA8DeA8AeAABeAAAeA8KeAgH0?gBAD8BeA8BAAeE8BeBAEeA8BeBAEeA8BeBADeB8LeAgH' });
-
-        operations.screen.writable();
+        visit({
+            fumen: 'v115@zgB8EeD8HeB8AeE8AeC8BeC8BeC8AeE8AeB8JeAgHz?gBAEeDAHeBAAeEAAeBAAeA8AeAAHeAAEeAAKeAgH0gB8DeB?8AeB8FeD8AeD8AeB8CeA8BeA8DeA8AeAABeAAAeA8KeAgH0?gBAD8BeA8BAAeE8BeBAEeA8BeBAEeA8BeBADeB8LeAgH',
+            mode: 'writable',
+        });
 
         operations.mode.piece.open();
 
@@ -226,9 +223,7 @@ describe('Put pieces', () => {
     });
 
     it('Move pieces 2', () => {
-        visit({});
-
-        operations.screen.writable();
+        visit({ mode: 'writable' });
 
         operations.mode.piece.open();
 

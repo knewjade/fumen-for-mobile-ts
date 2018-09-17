@@ -77,10 +77,22 @@ window.onresize = () => {
 };
 
 window.onload = () => {
+    // Query文字列を取得
+    let search = '';
+    if (location.search !== '') {
+        search = location.search.substr(1);
+    } else {
+        const hash = location.hash;
+        const index = hash.indexOf('?');
+        if (index !== -1) {
+            search = hash.substr(index + 1);
+        }
+    }
+
     // URLからロードする
     {
-        const url = decodeURIComponent(location.search);
-        const paramQuery = url.substr(1).split('&').find(value => value.startsWith('d='));
+        const url = decodeURIComponent(search);
+        const paramQuery = url.split('&').find(value => value.startsWith('d='));
         if (paramQuery !== undefined) {
             return main.loadFumen({ fumen: paramQuery.substr(2) });
         }

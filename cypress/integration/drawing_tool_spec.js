@@ -5,9 +5,8 @@ describe('Drawing Tools', () => {
     it('Duplicate page', () => {
         visit({
             fumen: 'v115@vhF2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDsOBA?A3rBzkBsqBifBAAA',
+            mode: 'writable',
         });
-
-        operations.screen.writable();
 
         operations.mode.tools.open();
         operations.mode.editor.nextPage();
@@ -58,9 +57,8 @@ describe('Drawing Tools', () => {
     it('Update by lock flag', () => {
         visit({
             fumen: 'v115@bhJ8JeAgH',
+            mode: 'writable',
         });
-
-        operations.screen.writable();
 
         cy.get(block(0, 0)).should('have.attr', 'color', Color.Gray.Highlight1);
 
@@ -77,9 +75,8 @@ describe('Drawing Tools', () => {
     it('Remove', () => {
         visit({
             fumen: 'v115@vhG9NYaAFLDmClcJSAVDEHBEooRBUoAVBa9aPCM+AA?A0sBXjB2uBzkBifBplBmhI8NjSFAooMDEPBAAAvhEHiuFA3?XaDEEBAAAHiBAwDHmBAAA',
+            mode: 'writable',
         });
-
-        operations.screen.writable();
 
         operations.mode.tools.open();
 
@@ -142,9 +139,8 @@ describe('Drawing Tools', () => {
     it('Undo/Redo', () => {
         visit({
             fumen: 'v115@HhglIeglIehlAezhMeAgH',
+            mode: 'writable',
         });
-
-        operations.screen.writable();
 
         operations.mode.tools.open();
 
@@ -280,9 +276,8 @@ describe('Drawing Tools', () => {
     it('Auto save', () => {
         visit({
             fumen: 'v115@HhglIeglIehlAezhMeAgH',
+            mode: 'writable',
         });
-
-        operations.screen.writable();
 
         operations.mode.tools.open();
 
@@ -304,9 +299,10 @@ describe('Drawing Tools', () => {
     });
 
     it('Flags', () => {
-        visit({ fumen: 'v115@lhwhglQpAtwwg0Q4CeAgH' });
-
-        operations.screen.writable();
+        visit({
+            fumen: 'v115@lhwhglQpAtwwg0Q4CeAgH',
+            mode: 'writable',
+        });
 
         operations.mode.block.open();
 
@@ -408,8 +404,10 @@ describe('Drawing Tools', () => {
     it('Shift', () => {
         visit({
             fumen: 'v115@heB8GeD8FeD8GeB8hfB8GeD8FeD8GeB8rexyHjeTaH?hxwIfgTaLfJHJDhQaIeQaIeQaIeQaMepmH',
-            mode: 'writable',
         });
+
+        // MenuからWritableモードにして開く
+        operations.screen.writable();
 
         operations.mode.shift.open();
 
