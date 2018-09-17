@@ -348,7 +348,9 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePiece, act
         rotateToLeft: () => void;
         rotateToRight: () => void;
         moveToLeft: () => void;
+        moveToLeftEnd: () => void;
         moveToRight: () => void;
+        moveToRightEnd: () => void;
         harddrop: () => void;
     };
 }) => {
@@ -368,6 +370,36 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePiece, act
             width: layout.buttons.size.width,
             margin: toolButtonMargin,
             key: 'div-space',
+        }),
+        dualButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'white',
+            textColor: '#333',
+            borderColor: '#333',
+        }, {
+            datatest: 'btn-move-to-left-end',
+            key: 'btn-move-to-left-end',
+            enable: operatePiece,
+            onclick: () => actions.moveToLeftEnd(),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: '',
+                iconSize: 24,
+                iconName: 'skip_previous',
+            }),
+        }, {
+            datatest: 'btn-move-to-right-end',
+            key: 'btn-move-to-right-end',
+            enable: operatePiece,
+            onclick: () => actions.moveToRightEnd(),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: '',
+                iconSize: 24,
+                iconName: 'skip_next',
+            }),
         }),
         dualButton({
             borderWidth: 1,

@@ -279,5 +279,27 @@ describe('Put pieces', () => {
         operations.mode.piece.moveToLeft();
 
         expectFumen('v115@vhCVPJxMJTLJ');
+
+        // I
+        minoPosition(Piece.I, Rotation.Spawn)(6, 18).forEach(position => {
+            operations.mode.block.click(position[0], position[1]);
+        });
+
+        operations.mode.piece.moveToLeftEnd();
+        operations.mode.piece.rotateToLeft();
+        operations.mode.piece.harddrop();
+
+        operations.mode.editor.nextPage();
+
+        // I
+        minoPosition(Piece.I, Rotation.Spawn)(2, 21).forEach(position => {
+            operations.mode.block.click(position[0], position[1]);
+        });
+
+        operations.mode.piece.moveToRightEnd();
+        operations.mode.piece.rotateToRight();
+        operations.mode.piece.harddrop();
+
+        expectFumen('v115@vhEVPJxMJTLJ5/IJ+I');
     });
 });

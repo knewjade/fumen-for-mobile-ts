@@ -142,8 +142,14 @@ export const operations = {
             moveToRight: () => {
                 cy.get(datatest('btn-move-to-right')).click();
             },
+            moveToRightEnd: () => {
+                cy.get(datatest('btn-move-to-right-end')).click();
+            },
             moveToLeft: () => {
                 cy.get(datatest('btn-move-to-left')).click();
+            },
+            moveToLeftEnd: () => {
+                cy.get(datatest('btn-move-to-left-end')).click();
             },
             harddrop: () => {
                 cy.get(datatest('btn-harddrop')).click();
