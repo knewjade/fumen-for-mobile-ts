@@ -51,6 +51,7 @@ export enum ModeTypes {
     DrawingTool = 'DrawingTool',
     Flags = 'Flags',
     Shift = 'Shift',
+    Fill = 'Fill',
 }
 
 export enum TouchTypes {
@@ -58,6 +59,7 @@ export enum TouchTypes {
     Drawing = 'Drawing',
     Piece = 'Piece',
     MovePiece = 'MovePiece',
+    FillRow = 'FillRow',
 }
 
 export function parsePieceName(piece: Piece) {

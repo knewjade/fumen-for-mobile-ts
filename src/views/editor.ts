@@ -156,6 +156,7 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
         changeToDrawingMode: () => void;
         changeToFlagsMode: () => void;
         changeToShiftMode: () => void;
+        changeToFillRowMode: () => void;
         changeToDrawPieceMode: () => void;
         changeToRef: (data: { index: number }) => void;
         changeToKey: (data: { index: number }) => void;
@@ -223,6 +224,23 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
             backgroundColorClass: 'red',
             textColor: '#fff',
             borderColor: '#f44336',
+            datatest: 'btn-fill-row-mode',
+            key: 'btn-fill-row-mode',
+            onclick: () => actions.changeToFillRowMode(),
+            contents: iconContents({
+                height: layout.buttons.size.height,
+                description: 'row',
+                iconSize: 24,
+                iconName: 'power_input',
+            }),
+        }),
+        toolButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'red',
+            textColor: '#fff',
+            borderColor: '#f44336',
             datatest: 'btn-shift-mode',
             key: 'btn-shift-mode',
             onclick: () => actions.changeToShiftMode(),
@@ -246,7 +264,7 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
             contents: iconContents({
                 height: layout.buttons.size.height,
                 description: 'flags',
-                iconSize: 22,
+                iconSize: 24,
                 iconName: 'flag',
             }),
         }),
@@ -264,7 +282,7 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
             contents: iconContents({
                 height: layout.buttons.size.height,
                 description: 'piece',
-                iconSize: 22,
+                iconSize: 20,
                 iconName: 'extension',
             }),
         }),
@@ -728,6 +746,42 @@ const shiftMode = ({ layout, currentIndex, keyPage, flags, actions }: {
     ]);
 };
 
+const fillMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
+    layout: EditorLayout;
+    keyPage: boolean;
+    currentIndex: number;
+    modePiece: Piece | undefined;
+    actions: {
+        selectPieceColor: (data: { piece: Piece }) => void;
+        selectInferencePieceColor: () => void;
+        changeToRef: (data: { index: number }) => void;
+        changeToKey: (data: { index: number }) => void;
+    };
+}) => {
+    const pieces = [Piece.I, Piece.L, Piece.O, Piece.Z, Piece.T, Piece.J, Piece.S, Piece.Empty, Piece.Gray];
+
+    const toolButtonMargin = 5;
+
+    return div({ style: toolStyle(layout) }, [
+        keyButton({
+            toolButtonMargin,
+            keyPage,
+            currentIndex,
+            actions,
+            width: layout.buttons.size.width,
+            height: layout.buttons.size.height,
+        }),
+        toolSpace({
+            flexGrow: 100,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            key: 'div-space',
+        }),
+    ].concat(pieces.map(piece => (
+        colorButton({ layout, piece, onclick: actions.selectPieceColor, highlight: modePiece === piece })
+    ))));
+};
+
 const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
     const pages = state.fumen.pages;
     const page = pages[state.fumen.currentIndex];
@@ -781,6 +835,15 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                     keyPage,
                     flags: page.flags,
                     currentIndex: state.fumen.currentIndex,
+                });
+            }
+            case ModeTypes.Fill: {
+                return fillMode({
+                    layout,
+                    actions,
+                    keyPage,
+                    currentIndex: state.fumen.currentIndex,
+                    modePiece: state.mode.piece,
                 });
             }
             }

@@ -339,4 +339,55 @@ describe('History', () => {
 
         play('v115@hlFexhhlFexh9gRpFeBtRpFeBtg0HewwAgH', testCases);
     });
+
+    it('Fill row', () => {
+        const testCases = [
+            {
+                callback: () => {
+                    operations.mode.fillRow.open();
+                    operations.mode.block.click(0, 0);
+                },
+                fumen: 'v115@chI8JeAgH',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.mode.fillRow.open();
+                    operations.mode.fillRow.I();
+                    operations.mode.block.dragToUp(1, { from: 1, to: 4 });
+                },
+                fumen: 'v115@zgwhAe4hAe4hAe4hAe3hAeI8JeAgH',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.mode.fillRow.open();
+                    operations.mode.fillRow.S();
+                    operations.mode.block.dragToRight({ from: 5, to: 8 }, 0);
+                },
+                fumen: 'v115@zgwhAe4hAe4hAe4hAe3hX4AeQ4JeAgH',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.mode.fillRow.open();
+                    operations.mode.fillRow.T();
+                    operations.mode.block.dragToRight({ from: 1, to: 4 }, -1);
+                },
+                fumen: 'v115@zgwhAe4hAe4hAe4hAe3hX4AeQ4zwAe0wAgH',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.mode.fillRow.open();
+                    operations.mode.fillRow.Empty();
+                    operations.mode.block.dragToUp(9, { from: -1, to: 10 });
+                },
+                fumen: 'v115@vhAAgH',
+                count: 1,
+            },
+        ];
+
+        play('v115@vhAAgH', testCases);
+    });
 });

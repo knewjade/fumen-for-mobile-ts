@@ -6,7 +6,7 @@ import { toPrimitivePage, toSinglePageTask } from '../history_task';
 import { fieldEditorActions } from './field_editor';
 import { inferPiece } from '../lib/inference';
 
-export interface DrawBlockActions {
+interface DrawBlockActions {
     fixInferencePiece(): action;
 
     clearInferencePiece(): action;

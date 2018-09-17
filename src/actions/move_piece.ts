@@ -4,7 +4,7 @@ import { getBlockPositions, isMinoPiece, Piece, toPositionIndex } from '../lib/e
 import { toPrimitivePage, toSinglePageTask } from '../history_task';
 import { PageFieldOperation, Pages } from '../lib/pages';
 
-export interface MovePieceActions {
+interface MovePieceActions {
     ontouchStartField(data: { index: number }): action;
 
     ontouchMoveField(data: { index: number }): action;

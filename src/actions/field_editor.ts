@@ -8,6 +8,7 @@ import { movePieceActions } from './move_piece';
 import { PageFieldOperation, Pages } from '../lib/pages';
 import { testLeftRotation, testRightRotation } from '../lib/srs';
 import { Field } from '../lib/fumen/field';
+import { fillRowActions } from './fill_row';
 
 export interface FieldEditorActions {
     fixInferencePiece(): action;
@@ -83,6 +84,8 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return putPieceActions.ontouchStartField({ index })(state);
         case TouchTypes.MovePiece:
             return movePieceActions.ontouchStartField({ index })(state);
+        case TouchTypes.FillRow:
+            return fillRowActions.ontouchStartField({ index })(state);
         }
         return undefined;
     },
@@ -94,6 +97,8 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return putPieceActions.ontouchMoveField({ index })(state);
         case TouchTypes.MovePiece:
             return movePieceActions.ontouchMoveField({ index })(state);
+        case TouchTypes.FillRow:
+            return fillRowActions.ontouchMoveField({ index })(state);
         }
         return undefined;
     },
@@ -105,6 +110,8 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return putPieceActions.ontouchEnd()(state);
         case TouchTypes.MovePiece:
             return movePieceActions.ontouchEnd()(state);
+        case TouchTypes.FillRow:
+            return fillRowActions.ontouchEnd()(state);
         }
         return undefined;
     },
@@ -112,6 +119,8 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
         switch (state.mode.touch) {
         case TouchTypes.Drawing:
             return drawBlockActions.ontouchStartSentLine({ index })(state);
+        case TouchTypes.FillRow:
+            return fillRowActions.ontouchStartSentLine({ index })(state);
         }
         return undefined;
     },
@@ -119,6 +128,8 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
         switch (state.mode.touch) {
         case TouchTypes.Drawing:
             return drawBlockActions.ontouchMoveSentLine({ index })(state);
+        case TouchTypes.FillRow:
+            return fillRowActions.ontouchMoveSentLine({ index })(state);
         }
         return undefined;
     },

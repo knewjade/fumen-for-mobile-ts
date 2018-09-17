@@ -6,7 +6,7 @@ import { toPrimitivePage, toSinglePageTask } from '../history_task';
 import { fieldEditorActions } from './field_editor';
 import { inferPiece } from '../lib/inference';
 
-export interface PutPieceActions {
+interface PutPieceActions {
     fixInferencePiece(): action;
 
     clearInferencePiece(): action;
@@ -94,7 +94,7 @@ export const putPieceActions: Readonly<PutPieceActions> = {
         return sequence(state, [
             actions.insertPage({ index: nextPageIndex }),
             actions.openPage({ index: nextPageIndex }),
-            newState => ontouchStartField(newState, index),
+            newState => ontouchStartField(newState, index),  // 次のページでのタッチ開始処理
             actions.ontouchMoveField({ index }),
         ]);
     },

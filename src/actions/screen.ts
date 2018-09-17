@@ -1,6 +1,6 @@
 import { NextState, sequence } from './commons';
 import { action, actions, main } from '../actions';
-import { ModeTypes, Screens, TouchTypes } from '../lib/enums';
+import { ModeTypes, Piece, Screens, TouchTypes } from '../lib/enums';
 import { resources, State } from '../states';
 import { animationActions } from './animation';
 
@@ -11,6 +11,7 @@ export interface ScreenActions {
     changeToDrawingToolMode: () => action;
     changeToFlagsMode: () => action;
     changeToShiftMode: () => action;
+    changeToFillRowMode: () => action;
     changeToDrawPieceMode: () => action;
     changeToMovePieceMode: () => action;
     changeScreen: (data: { screen: Screens }) => action;
@@ -58,6 +59,18 @@ export const modeActions: Readonly<ScreenActions> = {
         return sequence(state, [
             changeTouchType({ type: TouchTypes.None }),
             changeModeType({ type: ModeTypes.Shift }),
+        ]);
+    },
+    changeToFillRowMode: () => (state): NextState => {
+        return sequence(state, [
+            changeTouchType({ type: TouchTypes.FillRow }),
+            changeModeType({ type: ModeTypes.Fill }),
+            newState => ({
+                mode: {
+                    ...newState.mode,
+                    piece: newState.mode.piece !== undefined ? newState.mode.piece : Piece.Gray,
+                },
+            }),
         ]);
     },
     changeToDrawPieceMode: () => (state): NextState => {
