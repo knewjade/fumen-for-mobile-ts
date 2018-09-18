@@ -117,7 +117,7 @@ export class Pages {
             throw new FumenError(`Unexpected comment: ${prev.comment}`);
         }
 
-        this.insertPage(index, page);
+        this.insertPage(index, [page]);
     }
 
     // TODO: Add test
@@ -157,35 +157,41 @@ export class Pages {
             throw new FumenError(`Unexpected comment: ${prev.comment}`);
         }
 
-        this.insertPage(index, page);
+        this.insertPage(index, [page]);
     }
 
-    insertPage(index: number, page: Page) {
+    insertPage(insertPageIndex: number, pages: Page[]) {
+        const len = pages.length;
+        for (let index = 0; index < len; index += 1) {
+            pages[index].index = insertPageIndex + index;
+        }
+
+        const page = pages[len - 1];
         const ref = {
             field: page.field.ref !== undefined ? page.field.ref : page.index,
             comment: page.comment.ref !== undefined ? page.comment.ref : page.index,
         };
 
-        this.pages = this.pages.slice(0, index)
-            .concat([page])
-            .concat(this.pages.slice(index).map((page) => {
-                page.index += 1;
+        this.pages = this.pages.slice(0, insertPageIndex)
+            .concat(pages)
+            .concat(this.pages.slice(insertPageIndex).map((page) => {
+                page.index += len;
 
                 if (page.field.ref !== undefined) {
                     const currentRef = page.field.ref;
-                    if (currentRef < index) {
+                    if (currentRef < insertPageIndex) {
                         page.field.ref = ref.field;
-                    } else if (index <= currentRef) {
-                        page.field.ref += 1;
+                    } else if (insertPageIndex <= currentRef) {
+                        page.field.ref += len;
                     }
                 }
 
                 if (page.comment.ref !== undefined) {
                     const currentRef = page.comment.ref;
-                    if (currentRef < index) {
+                    if (currentRef < insertPageIndex) {
                         page.comment.ref = ref.comment;
-                    } else if (index <= currentRef) {
-                        page.comment.ref += 1;
+                    } else if (insertPageIndex <= currentRef) {
+                        page.comment.ref += len;
                     }
                 }
                 return page;
@@ -231,52 +237,54 @@ export class Pages {
             throw new FumenError(`Unexpected comment: ${prev.comment}`);
         }
 
-        this.insertPage(index, page);
+        this.insertPage(index, [page]);
     }
 
     // TODO: Add unit test
-    deletePage(index: number) {
-        const nextPage = this.pages[index + 1];
+    // from: include, to: exclude
+    deletePage(fromPageIndex: number, toPageIndex: number) {
+        const nextPage = this.pages[toPageIndex + 1];
 
         const ref = {
             field: 0,
             comment: 0,
         };
 
-        const reversedHeadPages = this.pages.slice(0, index).reverse();
+        const reversedHeadPages = this.pages.slice(0, fromPageIndex).reverse();
         if (nextPage !== undefined && nextPage.field.obj !== undefined) {
-            ref.field = index;
+            ref.field = fromPageIndex;
         } else {
             const lastKeyIndex = reversedHeadPages.findIndex(page => page.field.obj !== undefined);
-            ref.field = 0 <= lastKeyIndex ? index - lastKeyIndex - 1 : 0;
+            ref.field = 0 <= lastKeyIndex ? fromPageIndex - lastKeyIndex - 1 : 0;
         }
 
         if (nextPage !== undefined && nextPage.comment.text !== undefined) {
-            ref.comment = index;
+            ref.comment = fromPageIndex;
         } else {
             const lastKeyIndex = reversedHeadPages.findIndex(page => page.comment.text !== undefined);
-            ref.comment = 0 <= lastKeyIndex ? index - lastKeyIndex - 1 : 0;
+            ref.comment = 0 <= lastKeyIndex ? fromPageIndex - lastKeyIndex - 1 : 0;
         }
 
-        this.pages = this.pages.slice(0, index)
-            .concat(this.pages.slice(index + 1).map((page) => {
-                page.index -= 1;
+        const len = toPageIndex - fromPageIndex + 1;
+        this.pages = this.pages.slice(0, fromPageIndex)
+            .concat(this.pages.slice(toPageIndex + 1).map((page) => {
+                page.index -= len;
 
                 if (page.field.ref !== undefined) {
                     const currentRef = page.field.ref;
-                    if (currentRef <= index) {
+                    if (currentRef <= fromPageIndex) {
                         page.field.ref = ref.field;
-                    } else if (index < currentRef) {
-                        page.field.ref -= 1;
+                    } else if (fromPageIndex < currentRef) {
+                        page.field.ref -= len;
                     }
                 }
 
                 if (page.comment.ref !== undefined) {
                     const currentRef = page.comment.ref;
-                    if (currentRef <= index) {
+                    if (currentRef <= fromPageIndex) {
                         page.comment.ref = ref.comment;
-                    } else if (index < currentRef) {
-                        page.comment.ref -= 1;
+                    } else if (fromPageIndex < currentRef) {
+                        page.comment.ref -= len;
                     }
                 }
                 return page;

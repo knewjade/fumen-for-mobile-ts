@@ -49,33 +49,38 @@ export const toSinglePageTask = (index: number, primitivePrev: PrimitivePage, ne
     };
 };
 
-export const toRemovePageTask = (removeIndex: number, primitivePrev: PrimitivePage): OperationTask => {
+export const toRemovePageTask = (
+    removeFromIndex: number,
+    removeToIndex: number,
+    primitivePrevs: PrimitivePage[],
+): OperationTask => {
     return {
         replay: (pages: Page[]) => {
+            const removeIndex = removeToIndex - 1;
             const pagesObj = new Pages(pages);
-            pagesObj.deletePage(removeIndex);
+            pagesObj.deletePage(removeFromIndex, removeToIndex);
             const newPages = pagesObj.pages;
             return { pages: newPages, index: removeIndex < newPages.length ? removeIndex : newPages.length - 1 };
         },
         revert: (pages: Page[]) => {
             const pagesObj = new Pages(pages);
-            pagesObj.insertPage(removeIndex, toPage(primitivePrev));
-            return { pages: pagesObj.pages, index: removeIndex };
+            pagesObj.insertPage(removeFromIndex, primitivePrevs.map(toPage));
+            return { pages: pagesObj.pages, index: removeFromIndex };
         },
         fixed: false,
     };
 };
 
-export const toInsertPageTask = (insertIndex: number, primitiveNext: PrimitivePage): OperationTask => {
+export const toInsertPageTask = (insertIndex: number, primitiveNexts: PrimitivePage[]): OperationTask => {
     return {
         replay: (pages: Page[]) => {
             const pagesObj = new Pages(pages);
-            pagesObj.insertPage(insertIndex, toPage(primitiveNext));
-            return { pages: pagesObj.pages, index: insertIndex };
+            pagesObj.insertPage(insertIndex, primitiveNexts.map(toPage));
+            return { pages: pagesObj.pages, index: insertIndex - 1 + primitiveNexts.length };
         },
         revert: (pages: Page[]) => {
             const pagesObj = new Pages(pages);
-            pagesObj.deletePage(insertIndex);
+            pagesObj.deletePage(insertIndex, insertIndex);
             return { pages: pagesObj.pages, index: insertIndex - 1 };
         },
         fixed: false,

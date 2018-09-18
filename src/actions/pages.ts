@@ -393,7 +393,7 @@ const insertRefPage = ({ index }: { index: number }) => (state: Readonly<State>)
     pages.insertRefPage(index);
     const newPages = pages.pages;
 
-    const task = toInsertPageTask(index, toPrimitivePage(newPages[index]));
+    const task = toInsertPageTask(index, [toPrimitivePage(newPages[index])]);
     return sequence(state, [
         actions.registerHistoryTask({ task }),
         () => ({
@@ -411,7 +411,7 @@ const insertKeyPage = ({ index }: { index: number }) => (state: Readonly<State>)
     pages.insertKeyPage(index);
     const newPages = pages.pages;
 
-    const task = toInsertPageTask(index, toPrimitivePage(newPages[index]));
+    const task = toInsertPageTask(index, [toPrimitivePage(newPages[index])]);
     return sequence(state, [
         actions.registerHistoryTask({ task }),
         () => ({
@@ -429,7 +429,7 @@ const duplicatePage = ({ index }: { index: number }) => (state: Readonly<State>)
     pages.duplicatePage(index);
     const newPages = pages.pages;
 
-    const task = toInsertPageTask(index, toPrimitivePage(newPages[index]));
+    const task = toInsertPageTask(index, [toPrimitivePage(newPages[index])]);
     return sequence(state, [
         actions.registerHistoryTask({ task }),
         () => ({
@@ -482,8 +482,8 @@ const removePage = ({ index }: { index: number }) => (state: Readonly<State>): N
     // 現ページの削除
     {
         const primitiveCurrentPage = toPrimitivePage(currentPage);
-        pagesObj.deletePage(index);
-        tasks.push(toRemovePageTask(index, primitiveCurrentPage));
+        pagesObj.deletePage(index, index);
+        tasks.push(toRemovePageTask(index, index, [primitiveCurrentPage]));
     }
 
     const newPages = pagesObj.pages;
