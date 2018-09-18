@@ -293,9 +293,51 @@ describe('Drawing Tools', () => {
 
         cy.wait(1000);
 
-        visit({});
+        visit({ mode: 'writable' });
 
         expectFumen('v115@HhglIeglIehlAezhMeAgHYhi0GeSpJeAgH');
+
+        operations.menu.lastPage();
+
+        operations.mode.editor.nextPage();
+
+        operations.mode.block.T();
+        operations.mode.block.dragToRight({ from: 7, to: 9 }, 2);
+
+        operations.mode.block.S();
+        operations.mode.block.dragToRight({ from: 7, to: 9 }, 3);
+
+        operations.mode.tools.undo();
+
+        cy.wait(1000);
+
+        visit({});
+
+        expectFumen('v115@HhglIeglIehlAezhMeAgHYhi0GeSpJeAgHOhywdeAg?H');
+
+        operations.screen.writable();
+
+        operations.mode.block.open();
+
+        operations.menu.lastPage();
+
+        operations.mode.editor.nextPage();
+
+        operations.mode.block.L();
+        operations.mode.block.dragToRight({ from: 7, to: 9 }, 4);
+
+        operations.mode.block.I();
+        operations.mode.block.dragToRight({ from: 7, to: 9 }, 4);
+
+        operations.mode.tools.undo();
+        operations.mode.tools.undo();
+        operations.mode.tools.redo();
+
+        cy.wait(1000);
+
+        visit({});
+
+        expectFumen('v115@HhglIeglIehlAezhMeAgHYhi0GeSpJeAgHOhywdeAg?H6gilxeAgH');
     });
 
     it('Flags', () => {

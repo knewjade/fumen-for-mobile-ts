@@ -40,6 +40,7 @@ export const mementoActions: Readonly<MementoActions> = {
                         main.setPages({ pages: result.pages, open: false });
                         main.openPage({ index: result.index });
                         main.setHistoryCount({ undoCount: result.undoCount, redoCount: result.redoCount });
+                        memento.save(result.pages);
                     }
                 })();
                 return undefined;
@@ -61,6 +62,7 @@ export const mementoActions: Readonly<MementoActions> = {
                         main.setPages({ pages: result.pages, open: false });
                         main.openPage({ index: result.index });
                         main.setHistoryCount({ undoCount: result.undoCount, redoCount: result.redoCount });
+                        memento.save(result.pages);
                     }
                 })();
                 return undefined;

@@ -62,7 +62,7 @@ const getLayout = (display: { width: number, height: number }): EditorLayout => 
 
     const blockSize = Math.min(
         (canvasSize.height - borderWidthBottomField - 2) / 24,
-        (canvasSize.width - 75) / 10.5,  // 横のスペースが最低でも75pxは残るようにする
+        (canvasSize.width - 90) / 10.5,  // 横のスペースが最低でも90pxは残るようにする
     ) - 1;
 
     const fieldSize = {
@@ -218,12 +218,13 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
             }),
         }),
         toolButton({
-            borderWidth: 1,
+            borderWidth: 3,
             width: layout.buttons.size.width,
             margin: toolButtonMargin,
             backgroundColorClass: 'red',
             textColor: '#fff',
-            borderColor: '#f44336',
+            borderColor: touchType === TouchTypes.FillRow ? '#fff' : '#f44336',
+            borderType: touchType === TouchTypes.FillRow ? 'double' : undefined,
             datatest: 'btn-fill-row-mode',
             key: 'btn-fill-row-mode',
             onclick: () => actions.changeToFillRowMode(),
