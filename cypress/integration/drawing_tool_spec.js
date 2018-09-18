@@ -1,4 +1,4 @@
-import { block, Color, datatest, expectFumen, minoPosition, Piece, px, py, Rotation, visit } from './_common';
+import { block, Color, datatest, expectFumen, minoPosition, Piece, px, py, rightTap, Rotation, visit } from './_common';
 import { operations } from './_operations';
 
 describe('Drawing Tools', () => {
@@ -483,5 +483,54 @@ describe('Drawing Tools', () => {
         operations.mode.shift.down();
 
         expectFumen('v115@heB8GeD8FeD8GeB8hfB8GeD8FeD8GeB8reAgHvhBAg?HAgHheBAGeAABeAAPeA8BeA8GeB8XfBAGeAABeAAPeA8BeA?8GeB8heAgHvhAAgHheB8GeA8BeA8PeAABeAAGeBAXfB8GeA?8BeA8PeAABeAAGeBAheAgH');
+    });
+
+    it('Clear button visibility', () => {
+        visit({
+            fumen: 'v115@vhF2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDsOBA?A3rBzkBsqBifBAAA',
+            mode: 'writable',
+        });
+
+        {
+            operations.menu.firstPage();
+
+            operations.menu.open();
+
+            cy.get(datatest('btn-clear-to-end')).should('not.have.class', 'disabled');
+            cy.get(datatest('btn-clear-past')).should('have.class', 'disabled');
+        }
+
+        rightTap();
+
+        {
+            operations.menu.lastPage();
+
+            operations.menu.open();
+
+            cy.get(datatest('btn-clear-to-end')).should('have.class', 'disabled');
+            cy.get(datatest('btn-clear-past')).should('not.have.class', 'disabled');
+        }
+
+        rightTap();
+
+        {
+            operations.mode.editor.backPage();
+
+            operations.menu.open();
+
+            cy.get(datatest('btn-clear-to-end')).should('not.have.class', 'disabled');
+            cy.get(datatest('btn-clear-past')).should('not.have.class', 'disabled');
+        }
+
+        rightTap();
+
+        {
+            operations.menu.newPage();
+
+            operations.menu.open();
+
+            cy.get(datatest('btn-clear-to-end')).should('have.class', 'disabled');
+            cy.get(datatest('btn-clear-past')).should('have.class', 'disabled');
+        }
     });
 });

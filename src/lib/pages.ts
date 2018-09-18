@@ -243,7 +243,7 @@ export class Pages {
     // TODO: Add unit test
     // from: include, to: exclude
     deletePage(fromPageIndex: number, toPageIndex: number) {
-        const nextPage = this.pages[toPageIndex + 1];
+        const nextPage = this.pages[toPageIndex];
 
         const ref = {
             field: 0,
@@ -265,9 +265,9 @@ export class Pages {
             ref.comment = 0 <= lastKeyIndex ? fromPageIndex - lastKeyIndex - 1 : 0;
         }
 
-        const len = toPageIndex - fromPageIndex + 1;
+        const len = toPageIndex - fromPageIndex;
         this.pages = this.pages.slice(0, fromPageIndex)
-            .concat(this.pages.slice(toPageIndex + 1).map((page) => {
+            .concat(this.pages.slice(toPageIndex).map((page) => {
                 page.index -= len;
 
                 if (page.field.ref !== undefined) {

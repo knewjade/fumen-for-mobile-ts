@@ -390,4 +390,81 @@ describe('History', () => {
 
         play('v115@vhAAgH', testCases);
     });
+
+    it('Clear', () => {
+        const testCases = [
+            {
+                callback: () => {
+                    operations.mode.editor.nextPage();
+                    operations.mode.editor.nextPage();
+                    operations.mode.editor.nextPage();
+                    operations.menu.clearPast();
+                },
+                fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYFAooMDEPBAAAv?hBToQFA3XaDEEBAAAPnB',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.menu.clearToEnd();
+                },
+                fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYFAooMDEPBAAA',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.menu.firstPage();
+                    cy.get(datatest('text-comment')).clear().type('#Q=[](O)TS');
+                },
+                fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYWAFLDmClcJSAV?DEHBEooRBPoAVBUNBAA',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.mode.piece.open();
+                    minoPosition(Piece.O, Rotation.Spawn)(8, 1).forEach((block) => {
+                        operations.mode.block.click(block[0], block[1]);
+                    });
+                },
+                fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYWAFLDmClcJSAV?DEHBEooRBPoAVBUNBAAvhATIJ',
+                count: 2,
+            },
+            {
+                callback: () => {
+                    operations.mode.piece.open();
+                    minoPosition(Piece.T, Rotation.Reverse)(2, 1).forEach((block) => {
+                        operations.mode.block.click(block[0], block[1]);
+                    });
+                },
+                fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYWAFLDmClcJSAV?DEHBEooRBPoAVBUNBAAvhBTIJFKJ',
+                count: 2,
+            },
+            {
+                callback: () => {
+                    operations.mode.piece.open();
+                    minoPosition(Piece.S, Rotation.Right)(5, 1).forEach((block) => {
+                        operations.mode.block.click(block[0], block[1]);
+                    });
+                },
+                fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYWAFLDmClcJSAV?DEHBEooRBPoAVBUNBAAvhCTIJFKJPMJ',
+                count: 2,
+            },
+            {
+                callback: () => {
+                    operations.mode.editor.backPage();
+                    operations.menu.clearToEnd();
+                },
+                fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYWAFLDmClcJSAV?DEHBEooRBPoAVBUNBAAvhBTIJFKJ',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.menu.clearPast();
+                },
+                fumen: 'v115@HhglBeBtCeRpglCeBtAeg0RphlAezhi0JeFKYVAFLD?mClcJSAVDEHBEooRBUoAVBzAAAA',
+                count: 1,
+            },
+        ];
+
+        play('v115@vhFRQYFAooMDEPBAAAKpBUmBWyBToQFA3XaDEEBAAA?PnB', testCases);
+    });
 });

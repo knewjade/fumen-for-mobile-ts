@@ -29,6 +29,8 @@ export const i18n = {
             ReadonlyComment: () => t('Menu.Buttons.ReadonlyComment'),
             WritableComment: () => t('Menu.Buttons.WritableComment'),
             Help: () => t('Menu.Buttons.Help'),
+            ClearToEnd: () => t('Menu.Buttons.ClearToEnd'),
+            ClearPast: () => t('Menu.Buttons.ClearPast'),
         },
         Messages: {
             NoAvailableCommentButton: () => t('Menu.Messages.NoAvailableCommentButton'),

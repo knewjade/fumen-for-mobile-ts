@@ -256,6 +256,7 @@ export const view: View<State, Actions> = (state, actions) => {
             pages: state.fumen.pages,
             screen: state.mode.screen,
             currentIndex: state.fumen.currentIndex,
+            maxPageIndex: state.fumen.maxPage,
             commentEnable: state.mode.comment,
         }) : undefined as any,
     ]);

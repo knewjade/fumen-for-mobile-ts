@@ -279,5 +279,15 @@ export const operations = {
             cy.get(datatest('btn-comment-writable')).click();
             cy.wait(100);
         },
+        clearToEnd: () => {
+            operations.menu.open();
+            cy.get(datatest('btn-clear-to-end')).click();
+            cy.wait(100);
+        },
+        clearPast: () => {
+            operations.menu.open();
+            cy.get(datatest('btn-clear-past')).click();
+            cy.wait(100);
+        },
     },
 };

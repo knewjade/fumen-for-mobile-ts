@@ -33,6 +33,8 @@ export interface PageActions {
     nextPageOrNewPage: () => action;
     firstPage: () => action;
     lastPage: () => action;
+    clearToEnd: () => action;
+    clearPast: () => action;
     changeToRef: (data: { index: number }) => action;
     changeToKey: (data: { index: number }) => action;
     changeLockFlag: (data: { index: number, enable: boolean }) => action;
@@ -346,6 +348,24 @@ export const pageActions: Readonly<PageActions> = {
             },
         ]);
     },
+    clearToEnd: () => (state): NextState => {
+        return sequence(state, [
+            actions.fixInferencePiece(),
+            actions.clearInferencePiece(),
+            actions.commitCommentText(),
+            clearToEnd({ index: state.fumen.currentIndex }),
+            actions.reopenCurrentPage(),
+        ]);
+    },
+    clearPast: () => (state): NextState => {
+        return sequence(state, [
+            actions.fixInferencePiece(),
+            actions.clearInferencePiece(),
+            actions.commitCommentText(),
+            clearPast({ index: state.fumen.currentIndex }),
+            actions.reopenCurrentPage(),
+        ]);
+    },
 };
 
 export const parseToBlocks = (field: Field, move?: Move, commands?: Page['commands']) => {
@@ -482,8 +502,8 @@ const removePage = ({ index }: { index: number }) => (state: Readonly<State>): N
     // 現ページの削除
     {
         const primitiveCurrentPage = toPrimitivePage(currentPage);
-        pagesObj.deletePage(index, index);
-        tasks.push(toRemovePageTask(index, index, [primitiveCurrentPage]));
+        pagesObj.deletePage(index, index + 1);
+        tasks.push(toRemovePageTask(index, index + 1, [primitiveCurrentPage], index));
     }
 
     const newPages = pagesObj.pages;
@@ -499,5 +519,103 @@ const removePage = ({ index }: { index: number }) => (state: Readonly<State>): N
                 currentIndex: nextIndex,
             },
         }),
+    ]);
+};
+
+const clearToEnd = ({ index }: { index: number }) => (state: Readonly<State>): NextState => {
+    const fumen = state.fumen;
+    const pages = fumen.pages;
+
+    if (index < 0) {
+        throw new FumenError(`Illegal index: ${index}`);
+    }
+
+    const nextPageIndex = index + 1;
+    if (pages.length <= 1 || pages.length <= nextPageIndex) {
+        return;
+    }
+
+    const pagesObj = new Pages(pages);
+
+    // 次のページ以降を削除
+    const primitivePages = pages.slice(nextPageIndex).map(toPrimitivePage);
+    pagesObj.deletePage(nextPageIndex, pages.length);
+    const task = toRemovePageTask(nextPageIndex, pages.length, primitivePages, index);
+
+    const newPages = pagesObj.pages;
+    const nextIndex = index < newPages.length ? index : newPages.length - 1;
+
+    return sequence(state, [
+        actions.registerHistoryTask({ task }),
+        () => ({
+            fumen: {
+                ...state.fumen,
+                pages: newPages,
+                maxPage: newPages.length,
+                currentIndex: nextIndex,
+            },
+        }),
+    ]);
+};
+
+const clearPast = ({ index }: { index: number }) => (state: Readonly<State>): NextState => {
+    const fumen = state.fumen;
+    const pages = fumen.pages;
+
+    if (index < 0) {
+        throw new FumenError(`Illegal index: ${index}`);
+    }
+
+    if (pages.length <= 1 || index === 0) {
+        return;
+    }
+
+    const firstPage = pages[0];
+    if (firstPage === undefined) {
+        return;
+    }
+
+    const currentPage = pages[index];
+    const pagesObj = new Pages(pages);
+    const tasks: OperationTask[] = [];
+
+    // 次のページがあるときはKeyにする
+    if (currentPage !== undefined) {
+        if (currentPage.field.obj === undefined) {
+            pagesObj.toKeyPage(index);
+            tasks.push(toKeyPageTask(index));
+        }
+
+        if (currentPage.comment.ref !== undefined) {
+            pagesObj.freezeComment(index);
+            tasks.push(toFreezeCommentTask(index));
+        }
+
+        if (firstPage.flags.colorize !== currentPage.flags.colorize) {
+            const primitivePage = toPrimitivePage(currentPage);
+            currentPage.flags.colorize = firstPage.flags.colorize;
+            tasks.push(toSinglePageTask(index, primitivePage, currentPage));
+        }
+    }
+
+    // 前までのページを削除
+    {
+        const primitivePages = pages.slice(0, index).map(toPrimitivePage);
+        pagesObj.deletePage(0, index);
+        tasks.push(toRemovePageTask(0, index, primitivePages, 0));
+    }
+
+    const newPages = pagesObj.pages;
+    return sequence(state, [
+        actions.registerHistoryTask({ task: toPageTaskStack(tasks, index) }),
+        () => ({
+            fumen: {
+                ...state.fumen,
+                pages: newPages,
+                maxPage: newPages.length,
+                currentIndex: 0,
+            },
+        }),
+        actions.reopenCurrentPage(),
     ]);
 };

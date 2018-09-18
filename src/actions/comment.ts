@@ -64,9 +64,6 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
     const prevPage = pages[prevPageIndex];
 
     if (text.startsWith('#Q=')) {
-        // Quiz
-        page.flags.quiz = true;
-
         const pagesObj = new Pages(pages);
         const comment = pagesObj.getComment(index);
         if (prevPage === undefined || (isQuizCommentResult(comment) && comment.quiz !== text)) {
@@ -77,8 +74,9 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
         } else {
             page.comment = { ref: prevPageIndex };
         }
+
+        page.flags.quiz = true;
     } else {
-        page.flags.quiz = false;
         if (prevPage === undefined || text !== prevPage.comment.text) {
             page.comment = { text };
         } else if (prevPage.comment.ref !== undefined) {
@@ -87,6 +85,8 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
         } else {
             page.comment = { ref: prevPageIndex };
         }
+
+        page.flags.quiz = false;
     }
 
     return sequence(state, [

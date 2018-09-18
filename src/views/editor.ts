@@ -512,7 +512,7 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePiece, act
                 height: layout.buttons.size.height,
                 description: 'reset',
                 iconSize: 22,
-                iconName: 'crop_free',
+                iconName: 'clear',
             }),
         }),
         switchButton({
@@ -988,6 +988,7 @@ export const view: View<State, Actions> = (state, actions) => {
             version: state.version,
             pages: state.fumen.pages,
             screen: state.mode.screen,
+            maxPageIndex: state.fumen.maxPage,
             commentEnable: state.mode.comment,
         }) : undefined as any,
     ]);

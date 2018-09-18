@@ -144,6 +144,7 @@ interface MenuProps {
     pages: Page[];
     screen: Screens;
     currentIndex: number;
+    maxPageIndex: number;
     commentEnable: boolean;
     actions: {
         closeMenuModal: () => void;
@@ -156,10 +157,14 @@ interface MenuProps {
         loadNewFumen: () => void;
         firstPage: () => void;
         lastPage: () => void;
+        clearToEnd: () => void;
+        clearPast: () => void;
     };
 }
 
-export const MenuModal: Component<MenuProps> = ({ version, pages, screen, currentIndex, commentEnable, actions }) => {
+export const MenuModal: Component<MenuProps> = (
+    { version, pages, screen, currentIndex, maxPageIndex, commentEnable, actions },
+) => {
     const oncreate = (element: HTMLDivElement) => {
         const instance = M.Modal.init(element, {
             onOpenEnd: () => {
@@ -249,7 +254,7 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                     <div key="menu-top" style={divProperties}>
                         {screen === Screens.Editor ?
                             <SettingButton key="btn-readonly" datatest="btn-readonly"
-                                           href="#" iconName="visibility" fontSize={31.25}
+                                           href="#" iconName="visibility" iconSize={31.25}
                                            onclick={() => {
                                                actions.changeToReaderScreen();
                                                actions.closeMenuModal();
@@ -258,7 +263,7 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
 
                         {screen === Screens.Reader ?
                             <SettingButton key="btn-writable" datatest="btn-writable"
-                                           href="#" iconName="mode_edit" fontSize={31.25}
+                                           href="#" iconName="mode_edit" iconSize={31.25}
                                            onclick={() => {
                                                actions.changeToDrawerScreen();
                                                actions.changeToDrawingToolMode();
@@ -267,13 +272,13 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                             : undefined}
 
                         <SettingButton key="btn-copy-fumen" datatest="btn-copy-fumen"
-                                       href="#" iconName="content_copy"
-                                       fontSize={29.3} onclick={copyOnClick}>
+                                       href="#" iconName="content_copy" iconSize={29.3}
+                                       onclick={copyOnClick}>
                             {i18n.Menu.Buttons.Clipboard()}
                         </SettingButton>
 
                         <SettingButton key="btn-new-fumen" datatest="btn-new-fumen"
-                                       href="#" iconName="insert_drive_file" fontSize={32.3}
+                                       href="#" iconName="insert_drive_file" iconSize={32.3}
                                        onclick={() => {
                                            actions.fixInferencePiece();
                                            actions.clearInferencePiece();
@@ -286,7 +291,7 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                         </SettingButton>
 
                         <SettingButton key="btn-first-page" datatest="btn-first-page"
-                                       href="#" iconName="fast_rewind" fontSize={32.3}
+                                       href="#" iconName="fast_rewind" iconSize={32.3}
                                        onclick={() => {
                                            actions.firstPage();
                                            actions.closeMenuModal();
@@ -295,7 +300,7 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                         </SettingButton>
 
                         <SettingButton key="btn-last-page" datatest="btn-last-page"
-                                       href="#" iconName="fast_forward" fontSize={32.3}
+                                       href="#" iconName="fast_forward" iconSize={32.3}
                                        onclick={() => {
                                            actions.lastPage();
                                            actions.closeMenuModal();
@@ -303,9 +308,29 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                             {i18n.Menu.Buttons.LastPage()}
                         </SettingButton>
 
+                        <SettingButton key="btn-clear-to-end" datatest="btn-clear-to-end"
+                                       href="#" iconName="flip_to_front" iconSize={32.3} textSize={12}
+                                       enable={currentIndex < maxPageIndex - 1}
+                                       onclick={() => {
+                                           actions.clearToEnd();
+                                           actions.closeMenuModal();
+                                       }}>
+                            {i18n.Menu.Buttons.ClearToEnd()}
+                        </SettingButton>
+
+                        <SettingButton key="btn-clear-past" datatest="btn-clear-past"
+                                       href="#" iconName="flip_to_back" iconSize={32.3} textSize={12}
+                                       enable={0 < currentIndex}
+                                       onclick={() => {
+                                           actions.clearPast();
+                                           actions.closeMenuModal();
+                                       }}>
+                            {i18n.Menu.Buttons.ClearPast()}
+                        </SettingButton>
+
                         <SettingButton key="btn-comment"
                                        datatest={commentEnable ? 'btn-comment-readonly' : 'btn-comment-writable'}
-                                       href="#" iconName="text_fields" fontSize={32.3}
+                                       href="#" iconName="text_fields" iconSize={32.3}
                                        enable={screen === Screens.Editor}
                                        onclick={screen === Screens.Editor ? () => {
                                            actions.changeCommentMode({ enable: !commentEnable });
@@ -322,7 +347,7 @@ export const MenuModal: Component<MenuProps> = ({ version, pages, screen, curren
                         </SettingButton>
 
                         <SettingButton key="btn-help" datatest="btn-help"
-                                       href="./help.html" iconName="help_outline" fontSize={31.25}>
+                                       href="./help.html" iconName="help_outline" iconSize={31.25}>
                             {i18n.Menu.Buttons.Help()}
                         </SettingButton>
 
@@ -340,34 +365,37 @@ interface SettingButtonProps {
     iconName: string;
     key: string;
     datatest: string;
-    fontSize: number;
+    iconSize: number;
+    textSize?: number;
     enable?: boolean;
 }
 
 export const SettingButton: ComponentWithText<SettingButtonProps> = (
-    { href = '#', key, onclick, iconName, datatest, fontSize, enable = true }, showName,
+    { href = '#', key, onclick, iconName, datatest, iconSize, textSize = 13, enable = true }, showName,
     ) => (
     <a key={key} href={href} onclick={onclick !== undefined ? (event: MouseEvent) => {
             onclick(event);
             event.stopPropagation();
             event.preventDefault();
         } : undefined}>
-        <i key={`${key}-icon`} className={`material-icons z-depth-1 ${enable ? ' ' : 'disable'}`} style={style({
-                width: px(50),
-                height: px(40),
-                lineHeight: px(40),
-                fontSize: px(fontSize),
-                display: 'block',
-                color: enable ? '#333' : '#bdbdbd',
-                margin: px(5),
-                border: `solid 1px ${enable ? '#999' : '#bdbdbd'}`,
-                boxSizing: 'border-box',
-                textAlign: 'center',
-                cursor: 'pointer',
-            })}>{iconName}</i>
+        <i key={`${key}-icon`} datatest={datatest}
+           className={`material-icons z-depth-1 ${enable ? ' ' : 'disabled'}`}
+           style={style({
+               width: px(50),
+               height: px(40),
+               lineHeight: px(40),
+               fontSize: px(iconSize),
+               display: 'block',
+               color: enable ? '#333' : '#bdbdbd',
+               margin: px(5),
+               border: `solid 1px ${enable ? '#999' : '#bdbdbd'}`,
+               boxSizing: 'border-box',
+               textAlign: 'center',
+               cursor: 'pointer',
+           })}>{iconName}</i>
 
-        <div key={`${key}-text`} datatest={datatest}
-             style={style({ textAlign: 'center', color: enable ? '#333' : '#bdbdbd' })}>
+        <div key={`${key}-text`}
+             style={style({ textAlign: 'center', fontSize: px(textSize), color: enable ? '#333' : '#bdbdbd' })}>
                 {showName}
             </div>
         </a>

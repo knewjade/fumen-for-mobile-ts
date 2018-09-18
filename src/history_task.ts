@@ -53,19 +53,22 @@ export const toRemovePageTask = (
     removeFromIndex: number,
     removeToIndex: number,
     primitivePrevs: PrimitivePage[],
+    indexAfterReverting: number,
 ): OperationTask => {
     return {
         replay: (pages: Page[]) => {
-            const removeIndex = removeToIndex - 1;
             const pagesObj = new Pages(pages);
             pagesObj.deletePage(removeFromIndex, removeToIndex);
             const newPages = pagesObj.pages;
-            return { pages: newPages, index: removeIndex < newPages.length ? removeIndex : newPages.length - 1 };
+            return {
+                pages: newPages,
+                index: removeFromIndex < newPages.length ? removeFromIndex : newPages.length - 1
+            };
         },
         revert: (pages: Page[]) => {
             const pagesObj = new Pages(pages);
             pagesObj.insertPage(removeFromIndex, primitivePrevs.map(toPage));
-            return { pages: pagesObj.pages, index: removeFromIndex };
+            return { pages: pagesObj.pages, index: indexAfterReverting };
         },
         fixed: false,
     };
@@ -80,7 +83,7 @@ export const toInsertPageTask = (insertIndex: number, primitiveNexts: PrimitiveP
         },
         revert: (pages: Page[]) => {
             const pagesObj = new Pages(pages);
-            pagesObj.deletePage(insertIndex, insertIndex);
+            pagesObj.deletePage(insertIndex, insertIndex + 1);
             return { pages: pagesObj.pages, index: insertIndex - 1 };
         },
         fixed: false,
