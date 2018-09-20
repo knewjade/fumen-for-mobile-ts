@@ -253,8 +253,8 @@ export const MenuModal: Component<MenuProps> = (
 
                     <div key="menu-top" style={divProperties}>
                         {screen === Screens.Editor ?
-                            <SettingButton key="btn-readonly" datatest="btn-readonly"
-                                           href="#" iconName="visibility" iconSize={31.25}
+                            <SettingButton key="btn-readonly" datatest="btn-readonly" href="#"
+                                           icons={[{ name: 'visibility', size: 31.25 }]}
                                            onclick={() => {
                                                actions.changeToReaderScreen();
                                                actions.closeMenuModal();
@@ -262,8 +262,8 @@ export const MenuModal: Component<MenuProps> = (
                             : undefined}
 
                         {screen === Screens.Reader ?
-                            <SettingButton key="btn-writable" datatest="btn-writable"
-                                           href="#" iconName="mode_edit" iconSize={31.25}
+                            <SettingButton key="btn-writable" datatest="btn-writable" href="#"
+                                           icons={[{ name: 'mode_edit', size: 31.25 }]}
                                            onclick={() => {
                                                actions.changeToDrawerScreen();
                                                actions.changeToDrawingToolMode();
@@ -271,14 +271,14 @@ export const MenuModal: Component<MenuProps> = (
                                            }}>{i18n.Menu.Buttons.Writable()}</SettingButton>
                             : undefined}
 
-                        <SettingButton key="btn-copy-fumen" datatest="btn-copy-fumen"
-                                       href="#" iconName="content_copy" iconSize={29.3}
+                        <SettingButton key="btn-copy-fumen" datatest="btn-copy-fumen" href="#"
+                                       icons={[{ name: 'content_copy', size: 29.3 }]}
                                        onclick={copyOnClick}>
                             {i18n.Menu.Buttons.Clipboard()}
                         </SettingButton>
 
-                        <SettingButton key="btn-new-fumen" datatest="btn-new-fumen"
-                                       href="#" iconName="insert_drive_file" iconSize={32.3}
+                        <SettingButton key="btn-new-fumen" datatest="btn-new-fumen" href="#"
+                                       icons={[{ name: 'insert_drive_file', size: 32.3 }]}
                                        onclick={() => {
                                            actions.fixInferencePiece();
                                            actions.clearInferencePiece();
@@ -290,8 +290,8 @@ export const MenuModal: Component<MenuProps> = (
                             {i18n.Menu.Buttons.New()}
                         </SettingButton>
 
-                        <SettingButton key="btn-first-page" datatest="btn-first-page"
-                                       href="#" iconName="fast_rewind" iconSize={32.3}
+                        <SettingButton key="btn-first-page" datatest="btn-first-page" href="#"
+                                       icons={[{ name: 'fast_rewind', size: 32.3 }]}
                                        onclick={() => {
                                            actions.firstPage();
                                            actions.closeMenuModal();
@@ -299,8 +299,8 @@ export const MenuModal: Component<MenuProps> = (
                             {i18n.Menu.Buttons.FirstPage()}
                         </SettingButton>
 
-                        <SettingButton key="btn-last-page" datatest="btn-last-page"
-                                       href="#" iconName="fast_forward" iconSize={32.3}
+                        <SettingButton key="btn-last-page" datatest="btn-last-page" href="#"
+                                       icons={[{ name: 'fast_forward', size: 32.3 }]}
                                        onclick={() => {
                                            actions.lastPage();
                                            actions.closeMenuModal();
@@ -308,9 +308,9 @@ export const MenuModal: Component<MenuProps> = (
                             {i18n.Menu.Buttons.LastPage()}
                         </SettingButton>
 
-                        <SettingButton key="btn-clear-to-end" datatest="btn-clear-to-end"
-                                       href="#" iconName="flip_to_front" iconSize={32.3} textSize={12}
-                                       enable={currentIndex < maxPageIndex - 1}
+                        <SettingButton key="btn-clear-to-end" datatest="btn-clear-to-end" href="#"
+                                       icons={[{ name: 'clear', size: 28 }, { name: 'arrow_forward', size: 18 }]}
+                                       textSize={12} enable={currentIndex < maxPageIndex - 1}
                                        onclick={() => {
                                            actions.clearToEnd();
                                            actions.closeMenuModal();
@@ -318,9 +318,9 @@ export const MenuModal: Component<MenuProps> = (
                             {i18n.Menu.Buttons.ClearToEnd()}
                         </SettingButton>
 
-                        <SettingButton key="btn-clear-past" datatest="btn-clear-past"
-                                       href="#" iconName="flip_to_back" iconSize={32.3} textSize={12}
-                                       enable={0 < currentIndex}
+                        <SettingButton key="btn-clear-past" datatest="btn-clear-past" href="#"
+                                       icons={[{ name: 'arrow_back', size: 18 }, { name: 'clear', size: 28 }]}
+                                       textSize={12} enable={0 < currentIndex}
                                        onclick={() => {
                                            actions.clearPast();
                                            actions.closeMenuModal();
@@ -328,9 +328,9 @@ export const MenuModal: Component<MenuProps> = (
                             {i18n.Menu.Buttons.ClearPast()}
                         </SettingButton>
 
-                        <SettingButton key="btn-comment"
+                        <SettingButton key="btn-comment" href="#"
                                        datatest={commentEnable ? 'btn-comment-readonly' : 'btn-comment-writable'}
-                                       href="#" iconName="text_fields" iconSize={32.3}
+                                       icons={[{ name: 'text_fields', size: 32.3 }]}
                                        enable={screen === Screens.Editor}
                                        onclick={screen === Screens.Editor ? () => {
                                            actions.changeCommentMode({ enable: !commentEnable });
@@ -346,8 +346,8 @@ export const MenuModal: Component<MenuProps> = (
                             {commentEnable ? i18n.Menu.Buttons.ReadonlyComment() : i18n.Menu.Buttons.WritableComment()}
                         </SettingButton>
 
-                        <SettingButton key="btn-help" datatest="btn-help"
-                                       href="./help.html" iconName="help_outline" iconSize={31.25}>
+                        <SettingButton key="btn-help" datatest="btn-help" href="./help.html"
+                                       icons={[{ name: 'help_outline', size: 31.25 }]}>
                             {i18n.Menu.Buttons.Help()}
                         </SettingButton>
 
@@ -362,42 +362,53 @@ export const MenuModal: Component<MenuProps> = (
 interface SettingButtonProps {
     href?: string;
     onclick?: (event: MouseEvent) => void;
-    iconName: string;
+    icons: { name: string, size: number }[];
     key: string;
     datatest: string;
-    iconSize: number;
     textSize?: number;
     enable?: boolean;
 }
 
 export const SettingButton: ComponentWithText<SettingButtonProps> = (
-    { href = '#', key, onclick, iconName, datatest, iconSize, textSize = 13, enable = true }, showName,
-    ) => (
-    <a key={key} href={href} onclick={onclick !== undefined ? (event: MouseEvent) => {
-            onclick(event);
-            event.stopPropagation();
-            event.preventDefault();
-        } : undefined}>
-        <i key={`${key}-icon`} datatest={datatest}
-           className={`material-icons z-depth-1 ${enable ? ' ' : 'disabled'}`}
+    { href = '#', key, onclick, icons, datatest, textSize = 13, enable = true }, showName,
+) => {
+    const iconsElements = icons.map(icon => (
+        <i key={`${key}-icon-${icon.name}`} className={`material-icons ${enable ? ' ' : 'disabled'}`}
            style={style({
-               width: px(50),
-               height: px(40),
-               lineHeight: px(40),
-               fontSize: px(iconSize),
-               display: 'block',
-               color: enable ? '#333' : '#bdbdbd',
-               margin: px(5),
-               border: `solid 1px ${enable ? '#999' : '#bdbdbd'}`,
-               boxSizing: 'border-box',
-               textAlign: 'center',
-               cursor: 'pointer',
-           })}>{iconName}</i>
+               fontSize: px(icon.size),
+           })}
+        >
+            {icon.name}
+        </i>
+    ));
+
+    return <a key={key} href={href} onclick={onclick !== undefined ? (event: MouseEvent) => {
+        onclick(event);
+        event.stopPropagation();
+        event.preventDefault();
+    } : undefined}>
+        <div key={`${key}-icon`} datatest={datatest}
+             className={`z-depth-1 ${enable ? ' ' : 'disabled'}`}
+             style={style({
+                 width: px(50),
+                 height: px(40),
+                 lineHeight: px(40),
+                 display: 'flex',
+                 alignItems: 'center',
+                 justifyContent: 'center',
+                 color: enable ? '#333' : '#bdbdbd',
+                 margin: px(5),
+                 border: `solid 1px ${enable ? '#999' : '#bdbdbd'}`,
+                 boxSizing: 'border-box',
+                 cursor: 'pointer',
+             })}
+        >
+            {...iconsElements}
+        </div>
 
         <div key={`${key}-text`}
              style={style({ textAlign: 'center', fontSize: px(textSize), color: enable ? '#333' : '#bdbdbd' })}>
-                {showName}
-            </div>
-        </a>
-    )
-;
+            {showName}
+        </div>
+    </a>;
+};
