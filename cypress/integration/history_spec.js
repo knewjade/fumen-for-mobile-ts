@@ -68,7 +68,7 @@ describe('History', () => {
                     });
                 },
                 fumen: 'v115@vhBRQJUGJ',
-                count: 2,
+                count: 1,
             },
             {
                 callback: () => {
@@ -78,7 +78,7 @@ describe('History', () => {
                     });
                 },
                 fumen: 'v115@vhCRQJUGJKJJ',
-                count: 2,
+                count: 1,
             },
             {
                 callback: () => {
@@ -142,7 +142,7 @@ describe('History', () => {
                     });
                 },
                 fumen: 'v115@3gwwHeywwhGeR4whBtAeRpAeR4glwhg0BtRpAeilwh?i0JeO/IvhBp+I6WB',
-                count: 2,
+                count: 1,
             },
             {
                 callback: () => {
@@ -153,7 +153,7 @@ describe('History', () => {
                     });
                 },
                 fumen: 'v115@3gwwHeywwhGeR4whBtAeRpAeR4glwhg0BtRpAeilwh?i0JeO/IvhCp+I6WBFlB',
-                count: 2,
+                count: 1,
             },
             {
                 callback: () => {
@@ -212,7 +212,7 @@ describe('History', () => {
                     });
                 },
                 fumen: 'v115@vhBzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOJJ',
-                count: 2,
+                count: 1,
             },
             {
                 callback: () => {
@@ -222,7 +222,7 @@ describe('History', () => {
                     });
                 },
                 fumen: 'v115@vhCzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOJJx/I',
-                count: 2,
+                count: 1,
             },
             {
                 callback: () => {
@@ -239,7 +239,7 @@ describe('History', () => {
                     });
                 },
                 fumen: 'v115@vhDzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOJJx/XVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA9NJ',
-                count: 2,
+                count: 1,
             },
             {
                 callback: () => {
@@ -249,7 +249,7 @@ describe('History', () => {
                     });
                 },
                 fumen: 'v115@vhEzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOJJx/XVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA9NJ0MJ',
-                count: 2,
+                count: 1,
             },
             {
                 callback: () => {
@@ -259,7 +259,7 @@ describe('History', () => {
                     });
                 },
                 fumen: 'v115@vhFzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOJJx/XVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA9NJ0MJXD?J',
-                count: 2,
+                count: 1,
             },
             {
                 callback: () => {
@@ -289,7 +289,7 @@ describe('History', () => {
         play('v115@vhAAgH', testCases);
     });
 
-    it('Quiz', () => {
+    it('Shift', () => {
         const testCases = [
             {
                 callback: () => {
@@ -426,7 +426,7 @@ describe('History', () => {
                     });
                 },
                 fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYWAFLDmClcJSAV?DEHBEooRBPoAVBUNBAAvhATIJ',
-                count: 2,
+                count: 1,
             },
             {
                 callback: () => {
@@ -436,7 +436,7 @@ describe('History', () => {
                     });
                 },
                 fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYWAFLDmClcJSAV?DEHBEooRBPoAVBUNBAAvhBTIJFKJ',
-                count: 2,
+                count: 1,
             },
             {
                 callback: () => {
@@ -446,7 +446,7 @@ describe('History', () => {
                     });
                 },
                 fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYWAFLDmClcJSAV?DEHBEooRBPoAVBUNBAAvhCTIJFKJPMJ',
-                count: 2,
+                count: 1,
             },
             {
                 callback: () => {

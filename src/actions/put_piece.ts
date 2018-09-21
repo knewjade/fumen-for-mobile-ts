@@ -2,9 +2,11 @@ import { State } from '../states';
 import { getBlockPositions, Piece, toPositionIndex } from '../lib/enums';
 import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
-import { toPrimitivePage, toSinglePageTask } from '../history_task';
+import { OperationTask, toPrimitivePage, toSinglePageTask } from '../history_task';
 import { fieldEditorActions } from './field_editor';
 import { inferPiece } from '../lib/inference';
+import { Page } from '../lib/fumen/fumen';
+import { memento } from '../memento';
 
 interface PutPieceActions {
     fixInferencePiece(): action;
@@ -22,42 +24,14 @@ interface PutPieceActions {
 
 export const putPieceActions: Readonly<PutPieceActions> = {
     fixInferencePiece: () => (state): NextState => {
-        const inferences = state.events.inferences;
-        if (inferences.length < 4) {
+        const inferencePiece = parseInferenceToPage(state);
+        if (inferencePiece === undefined) {
             return undefined;
         }
-
-        // InferencePieceが揃っているとき
-        let piece;
-        try {
-            piece = inferPiece(inferences);
-        } catch (e) {
-            return undefined;
-        }
-
-        const currentPageIndex = state.fumen.currentIndex;
-        const pages = state.fumen.pages;
-        const page = pages[currentPageIndex];
-        const prevPage = toPrimitivePage(page);
-
-        page.piece = {
-            type: piece.piece,
-            rotation: piece.rotate,
-            coordinate: piece.coordinate,
-        };
 
         // 4つ以上あるとき
-        return sequence(state, [
-            newState => ({
-                fumen: {
-                    ...newState.fumen,
-                    pages,
-                },
-            }),
-            fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
-            actions.registerHistoryTask({ task: toSinglePageTask(currentPageIndex, prevPage, page) }),
-        ]);
+        const task = inferencePiece.task;
+        return commitInferencePiece(inferencePiece.pages, task)(state);
     },
     clearInferencePiece: () => (state): NextState => {
         return sequence(state, [
@@ -65,6 +39,10 @@ export const putPieceActions: Readonly<PutPieceActions> = {
                 events: {
                     ...state.events,
                     inferences: [],
+                },
+                cache: {
+                    ...state.cache,
+                    taskKey: undefined,
                 },
             }),
         ]);
@@ -94,6 +72,12 @@ export const putPieceActions: Readonly<PutPieceActions> = {
         return sequence(state, [
             actions.insertPage({ index: nextPageIndex }),
             actions.openPage({ index: nextPageIndex }),
+            newState => ({
+                cache: {
+                    ...newState.cache,
+                    taskKey: memento.lastKey(),
+                },
+            }),
             newState => ontouchStartField(newState, index),  // 次のページでのタッチ開始処理
             actions.ontouchMoveField({ index }),
         ]);
@@ -159,11 +143,63 @@ export const putPieceActions: Readonly<PutPieceActions> = {
         return undefined;
     },
     ontouchEnd: () => (state): NextState => {
+        const inferencePiece = parseInferenceToPage(state);
         return sequence(state, [
-            putPieceActions.fixInferencePiece(),
+            inferencePiece !== undefined
+                ? commitInferencePiece(inferencePiece.pages, inferencePiece.task, state.cache.taskKey)
+                : undefined,
             endDrawingField,
         ]);
     },
+};
+
+const commitInferencePiece = (pages: Page[], task: OperationTask, mergeKey?: string) => (state: State): NextState => {
+    return sequence(state, [
+        newState => ({
+            fumen: {
+                ...newState.fumen,
+                pages,
+            },
+            cache: {
+                ...newState.cache,
+                taskKey: undefined,
+            },
+        }),
+        fieldEditorActions.resetInferencePiece(),
+        actions.saveToMemento(),
+        actions.registerHistoryTask({ task, mergeKey }),
+    ]);
+};
+
+const parseInferenceToPage = (state: State): ({ pages: Page[], task: OperationTask } | undefined) => {
+    const inferences = state.events.inferences;
+    if (inferences.length < 4) {
+        return undefined;
+    }
+
+    // InferencePieceが揃っているとき
+    let piece;
+    try {
+        piece = inferPiece(inferences);
+    } catch (e) {
+        return undefined;
+    }
+
+    const currentPageIndex = state.fumen.currentIndex;
+    const pages = state.fumen.pages;
+    const page = pages[currentPageIndex];
+    const prevPage = toPrimitivePage(page);
+
+    page.piece = {
+        type: piece.piece,
+        rotation: piece.rotate,
+        coordinate: piece.coordinate,
+    };
+
+    return {
+        pages,
+        task: toSinglePageTask(currentPageIndex, prevPage, page),
+    };
 };
 
 const ontouchStartField = (state: State, index: number): NextState => {
@@ -210,6 +246,9 @@ const endDrawingField = (state: State): NextState => {
             touch: { piece: undefined },
             prevPage: undefined,
             updated: false,
+        },
+        cache: {
+            ...state.cache,
         },
     };
 };

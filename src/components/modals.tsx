@@ -308,16 +308,6 @@ export const MenuModal: Component<MenuProps> = (
                             {i18n.Menu.Buttons.LastPage()}
                         </SettingButton>
 
-                        <SettingButton key="btn-clear-to-end" datatest="btn-clear-to-end" href="#"
-                                       icons={[{ name: 'clear', size: 28 }, { name: 'arrow_forward', size: 18 }]}
-                                       textSize={12} enable={currentIndex < maxPageIndex - 1}
-                                       onclick={() => {
-                                           actions.clearToEnd();
-                                           actions.closeMenuModal();
-                                       }}>
-                            {i18n.Menu.Buttons.ClearToEnd()}
-                        </SettingButton>
-
                         <SettingButton key="btn-clear-past" datatest="btn-clear-past" href="#"
                                        icons={[{ name: 'arrow_back', size: 18 }, { name: 'clear', size: 28 }]}
                                        textSize={12} enable={0 < currentIndex}
@@ -326,6 +316,16 @@ export const MenuModal: Component<MenuProps> = (
                                            actions.closeMenuModal();
                                        }}>
                             {i18n.Menu.Buttons.ClearPast()}
+                        </SettingButton>
+
+                        <SettingButton key="btn-clear-to-end" datatest="btn-clear-to-end" href="#"
+                                       icons={[{ name: 'clear', size: 28 }, { name: 'arrow_forward', size: 18 }]}
+                                       textSize={12} enable={currentIndex < maxPageIndex - 1}
+                                       onclick={() => {
+                                           actions.clearToEnd();
+                                           actions.closeMenuModal();
+                                       }}>
+                            {i18n.Menu.Buttons.ClearToEnd()}
                         </SettingButton>
 
                         <SettingButton key="btn-comment" href="#"

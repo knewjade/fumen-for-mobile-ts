@@ -5,7 +5,7 @@ import { HistoryTask } from '../history_task';
 
 export interface MementoActions {
     saveToMemento: () => action;
-    registerHistoryTask: (data: { task: HistoryTask }) => action;
+    registerHistoryTask: (data: { task: HistoryTask, mergeKey?: string }) => action;
     undo: () => action;
     redo: () => action;
     setHistoryCount: (data: { redoCount: number, undoCount: number }) => action;
@@ -16,8 +16,8 @@ export const mementoActions: Readonly<MementoActions> = {
         memento.save(state.fumen.pages);
         return undefined;
     },
-    registerHistoryTask: ({ task }) => (state): NextState => {
-        const undoCount = memento.register(task);
+    registerHistoryTask: ({ task, mergeKey }) => (state): NextState => {
+        const undoCount = memento.register(task, mergeKey);
         return mementoActions.setHistoryCount({ undoCount, redoCount: 0 })(state);
     },
     undo: () => (state): NextState => {

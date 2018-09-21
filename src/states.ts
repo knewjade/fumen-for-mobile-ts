@@ -38,6 +38,7 @@ export interface State {
     };
     cache: {
         currentInitField: Field;
+        taskKey?: string;
     };
     modal: {
         fumen: boolean;
@@ -99,6 +100,7 @@ export const initState: Readonly<State> = {
     },
     cache: {
         currentInitField: new Field({}),
+        taskKey: undefined,
     },
     modal: {
         fumen: false,

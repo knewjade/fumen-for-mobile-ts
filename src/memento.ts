@@ -1,5 +1,5 @@
 import { encode, Page } from './lib/fumen/fumen';
-import { HistoryTask } from './history_task';
+import { HistoryTask, isOperationTask, toDecoratorOperationTask } from './history_task';
 
 interface SaverProp {
     saveKey: string;
@@ -10,12 +10,12 @@ type SaverObj = { save: (key: string) => Promise<void> };
 
 const KEY_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
-const saver = (() => {
-    const generateKey = (length: number = 8): string => {
-        const max = KEY_CHARS.length;
-        return Array.from({ length }).map(() => KEY_CHARS[Math.floor(Math.random() * max)]).join('');
-    };
+export const generateKey = (length: number = 8): string => {
+    const max = KEY_CHARS.length;
+    return Array.from({ length }).map(() => KEY_CHARS[Math.floor(Math.random() * max)]).join('');
+};
 
+const saver = (() => {
     const saverState = {
         isWorking: false,
         last: {
@@ -85,13 +85,26 @@ export const memento = (() => {
             saver(pages);
         },
         // タスクの追加
-        register: (task: HistoryTask): number => {
-            if (undoQueue.length < 200) {
-                undoQueue.push(task);
+        register: (task: HistoryTask, mergeKey?: string): number => {
+            const lastTask = undoQueue[undoQueue.length - 1];
+            console.log(lastTask);
+            console.log(mergeKey);
+            if (lastTask !== undefined && lastTask.key === mergeKey
+                && isOperationTask(lastTask) && isOperationTask(task)
+            ) {
+                // keyが同じときはくっつける
+                // 現時点では OperationTask 同士のみ対応
+                undoQueue[undoQueue.length - 1] = toDecoratorOperationTask(lastTask, task);
             } else {
-                undoQueue.shift();
-                undoQueue.push(task);
+                // そのまま追加する
+                if (undoQueue.length < 200) {
+                    undoQueue.push(task);
+                } else {
+                    undoQueue.shift();
+                    undoQueue.push(task);
+                }
             }
+
             redoQueue = [];
             return undoQueue.length - 1;
         },
@@ -126,6 +139,10 @@ export const memento = (() => {
                 undoCount: undoQueue.length - 1,
                 redoCount: redoQueue.length,
             };
+        },
+        lastKey: (): (string | undefined) => {
+            const lastTask = undoQueue[undoQueue.length - 1];
+            return lastTask !== undefined ? lastTask.key : undefined;
         },
     };
 })();

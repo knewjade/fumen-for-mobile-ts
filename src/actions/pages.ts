@@ -99,6 +99,7 @@ export const pageActions: Readonly<PageActions> = {
                     currentIndex: index,
                 },
                 cache: {
+                    ...newState.cache,
                     currentInitField: field,
                 },
             }),

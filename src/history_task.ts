@@ -2,6 +2,7 @@ import { decode, Move, Page, PreCommand } from './lib/fumen/fumen';
 import { Piece } from './lib/enums';
 import { Field, PlayField } from './lib/fumen/field';
 import { Pages } from './lib/pages';
+import { generateKey } from './memento';
 
 export type HistoryTask = OperationTask | FixedTask;
 
@@ -14,12 +15,18 @@ export interface OperationTask {
     replay: (pages: Page[]) => TaskResult;
     revert: (pages: Page[]) => TaskResult;
     fixed: false;
+    key: string;
+}
+
+export function isOperationTask(task: HistoryTask): task is OperationTask {
+    return !task.fixed;
 }
 
 interface FixedTask {
     replay: () => Promise<TaskResult>;
     revert: () => Promise<TaskResult>;
     fixed: true;
+    key: string;
 }
 
 export const toFumenTask = (primitivePrev: PrimitivePage[], fumen: string, prevIndex: number): FixedTask => {
@@ -31,6 +38,7 @@ export const toFumenTask = (primitivePrev: PrimitivePage[], fumen: string, prevI
             return { pages: primitivePrev.map(toPage), index: prevIndex };
         },
         fixed: true,
+        key: generateKey(),
     };
 };
 
@@ -46,6 +54,7 @@ export const toSinglePageTask = (index: number, primitivePrev: PrimitivePage, ne
             return { pages, index };
         },
         fixed: false,
+        key: generateKey(),
     };
 };
 
@@ -62,7 +71,7 @@ export const toRemovePageTask = (
             const newPages = pagesObj.pages;
             return {
                 pages: newPages,
-                index: removeFromIndex < newPages.length ? removeFromIndex : newPages.length - 1
+                index: removeFromIndex < newPages.length ? removeFromIndex : newPages.length - 1,
             };
         },
         revert: (pages: Page[]) => {
@@ -71,6 +80,7 @@ export const toRemovePageTask = (
             return { pages: pagesObj.pages, index: indexAfterReverting };
         },
         fixed: false,
+        key: generateKey(),
     };
 };
 
@@ -87,6 +97,7 @@ export const toInsertPageTask = (insertIndex: number, primitiveNexts: PrimitiveP
             return { pages: pagesObj.pages, index: insertIndex - 1 };
         },
         fixed: false,
+        key: generateKey(),
     };
 };
 
@@ -103,6 +114,7 @@ export const toKeyPageTask = (index: number): OperationTask => {
             return { index, pages: pagesObj.pages };
         },
         fixed: false,
+        key: generateKey(),
     };
 };
 
@@ -119,6 +131,7 @@ export const toRefPageTask = (index: number): OperationTask => {
             return { index, pages: pagesObj.pages };
         },
         fixed: false,
+        key: generateKey(),
     };
 };
 
@@ -135,10 +148,11 @@ export const toFreezeCommentTask = (index: number): OperationTask => {
             return { index, pages: pagesObj.pages };
         },
         fixed: false,
+        key: generateKey(),
     };
 };
 
-export const toPageTaskStack = (tasks: OperationTask[], pageIndexAfterReverting: number): OperationTask => {
+export const toPageTaskStack = (tasks: OperationTask[], pageIndexAfterReverting?: number): OperationTask => {
     return {
         replay: (pages: Page[]) => {
             let result: TaskResult = { pages, index: 0 };
@@ -152,9 +166,28 @@ export const toPageTaskStack = (tasks: OperationTask[], pageIndexAfterReverting:
             for (const task of tasks.concat().reverse()) {
                 result = task.revert(result.pages);
             }
-            return { pages: result.pages, index: pageIndexAfterReverting };
+            return {
+                pages: result.pages,
+                index: pageIndexAfterReverting !== undefined ? pageIndexAfterReverting : result.index,
+            };
         },
         fixed: false,
+        key: generateKey(),
+    };
+};
+
+export const toDecoratorOperationTask = (first: OperationTask, second: OperationTask): OperationTask => {
+    return {
+        replay: (pages: Page[]) => {
+            const result1: TaskResult = first.replay(pages);
+            return second.replay(result1.pages);
+        },
+        revert: (pages: Page[]) => {
+            const result1 = second.revert(pages);
+            return first.revert(result1.pages);
+        },
+        fixed: false,
+        key: first.key,
     };
 };
 
