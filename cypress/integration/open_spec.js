@@ -12,12 +12,18 @@ describe('Open fumen', () => {
         // 入力に失敗するパターン
         cy.get(datatest('mdl-open-fumen')).should('visible')
             .within(() => {
+                cy.get(datatest('btn-open')).should('have.class', 'disabled');
+
                 // テト譜を開く
                 cy.get(datatest('input-fumen')).clear().type('hello world');
+
+                cy.get(datatest('btn-open')).should('not.have.class', 'disabled');
                 cy.get(datatest('btn-open')).click();
 
                 // Assertion: エラーメッセージ
                 cy.get(datatest('text-message')).should('contain', 'テト譜を読み込めませんでした');
+
+                cy.get(datatest('btn-open')).should('have.class', 'disabled');
             });
 
         // 入力に成功するパターン
@@ -25,6 +31,8 @@ describe('Open fumen', () => {
             .within(() => {
                 // テト譜を開く
                 cy.get(datatest('input-fumen')).clear().type('v115@9gi0EeR4Rpg0DeR4wwRpglCeBtxwilDeBtwwJeAgHv?hERmBuqBMrBXsBAAA');
+
+                cy.get(datatest('btn-open')).should('not.have.class', 'disabled');
                 cy.get(datatest('btn-open')).click();
             });
 
@@ -33,6 +41,49 @@ describe('Open fumen', () => {
 
         // Assertion: ページ番号の確認
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 6');
+    });
+
+    it('Cancel', () => {
+        visit({ lng: 'ja' });
+
+        // モーダルを開く
+        operations.mode.reader.openPage();
+
+        // 入力に失敗するパターン
+        cy.get(datatest('mdl-open-fumen')).should('visible')
+            .within(() => {
+                // テト譜を開く
+                cy.get(datatest('input-fumen')).clear().type('hello world');
+                cy.get(datatest('btn-open')).click();
+
+                // Assertion: エラーメッセージ
+                cy.get(datatest('text-message')).should('contain', 'テト譜を読み込めませんでした');
+
+                cy.get(datatest('btn-open')).should('have.class', 'disabled');
+            });
+
+        // キャンセル
+        cy.get(datatest('mdl-open-fumen')).should('visible')
+            .within(() => {
+                cy.get(datatest('btn-cancel')).click();
+            });
+
+        // Assertion: モーダルが閉じられている
+        cy.get(datatest('mdl-open-fumen')).should('not.exist');
+
+        // Assertion: ページ番号の確認
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 1');
+
+        // モーダルを開く
+        operations.mode.reader.openPage();
+
+        // 全てが消えている
+        cy.get(datatest('mdl-open-fumen')).should('visible')
+            .within(() => {
+                cy.get(datatest('btn-open')).should('have.class', 'disabled');
+                cy.get(datatest('input-fumen')).should('have.text', '');
+                cy.get(datatest('text-message')).should('have.text', '');
+            });
     });
 
     it('First page/Last page', () => {

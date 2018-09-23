@@ -3,7 +3,6 @@ import { Coordinate, Size } from './commons';
 import { View } from 'hyperapp';
 import { resources, State } from '../states';
 import { EditorTools } from '../components/tools/editor_tools';
-import { MenuModal, OpenFumenModal } from '../components/modals';
 import { Palette } from '../lib/colors';
 import { Actions } from '../actions';
 import { Field } from '../components/field';
@@ -193,13 +192,11 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
                 actions.duplicatePage({ index: nextPage });
                 actions.openPage({ index: nextPage });
             },
-            contents: iconContents({
-                height: layout.buttons.size.height,
-                description: 'copy',
-                iconSize: 22,
-                iconName: 'content_copy',
-            }),
-        }),
+        }, iconContents({
+            description: 'copy',
+            iconSize: 22,
+            iconName: 'content_copy',
+        })),
         toolButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
@@ -210,13 +207,11 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
             datatest: 'btn-remove-page',
             key: 'btn-remove-page',
             onclick: () => actions.removePage({ index: currentIndex }),
-            contents: iconContents({
-                height: layout.buttons.size.height,
-                description: 'remove',
-                iconSize: 22,
-                iconName: 'remove_circle_outline',
-            }),
-        }),
+        }, iconContents({
+            description: 'remove',
+            iconSize: 22,
+            iconName: 'remove_circle_outline',
+        })),
         toolButton({
             borderWidth: 3,
             width: layout.buttons.size.width,
@@ -228,13 +223,11 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
             datatest: 'btn-fill-row-mode',
             key: 'btn-fill-row-mode',
             onclick: () => actions.changeToFillRowMode(),
-            contents: iconContents({
-                height: layout.buttons.size.height,
-                description: 'row',
-                iconSize: 24,
-                iconName: 'power_input',
-            }),
-        }),
+        }, iconContents({
+            description: 'row',
+            iconSize: 24,
+            iconName: 'power_input',
+        })),
         toolButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
@@ -245,13 +238,11 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
             datatest: 'btn-shift-mode',
             key: 'btn-shift-mode',
             onclick: () => actions.changeToShiftMode(),
-            contents: iconContents({
-                height: layout.buttons.size.height,
-                description: 'shift',
-                iconSize: 24,
-                iconName: 'swap_vert',
-            }),
-        }),
+        }, iconContents({
+            description: 'shift',
+            iconSize: 24,
+            iconName: 'swap_vert',
+        })),
         toolButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
@@ -262,13 +253,11 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
             datatest: 'btn-flags-mode',
             key: 'btn-flags-mode',
             onclick: () => actions.changeToFlagsMode(),
-            contents: iconContents({
-                height: layout.buttons.size.height,
-                description: 'flags',
-                iconSize: 24,
-                iconName: 'flag',
-            }),
-        }),
+        }, iconContents({
+            description: 'flags',
+            iconSize: 24,
+            iconName: 'flag',
+        })),
         toolButton({
             borderWidth: 3,
             width: layout.buttons.size.width,
@@ -280,13 +269,11 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
             datatest: 'btn-piece-mode',
             key: 'btn-piece-mode',
             onclick: () => actions.changeToDrawPieceMode(),
-            contents: iconContents({
-                height: layout.buttons.size.height,
-                description: 'piece',
-                iconSize: 20,
-                iconName: 'extension',
-            }),
-        }),
+        }, iconContents({
+            description: 'piece',
+            iconSize: 20,
+            iconName: 'extension',
+        })),
         toolButton({
             borderWidth: 3,
             width: layout.buttons.size.width,
@@ -298,13 +285,11 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
             datatest: 'btn-block-mode',
             key: 'btn-block-mode',
             onclick: () => actions.changeToDrawingMode(),
-            contents: iconContents({
-                height: layout.buttons.size.height,
-                description: 'block',
-                iconSize: 22,
-                iconName: 'edit',
-            }),
-        }),
+        }, iconContents({
+            description: 'block',
+            iconSize: 22,
+            iconName: 'edit',
+        })),
     ]);
 };
 
@@ -403,7 +388,6 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePiece, act
             enable: operatePiece,
             onclick: () => actions.moveToLeftEnd(),
             contents: iconContents({
-                height: layout.buttons.size.height,
                 description: '',
                 iconSize: 24,
                 iconName: 'skip_previous',
@@ -414,7 +398,6 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePiece, act
             enable: operatePiece,
             onclick: () => actions.moveToRightEnd(),
             contents: iconContents({
-                height: layout.buttons.size.height,
                 description: '',
                 iconSize: 24,
                 iconName: 'skip_next',
@@ -433,7 +416,6 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePiece, act
             enable: operatePiece,
             onclick: () => actions.moveToLeft(),
             contents: iconContents({
-                height: layout.buttons.size.height,
                 description: '',
                 iconSize: 24,
                 iconName: 'keyboard_arrow_left',
@@ -444,7 +426,6 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePiece, act
             enable: operatePiece,
             onclick: () => actions.moveToRight(),
             contents: iconContents({
-                height: layout.buttons.size.height,
                 description: '',
                 iconSize: 24,
                 iconName: 'keyboard_arrow_right',
@@ -461,13 +442,11 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePiece, act
             key: 'btn-harddrop',
             enable: operatePiece,
             onclick: () => actions.harddrop(),
-            contents: iconContents({
-                height: layout.buttons.size.height,
-                description: 'drop',
-                iconSize: 22,
-                iconName: 'vertical_align_bottom',
-            }),
-        }),
+        }, iconContents({
+            description: 'drop',
+            iconSize: 22,
+            iconName: 'vertical_align_bottom',
+        })),
         dualButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
@@ -481,7 +460,6 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePiece, act
             enable: operatePiece,
             onclick: () => actions.rotateToLeft(),
             contents: iconContents({
-                height: layout.buttons.size.height,
                 description: '',
                 iconSize: 23,
                 iconName: 'rotate_left',
@@ -492,7 +470,6 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePiece, act
             enable: operatePiece,
             onclick: () => actions.rotateToRight(),
             contents: iconContents({
-                height: layout.buttons.size.height,
                 description: '',
                 iconSize: 23,
                 iconName: 'rotate_right',
@@ -508,13 +485,11 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePiece, act
             datatest: 'btn-reset-piece',
             key: 'btn-reset-piece',
             onclick: () => actions.clearPiece(),
-            contents: iconContents({
-                height: layout.buttons.size.height,
-                description: 'reset',
-                iconSize: 22,
-                iconName: 'clear',
-            }),
-        }),
+        }, iconContents({
+            description: 'reset',
+            iconSize: 22,
+            iconName: 'clear',
+        })),
         switchButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
@@ -525,14 +500,12 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePiece, act
             datatest: 'btn-move-piece',
             key: 'btn-move-piece',
             onclick: () => actions.changeToMovePieceMode(),
-            contents: radioIconContents({
-                height: layout.buttons.size.height,
-                description: 'move',
-                iconSize: 22,
-                enable: touchType === TouchTypes.MovePiece,
-            }),
             enable: touchType === TouchTypes.MovePiece,
-        }),
+        }, radioIconContents({
+            description: 'move',
+            iconSize: 22,
+            enable: touchType === TouchTypes.MovePiece,
+        })),
         switchButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
@@ -543,14 +516,12 @@ const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePiece, act
             datatest: 'btn-draw-piece',
             key: 'btn-draw-piece',
             onclick: () => actions.changeToDrawPieceMode(),
-            contents: radioIconContents({
-                height: layout.buttons.size.height,
-                description: 'draw',
-                iconSize: 22,
-                enable: touchType === TouchTypes.Piece,
-            }),
             enable: touchType === TouchTypes.Piece,
-        }),
+        }, radioIconContents({
+            description: 'draw',
+            iconSize: 22,
+            enable: touchType === TouchTypes.Piece,
+        })),
     ]);
 };
 
@@ -600,14 +571,12 @@ const flagsMode = ({ layout, currentIndex, keyPage, flags, actions }: {
             datatest: 'btn-lock-flag',
             key: 'btn-lock-flag',
             onclick: () => actions.changeLockFlag({ index: currentIndex, enable: !flags.lock }),
-            contents: switchIconContents({
-                height: layout.buttons.size.height,
-                description: 'lock',
-                iconSize: 22,
-                enable: flags.lock,
-            }),
             enable: flags.lock,
-        }),
+        }, switchIconContents({
+            description: 'lock',
+            iconSize: 22,
+            enable: flags.lock,
+        })),
         switchButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
@@ -618,14 +587,12 @@ const flagsMode = ({ layout, currentIndex, keyPage, flags, actions }: {
             datatest: 'btn-rise-flag',
             key: 'btn-rise-flag',
             onclick: () => actions.changeRiseFlag({ index: currentIndex, enable: !flags.rise }),
-            contents: switchIconContents({
-                height: layout.buttons.size.height,
-                description: 'rise',
-                iconSize: 22,
-                enable: flags.rise,
-            }),
             enable: flags.rise,
-        }),
+        }, switchIconContents({
+            description: 'rise',
+            iconSize: 22,
+            enable: flags.rise,
+        })),
         switchButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
@@ -636,14 +603,12 @@ const flagsMode = ({ layout, currentIndex, keyPage, flags, actions }: {
             datatest: 'btn-mirror-flag',
             key: 'btn-mirror-flag',
             onclick: () => actions.changeMirrorFlag({ index: currentIndex, enable: !flags.mirror }),
-            contents: switchIconContents({
-                height: layout.buttons.size.height,
-                description: 'mirror',
-                iconSize: 22,
-                enable: flags.mirror,
-            }),
             enable: flags.mirror,
-        }),
+        }, switchIconContents({
+            description: 'mirror',
+            iconSize: 22,
+            enable: flags.mirror,
+        })),
     ]);
 };
 
@@ -692,13 +657,11 @@ const shiftMode = ({ layout, currentIndex, keyPage, flags, actions }: {
             datatest: 'btn-shift-to-up',
             key: 'btn-shift-to-up',
             onclick: () => actions.shiftToUp(),
-            contents: iconContents({
-                height: layout.buttons.size.height,
-                description: '',
-                iconSize: 22,
-                iconName: 'keyboard_arrow_up',
-            }),
-        }),
+        }, iconContents({
+            description: '',
+            iconSize: 22,
+            iconName: 'keyboard_arrow_up',
+        })),
         dualButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
@@ -711,7 +674,6 @@ const shiftMode = ({ layout, currentIndex, keyPage, flags, actions }: {
             key: 'btn-shift-to-left',
             onclick: () => actions.shiftToLeft(),
             contents: iconContents({
-                height: layout.buttons.size.height,
                 description: '',
                 iconSize: 23,
                 iconName: 'keyboard_arrow_left',
@@ -721,7 +683,6 @@ const shiftMode = ({ layout, currentIndex, keyPage, flags, actions }: {
             key: 'btn-shift-to-right',
             onclick: () => actions.shiftToRight(),
             contents: iconContents({
-                height: layout.buttons.size.height,
                 description: '',
                 iconSize: 23,
                 iconName: 'keyboard_arrow_right',
@@ -737,13 +698,11 @@ const shiftMode = ({ layout, currentIndex, keyPage, flags, actions }: {
             datatest: 'btn-shift-to-down',
             key: 'btn-shift-to-down',
             onclick: () => actions.shiftToBottom(),
-            contents: iconContents({
-                height: layout.buttons.size.height,
-                description: '',
-                iconSize: 22,
-                iconName: 'keyboard_arrow_down',
-            }),
-        }),
+        }, iconContents({
+            description: '',
+            iconSize: 22,
+            iconName: 'keyboard_arrow_down',
+        })),
     ]);
 };
 
@@ -932,7 +891,7 @@ export const view: View<State, Actions> = (state, actions) => {
         onupdate: batchDraw,
         key: 'view',
     }, [ // Hyperappでは最上位のノードが最後に実行される
-        resources.konva.stage.isReady ? Events(state, actions) : undefined,
+        resources.konva.stage.isReady ? Events(state, actions) : undefined as any,
 
         ScreenField(state, actions, layout),
 
@@ -975,21 +934,5 @@ export const view: View<State, Actions> = (state, actions) => {
 
             Tools(state, actions, layout.tools.size.height),
         ]),
-
-        state.modal.fumen ? OpenFumenModal({
-            actions,
-            errorMessage: state.fumen.errorMessage,
-            textAreaValue: state.fumen.value,
-        }) : undefined as any,
-
-        state.modal.menu ? MenuModal({
-            actions,
-            currentIndex,
-            version: state.version,
-            pages: state.fumen.pages,
-            screen: state.mode.screen,
-            maxPageIndex: state.fumen.maxPage,
-            commentEnable: state.mode.comment,
-        }) : undefined as any,
     ]);
 };

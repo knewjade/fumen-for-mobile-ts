@@ -160,12 +160,29 @@ export class Pages {
         this.insertPage(index, [page]);
     }
 
-    insertPage(insertPageIndex: number, pages: Page[]) {
-        const len = pages.length;
-        for (let index = 0; index < len; index += 1) {
-            pages[index].index = insertPageIndex + index;
+    insertPage(insertPageIndex: number, insertedPages: Page[]) {
+        if (insertedPages[0] === undefined) {
+            throw new ViewError('No inserted pages');
         }
 
+        const firstIndex = insertedPages[0].index;
+        const pages = insertedPages.map((page, index) => {
+            page.index = insertPageIndex + index;
+
+            if (page.field.ref !== undefined) {
+                const currentRef = page.field.ref;
+                page.field.ref = insertPageIndex + (currentRef - firstIndex);
+            }
+
+            if (page.comment.ref !== undefined) {
+                const currentRef = page.comment.ref;
+                page.comment.ref = insertPageIndex + (currentRef - firstIndex);
+            }
+
+            return page;
+        });
+
+        const len = pages.length;
         const page = pages[len - 1];
         const ref = {
             field: page.field.ref !== undefined ? page.field.ref : page.index,

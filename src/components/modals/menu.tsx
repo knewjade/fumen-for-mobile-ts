@@ -1,143 +1,12 @@
-import { Component, ComponentWithText, px, style } from '../lib/types';
+import { Component, ComponentWithText, px, style } from '../../lib/types';
 import { h } from 'hyperapp';
-import { resources } from '../states';
+import { resources } from '../../states';
 import { i } from '@hyperapp/html';
-import { encode, Page } from '../lib/fumen/fumen';
-import { Screens } from '../lib/enums';
-import { i18n } from '../locales/keys';
+import { encode, Page } from '../../lib/fumen/fumen';
+import { Screens } from '../../lib/enums';
+import { i18n } from '../../locales/keys';
 
 declare const M: any;
-
-interface OpenFumenModalProps {
-    errorMessage?: string;
-    textAreaValue?: string;
-    actions: {
-        closeFumenModal: () => void;
-        inputFumenData(data: { value?: string }): void;
-        clearFumenData: () => void;
-        loadFumen(data: { fumen: string }): void;
-    };
-}
-
-export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, errorMessage, actions }) => {
-    const oncreate = (element: HTMLDivElement) => {
-        const instance = M.Modal.init(element, {
-            onOpenEnd: () => {
-                // Focus用のボタンをクリック
-                const element = document.getElementById('trigger-focus-fumen');
-                if (element !== null) {
-                    element.focus();
-                }
-            },
-            onCloseStart: () => {
-                actions.closeFumenModal();
-            },
-        });
-
-        instance.open();
-
-        resources.modals.fumen = instance;
-    };
-
-    const ondestroy = () => {
-        const modal = resources.modals.fumen;
-        if (modal !== undefined) {
-            modal.close();
-        }
-        resources.modals.fumen = undefined;
-    };
-
-    const textAreaStyle = style({
-        width: '100%',
-        border: errorMessage !== undefined ? 'solid 1px #ff5252' : undefined,
-    });
-
-    const isEmptyTextArea = textAreaValue === undefined;
-    const oninput = (e: TextEvent) => {
-        const inputType = (e as any).inputType;
-        if (inputType === 'insertLineBreak') {
-            const element = document.getElementById('#input-fumen');
-            if (element !== null) {
-                element.focus();
-            }
-            return;
-        }
-
-        if (e.target === null) {
-            return;
-        }
-
-        const target = e.target as HTMLTextAreaElement;
-        const isEmptyTextAreaNow = target.value === '';
-        if (errorMessage !== undefined || isEmptyTextArea !== isEmptyTextAreaNow) {
-            onblur(e);
-        }
-    };
-
-    const onblur = (e: TextEvent) => {
-        if (e.target === null) {
-            return;
-        }
-
-        const target = e.target as HTMLTextAreaElement;
-        const value = target.value !== '' ? target.value : undefined;
-        actions.inputFumenData({ value });
-    };
-
-    const cancel = () => {
-        actions.closeFumenModal();
-        actions.clearFumenData();
-    };
-
-    const open = () => {
-        const selector = document.body.querySelector('#input-fumen');
-        if (!selector) {
-            return;
-        }
-
-        const target = selector as HTMLTextAreaElement;
-        if (target.value !== undefined && target.value !== '') {
-            actions.loadFumen({ fumen: target.value });
-        }
-    };
-
-    const openClassVisibility = isEmptyTextArea || errorMessage !== undefined ? ' disabled' : '';
-    const openClassName = `waves-effect waves-teal btn-flat${openClassVisibility}`;
-
-    return (
-        <div key="fumen-modal-top">
-            <div key="mdl-open-fumen" datatest="mdl-open-fumen"
-                 className="modal" oncreate={oncreate} ondestroy={ondestroy}>
-                <div key="modal-content" className="modal-content">
-                    <h4 key="open-fumen-label" dataTest="open-fumen-label">{i18n.OpenFumen.Title()}</h4>
-
-                    <textarea key="input-fumen" dataTest="input-fumen" id="input-fumen" rows={3} style={textAreaStyle}
-                              oninput={oninput} onblur={onblur}
-                              value={textAreaValue} placeholder={i18n.OpenFumen.PlaceHolder()}/>
-
-                    <span key="text-message" datatest="text-message" id="text-fumen-modal-error"
-                          className="red-text text-accent-2"
-                          style={style({ display: errorMessage !== undefined ? undefined : 'none' })}>
-                        {errorMessage}
-                    </span>
-
-                </div>
-
-                <div key="modal-footer" className="modal-footer">
-                    <a href="#" key="btn-cancel" datatest="btn-cancel" id="btn-cancel"
-                       className="waves-effect waves-teal btn-flat" onclick={cancel}>
-                        {i18n.OpenFumen.Buttons.Cancel()}
-                    </a>
-
-                    <a href="#" key="btn-open" datatest="btn-open" id="btn-open"
-                       className={openClassName} onclick={open}>
-                        {i18n.OpenFumen.Buttons.Open()}
-                    </a>
-                </div>
-            </div>
-        </div>
-    );
-};
 
 interface MenuProps {
     version: string;
@@ -159,6 +28,7 @@ interface MenuProps {
         lastPage: () => void;
         clearToEnd: () => void;
         clearPast: () => void;
+        openAppendModal: () => void;
     };
 }
 
@@ -290,6 +160,15 @@ export const MenuModal: Component<MenuProps> = (
                             {i18n.Menu.Buttons.New()}
                         </SettingButton>
 
+                        <SettingButton key="btn-append-fumen" datatest="btn-append-fumen" href="#"
+                                       icons={[{ name: 'library_add', size: 29 }]}
+                                       onclick={() => {
+                                           actions.closeMenuModal();
+                                           actions.openAppendModal();
+                                       }}>
+                            {i18n.Menu.Buttons.Append()}
+                        </SettingButton>
+
                         <SettingButton key="btn-first-page" datatest="btn-first-page" href="#"
                                        icons={[{ name: 'fast_rewind', size: 32.3 }]}
                                        onclick={() => {
@@ -381,7 +260,6 @@ export const SettingButton: ComponentWithText<SettingButtonProps> = (
             {icon.name}
         </i>
     ));
-
     return <a key={key} href={href} onclick={onclick !== undefined ? (event: MouseEvent) => {
         onclick(event);
         event.stopPropagation();

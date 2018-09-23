@@ -2,12 +2,14 @@ import { NextState, sequence } from './commons';
 import { action, actions, main } from '../actions';
 import { memento } from '../memento';
 import { HistoryTask } from '../history_task';
+import { Page } from '../lib/fumen/fumen';
 
 export interface MementoActions {
     saveToMemento: () => action;
     registerHistoryTask: (data: { task: HistoryTask, mergeKey?: string }) => action;
     undo: () => action;
     redo: () => action;
+    loadPagesViaHistory: (data: { pages: Page[], index: number, undoCount: number, redoCount: number }) => action;
     setHistoryCount: (data: { redoCount: number, undoCount: number }) => action;
 }
 
@@ -37,10 +39,7 @@ export const mementoActions: Readonly<MementoActions> = {
                 (async () => {
                     const result = await memento.undo(newState.fumen.pages);
                     if (result !== undefined) {
-                        main.setPages({ pages: result.pages, open: false });
-                        main.openPage({ index: result.index });
-                        main.setHistoryCount({ undoCount: result.undoCount, redoCount: result.redoCount });
-                        memento.save(result.pages);
+                        main.loadPagesViaHistory(result);
                     }
                 })();
                 return undefined;
@@ -59,14 +58,21 @@ export const mementoActions: Readonly<MementoActions> = {
                 (async () => {
                     const result = await memento.redo(newState.fumen.pages);
                     if (result !== undefined) {
-                        main.setPages({ pages: result.pages, open: false });
-                        main.openPage({ index: result.index });
-                        main.setHistoryCount({ undoCount: result.undoCount, redoCount: result.redoCount });
-                        memento.save(result.pages);
+                        main.loadPagesViaHistory(result);
                     }
                 })();
                 return undefined;
             },
+        ]);
+    },
+    loadPagesViaHistory: ({ pages, index, undoCount, redoCount }) => (state): NextState => {
+        console.log(index);
+        console.log(pages);
+        return sequence(state, [
+            actions.setPages({ pages, open: false }),
+            actions.openPage({ index }),
+            actions.setHistoryCount({ undoCount, redoCount }),
+            actions.saveToMemento(),
         ]);
     },
     setHistoryCount: ({ undoCount, redoCount }) => (): NextState => {

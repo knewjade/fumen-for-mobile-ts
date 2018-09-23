@@ -254,6 +254,10 @@ export const operations = {
             operations.menu.open();
             cy.get(datatest('btn-new-fumen')).click();
         },
+        append: () => {
+            operations.menu.open();
+            cy.get(datatest('btn-append-fumen')).click();
+        },
         copyToClipboard: () => {
             operations.menu.open();
             cy.get(datatest('btn-copy-fumen')).click();

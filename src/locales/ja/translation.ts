@@ -9,6 +9,12 @@ export const resources = {
             FailedToLoad: 'テト譜を読み込めませんでした',
         },
     },
+    AppendFumen: {
+        Title: 'テト譜を追記',
+        Errors: {
+            FailedToLoad: 'テト譜を読み込めませんでした',
+        },
+    },
     Menu: {
         Messages: {
             NoAvailableCommentButton: 'Writableモードのときだけ変更できます',

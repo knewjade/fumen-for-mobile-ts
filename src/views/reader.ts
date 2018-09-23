@@ -1,7 +1,6 @@
 import { Coordinate, Size } from './commons';
 import { View } from 'hyperapp';
 import { resources, State } from '../states';
-import { MenuModal, OpenFumenModal } from '../components/modals';
 import { Actions } from '../actions';
 import { div } from '@hyperapp/html';
 import { KonvaCanvas } from '../components/konva_canvas';
@@ -223,7 +222,7 @@ export const view: View<State, Actions> = (state, actions) => {
         onupdate: batchDraw,
         key: 'view',
     }, [ // Hyperappでは最上位のノードが最後に実行される
-        resources.konva.stage.isReady ? Events(state, actions, layout) : undefined,
+        resources.konva.stage.isReady ? Events(state, actions, layout) : undefined as any,
 
         ScreenField(state, actions, layout),
 
@@ -243,21 +242,5 @@ export const view: View<State, Actions> = (state, actions) => {
 
             Tools(state, actions, layout.tools.size.height),
         ]),
-
-        state.modal.fumen ? OpenFumenModal({
-            actions,
-            errorMessage: state.fumen.errorMessage,
-            textAreaValue: state.fumen.value,
-        }) : undefined as any,
-
-        state.modal.menu ? MenuModal({
-            actions,
-            version: state.version,
-            pages: state.fumen.pages,
-            screen: state.mode.screen,
-            currentIndex: state.fumen.currentIndex,
-            maxPageIndex: state.fumen.maxPage,
-            commentEnable: state.mode.comment,
-        }) : undefined as any,
     ]);
 };

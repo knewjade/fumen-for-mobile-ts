@@ -11,6 +11,18 @@ export const resources = {
             Unexpected: 'Unexpected error: {{message}}',
         },
     },
+    AppendFumen: {
+        Title: 'Append Fumen',
+        PlaceHolder: 'URL or v115@~ / Support v115 or v110',
+        Buttons: {
+            AppendToEnd: 'End',
+            AppendToNext: 'Next',
+        },
+        Errors: {
+            FailedToLoad: 'Failed to load',
+            Unexpected: 'Unexpected error: {{message}}',
+        },
+    },
     Menu: {
         Title: 'Menu',
         Build: 'build {{version}}',
@@ -26,6 +38,7 @@ export const resources = {
             WritableComment: 'WriteText',
             ClearToEnd: 'ClearToEnd',
             ClearPast: 'ClearPast',
+            Append: 'Append',
         },
         Messages: {
             NoAvailableCommentButton: 'Available only when writable mode',

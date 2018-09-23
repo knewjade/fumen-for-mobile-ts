@@ -14,7 +14,6 @@ describe('History', () => {
             },
         ].concat(history);
 
-
         visit({});
         operations.screen.writable();
 
@@ -466,5 +465,67 @@ describe('History', () => {
         ];
 
         play('v115@vhFRQYFAooMDEPBAAAKpBUmBWyBToQFA3XaDEEBAAA?PnB', testCases);
+    });
+
+    it('Append', () => {
+        const testCases = [
+            {
+                callback: () => {
+                    operations.menu.append();
+
+                    cy.get(datatest('mdl-append-fumen')).should('visible')
+                        .within(() => {
+                            cy.get(datatest('input-fumen')).clear().type('v115@vhExOYZAFLDmClcJSAVjiSAVG88A4N88A5N1LCpAAA?AxpBTrBxxBxxB');
+                            cy.get(datatest('btn-append-to-end')).click();
+                        });
+
+                    cy.wait(500);
+                },
+                fumen: 'v115@vhJ2OYYAFLDmClcJSAVzbSAVG88AYP88A5tSgCRqBT?sBTtBSwBxOYZAFLDmClcJSAVjiSAVG88A4N88A5N1LCpAAA?AxpBTrBxxBxxB',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.menu.firstPage();
+                    operations.mode.editor.nextPage();
+                    operations.mode.editor.nextPage();
+
+                    operations.menu.append();
+
+                    cy.get(datatest('mdl-append-fumen')).should('visible')
+                        .within(() => {
+                            cy.get(datatest('input-fumen')).clear().type('v115@bhI8KeAgWFAooMDEPBAAARhI8UeAAAHhI8eeAAA');
+                            cy.get(datatest('btn-append-to-next')).click();
+                        });
+
+                    cy.wait(500);
+                },
+                fumen: 'v115@vhC2OYYAFLDmClcJSAVzbSAVG88AYP88A5tSgCRqBT?sBRhgHTaAexSBeilC8xwA8KeAgWFAooMDEPBAAARhI8UeAA?AHhI8eeAAAHhIAAegWzDAARLAAAeiWCARLAAKeTNYVAFLDm?ClcJSAVzbSAVG88A4W88AZAAAAvhFSwBxOYZAFLDmClcJSA?VjiSAVG88A4N88A5N1LCpAAAAxpBTrBxxBxxB',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.menu.firstPage();
+                    operations.mode.editor.nextPage();
+                    operations.mode.editor.nextPage();
+                    operations.mode.editor.nextPage();
+                    operations.mode.editor.nextPage();
+
+                    operations.menu.append();
+
+                    cy.get(datatest('mdl-append-fumen')).should('visible')
+                        .within(() => {
+                            cy.get(datatest('input-fumen')).clear().type('v115@zgwhIewhIewhIewhIewhSeAgH0gwhIewhIewhIewhI?ewhReAAA1gwhIewhIewhIewhIewhQeAAA');
+                            cy.get(datatest('btn-append-to-next')).click();
+                        });
+
+                    cy.wait(500);
+                },
+                fumen: 'v115@vhC2OYYAFLDmClcJSAVzbSAVG88AYP88A5tSgCRqBT?sBRhgHTaAexSBeilC8xwA8KeAgWFAooMDEPBAAARhI8UeAA?AzgwhIewhIewhIewDHAAewDHAKeAgWAA0gwhIewhIewhIew?hIewhReAAA1gwhIewhIewhIewhIewhQeAAAzgSaGeSaGeS4?F8AeS4F8AeS4F8KeAgWFAooMDEPBAAAHhIAAegWzDAARLAA?AeiWCARLAAKeTNYVAFLDmClcJSAVzbSAVG88A4W88AZAAAA?vhFSwBxOYZAFLDmClcJSAVjiSAVG88A4N88A5N1LCpAAAAx?pBTrBxxBxxB',
+                count: 1,
+            },
+        ];
+
+        play('v115@vhE2OYYAFLDmClcJSAVzbSAVG88AYP88A5tSgCRqBT?sBTtBSwB', testCases);
     });
 });

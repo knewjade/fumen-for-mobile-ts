@@ -16,6 +16,18 @@ export const i18n = {
             Unexpected: (message: string) => t('OpenFumen.Errors.Unexpected', { message }),
         },
     },
+    AppendFumen: {
+        Title: () => t('AppendFumen.Title'),
+        PlaceHolder: () => t('AppendFumen.PlaceHolder'),
+        Buttons: {
+            AppendToEnd: () => t('AppendFumen.Buttons.AppendToEnd'),
+            AppendToNext: () => t('AppendFumen.Buttons.AppendToNext'),
+        },
+        Errors: {
+            FailedToLoad: () => t('AppendFumen.Errors.FailedToLoad'),
+            Unexpected: (message: string) => t('AppendFumen.Errors.Unexpected', { message }),
+        },
+    },
     Menu: {
         Title: () => t('Menu.Title'),
         Build: (version: string) => t('Menu.Build', { version }),
@@ -31,6 +43,7 @@ export const i18n = {
             Help: () => t('Menu.Buttons.Help'),
             ClearToEnd: () => t('Menu.Buttons.ClearToEnd'),
             ClearPast: () => t('Menu.Buttons.ClearPast'),
+            Append: () => t('Menu.Buttons.Append'),
         },
         Messages: {
             NoAvailableCommentButton: () => t('Menu.Messages.NoAvailableCommentButton'),

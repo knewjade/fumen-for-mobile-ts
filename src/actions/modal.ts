@@ -7,12 +7,14 @@ export interface ModalActions {
     openMenuModal: () => action;
     closeFumenModal: () => action;
     closeMenuModal: () => action;
+    openAppendModal: () => action;
+    closeAppendModal: () => action;
+    closeAllModals: () => action;
 }
 
 export const modalActions: Readonly<ModalActions> = {
     showOpenErrorMessage: ({ message }) => (state): NextState => {
         return sequence(state, [
-            modalActions.openFumenModal(),
             () => ({
                 fumen: {
                     ...state.fumen,
@@ -49,6 +51,31 @@ export const modalActions: Readonly<ModalActions> = {
         return {
             modal: {
                 ...state.modal,
+                menu: false,
+            },
+        };
+    },
+    openAppendModal: () => (state): NextState => {
+        return {
+            modal: {
+                ...state.modal,
+                append: true,
+            },
+        };
+    },
+    closeAppendModal: () => (state): NextState => {
+        return {
+            modal: {
+                ...state.modal,
+                append: false,
+            },
+        };
+    },
+    closeAllModals: () => (): NextState => {
+        return {
+            modal: {
+                append: false,
+                fumen: false,
                 menu: false,
             },
         };

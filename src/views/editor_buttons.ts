@@ -25,7 +25,6 @@ export const colorButton = ({ layout, piece, highlight, onclick }: {
 
     return toolButton({
         borderWidth,
-        contents,
         width: layout.buttons.size.width,
         margin: 5,
         backgroundColorClass: 'white',
@@ -34,7 +33,7 @@ export const colorButton = ({ layout, piece, highlight, onclick }: {
         datatest: `btn-piece-${pieceName.toLowerCase()}`,
         key: `btn-piece-${pieceName.toLowerCase()}`,
         onclick: () => onclick({ piece }),
-    });
+    }, contents);
 };
 
 export const inferenceButton = ({ layout, highlight, actions }: {
@@ -45,7 +44,6 @@ export const inferenceButton = ({ layout, highlight, actions }: {
     },
 }) => {
     const contents = iconContents({
-        height: layout.buttons.size.height,
         description: 'comp',
         iconSize: 22,
         iconName: 'image_aspect_ratio',
@@ -54,7 +52,6 @@ export const inferenceButton = ({ layout, highlight, actions }: {
 
     return toolButton({
         borderWidth,
-        contents,
         width: layout.buttons.size.width,
         margin: 5,
         backgroundColorClass: 'white',
@@ -63,12 +60,11 @@ export const inferenceButton = ({ layout, highlight, actions }: {
         datatest: 'btn-piece-inference',
         key: 'btn-piece-inference',
         onclick: () => actions.selectInferencePieceColor(),
-    });
+    }, contents);
 };
 
 export const iconContents = (
-    { height, description, iconSize, iconName }: {
-        height: number;
+    { description, iconSize, iconName }: {
         description: string;
         iconSize: number;
         iconName: string;
@@ -76,15 +72,13 @@ export const iconContents = (
 ) => {
     const properties = style({
         display: 'block',
-        height: px(height),
-        lineHeight: px(height),
         fontSize: px(iconSize),
         border: 'solid 0px #000',
         marginRight: px(2),
         cursor: 'pointer',
     });
 
-    const className = 'material-icons';
+    const className = 'material-icons left';
 
     const icon = i({
         className,
@@ -95,8 +89,7 @@ export const iconContents = (
 };
 
 export const switchIconContents = (
-    { height, description, iconSize, enable }: {
-        height: number;
+    { description, iconSize, enable }: {
         description: string;
         iconSize: number;
         enable: boolean;
@@ -104,15 +97,13 @@ export const switchIconContents = (
 ) => {
     const properties = style({
         display: 'block',
-        height: px(height),
-        lineHeight: px(height),
         fontSize: px(iconSize),
         border: 'solid 0px #000',
         marginRight: px(2),
         cursor: 'pointer',
     });
 
-    const className = 'material-icons';
+    const className = 'material-icons left';
 
     const icon = i({
         className,
@@ -123,8 +114,7 @@ export const switchIconContents = (
 };
 
 export const radioIconContents = (
-    { height, description, iconSize, enable }: {
-        height: number;
+    { description, iconSize, enable }: {
         description: string;
         iconSize: number;
         enable: boolean;
@@ -132,15 +122,12 @@ export const radioIconContents = (
 ) => {
     const properties = style({
         display: 'block',
-        height: px(height),
-        lineHeight: px(height),
-        fontSize: px(iconSize),
         border: 'solid 0px #000',
         marginRight: px(2),
         cursor: 'pointer',
     });
 
-    const className = 'material-icons';
+    const className = 'material-icons left';
 
     const icon = i({
         className,
@@ -175,21 +162,19 @@ export const keyButton = (
         borderColor: '#f44336',
         datatest: 'btn-key-page',
         key: 'btn-key-ref-page',
-        contents: switchIconContents({
-            height,
-            description: 'key',
-            iconSize: 18,
-            enable: keyPage,
-        }),
         onclick: keyOnclick,
         enable: keyPage,
-    });
+    }, switchIconContents({
+        description: 'key',
+        iconSize: 18,
+        enable: keyPage,
+    }));
 };
 
 export const toolButton = (
     {
         width, backgroundColorClass, textColor, borderColor, borderWidth = 1, borderType = 'solid',
-        datatest, key, onclick, contents, flexGrow, margin, enable = true,
+        datatest, key, onclick, flexGrow, margin, enable = true,
     }: {
         flexGrow?: number;
         width: number;
@@ -202,9 +187,10 @@ export const toolButton = (
         datatest: string;
         key: string;
         enable?: boolean;
-        contents: string | number | (string | number | VNode<{}>)[];
         onclick: (event: MouseEvent) => void;
-    }) => {
+    },
+    contents: string | number | (string | number | VNode<{}>)[],
+) => {
     return a({
         datatest,
         key,
@@ -315,7 +301,7 @@ export const dualButton = (
 export const switchButton = (
     {
         width, backgroundColorClass, textColor, borderColor, borderWidth = 1,
-        datatest, key, onclick, contents, flexGrow, margin, enable,
+        datatest, key, onclick, flexGrow, margin, enable,
     }: {
         flexGrow?: number;
         width: number;
@@ -327,9 +313,10 @@ export const switchButton = (
         datatest: string;
         key: string;
         enable: boolean;
-        contents: string | number | (string | number | VNode<{}>)[];
         onclick: (event: MouseEvent) => void;
-    }) => {
+    },
+    contents: string | number | (string | number | VNode<{}>)[],
+) => {
     return a({
         key,
         href: '#',

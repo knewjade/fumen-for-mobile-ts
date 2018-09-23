@@ -87,8 +87,6 @@ export const memento = (() => {
         // タスクの追加
         register: (task: HistoryTask, mergeKey?: string): number => {
             const lastTask = undoQueue[undoQueue.length - 1];
-            console.log(lastTask);
-            console.log(mergeKey);
             if (lastTask !== undefined && lastTask.key === mergeKey
                 && isOperationTask(lastTask) && isOperationTask(task)
             ) {

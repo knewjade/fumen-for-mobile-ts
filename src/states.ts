@@ -43,6 +43,7 @@ export interface State {
     modal: {
         fumen: boolean;
         menu: boolean;
+        append: boolean;
     };
     handlers: {
         animation?: number;
@@ -105,6 +106,7 @@ export const initState: Readonly<State> = {
     modal: {
         fumen: false,
         menu: false,
+        append: false,
     },
     handlers: {
         animation: undefined,
@@ -135,6 +137,7 @@ export const resources = {
     modals: {
         menu: undefined as any,
         fumen: undefined as any,
+        append: undefined as any,
     },
     konva: createKonvaObjects(),
     comment: undefined as ({ text: string, pageIndex: number } | undefined),

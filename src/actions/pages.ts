@@ -354,7 +354,7 @@ export const pageActions: Readonly<PageActions> = {
             actions.fixInferencePiece(),
             actions.clearInferencePiece(),
             actions.commitCommentText(),
-            clearToEnd({ index: state.fumen.currentIndex }),
+            clearToEnd({ pageIndex: state.fumen.currentIndex }),
             actions.reopenCurrentPage(),
         ]);
     },
@@ -363,7 +363,7 @@ export const pageActions: Readonly<PageActions> = {
             actions.fixInferencePiece(),
             actions.clearInferencePiece(),
             actions.commitCommentText(),
-            clearPast({ index: state.fumen.currentIndex }),
+            clearPast({ pageIndex: state.fumen.currentIndex }),
             actions.reopenCurrentPage(),
         ]);
     },
@@ -414,7 +414,7 @@ const insertRefPage = ({ index }: { index: number }) => (state: Readonly<State>)
     pages.insertRefPage(index);
     const newPages = pages.pages;
 
-    const task = toInsertPageTask(index, [toPrimitivePage(newPages[index])]);
+    const task = toInsertPageTask(index, [toPrimitivePage(newPages[index])], state.fumen.currentIndex);
     return sequence(state, [
         actions.registerHistoryTask({ task }),
         () => ({
@@ -432,7 +432,7 @@ const insertKeyPage = ({ index }: { index: number }) => (state: Readonly<State>)
     pages.insertKeyPage(index);
     const newPages = pages.pages;
 
-    const task = toInsertPageTask(index, [toPrimitivePage(newPages[index])]);
+    const task = toInsertPageTask(index, [toPrimitivePage(newPages[index])], state.fumen.currentIndex);
     return sequence(state, [
         actions.registerHistoryTask({ task }),
         () => ({
@@ -450,7 +450,7 @@ const duplicatePage = ({ index }: { index: number }) => (state: Readonly<State>)
     pages.duplicatePage(index);
     const newPages = pages.pages;
 
-    const task = toInsertPageTask(index, [toPrimitivePage(newPages[index])]);
+    const task = toInsertPageTask(index, [toPrimitivePage(newPages[index])], state.fumen.currentIndex);
     return sequence(state, [
         actions.registerHistoryTask({ task }),
         () => ({
@@ -523,15 +523,15 @@ const removePage = ({ index }: { index: number }) => (state: Readonly<State>): N
     ]);
 };
 
-const clearToEnd = ({ index }: { index: number }) => (state: Readonly<State>): NextState => {
+const clearToEnd = ({ pageIndex }: { pageIndex: number }) => (state: Readonly<State>): NextState => {
     const fumen = state.fumen;
     const pages = fumen.pages;
 
-    if (index < 0) {
-        throw new FumenError(`Illegal index: ${index}`);
+    if (pageIndex < 0) {
+        throw new FumenError(`Illegal index: ${pageIndex}`);
     }
 
-    const nextPageIndex = index + 1;
+    const nextPageIndex = pageIndex + 1;
     if (pages.length <= 1 || pages.length <= nextPageIndex) {
         return;
     }
@@ -541,10 +541,10 @@ const clearToEnd = ({ index }: { index: number }) => (state: Readonly<State>): N
     // 次のページ以降を削除
     const primitivePages = pages.slice(nextPageIndex).map(toPrimitivePage);
     pagesObj.deletePage(nextPageIndex, pages.length);
-    const task = toRemovePageTask(nextPageIndex, pages.length, primitivePages, index);
+    const task = toRemovePageTask(nextPageIndex, pages.length, primitivePages, pageIndex);
 
     const newPages = pagesObj.pages;
-    const nextIndex = index < newPages.length ? index : newPages.length - 1;
+    const nextIndex = pageIndex < newPages.length ? pageIndex : newPages.length - 1;
 
     return sequence(state, [
         actions.registerHistoryTask({ task }),
@@ -559,15 +559,15 @@ const clearToEnd = ({ index }: { index: number }) => (state: Readonly<State>): N
     ]);
 };
 
-const clearPast = ({ index }: { index: number }) => (state: Readonly<State>): NextState => {
+const clearPast = ({ pageIndex }: { pageIndex: number }) => (state: Readonly<State>): NextState => {
     const fumen = state.fumen;
     const pages = fumen.pages;
 
-    if (index < 0) {
-        throw new FumenError(`Illegal index: ${index}`);
+    if (pageIndex < 0) {
+        throw new FumenError(`Illegal index: ${pageIndex}`);
     }
 
-    if (pages.length <= 1 || index === 0) {
+    if (pages.length <= 1 || pageIndex === 0) {
         return;
     }
 
@@ -576,39 +576,39 @@ const clearPast = ({ index }: { index: number }) => (state: Readonly<State>): Ne
         return;
     }
 
-    const currentPage = pages[index];
+    const currentPage = pages[pageIndex];
     const pagesObj = new Pages(pages);
     const tasks: OperationTask[] = [];
 
     // 次のページがあるときはKeyにする
     if (currentPage !== undefined) {
         if (currentPage.field.obj === undefined) {
-            pagesObj.toKeyPage(index);
-            tasks.push(toKeyPageTask(index));
+            pagesObj.toKeyPage(pageIndex);
+            tasks.push(toKeyPageTask(pageIndex));
         }
 
         if (currentPage.comment.ref !== undefined) {
-            pagesObj.freezeComment(index);
-            tasks.push(toFreezeCommentTask(index));
+            pagesObj.freezeComment(pageIndex);
+            tasks.push(toFreezeCommentTask(pageIndex));
         }
 
         if (firstPage.flags.colorize !== currentPage.flags.colorize) {
             const primitivePage = toPrimitivePage(currentPage);
             currentPage.flags.colorize = firstPage.flags.colorize;
-            tasks.push(toSinglePageTask(index, primitivePage, currentPage));
+            tasks.push(toSinglePageTask(pageIndex, primitivePage, currentPage));
         }
     }
 
     // 前までのページを削除
     {
-        const primitivePages = pages.slice(0, index).map(toPrimitivePage);
-        pagesObj.deletePage(0, index);
-        tasks.push(toRemovePageTask(0, index, primitivePages, 0));
+        const primitivePages = pages.slice(0, pageIndex).map(toPrimitivePage);
+        pagesObj.deletePage(0, pageIndex);
+        tasks.push(toRemovePageTask(0, pageIndex, primitivePages, 0));
     }
 
     const newPages = pagesObj.pages;
     return sequence(state, [
-        actions.registerHistoryTask({ task: toPageTaskStack(tasks, index) }),
+        actions.registerHistoryTask({ task: toPageTaskStack(tasks, pageIndex) }),
         () => ({
             fumen: {
                 ...state.fumen,
