@@ -10,7 +10,7 @@ export const resources = {
         },
     },
     AppendFumen: {
-        Title: 'テト譜を追記',
+        Title: 'テト譜を追加',
         Errors: {
             FailedToLoad: 'テト譜を読み込めませんでした',
         },

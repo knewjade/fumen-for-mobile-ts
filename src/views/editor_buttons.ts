@@ -364,7 +364,7 @@ export const toolSpace = (
         style: style({
             flexGrow,
             color: '#fff',
-            border: 'solid 0px #fff',
+            borderWidth: px(0),
             margin: `${px(margin)} 0px`,
             padding: px(0),
             width: px(width),

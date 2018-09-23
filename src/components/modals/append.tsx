@@ -180,7 +180,6 @@ export const Button: ComponentWithText<ButtonProps> = (
 
     return <a href="#" key={key} datatest={datatest} className={className} onclick={onclick}
               style={style({
-                  // border: 'solid 0px #fff',
                   margin: '0px 5px',
                   padding: px(5),
                   width: px(width),

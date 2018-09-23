@@ -169,6 +169,15 @@ export const MenuModal: Component<MenuProps> = (
                             {i18n.Menu.Buttons.Append()}
                         </SettingButton>
 
+                        <SettingButton key="btn-specify-page" datatest="btn-specify-page" href="#"
+                                       icons={[{ name: 'looks_one', size: 30 }]}
+                                       onclick={() => {
+                                           actions.closeMenuModal();
+                                           // actions.openSpecifyPageModal();
+                                       }}>
+                            {i18n.Menu.Buttons.FirstPage()}
+                        </SettingButton>
+
                         <SettingButton key="btn-first-page" datatest="btn-first-page" href="#"
                                        icons={[{ name: 'fast_rewind', size: 32.3 }]}
                                        onclick={() => {
