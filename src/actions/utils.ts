@@ -95,7 +95,6 @@ export const utilsActions: Readonly<UtilsActions> = {
         (async () => {
             let pages: Page[];
             try {
-                console.log(fumen)
                 pages = await decode(fumen);
             } catch (e) {
                 console.error(e);

@@ -66,8 +66,6 @@ export const mementoActions: Readonly<MementoActions> = {
         ]);
     },
     loadPagesViaHistory: ({ pages, index, undoCount, redoCount }) => (state): NextState => {
-        console.log(index);
-        console.log(pages);
         return sequence(state, [
             actions.setPages({ pages, open: false }),
             actions.openPage({ index }),

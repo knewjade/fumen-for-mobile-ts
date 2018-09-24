@@ -62,6 +62,12 @@ export enum TouchTypes {
     FillRow = 'FillRow',
 }
 
+export enum CommentType {
+    Writable = 'Writable',
+    Readonly = 'Readonly',
+    PageSlider = 'PageSlider',
+}
+
 export function parsePieceName(piece: Piece) {
     switch (piece) {
     case Piece.I:

@@ -293,5 +293,9 @@ export const operations = {
             cy.get(datatest('btn-clear-past')).click();
             cy.wait(100);
         },
+        pageSlider: () => {
+            operations.menu.open();
+            cy.get(datatest('btn-page-slider')).click();
+        },
     },
 };

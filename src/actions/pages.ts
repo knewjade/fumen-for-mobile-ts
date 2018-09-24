@@ -22,6 +22,7 @@ import { FumenError } from '../lib/errors';
 export interface PageActions {
     reopenCurrentPage: () => action;
     openPage: (data: { index: number }) => action;
+    openPageWhenChange: (data: { index: number }) => action;
     insertPage: (data: { index: number }) => action;
     insertRefPage: (data: { index: number }) => action;
     insertKeyPage: (data: { index: number }) => action;
@@ -104,6 +105,13 @@ export const pageActions: Readonly<PageActions> = {
                 },
             }),
         ]);
+    },
+    openPageWhenChange: ({ index }) => (state): NextState => {
+        if (state.fumen.currentIndex === index) {
+            return undefined;
+        }
+
+        return pageActions.openPage({ index })(state);
     },
     insertPage: ({ index }) => (state): NextState => {
         const fumen = state.fumen;

@@ -1,4 +1,4 @@
-import { AnimationState, ModeTypes, Piece, Screens, TouchTypes } from './lib/enums';
+import { AnimationState, CommentType, ModeTypes, Piece, Screens, TouchTypes } from './lib/enums';
 import { Page } from './lib/fumen/fumen';
 import { HyperStage } from './lib/hyper';
 import { Box } from './components/box';
@@ -61,7 +61,7 @@ export interface State {
         type: ModeTypes;
         touch: TouchTypes;
         piece: Piece | undefined;
-        comment: boolean;
+        comment: CommentType;
     };
     history: {
         undoCount: number;
@@ -124,7 +124,7 @@ export const initState: Readonly<State> = {
         type: ModeTypes.DrawingTool,
         touch: TouchTypes.Drawing,
         piece: undefined,
-        comment: true,
+        comment: CommentType.Writable,
     },
     history: {
         undoCount: 0,

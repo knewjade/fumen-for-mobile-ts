@@ -63,7 +63,7 @@ const saver = (() => {
 
         setTimeout(() => {
             saverObj.save(saverState.last.key)
-                .catch(error => console.log(error));
+                .catch(error => console.error(error));
         }, saverState.isWorking ? 3000 : 0);
     };
 })();

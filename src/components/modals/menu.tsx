@@ -3,7 +3,7 @@ import { h } from 'hyperapp';
 import { resources } from '../../states';
 import { i } from '@hyperapp/html';
 import { encode, Page } from '../../lib/fumen/fumen';
-import { Screens } from '../../lib/enums';
+import { CommentType, Screens } from '../../lib/enums';
 import { i18n } from '../../locales/keys';
 
 declare const M: any;
@@ -14,13 +14,13 @@ interface MenuProps {
     screen: Screens;
     currentIndex: number;
     maxPageIndex: number;
-    commentEnable: boolean;
+    comment: CommentType;
     actions: {
         closeMenuModal: () => void;
         changeToReaderScreen: () => void;
         changeToDrawerScreen: () => void;
         changeToDrawingToolMode: () => void;
-        changeCommentMode: (data: { enable: boolean }) => void;
+        changeCommentMode: (data: { type: CommentType }) => void;
         fixInferencePiece: () => void;
         clearInferencePiece: () => void;
         loadNewFumen: () => void;
@@ -33,7 +33,7 @@ interface MenuProps {
 }
 
 export const MenuModal: Component<MenuProps> = (
-    { version, pages, screen, currentIndex, maxPageIndex, commentEnable, actions },
+    { version, pages, screen, currentIndex, maxPageIndex, comment, actions },
 ) => {
     const oncreate = (element: HTMLDivElement) => {
         const instance = M.Modal.init(element, {
@@ -169,15 +169,6 @@ export const MenuModal: Component<MenuProps> = (
                             {i18n.Menu.Buttons.Append()}
                         </SettingButton>
 
-                        {/*<SettingButton key="btn-specify-page" datatest="btn-specify-page" href="#"*/}
-                        {/*icons={[{ name: 'looks_one', size: 30 }]}*/}
-                        {/*onclick={() => {*/}
-                        {/*actions.closeMenuModal();*/}
-                        {/*// actions.openSpecifyPageModal();*/}
-                        {/*}}>*/}
-                        {/*{i18n.Menu.Buttons.FirstPage()}*/}
-                        {/*</SettingButton>*/}
-
                         <SettingButton key="btn-first-page" datatest="btn-first-page" href="#"
                                        icons={[{ name: 'fast_rewind', size: 32.3 }]}
                                        onclick={() => {
@@ -216,23 +207,60 @@ export const MenuModal: Component<MenuProps> = (
                             {i18n.Menu.Buttons.ClearToEnd()}
                         </SettingButton>
 
-                        <SettingButton key="btn-comment" href="#"
-                                       datatest={commentEnable ? 'btn-comment-readonly' : 'btn-comment-writable'}
-                                       icons={[{ name: 'text_fields', size: 32.3 }]}
-                                       enable={screen === Screens.Editor}
-                                       onclick={screen === Screens.Editor ? () => {
-                                           actions.changeCommentMode({ enable: !commentEnable });
-                                           actions.closeMenuModal();
-                                       } : () => {
-                                           M.toast({
-                                               html: i18n.Menu.Messages.NoAvailableCommentButton(),
-                                               classes: 'mytoast',
-                                               displayLength: 3000,
-                                           });
-                                       }}>
+                        {comment !== CommentType.PageSlider ?
+                            <SettingButton key="btn-page-slider" href="#"
+                                           datatest="btn-page-slider"
+                                           icons={[{ name: 'looks_one', size: 30 }]}
+                                           onclick={() => {
+                                               actions.changeCommentMode({ type: CommentType.PageSlider });
+                                               actions.closeMenuModal();
+                                           }}>
+                                {i18n.Menu.Buttons.PageSlider()}
+                            </SettingButton>
+                            : undefined}
 
-                            {commentEnable ? i18n.Menu.Buttons.ReadonlyComment() : i18n.Menu.Buttons.WritableComment()}
-                        </SettingButton>
+                        {screen === Screens.Reader && comment === CommentType.PageSlider ?
+                            <SettingButton key="btn-show-comment" href="#"
+                                           datatest="btn-show-comment"
+                                           icons={[{ name: 'text_fields', size: 32 }]}
+                                           onclick={() => {
+                                               actions.changeCommentMode({ type: CommentType.Writable });
+                                               actions.closeMenuModal();
+                                           }}>
+                                {i18n.Menu.Buttons.ShowComment()}
+                            </SettingButton>
+                            : undefined}
+
+                        {screen === Screens.Editor && comment !== CommentType.Writable ?
+                            <SettingButton key="btn-comment-writable" href="#"
+                                           datatest="btn-comment-writable"
+                                           icons={[{ name: 'text_fields', size: 32 }]}
+                                           onclick={() => {
+                                               actions.changeCommentMode({ type: CommentType.Writable });
+                                               actions.closeMenuModal();
+                                           }}>
+                                {i18n.Menu.Buttons.WritableComment()}
+                            </SettingButton>
+                            : undefined}
+
+                        {screen === Screens.Editor && comment !== CommentType.Readonly ?
+                            <SettingButton key="btn-comment-readonly" href="#"
+                                           datatest="btn-comment-readonly"
+                                           icons={[{ name: 'lock_outline', size: 30 }]}
+                                           enable={screen === Screens.Editor}
+                                           onclick={screen === Screens.Editor ? () => {
+                                               actions.changeCommentMode({ type: CommentType.Readonly });
+                                               actions.closeMenuModal();
+                                           } : () => {
+                                               M.toast({
+                                                   html: i18n.Menu.Messages.NoAvailableCommentButton(),
+                                                   classes: 'mytoast',
+                                                   displayLength: 3000,
+                                               });
+                                           }}>
+                                {i18n.Menu.Buttons.ReadonlyComment()}
+                            </SettingButton>
+                            : undefined}
 
                         <SettingButton key="btn-help" datatest="btn-help" href="./help.html"
                                        icons={[{ name: 'help_outline', size: 31.25 }]}>

@@ -5,13 +5,14 @@ import { Actions } from '../actions';
 import { div } from '@hyperapp/html';
 import { KonvaCanvas } from '../components/konva_canvas';
 import { comment } from '../components/comment';
-import { isMinoPiece, Screens } from '../lib/enums';
+import { CommentType, isMinoPiece, Screens } from '../lib/enums';
 import { EventCanvas } from '../components/event/event_canvas';
 import { Box } from '../components/box';
 import { decidePieceColor, Palette } from '../lib/colors';
 import { Field } from '../components/field';
 import { ReaderTools } from '../components/tools/reader_tools';
 import { HighlightType } from '../state_types';
+import { pageSlider } from '../components/pageSlider';
 
 interface ReaderLayout {
     canvas: {
@@ -211,6 +212,35 @@ const Tools = (state: State, actions: Actions, height: number) => {
     });
 };
 
+export const getComment = (state: State, actions: Actions, layout: ReaderLayout) => {
+    switch (state.mode.comment) {
+    case CommentType.PageSlider: {
+        return pageSlider({
+            actions,
+            datatest: 'range-page-slider',
+            size: {
+                width: layout.comment.size.width * 0.8,
+                height: layout.comment.size.height,
+            },
+            currentIndex: state.fumen.currentIndex,
+            maxPage: state.fumen.maxPage,
+        });
+    }
+    default: {
+        return comment({
+            key: 'text-comment',
+            dataTest: 'text-comment',
+            id: 'text-comment',
+            textColor: state.comment.isChanged ? '#fff' : '#333',
+            backgroundColorClass: state.comment.text !== '' && state.comment.isChanged ? 'green darken-1' : 'white',
+            height: layout.comment.size.height,
+            text: state.comment.text,
+            readonly: true,
+        });
+    }
+    }
+};
+
 export const view: View<State, Actions> = (state, actions) => {
     // 初期化
     const layout = getLayout(state.display);
@@ -229,16 +259,7 @@ export const view: View<State, Actions> = (state, actions) => {
         div({
             key: 'menu-top',
         }, [
-            comment({
-                key: 'text-comment',
-                dataTest: 'text-comment',
-                id: 'text-comment',
-                textColor: state.comment.isChanged ? '#fff' : '#333',
-                backgroundColorClass: state.comment.text !== '' && state.comment.isChanged ? 'green darken-1' : 'white',
-                height: layout.comment.size.height,
-                text: state.comment.text,
-                readonly: true,
-            }),
+            getComment(state, actions, layout),
 
             Tools(state, actions, layout.tools.size.height),
         ]),

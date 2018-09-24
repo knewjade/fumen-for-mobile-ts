@@ -1,6 +1,6 @@
 import { NextState, sequence } from './commons';
 import { action, actions, main } from '../actions';
-import { ModeTypes, Piece, Screens, TouchTypes } from '../lib/enums';
+import { CommentType, ModeTypes, Piece, Screens, TouchTypes } from '../lib/enums';
 import { resources, State } from '../states';
 import { animationActions } from './animation';
 
@@ -15,7 +15,7 @@ export interface ScreenActions {
     changeToDrawPieceMode: () => action;
     changeToMovePieceMode: () => action;
     changeScreen: (data: { screen: Screens }) => action;
-    changeCommentMode: (data: { enable: boolean }) => action;
+    changeCommentMode: (data: { type: CommentType }) => action;
 }
 
 export const modeActions: Readonly<ScreenActions> = {
@@ -93,11 +93,11 @@ export const modeActions: Readonly<ScreenActions> = {
             },
         };
     },
-    changeCommentMode: ({ enable }) => (state): NextState => {
+    changeCommentMode: ({ type }) => (state): NextState => {
         return {
             mode: {
                 ...state.mode,
-                comment: enable,
+                comment: type,
             },
         };
     },

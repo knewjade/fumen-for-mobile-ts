@@ -3,6 +3,14 @@ import { operations } from './_operations';
 
 // テト譜を開く
 describe('Open fumen', () => {
+    const dragNDrop = (val) => {
+        cy.get(datatest('range-page-slider')).as('range')
+            .trigger('mousedown')
+            .invoke('val', val)
+            .trigger('input')
+            .trigger('mouseleave');
+    };
+
     it('Error -> success', () => {
         visit({ lng: 'ja' });
 
@@ -171,6 +179,60 @@ describe('Open fumen', () => {
         cy.get(block(0, 1)).should('have.attr', 'color', Color.Gray.Highlight1);
         cy.get(block(0, 4)).should('have.attr', 'color', Color.Gray.Highlight1);
         cy.get(block(0, 5)).should('have.attr', 'color', Color.Gray.Normal);
+    });
+
+    it('Page Slider: Readonly', () => {
+        visit({ fumen: 'v115@vhJTJJ+NJ3MJVQJ0GJXDJFCJuFJT/IJFJ' });
+
+        operations.menu.pageSlider();
+
+        dragNDrop(2);
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '2 / 10');
+
+        dragNDrop(5);
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '5 / 10');
+
+        dragNDrop(10);
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '10 / 10');
+
+        dragNDrop(8);
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '8 / 10');
+
+        leftTap();
+        cy.get(datatest('range-page-slider')).should('have.value', '7');
+
+        rightTap();
+        cy.get(datatest('range-page-slider')).should('have.value', '8');
+
+        dragNDrop(1);
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 10');
+    });
+
+    it('Page Slider: Writable', () => {
+        visit({ fumen: 'v115@vhJTJJ+NJ3MJVQJ0GJXDJFCJuFJT/IJFJ', mode: 'writable' });
+
+        operations.menu.pageSlider();
+
+        dragNDrop(2);
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '2 / 10');
+
+        dragNDrop(5);
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '5 / 10');
+
+        dragNDrop(10);
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '10 / 10');
+
+        dragNDrop(8);
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '8 / 10');
+
+        operations.mode.editor.backPage();
+        cy.get(datatest('range-page-slider')).should('have.value', '7');
+
+        operations.mode.editor.nextPage();
+        cy.get(datatest('range-page-slider')).should('have.value', '8');
+
+        dragNDrop(1);
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 10');
     });
 });
 

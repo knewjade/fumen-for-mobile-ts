@@ -1,4 +1,4 @@
-import { ModeTypes, Piece, Screens, TouchTypes } from '../lib/enums';
+import { CommentType, ModeTypes, Piece, Screens, TouchTypes } from '../lib/enums';
 import { Coordinate, Size } from './commons';
 import { View } from 'hyperapp';
 import { resources, State } from '../states';
@@ -24,6 +24,7 @@ import {
 } from './editor_buttons';
 import { ViewError } from '../lib/errors';
 import { comment } from '../components/comment';
+import { pageSlider } from '../components/pageSlider';
 
 export interface EditorLayout {
     canvas: {
@@ -873,18 +874,117 @@ const Tools = (state: State, actions: Actions, height: number) => {
     });
 };
 
+export const getComment = (state: State, actions: Actions, layout: EditorLayout) => {
+    const currentIndex = state.fumen.currentIndex;
+    const currentPage = state.fumen.pages[currentIndex];
+
+    switch (state.mode.comment) {
+    case CommentType.Writable: {
+        const isCommentKey = resources.comment !== undefined
+            || (currentPage !== undefined && currentPage.comment.text !== undefined);
+
+        const element = document.querySelector('#text-comment') as HTMLInputElement;
+        return comment({
+            key: 'text-comment',
+            dataTest: 'text-comment',
+            id: 'text-comment',
+            textColor: isCommentKey ? '#333' : '#757575',
+            backgroundColorClass: 'white',
+            height: layout.comment.size.height,
+            text: resources.comment !== undefined ? resources.comment.text : state.comment.text,
+            placeholder: 'comment',
+            readonly: false,
+            actions: {
+                onkeypress: (event) => {
+                    if (!element) {
+                        return;
+                    }
+
+                    const text = element.value ? element.value : '';
+                    actions.updateCommentText({ text, pageIndex: currentIndex });
+
+                    if (event.key === 'Enter') {
+                        element.blur();
+                    }
+                },
+                onblur: () => {
+                    if (element) {
+                        const text = element.value ? element.value : '';
+                        actions.updateCommentText({ text, pageIndex: currentIndex });
+                    }
+
+                    actions.commitCommentText();
+                },
+            },
+        });
+    }
+    case CommentType.Readonly: {
+        const currentIndex = state.fumen.currentIndex;
+        const currentPage = state.fumen.pages[currentIndex];
+        const isCommentKey = resources.comment !== undefined
+            || (currentPage !== undefined && currentPage.comment.text !== undefined);
+
+        const element = document.querySelector('#text-comment') as HTMLInputElement;
+        return comment({
+            key: 'text-comment',
+            dataTest: 'text-comment',
+            id: 'text-comment',
+            textColor: isCommentKey ? '#333' : '#757575',
+            backgroundColorClass: 'white',
+            height: layout.comment.size.height,
+            text: resources.comment !== undefined ? resources.comment.text : state.comment.text,
+            readonly: true,
+            actions: {
+                onkeypress: (event) => {
+                    if (!element) {
+                        return;
+                    }
+
+                    const text = element.value ? element.value : '';
+                    actions.updateCommentText({ text, pageIndex: currentIndex });
+
+                    if (event.key === 'Enter') {
+                        element.blur();
+                    }
+                },
+                onblur: () => {
+                    if (element) {
+                        const text = element.value ? element.value : '';
+                        actions.updateCommentText({ text, pageIndex: currentIndex });
+                    }
+
+                    actions.commitCommentText();
+                },
+            },
+        });
+    }
+    case CommentType.PageSlider: {
+        return pageSlider({
+            actions,
+            datatest: 'range-page-slider',
+            size: {
+                width: layout.comment.size.width * 0.8,
+                height: layout.comment.size.height,
+            },
+            currentIndex: state.fumen.currentIndex,
+            maxPage: state.fumen.maxPage,
+        });
+    }
+    }
+
+    return div({
+        style: style({
+            width: px(layout.comment.size.width),
+            height: px(layout.comment.size.height),
+        }),
+    });
+};
+
 export const view: View<State, Actions> = (state, actions) => {
     // 初期化
     const layout = getLayout(state.display);
 
     const batchDraw = () => resources.konva.stage.batchDraw();
-
-    const currentIndex = state.fumen.currentIndex;
-    const currentPage = state.fumen.pages[currentIndex];
-    const isCommentKey = resources.comment !== undefined
-        || (currentPage !== undefined && currentPage.comment.text !== undefined);
-
-    const element = document.querySelector('#text-comment') as HTMLInputElement;
 
     return div({
         oncreate: batchDraw,
@@ -898,39 +998,7 @@ export const view: View<State, Actions> = (state, actions) => {
         div({
             key: 'menu-top',
         }, [
-            comment({
-                key: 'text-comment',
-                dataTest: 'text-comment',
-                id: 'text-comment',
-                textColor: isCommentKey ? '#333' : '#757575',
-                backgroundColorClass: 'white',
-                height: layout.comment.size.height,
-                text: resources.comment !== undefined ? resources.comment.text : state.comment.text,
-                placeholder: state.mode.comment ? 'comment' : undefined,
-                readonly: !state.mode.comment,
-                actions: {
-                    onkeypress: (event) => {
-                        if (!element) {
-                            return;
-                        }
-
-                        const text = element.value ? element.value : '';
-                        actions.updateCommentText({ text, pageIndex: currentIndex });
-
-                        if (event.key === 'Enter') {
-                            element.blur();
-                        }
-                    },
-                    onblur: () => {
-                        if (element) {
-                            const text = element.value ? element.value : '';
-                            actions.updateCommentText({ text, pageIndex: currentIndex });
-                        }
-
-                        actions.commitCommentText();
-                    },
-                },
-            }),
+            getComment(state, actions, layout),
 
             Tools(state, actions, layout.tools.size.height),
         ]),
