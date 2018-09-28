@@ -10,13 +10,21 @@ describe('quiz', () => {
             new Quiz('#Q=[](I)');
             new Quiz(' # Q = [ ] ( ) ');
             new Quiz('#Q=[i](t)oszlj');
+            new Quiz('#Q=[i](t)oszlj;');
+            new Quiz('#Q=[]();');
+            new Quiz('#Q=[i](t)oszlj;#Q=[i](t)oszlj;');
+            new Quiz('#Q=[i](t)oszlj;#Q=[i](t)oszlj;hello');
+            new Quiz('#Q=[J](O)L;#Q=[S](Z)T;hello');
+        });
+
+        it('regular comment', () => {
+            new Quiz('Q=[T](I)SZOJL');
+            new Quiz('"=[T](I)SZOJL');
         });
 
         it('broken quiz', () => {
             expect(() => new Quiz('#Q=[]()O')).toThrowError(FumenError);
             expect(() => new Quiz('#Q=[T]()SZOJL')).toThrowError(FumenError);
-            expect(() => new Quiz('Q=[T](I)SZOJL')).toThrowError(FumenError);
-            expect(() => new Quiz('"=[T](I)SZOJL')).toThrowError(FumenError);
             expect(() => new Quiz('#Q=T](I)SZOJL')).toThrowError(FumenError);
             expect(() => new Quiz('#Q=[T(I)SZOJL')).toThrowError(FumenError);
             expect(() => new Quiz('#Q=[T]I)SZOJL')).toThrowError(FumenError);
@@ -228,7 +236,7 @@ describe('quiz', () => {
 
         it('getPiece', () => {
             expect(quiz.getHoldPiece()).toEqual(Piece.Empty);
-            expect(quiz.getNextPieces()).toEqual([]);
+            // expect(quiz.getNextPieces()).toEqual([]);
         });
 
         it('direct', () => {
@@ -245,12 +253,55 @@ describe('quiz', () => {
 
         it('format', () => {
             const format = quiz.format();
-            expect(format).toEqual(new Quiz('#Q=[]()'));
+            expect(format).toEqual(new Quiz(''));
         });
 
         it('toString', () => {
             const str = quiz.toString();
-            expect(str).toEqual('');
+            expect(str).toEqual('#Q=[]()');
         });
+    });
+
+    it('Quiz with comment', () => {
+        let quiz = new Quiz('#Q=[T](I);#Q=[T](I);hello');
+
+        {
+            const operation = quiz.getOperation(Piece.T);
+            const newQuiz = quiz.operate(operation);
+            quiz = newQuiz.format();
+            expect(quiz.toString()).toEqual('#Q=[](I);#Q=[T](I);hello');
+            expect(quiz.getHoldPiece()).toEqual(Piece.Empty);
+            expect(quiz.getNextPieces(3)).toEqual([Piece.I, Piece.Empty, Piece.Empty]);
+        }
+
+        {
+            const operation = quiz.getOperation(Piece.I);
+            const newQuiz = quiz.operate(operation);
+            quiz = newQuiz.format();
+            expect(quiz.toString()).toEqual('#Q=[T](I);hello');
+            expect(quiz.getHoldPiece()).toEqual(Piece.T);
+            expect(quiz.getNextPieces(3)).toEqual([Piece.I, Piece.Empty, Piece.Empty]);
+        }
+
+        {
+            const operation = quiz.getOperation(Piece.I);
+            const newQuiz = quiz.operate(operation);
+            quiz = newQuiz.format();
+            expect(quiz.toString()).toEqual('#Q=[](T);hello');
+            expect(quiz.getHoldPiece()).toEqual(Piece.Empty);
+            expect(quiz.getNextPieces(3)).toEqual([Piece.T, Piece.Empty, Piece.Empty]);
+        }
+
+        {
+            const operation = quiz.getOperation(Piece.T);
+            const newQuiz = quiz.operate(operation);
+            quiz = newQuiz.format();
+            expect(quiz.toString()).toEqual('hello');
+            expect(quiz.getHoldPiece()).toEqual(Piece.Empty);
+            expect(quiz.getNextPieces(0)).toEqual([]);
+            expect(quiz.getNextPieces(3)).toEqual([Piece.Empty, Piece.Empty, Piece.Empty]);
+        }
+
+        expect(quiz.format().toString()).toEqual('hello');
     });
 });

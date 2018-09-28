@@ -157,4 +157,48 @@ describe('Comments', () => {
 
         expectFumen('v115@vhF1OYaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AA?A0KJXBJ0LYaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AAA?dHJpIJ');
     });
+
+    it('Multi quiz', () => {
+        visit({
+            mode: 'writable',
+            fumen: 'v115@vhGyOY3AFLDmClcJSAVjiSAVG88AYS88AZPUABCowA?BR4K6Bl/UtClfJSASE7SAyltSATzarDMjzCATEJm/I3LJtK?JUBJAgH'
+        });
+
+        operations.mode.piece.open();
+
+        // 1ページ目
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[O](L)J;#Q=[S](Z)T;hello');
+        operations.mode.editor.nextPage();
+
+        // 2ページ目
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[O](J);#Q=[S](Z)T;hello');
+        operations.mode.editor.nextPage();
+
+        // 3ページ目
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[](J);#Q=[S](Z)T;hello');
+        operations.mode.editor.nextPage();
+
+        // 4ページ目
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[S](Z)T;hello');
+        operations.mode.editor.nextPage();
+
+        // 5ページ目
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[Z](T);hello');
+        operations.mode.editor.nextPage();
+
+        // 6ページ目
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[](Z);hello');
+        operations.mode.editor.nextPage();
+
+        // 7ページ目
+        cy.get(datatest('text-comment')).should('have.value', 'hello');
+
+        // 新規ページ追加
+        operations.mode.editor.nextPage();
+
+        // 8ページ目
+        cy.get(datatest('text-comment')).should('have.value', 'hello');
+
+        expectFumen('v115@vhHyOY3AFLDmClcJSAVjiSAVG88AYS88AZPUABCowA?BR4K6Bl/UtClfJSASE7SAyltSATzarDMjzCATEJm/I3LJtK?JUBJAgHAgH');
+    });
 });
