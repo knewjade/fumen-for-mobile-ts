@@ -143,25 +143,27 @@ export class Quiz {
     operate(operation: Operation): Quiz {
         switch (operation) {
         case Operation.Direct:
-            return this.nextIfEnd(this.direct());
+            return this.direct();
         case Operation.Swap:
-            return this.nextIfEnd(this.swap());
+            return this.swap();
         case Operation.Stock:
-            return this.nextIfEnd(this.stock());
+            return this.stock();
         }
         throw new FumenError('Unexpected operation');
     }
 
     format(): Quiz {
-        if (this.quiz === '#Q=[]()') {
+        const quiz = this.nextIfEnd();
+        if (quiz.quiz === '#Q=[]()') {
             return new Quiz('');
         }
 
-        const hold = this.hold;
-        if (this.current === '' && hold !== '') {
-            return new Quiz(`#Q=[](${hold})${this.least}`);
+        const hold = quiz.hold;
+        if (quiz.current === '' && hold !== '') {
+            return new Quiz(`#Q=[](${hold})${quiz.least}`);
         }
-        return new Quiz(this.quiz);
+
+        return quiz;
     }
 
     getHoldPiece(): Piece {
@@ -199,13 +201,16 @@ export class Quiz {
     }
 
     canOperate(): boolean {
+        if (this.quiz.startsWith('#Q=[]();#Q=')) {
+            return true;
+        }
         return this.quiz.startsWith('#Q=') && this.quiz.substr(0, 7) !== '#Q=[]()';
     }
 
-    private nextIfEnd(target: Quiz): Quiz {
-        if (target.quiz.startsWith('#Q=[]();')) {
-            return new Quiz(target.quiz.substr(8));
+    nextIfEnd(): Quiz {
+        if (this.quiz.startsWith('#Q=[]();')) {
+            return new Quiz(this.quiz.substr(8));
         }
-        return target;
+        return this;
     }
 }

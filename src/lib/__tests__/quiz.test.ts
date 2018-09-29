@@ -15,6 +15,7 @@ describe('quiz', () => {
             new Quiz('#Q=[i](t)oszlj;#Q=[i](t)oszlj;');
             new Quiz('#Q=[i](t)oszlj;#Q=[i](t)oszlj;hello');
             new Quiz('#Q=[J](O)L;#Q=[S](Z)T;hello');
+            new Quiz('#Q=[]();#Q=[S](Z)T;hello');
         });
 
         it('regular comment', () => {
@@ -266,8 +267,13 @@ describe('quiz', () => {
         let quiz = new Quiz('#Q=[T](I);#Q=[T](I);hello');
 
         {
+            quiz = quiz.nextIfEnd();
             const operation = quiz.getOperation(Piece.T);
             const newQuiz = quiz.operate(operation);
+            expect(newQuiz.getHoldPiece()).toEqual(Piece.I);
+            expect(newQuiz.getNextPieces(3)).toEqual([Piece.Empty, Piece.Empty, Piece.Empty]);
+            expect(newQuiz.canOperate()).toEqual(true);
+
             quiz = newQuiz.format();
             expect(quiz.toString()).toEqual('#Q=[](I);#Q=[T](I);hello');
             expect(quiz.getHoldPiece()).toEqual(Piece.Empty);
@@ -275,8 +281,13 @@ describe('quiz', () => {
         }
 
         {
+            quiz = quiz.nextIfEnd();
             const operation = quiz.getOperation(Piece.I);
             const newQuiz = quiz.operate(operation);
+            expect(newQuiz.getHoldPiece()).toEqual(Piece.Empty);
+            expect(newQuiz.getNextPieces(3)).toEqual([Piece.Empty, Piece.Empty, Piece.Empty]);
+            expect(newQuiz.canOperate()).toEqual(true);
+
             quiz = newQuiz.format();
             expect(quiz.toString()).toEqual('#Q=[T](I);hello');
             expect(quiz.getHoldPiece()).toEqual(Piece.T);
@@ -284,8 +295,13 @@ describe('quiz', () => {
         }
 
         {
+            quiz = quiz.nextIfEnd();
             const operation = quiz.getOperation(Piece.I);
             const newQuiz = quiz.operate(operation);
+            expect(newQuiz.getHoldPiece()).toEqual(Piece.T);
+            expect(newQuiz.getNextPieces(3)).toEqual([Piece.Empty, Piece.Empty, Piece.Empty]);
+            expect(newQuiz.canOperate()).toEqual(true);
+
             quiz = newQuiz.format();
             expect(quiz.toString()).toEqual('#Q=[](T);hello');
             expect(quiz.getHoldPiece()).toEqual(Piece.Empty);
@@ -293,8 +309,13 @@ describe('quiz', () => {
         }
 
         {
+            quiz = quiz.nextIfEnd();
             const operation = quiz.getOperation(Piece.T);
             const newQuiz = quiz.operate(operation);
+            expect(newQuiz.getHoldPiece()).toEqual(Piece.Empty);
+            expect(newQuiz.getNextPieces(3)).toEqual([Piece.Empty, Piece.Empty, Piece.Empty]);
+            expect(newQuiz.canOperate()).toEqual(false);
+
             quiz = newQuiz.format();
             expect(quiz.toString()).toEqual('hello');
             expect(quiz.getHoldPiece()).toEqual(Piece.Empty);

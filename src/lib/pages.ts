@@ -519,8 +519,9 @@ export class Pages {
                     if (quizPage.piece !== undefined && quizPage.flags.lock) {
                         try {
                             // ミノを操作をする
-                            const operation = currentQuiz.getOperation(quizPage.piece.type);
-                            const quizAfterOperation = currentQuiz.operate(operation);
+                            const nextQuiz = currentQuiz.nextIfEnd();
+                            const operation = nextQuiz.getOperation(quizPage.piece.type);
+                            const quizAfterOperation = nextQuiz.operate(operation);
 
                             result = { quizAfterOperation, quiz: cache.comment };
                             cache = { quiz: quizAfterOperation, comment: quizAfterOperation.format().toString() };

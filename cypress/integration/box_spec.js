@@ -637,4 +637,72 @@ describe('Box', () => {
             cy.get(nextBox(5)).should('not.exist');
         });
     });
+
+    it('Multi quiz', () => {
+        visit({ fumen: 'v115@vhHyOY3AFLDmClcJSAVjiSAVG88AYS88AZPUABCowA?BR4K6Bl/UtClfJSASE7SAyltSATzarDMjzCATEJm/I3LJtK?JUBJAgHAgH' });
+
+        {
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[O](L)J;#Q=[S](Z)T;hello');
+
+            cy.get(holdBox()).should('have.attr', 'type', Piece.O);
+
+            [Piece.J].forEach((piece, index) => {
+                cy.get(nextBox(index)).should('have.attr', 'type', piece);
+            });
+
+            cy.get(nextBox(1)).should('not.exist');
+        }
+
+        rightTap(() => {
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[O](J);#Q=[S](Z)T;hello');
+
+            cy.get(holdBox()).should('have.attr', 'type', Piece.J);
+
+            cy.get(nextBox(0)).should('not.exist');
+        });
+
+        rightTap(() => {
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[](J);#Q=[S](Z)T;hello');
+
+            cy.get(holdBox()).should('have.attr', 'type', Piece.Empty);
+
+            cy.get(nextBox(0)).should('not.exist');
+        });
+
+        rightTap(() => {
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[S](Z)T;hello');
+
+            cy.get(holdBox()).should('have.attr', 'type', Piece.Z);
+
+            [Piece.T].forEach((piece, index) => {
+                cy.get(nextBox(index)).should('have.attr', 'type', piece);
+            });
+
+            cy.get(nextBox(1)).should('not.exist');
+        });
+
+        rightTap(() => {
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[Z](T);hello');
+
+            cy.get(holdBox()).should('have.attr', 'type', Piece.Z);
+
+            cy.get(nextBox(0)).should('not.exist');
+        });
+
+        rightTap(() => {
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[](Z);hello');
+
+            cy.get(holdBox()).should('have.attr', 'type', Piece.Empty);
+
+            cy.get(nextBox(0)).should('not.exist');
+        });
+
+        rightTap(() => {
+            cy.get(datatest('text-comment')).should('have.value', 'hello');
+
+            cy.get(holdBox()).should('not.exist');
+
+            cy.get(nextBox(0)).should('not.exist');
+        });
+    });
 });
