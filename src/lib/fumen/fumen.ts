@@ -247,8 +247,9 @@ export async function innerDecode(
 
             if (action.lock && isMinoPiece(action.piece.type) && store.quiz.canOperate()) {
                 try {
-                    const operation = store.quiz.getOperation(action.piece.type);
-                    store.quiz = store.quiz.operate(operation);
+                    const nextQuiz = store.quiz.nextIfEnd();
+                    const operation = nextQuiz.getOperation(action.piece.type);
+                    store.quiz = nextQuiz.operate(operation);
                 } catch (e) {
                     // Not operate
                     console.error(e.message);
