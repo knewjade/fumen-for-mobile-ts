@@ -515,8 +515,16 @@ export class Pages {
                 }
 
                 const currentQuiz = cache.quiz;
-                if (currentQuiz.canOperate()) {
-                    if (quizPage.piece !== undefined && quizPage.flags.lock) {
+                if (!currentQuiz.canOperate()) {
+                    // Quizが終了した後、変化することはないため、目的のページのNext, Holdを直接算出
+                    return {
+                        text: cache.comment,
+                        next: Pages.extractNext(this.pages.slice(pageIndex)),
+                    };
+                }
+
+                if (quizPage.flags.lock) {
+                    if (quizPage.piece !== undefined && isMinoPiece(quizPage.piece.type)) {
                         try {
                             // ミノを操作をする
                             const nextQuiz = currentQuiz.nextIfEnd();
@@ -526,18 +534,18 @@ export class Pages {
                             result = { quizAfterOperation, quiz: cache.comment };
                             cache = { quiz: quizAfterOperation, comment: quizAfterOperation.format().toString() };
                         } catch (e) {
+                            console.error(e);
+
                             // Quizの解釈ができない
                             result = { quizAfterOperation: cache.quiz, quiz: cache.comment };
+                            const nextQuiz = currentQuiz.format();
+                            cache = { quiz: nextQuiz, comment: nextQuiz.toString() };
                         }
                     } else {
                         result = { quizAfterOperation: cache.quiz, quiz: cache.comment };
+                        const nextQuiz = currentQuiz.format();
+                        cache = { quiz: nextQuiz, comment: nextQuiz.toString() };
                     }
-                } else {
-                    // Quizが終了した後、変化することはないため、目的のページのNext, Holdを直接算出
-                    return {
-                        text: cache.comment,
-                        next: Pages.extractNext(this.pages.slice(pageIndex)),
-                    };
                 }
             }
 

@@ -1,4 +1,17 @@
-import { Color, datatest, holdBox, leftTap, mino, nextBox, pages, Piece, rightTap, Rotation, visit } from './_common';
+import {
+    Color,
+    datatest,
+    expectFumen,
+    holdBox,
+    leftTap,
+    mino,
+    nextBox,
+    pages,
+    Piece,
+    rightTap,
+    Rotation,
+    visit,
+} from './_common';
 
 // Quizのテスト
 describe('Quiz', () => {
@@ -79,18 +92,18 @@ describe('Quiz', () => {
 
         // パフェ1回目
         [
-            {comment: '#Q=[](I)LOTJSZ', isChanged: false},
-            {comment: '#Q=[](L)OTJSZ', isChanged: true},
-            {comment: '#Q=[](O)TJSZ', isChanged: true},
-            {comment: '#Q=[](T)JSZ', isChanged: true},
-            {comment: '#Q=[T](S)Z ZTIOJLS', isChanged: true},
-            {comment: '#Q=[T](Z)ZTIOJLS', isChanged: true},
-            {comment: '#Q=[Z](Z)TIOJLS', isChanged: true},
-            {comment: '#Q=[Z](T)IOJLS', isChanged: true},
-            {comment: '#Q=[T](I)OJLS', isChanged: true},
-            {comment: '#Q=[I](O)JLS', isChanged: true},
-            {comment: '#Q=[O](J)LS ZSJLOIT', isChanged: true}
-        ].forEach(({comment, isChanged}) => {
+            { comment: '#Q=[](I)LOTJSZ', isChanged: false },
+            { comment: '#Q=[](L)OTJSZ', isChanged: true },
+            { comment: '#Q=[](O)TJSZ', isChanged: true },
+            { comment: '#Q=[](T)JSZ', isChanged: true },
+            { comment: '#Q=[T](S)Z ZTIOJLS', isChanged: true },
+            { comment: '#Q=[T](Z)ZTIOJLS', isChanged: true },
+            { comment: '#Q=[Z](Z)TIOJLS', isChanged: true },
+            { comment: '#Q=[Z](T)IOJLS', isChanged: true },
+            { comment: '#Q=[T](I)OJLS', isChanged: true },
+            { comment: '#Q=[I](O)JLS', isChanged: true },
+            { comment: '#Q=[O](J)LS ZSJLOIT', isChanged: true }
+        ].forEach(({ comment, isChanged }) => {
             rightTap();
             cy.get(datatest('text-comment')).should('have.value', comment);
             if (isChanged)
@@ -196,18 +209,18 @@ describe('Quiz', () => {
 
         // パフェ1回目
         [
-            {comment: '#Q=[](I)LOTJSZ', isChanged: false},
-            {comment: '#Q=[](L)OTJSZ', isChanged: true},
-            {comment: '#Q=[](O)TJSZ', isChanged: true},
-            {comment: '#Q=[](T)JSZ', isChanged: true},
-            {comment: '#Q=[T](S)Z ZTIOJLS', isChanged: true},
-            {comment: '#Q=[T](Z)ZTIOJLS', isChanged: true},
-            {comment: '#Q=[Z](Z)TIOJLS', isChanged: true},
-            {comment: '#Q=[Z](T)IOJLS', isChanged: true},
-            {comment: '#Q=[T](I)OJLS', isChanged: true},
-            {comment: '#Q=[I](O)JLS', isChanged: true},
-            {comment: '#Q=[O](J)LS ZSJLOIT', isChanged: true}
-        ].forEach(({comment, isChanged}) => {
+            { comment: '#Q=[](I)LOTJSZ', isChanged: false },
+            { comment: '#Q=[](L)OTJSZ', isChanged: true },
+            { comment: '#Q=[](O)TJSZ', isChanged: true },
+            { comment: '#Q=[](T)JSZ', isChanged: true },
+            { comment: '#Q=[T](S)Z ZTIOJLS', isChanged: true },
+            { comment: '#Q=[T](Z)ZTIOJLS', isChanged: true },
+            { comment: '#Q=[Z](Z)TIOJLS', isChanged: true },
+            { comment: '#Q=[Z](T)IOJLS', isChanged: true },
+            { comment: '#Q=[T](I)OJLS', isChanged: true },
+            { comment: '#Q=[I](O)JLS', isChanged: true },
+            { comment: '#Q=[O](J)LS ZSJLOIT', isChanged: true }
+        ].forEach(({ comment, isChanged }) => {
             rightTap();
             cy.get(datatest('text-comment')).should('have.value', comment);
             if (isChanged)
@@ -290,5 +303,69 @@ describe('Quiz', () => {
             cy.get(datatest('text-comment')).should('have.value', '#Q=[](I)LOTJSZ');
             cy.get(datatest('text-comment')).should('have.class', changeColor);
         });
+    });
+
+    it('Quiz: ()[]', () => {
+        visit({ fumen: 'v115@vhJAg0aAFLDmClcJSAVDEHBEooRBFrYwCv3ntCpCBA?AAAAzrBMtBmqB3hBJkBClBlnBAAA' });
+
+        {
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[]()TOZJSIL');
+
+            cy.get(holdBox()).should('have.attr', 'type', Piece.Empty);
+
+            [Piece.T, Piece.O, Piece.Z, Piece.J, Piece.S].forEach((piece, index) => {
+                cy.get(nextBox(index)).should('have.attr', 'type', piece);
+            });
+        }
+
+        rightTap(() => {
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[]()TOZJSIL');
+
+            cy.get(holdBox()).should('have.attr', 'type', Piece.Empty);
+
+            [Piece.T, Piece.O, Piece.Z, Piece.J, Piece.S].forEach((piece, index) => {
+                cy.get(nextBox(index)).should('have.attr', 'type', piece);
+            });
+        });
+
+        rightTap(() => {
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[](T)OZJSIL');
+
+            cy.get(holdBox()).should('have.attr', 'type', Piece.T);
+
+            [Piece.Z, Piece.J, Piece.S, Piece.I, Piece.L].forEach((piece, index) => {
+                cy.get(nextBox(index)).should('have.attr', 'type', piece);
+            });
+        });
+
+        rightTap(() => {
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[T](Z)JSIL');
+        });
+
+        rightTap(() => {
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[T](J)SIL');
+        });
+
+        rightTap(() => {
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[T](S)IL');
+        });
+
+        rightTap(() => {
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[T](I)L');
+        });
+
+        rightTap(() => {
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[T](L)');
+        });
+
+        rightTap(() => {
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[](T)');
+        });
+
+        rightTap(() => {
+            cy.get(datatest('text-comment')).should('have.value', '');
+        });
+
+        expectFumen('v115@vhJAg0aAFLDmClcJSAVDEHBEooRBFrYwCv3ntCpCBA?AAAAzrBMtBmqB3hBJkBClBlnBAAA');
     });
 });

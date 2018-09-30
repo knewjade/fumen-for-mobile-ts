@@ -245,14 +245,20 @@ export async function innerDecode(
         if (store.quiz !== undefined) {
             quiz = true;
 
-            if (action.lock && isMinoPiece(action.piece.type) && store.quiz.canOperate()) {
-                try {
-                    const nextQuiz = store.quiz.nextIfEnd();
-                    const operation = nextQuiz.getOperation(action.piece.type);
-                    store.quiz = nextQuiz.operate(operation);
-                } catch (e) {
-                    // Not operate
-                    console.error(e.message);
+            if (store.quiz.canOperate() && action.lock) {
+                if (isMinoPiece(action.piece.type)) {
+                    try {
+                        const nextQuiz = store.quiz.nextIfEnd();
+                        const operation = nextQuiz.getOperation(action.piece.type);
+                        store.quiz = nextQuiz.operate(operation);
+                    } catch (e) {
+                        console.error(e.message);
+
+                        // Not operate
+                        store.quiz = store.quiz.format();
+                    }
+                } else {
+                    store.quiz = store.quiz.format();
                 }
             }
         }
