@@ -2,15 +2,15 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 83 41" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
     <g transform="matrix(0.60394,0,0,0.719015,-18.6224,-20.9687)">
-        <rect x="30.8" y="43.751" width="33.116" height="27.816" style="fill:rgb(51,204,204);"/>
+        <rect x="30.8" y="43.751" width="33.116" height="27.816" style="fill:rgb(204,51,51);"/>
     </g>
     <g transform="matrix(0.60394,0,0,0.719015,2.37675,-20.9463)">
-        <rect x="30.8" y="43.751" width="33.116" height="27.816" style="fill:rgb(51,204,204);"/>
+        <rect x="30.8" y="43.751" width="33.116" height="27.816" style="fill:rgb(204,51,51);"/>
     </g>
     <g transform="matrix(0.60394,0,0,0.719015,23.4202,-20.9463)">
-        <rect x="30.8" y="43.751" width="33.116" height="27.816" style="fill:rgb(51,204,204);"/>
+        <rect x="30.8" y="43.751" width="33.116" height="27.816" style="fill:rgb(204,51,51);"/>
     </g>
     <g transform="matrix(0.60394,0,0,0.719015,44.4202,-20.9463)">
-        <rect x="30.8" y="43.751" width="33.116" height="27.816" style="fill:rgb(51,204,204);"/>
+        <rect x="30.8" y="43.751" width="33.116" height="27.816" style="fill:rgb(204,51,51);"/>
     </g>
 </svg>

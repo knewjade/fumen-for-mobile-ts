@@ -4,10 +4,11 @@ import { EditorLayout } from './editor';
 import { VNode } from 'hyperapp';
 import { parsePieceName, Piece } from '../lib/enums';
 
-export const colorButton = ({ layout, piece, highlight, onclick }: {
+export const colorButton = ({ layout, piece, highlight, colorize, onclick }: {
     layout: EditorLayout,
     piece: Piece,
     highlight: boolean,
+    colorize: boolean,
     onclick: (data: { piece: Piece }) => void,
 }) => {
     const borderWidth = highlight ? 3 : 1;
@@ -15,7 +16,7 @@ export const colorButton = ({ layout, piece, highlight, onclick }: {
 
     const contents = [
         img({
-            src: `img/${pieceName}.svg`,
+            src: colorize ? `img/${pieceName}.svg` : `img/${pieceName}_classic.svg`,
             height: `${0.55 * layout.buttons.size.height}`,
             style: style({
                 margin: 'auto',

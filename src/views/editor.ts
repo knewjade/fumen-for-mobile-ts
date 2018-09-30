@@ -294,11 +294,12 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
     ]);
 };
 
-const blockMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
+const blockMode = ({ layout, keyPage, currentIndex, modePiece, colorize, actions }: {
     layout: EditorLayout;
     keyPage: boolean;
     currentIndex: number;
     modePiece: Piece | undefined;
+    colorize: boolean;
     actions: {
         selectPieceColor: (data: { piece: Piece }) => void;
         selectInferencePieceColor: () => void;
@@ -326,7 +327,7 @@ const blockMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
             key: 'div-space',
         }),
     ].concat(pieces.map(piece => (
-        colorButton({ layout, piece, onclick: actions.selectPieceColor, highlight: modePiece === piece })
+        colorButton({ layout, piece, colorize, onclick: actions.selectPieceColor, highlight: modePiece === piece })
     ))).concat([
         inferenceButton({
             layout,
@@ -707,11 +708,12 @@ const shiftMode = ({ layout, currentIndex, keyPage, flags, actions }: {
     ]);
 };
 
-const fillMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
+const fillMode = ({ layout, keyPage, currentIndex, modePiece, colorize, actions }: {
     layout: EditorLayout;
     keyPage: boolean;
     currentIndex: number;
     modePiece: Piece | undefined;
+    colorize: boolean;
     actions: {
         selectPieceColor: (data: { piece: Piece }) => void;
         selectInferencePieceColor: () => void;
@@ -739,7 +741,7 @@ const fillMode = ({ layout, keyPage, currentIndex, modePiece, actions }: {
             key: 'div-space',
         }),
     ].concat(pieces.map(piece => (
-        colorButton({ layout, piece, onclick: actions.selectPieceColor, highlight: modePiece === piece })
+        colorButton({ layout, piece, colorize, onclick: actions.selectPieceColor, highlight: modePiece === piece })
     ))));
 };
 
@@ -747,6 +749,9 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
     const pages = state.fumen.pages;
     const page = pages[state.fumen.currentIndex];
     const keyPage = page === undefined || page.field.obj !== undefined;
+
+    // テト譜の仕様により、最初のページのフラグが全体に反映される
+    const guideLineColor = state.fumen.pages[0] !== undefined ? state.fumen.pages[0].flags.colorize : true;
 
     const getChildren = () => {
         const getMode = () => {
@@ -757,6 +762,7 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                     actions,
                     keyPage,
                     currentIndex: state.fumen.currentIndex,
+                    colorize: guideLineColor,
                     modePiece: state.mode.piece,
                 });
             }
@@ -804,6 +810,7 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                     actions,
                     keyPage,
                     currentIndex: state.fumen.currentIndex,
+                    colorize: guideLineColor,
                     modePiece: state.mode.piece,
                 });
             }
