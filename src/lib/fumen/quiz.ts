@@ -32,23 +32,9 @@ export class Quiz {
         this.quiz = Quiz.verify(quiz);
     }
 
-    getOperation(used: Piece): Operation {
-        const usedName = parsePieceName(used);
-        if (usedName === this.current) {
-            return Operation.Direct;
-        }
-
-        const hold = this.hold;
-        if (hold === '') {
-            // 次のミノを利用できる
-            if (usedName === this.next) {
-                return Operation.Stock;
-            }
-        } else if (usedName === hold) {
-            return Operation.Swap;
-        }
-
-        throw new FumenError(`Unexpected hold piece in quiz: ${this.quiz}`);
+    private get least(): string {
+        const index = this.quiz.indexOf(')');
+        return this.quiz.substr(index + 1);
     }
 
     private get current(): string {
@@ -69,12 +55,38 @@ export class Quiz {
         return name;
     }
 
-    private get least(): string {
+    private get leastAfterNext2(): string {
         const index = this.quiz.indexOf(')');
         if (this.quiz[index + 1] === ';') {
             return this.quiz.substr(index + 1);
         }
         return this.quiz.substr(index + 2);
+    }
+
+    getOperation(used: Piece): Operation {
+        const usedName = parsePieceName(used);
+        const current = this.current;
+        if (usedName === current) {
+            return Operation.Direct;
+        }
+
+        const hold = this.hold;
+        if (usedName === hold) {
+            return Operation.Swap;
+        }
+
+        // 次のミノを利用できる
+        if (hold === '') {
+            if (usedName === this.next) {
+                return Operation.Stock;
+            }
+        } else {
+            if (current === '' && usedName === this.next) {
+                return Operation.Direct;
+            }
+        }
+
+        throw new FumenError(`Unexpected hold piece in quiz: ${this.quiz}`);
     }
 
     private get leastInActiveBag(): string {
@@ -90,10 +102,6 @@ export class Quiz {
     private static verify(quiz: string): string {
         const replaced = this.trim(quiz);
 
-        if (replaced.startsWith('#Q=()[];')) {
-            return replaced;
-        }
-
         if (replaced.length === 0 || quiz === '#Q=[]()' || !quiz.startsWith('#Q=')) {
             return quiz;
         }
@@ -102,19 +110,15 @@ export class Quiz {
             throw new FumenError(`Current piece doesn't exist, however next pieces exist: ${quiz}`);
         }
 
-        const index = replaced.indexOf(')');
-        if (replaced[index - 1] === '(' && (replaced[index + 1] !== undefined && replaced[index + 1] !== ';')) {
-            throw new FumenError('Unexpected quiz');
-        }
-
         return replaced;
     }
 
     direct(): Quiz {
         if (this.current === '') {
-            throw new FumenError(`Cannot find next piece: ${this.quiz}`);
+            const least = this.leastAfterNext2;
+            return new Quiz(`#Q=[${this.hold}](${least[0]})${least.substr(1)}`);
         }
-        return new Quiz(`#Q=[${this.hold}](${this.next})${this.least}`);
+        return new Quiz(`#Q=[${this.hold}](${this.next})${this.leastAfterNext2}`);
     }
 
     swap(): Quiz {
@@ -122,7 +126,7 @@ export class Quiz {
             throw new FumenError(`Cannot find hold piece: ${this.quiz}`);
         }
         const next = this.next;
-        return new Quiz(`#Q=[${this.current}](${next})${this.least}`);
+        return new Quiz(`#Q=[${this.current}](${next})${this.leastAfterNext2}`);
     }
 
     stock(): Quiz {
@@ -130,7 +134,7 @@ export class Quiz {
             throw new FumenError(`Cannot stock: ${this.quiz}`);
         }
 
-        const least = this.least;
+        const least = this.leastAfterNext2;
         const head = least[0] !== undefined ? least[0] : '';
 
         if (1 < least.length) {
@@ -158,9 +162,25 @@ export class Quiz {
             return new Quiz('');
         }
 
+        const current = quiz.current;
         const hold = quiz.hold;
-        if (quiz.current === '' && hold !== '') {
+
+        if (current === '' && hold !== '') {
             return new Quiz(`#Q=[](${hold})${quiz.least}`);
+        }
+
+        if (current === '') {
+            const least = quiz.least;
+            const head = least[0];
+            if (head === undefined) {
+                return new Quiz('');
+            }
+
+            if (head === ';') {
+                return new Quiz(least.substr(1));
+            }
+
+            return new Quiz(`#Q=[](${head})${least.substr(1)}`);
         }
 
         return quiz;
@@ -201,10 +221,11 @@ export class Quiz {
     }
 
     canOperate(): boolean {
-        if (this.quiz.startsWith('#Q=[]();#Q=')) {
-            return true;
+        let quiz = this.quiz;
+        if (quiz.startsWith('#Q=[]();')) {
+            quiz = this.quiz.substr(8);
         }
-        return this.quiz.startsWith('#Q=') && this.quiz.substr(0, 7) !== '#Q=[]()';
+        return quiz.startsWith('#Q=') && quiz !== '#Q=[]()';
     }
 
     nextIfEnd(): Quiz {
