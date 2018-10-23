@@ -891,6 +891,11 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
             || (currentPage !== undefined && currentPage.comment.text !== undefined);
 
         const element = document.querySelector('#text-comment') as HTMLInputElement;
+        const updateText = () => {
+            if (element) {
+                actions.updateCommentText({ text: element.value, pageIndex: state.fumen.currentIndex });
+            }
+        };
         return comment({
             key: 'text-comment',
             dataTest: 'text-comment',
@@ -903,17 +908,14 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
             readonly: false,
             commentKey: state.comment.changeKey,
             actions: {
-                onupdate: () => {
-                    if (element) {
-                        actions.updateCommentText({ text: element.value, pageIndex: state.fumen.currentIndex });
-                    }
-                },
+                onupdate: updateText,
                 onenter: () => {
                     if (element) {
                         element.blur();
                     }
                 },
                 onblur: () => {
+                    updateText();
                     actions.commitCommentText();
                 },
             },
