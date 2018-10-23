@@ -44,6 +44,14 @@ export const comment: Component<Props> = (
             dataTest,
             id,
             placeholder,
+            onkeydown: (e: any) => {
+                console.log('down');
+                console.log(e);
+            },
+            onkeyup: (e: any) => {
+                console.log('up');
+                console.log(e);
+            },
             onkeypress: actions !== undefined ? actions.onkeypress : undefined,
             onblur: actions !== undefined ? actions.onblur : undefined,
             type: 'text',

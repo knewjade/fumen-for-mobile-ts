@@ -903,6 +903,8 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
             readonly: false,
             actions: {
                 onkeypress: (event) => {
+                    console.log('press');
+                    console.log(event);
                     if (!element) {
                         return;
                     }
