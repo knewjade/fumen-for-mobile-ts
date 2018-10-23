@@ -21,6 +21,7 @@ export interface State {
     display: {
         width: number;
         height: number;
+        lock: boolean;
     };
     hold?: Piece;
     nexts?: Piece[];
@@ -84,6 +85,7 @@ export const initState: Readonly<State> = {
     display: {
         width: window.document.body.clientWidth,
         height: window.document.body.clientHeight,
+        lock: false,
     },
     hold: undefined,
     nexts: undefined,

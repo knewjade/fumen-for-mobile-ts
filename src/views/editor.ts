@@ -890,7 +890,6 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
         const isCommentKey = resources.comment !== undefined
             || (currentPage !== undefined && currentPage.comment.text !== undefined);
 
-        const element = document.querySelector('#text-comment') as HTMLInputElement;
         return comment({
             key: 'text-comment',
             dataTest: 'text-comment',
@@ -901,30 +900,6 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
             text: resources.comment !== undefined ? resources.comment.text : state.comment.text,
             placeholder: 'comment',
             readonly: false,
-            actions: {
-                onkeypress: (event) => {
-                    console.log('press');
-                    console.log(event);
-                    if (!element) {
-                        return;
-                    }
-
-                    const text = element.value ? element.value : '';
-                    actions.updateCommentText({ text, pageIndex: currentIndex });
-
-                    if (event.key === 'Enter') {
-                        element.blur();
-                    }
-                },
-                onblur: () => {
-                    if (element) {
-                        const text = element.value ? element.value : '';
-                        actions.updateCommentText({ text, pageIndex: currentIndex });
-                    }
-
-                    actions.commitCommentText();
-                },
-            },
         });
     }
     case CommentType.Readonly: {
@@ -933,7 +908,6 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
         const isCommentKey = resources.comment !== undefined
             || (currentPage !== undefined && currentPage.comment.text !== undefined);
 
-        const element = document.querySelector('#text-comment') as HTMLInputElement;
         return comment({
             key: 'text-comment',
             dataTest: 'text-comment',
@@ -943,28 +917,6 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
             height: layout.comment.size.height,
             text: resources.comment !== undefined ? resources.comment.text : state.comment.text,
             readonly: true,
-            actions: {
-                onkeypress: (event) => {
-                    if (!element) {
-                        return;
-                    }
-
-                    const text = element.value ? element.value : '';
-                    actions.updateCommentText({ text, pageIndex: currentIndex });
-
-                    if (event.key === 'Enter') {
-                        element.blur();
-                    }
-                },
-                onblur: () => {
-                    if (element) {
-                        const text = element.value ? element.value : '';
-                        actions.updateCommentText({ text, pageIndex: currentIndex });
-                    }
-
-                    actions.commitCommentText();
-                },
-            },
         });
     }
     case CommentType.PageSlider: {

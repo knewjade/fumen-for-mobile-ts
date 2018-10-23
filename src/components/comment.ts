@@ -12,8 +12,10 @@ interface Props {
     readonly: boolean;
     placeholder?: string;
     actions?: {
-        onkeypress: (event: KeyboardEvent) => void;
-        onblur: (event: TextEvent) => void;
+        lockScreen: () => void;
+        unlockScreen: () => void;
+        //     onkeypress: (event: KeyboardEvent) => void;
+        //     onblur: (event: TextEvent) => void;
     };
 }
 
@@ -44,21 +46,17 @@ export const comment: Component<Props> = (
             dataTest,
             id,
             placeholder,
-            onkeydown: (e: any) => {
-                console.log('down');
-                console.log(e);
-            },
-            onkeyup: (e: any) => {
-                console.log('up');
-                console.log(e);
-            },
-            onkeypress: actions !== undefined ? actions.onkeypress : undefined,
-            onblur: actions !== undefined ? actions.onblur : undefined,
             type: 'text',
             className: backgroundColorClass,
             style: commentStyle,
             value: text,
             readonly: readonly ? 'readonly' : undefined,
+            onfocous: actions !== undefined ? () => {
+                actions.lockScreen();
+            } : undefined,
+            onblur: actions !== undefined ? () => {
+                actions.unlockScreen();
+            } : undefined,
         }),
     ]);
 };
