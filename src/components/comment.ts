@@ -15,6 +15,7 @@ interface Props {
     actions?: {
         onenter: () => void;
         onupdate: () => void;
+        onblur: () => void;
     };
 }
 
@@ -82,6 +83,9 @@ export const comment: Component<Props> = (
                         actions.onenter();
                     }
                 }
+            } : undefined,
+            onblur: actions !== undefined ? () => {
+                actions.onblur();
             } : undefined,
         }),
     ]);

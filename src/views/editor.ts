@@ -909,10 +909,12 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
                     }
                 },
                 onenter: () => {
-                    actions.commitCommentText();
                     if (element) {
                         element.blur();
                     }
+                },
+                onblur: () => {
+                    actions.commitCommentText();
                 },
             },
         });
