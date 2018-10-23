@@ -1,7 +1,6 @@
 const path = require('path');
 const version = process.env.TRAVIS_BUILD_NUMBER || `dev-${new Date().toISOString()}`;
-// const isDebug = (!process.env.TRAVIS_BUILD_NUMBER) + '';
-const isDebug = 'true';
+const isDebug = (!process.env.TRAVIS_BUILD_NUMBER) + '';
 
 module.exports = {
     entry: [
