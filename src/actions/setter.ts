@@ -4,6 +4,7 @@ import { FieldConstants, Piece } from '../lib/enums';
 import { Block, HighlightType } from '../state_types';
 import { Page } from '../lib/fumen/fumen';
 import { inferPiece } from '../lib/inference';
+import { generateKey } from '../lib/random';
 
 export interface SetterActions {
     setPages: (args: { pages: Page[], open?: boolean }) => action;
@@ -54,6 +55,7 @@ export const setterActions: Readonly<SetterActions> = {
             comment: {
                 isChanged: comment !== undefined && comment !== state.comment.text,
                 text: comment !== undefined ? comment : state.comment.text,
+                changeKey: generateKey(),
             },
         };
     },

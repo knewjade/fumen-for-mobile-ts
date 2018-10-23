@@ -236,6 +236,7 @@ export const getComment = (state: State, actions: Actions, layout: ReaderLayout)
             height: layout.comment.size.height,
             text: state.comment.text,
             readonly: true,
+            commentKey: state.comment.changeKey,
         });
     }
     }

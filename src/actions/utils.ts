@@ -18,8 +18,6 @@ import { Pages } from '../lib/pages';
 
 export interface UtilsActions {
     resize: (data: { width: number, height: number }) => action;
-    lockScreen: () => action;
-    unlockScreen: () => action;
     loadFumen: (data: { fumen: string, purgeOnFailed?: boolean }) => action;
     loadNewFumen: () => action;
     appendFumen: (data: { fumen: string, pageIndex: number }) => action;
@@ -31,22 +29,8 @@ export interface UtilsActions {
 
 export const utilsActions: Readonly<UtilsActions> = {
     resize: ({ width, height }) => (state): NextState => {
-        if (state.display.lock) {
-            return undefined;
-        }
-
         return {
             display: { ...state.display, width, height },
-        };
-    },
-    lockScreen: () => (state): NextState => {
-        return {
-            display: { ...state.display, lock: true },
-        };
-    },
-    unlockScreen: () => (state): NextState => {
-        return {
-            display: { ...state.display, lock: false },
         };
     },
     loadFumen: ({ fumen, purgeOnFailed = false }) => (): NextState => {
