@@ -28,9 +28,9 @@ export interface UtilsActions {
 }
 
 export const utilsActions: Readonly<UtilsActions> = {
-    resize: ({ width, height }) => (): NextState => {
+    resize: ({ width, height }) => (state): NextState => {
         return {
-            display: { width, height },
+            display: { ...state.display, width, height },
         };
     },
     loadFumen: ({ fumen, purgeOnFailed = false }) => (): NextState => {

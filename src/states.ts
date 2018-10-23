@@ -6,6 +6,7 @@ import { PageEnv } from './env';
 import { Block } from './state_types';
 import { Field } from './lib/fumen/field';
 import { PrimitivePage } from './history_task';
+import { generateKey } from './lib/random';
 import konva = require('konva');
 
 const VERSION = PageEnv.Version;
@@ -17,6 +18,7 @@ export interface State {
     comment: {
         text: string;
         isChanged: boolean;
+        changeKey: string;
     };
     display: {
         width: number;
@@ -80,6 +82,7 @@ export const initState: Readonly<State> = {
     comment: {
         text: '',
         isChanged: false,
+        changeKey: generateKey(),
     },
     display: {
         width: window.document.body.clientWidth,

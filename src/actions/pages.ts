@@ -193,6 +193,7 @@ export const pageActions: Readonly<PageActions> = {
         return sequence(state, [
             actions.fixInferencePiece(),
             actions.clearInferencePiece(),
+            actions.commitCommentText(),
             pageActions.openPage({ index: backPage }),
         ]);
     },
