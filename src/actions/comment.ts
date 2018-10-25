@@ -61,7 +61,7 @@ export const commentActions: Readonly<CommentActions> = {
 };
 
 const commitCommentText = (index: number, text: string) => (state: State): NextState => {
-    const pages = state.fumen.pages;
+    let pages = state.fumen.pages;
     const page = pages[index];
     if (page === undefined) {
         return undefined;
@@ -74,6 +74,10 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
     const comment = pagesObj.getComment(index);
     const tasks: OperationTask[] = [];
 
+    if (page.comment.text === text) {
+        return;
+    }
+
     const isCurrentQuiz = text.startsWith('#Q=');
     if (isCurrentQuiz) {
         // Quizにする
@@ -85,6 +89,8 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
                 pagesObj.unfreezeComment(index);
                 tasks.push(toUnfreezeCommentTask(index));
             }
+
+            pages = pagesObj.pages;
         } else {
             // textにする
             if (page.comment.text === undefined) {
@@ -100,9 +106,11 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
             }
 
             // コメントを更新
-            const primitivePage = toPrimitivePage(page);
-            page.comment = { text };
-            tasks.push(toSinglePageTask(index, primitivePage, page));
+            pages = pagesObj.pages;
+            const currentPage = pages[index];
+            const primitivePage = toPrimitivePage(currentPage);
+            currentPage.comment = { text };
+            tasks.push(toSinglePageTask(index, primitivePage, currentPage));
         }
     } else {
         // テキストにする
@@ -114,6 +122,8 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
                 pagesObj.unfreezeComment(index);
                 tasks.push(toUnfreezeCommentTask(index));
             }
+
+            pages = pagesObj.pages;
         } else {
             // textにする
             if (page.comment.text === undefined) {
@@ -129,9 +139,11 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
             }
 
             // コメントを更新
-            const primitivePage = toPrimitivePage(page);
-            page.comment = { text };
-            tasks.push(toSinglePageTask(index, primitivePage, page));
+            pages = pagesObj.pages;
+            const currentPage = pages[index];
+            const primitivePage = toPrimitivePage(currentPage);
+            currentPage.comment = { text };
+            tasks.push(toSinglePageTask(index, primitivePage, currentPage));
         }
     }
 

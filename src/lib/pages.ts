@@ -697,14 +697,14 @@ export class Pages {
     }
 
     unsetQuizFlag(pageIndex: number): void {
-        this.changeQuizFlag(pageIndex, true);
+        this.changeQuizFlag(pageIndex, false);
     }
 
     private changeQuizFlag(pageIndex: number, flag: boolean): void {
         const currentPage = this.pages[pageIndex];
 
-        if (currentPage.comment.text !== undefined) {
-            throw new FumenError(`Comment does not exist in page: index=${pageIndex}`);
+        if (currentPage.comment.text === undefined) {
+            throw new FumenError(`Comment does not exist in page: index=${pageIndex}, flag=${flag}`);
         }
 
         currentPage.flags.quiz = flag;
