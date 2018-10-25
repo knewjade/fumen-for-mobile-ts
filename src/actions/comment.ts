@@ -82,15 +82,14 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
     if (isCurrentQuiz) {
         // Quizにする
 
-        console.log(comment);
-        console.log(comment !== undefined && isQuizCommentResult(comment) ? comment.quizAfterOperation.format().toString() : '');
         if (comment !== undefined && isQuizCommentResult(comment)
             && comment.quizAfterOperation.format().toString() === text) {
             // refにする
             if (page.comment.text !== undefined) {
                 // commentをrefに変換する
+                const prevComment = page.comment.text;
                 pagesObj.unfreezeComment(index);
-                tasks.push(toUnfreezeCommentTask(index));
+                tasks.push(toUnfreezeCommentTask(index, prevComment));
             }
 
             pages = pagesObj.pages;
@@ -121,8 +120,9 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
             // refにする
             if (page.comment.text !== undefined) {
                 // commentをrefに変換する
+                const prevComment = page.comment.text;
                 pagesObj.unfreezeComment(index);
-                tasks.push(toUnfreezeCommentTask(index));
+                tasks.push(toUnfreezeCommentTask(index, prevComment));
             }
 
             pages = pagesObj.pages;

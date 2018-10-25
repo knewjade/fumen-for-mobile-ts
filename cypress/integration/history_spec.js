@@ -528,4 +528,96 @@ describe('History', () => {
 
         play('v115@vhE2OYYAFLDmClcJSAVzbSAVG88AYP88A5tSgCRqBT?sBTtBSwB', testCases);
     });
+
+    it('Comment', () => {
+        const testCases = [
+            {
+                callback: () => {
+                    cy.get(datatest('text-comment')).clear().type('test1');
+
+                    operations.mode.editor.nextPage();
+                    operations.mode.editor.nextPage();
+
+                    cy.get(datatest('text-comment')).clear().type('test2');
+
+                    operations.mode.editor.nextPage();
+                    operations.mode.editor.nextPage();
+                    operations.mode.editor.nextPage();
+                    operations.mode.editor.nextPage();
+
+                    cy.get(datatest('text-comment')).clear().type('test3');
+                },
+                fumen: 'v115@vhGAgWFA0YceERAAAAAgHAgWFA0YceESAAAAAgHAgH?AgHAgWFA0YceETAAAA',
+                count: 9,
+            },
+            {
+                callback: () => {
+                    operations.mode.editor.backPage();
+                    operations.mode.editor.backPage();
+                    operations.mode.editor.backPage();
+                    operations.mode.editor.backPage();
+
+                    cy.get(datatest('text-comment')).clear().type('test1');
+
+                    operations.mode.editor.backPage();
+
+                    cy.get(datatest('text-comment')).clear().type('hello');
+                },
+                fumen: 'v115@vhGAgWFA0YceERAAAAAgWFAooMDEPBAAAAgHAgHAgH?AgHAgWFA0YceETAAAA',
+                count: 2,
+            },
+            {
+                callback: () => {
+                    operations.mode.piece.open();
+
+                    operations.mode.editor.nextPage();
+
+                    cy.get(datatest('text-comment')).clear().type('#Q=[](O)LTS');
+
+                    minoPosition(Piece.O, Rotation.Spawn)(0, 0).forEach(([x, y]) => {
+                        operations.mode.block.click(x, y);
+                    });
+
+                    operations.mode.editor.nextPage();
+
+                    minoPosition(Piece.T, Rotation.Left)(9, 1).forEach(([x, y]) => {
+                        operations.mode.block.click(x, y);
+                    });
+
+                    operations.mode.editor.nextPage();
+
+                    minoPosition(Piece.S, Rotation.Spawn)(8, 2).forEach(([x, y]) => {
+                        operations.mode.block.click(x, y);
+                    });
+                },
+                fumen: 'v115@vhCAgWFA0YceERAAAAAgWFAooMDEPBAAATJYXAFLDm?ClcJSAVDEHBEooRBPoAVBs+zBARhxSHexSRe9NJQhQLHeRL?IeQLJeXDJFhxDGexDeeAgHvhAAgWFA0YceETAAAA',
+                count: 4,
+            },
+            {
+                callback: () => {
+                    cy.get(datatest('text-comment')).clear().type('#Q=[](I)SZO');
+                },
+                fumen: 'v115@vhCAgWFA0YceERAAAAAgWFAooMDEPBAAATJYXAFLDm?ClcJSAVDEHBEooRBPoAVBs+zBARhxSHexSRe9NJQhQLHeRL?IeQLJeXDYXAFLDmClcJSAVDEHBEooRBJoAVBzHrBAFhxDGe?xDeeAgHvhAAgWFA0YceETAAAA',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    cy.get(datatest('text-comment')).clear().type('#Q=[L](S)');
+                },
+                fumen: 'v115@vhCAgWFA0YceERAAAAAgWFAooMDEPBAAATJYXAFLDm?ClcJSAVDEHBEooRBPoAVBs+zBARhxSHexSRe9NJQhQLHeRL?IeQLJeXDJFhxDGexDeeAgHvhAAgWFA0YceETAAAA',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.mode.editor.backPage();
+
+                    cy.get(datatest('text-comment')).clear().type('world');
+                },
+                fumen: 'v115@vhCAgWFA0YceERAAAAAgWFAooMDEPBAAATJYXAFLDm?ClcJSAVDEHBEooRBPoAVBs+zBARhxSHexSRe9NYFA3XaDEE?BAAAQhQLHeRLIeQLJeXDJFhxDGexDeeAgHvhAAgWFA0YceE?TAAAA',
+                count: 1,
+            },
+        ];
+
+        play('v115@vhAAgH', testCases);
+    });
 });

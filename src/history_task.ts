@@ -156,7 +156,7 @@ export const toFreezeCommentTask = (index: number): OperationTask => {
     };
 };
 
-export const toUnfreezeCommentTask = (index: number): OperationTask => {
+export const toUnfreezeCommentTask = (index: number, prevComment: string): OperationTask => {
     return {
         replay: (pages: Page[]) => {
             const pagesObj = new Pages(pages);
@@ -166,7 +166,9 @@ export const toUnfreezeCommentTask = (index: number): OperationTask => {
         revert: (pages: Page[]) => {
             const pagesObj = new Pages(pages);
             pagesObj.freezeComment(index);
-            return { index, pages: pagesObj.pages };
+            const newPages = pagesObj.pages;
+            newPages[index].comment = { text: prevComment };
+            return { index, pages: newPages };
         },
         fixed: false,
         key: generateKey(),
