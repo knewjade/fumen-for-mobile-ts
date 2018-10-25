@@ -1,8 +1,17 @@
 import { NextState, sequence } from './commons';
 import { action, actions } from '../actions';
-import { toPrimitivePage, toSinglePageTask } from '../history_task';
+import {
+    OperationTask,
+    toFreezeCommentTask,
+    toPageTaskStack,
+    toPrimitivePage,
+    toSetQuizFlagTask,
+    toSinglePageTask,
+    toUnfreezeCommentTask,
+    toUnsetQuizFlagTask,
+} from '../history_task';
 import { resources, State } from '../states';
-import { isQuizCommentResult, Pages } from '../lib/pages';
+import { isQuizCommentResult, isTextCommentResult, Pages } from '../lib/pages';
 
 export interface CommentActions {
     updateCommentText: (data: { text?: string, pageIndex: number }) => action;
@@ -58,35 +67,72 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
         return undefined;
     }
 
-    const primitivePage = toPrimitivePage(page);
-
     const prevPageIndex = index - 1;
     const prevPage = pages[prevPageIndex];
 
-    if (text.startsWith('#Q=')) {
-        const pagesObj = new Pages(pages);
-        const comment = pagesObj.getComment(index);
-        if (prevPage === undefined || (isQuizCommentResult(comment) && comment.quiz !== text)) {
-            page.comment = { text };
-        } else if (prevPage.comment.ref !== undefined) {
-            // 前のページを参照する or 前のページと同じ参照先をコピーする
-            page.comment = { ref: prevPage.comment.ref };
-        } else {
-            page.comment = { ref: prevPageIndex };
-        }
+    const pagesObj = new Pages(pages);
+    const comment = pagesObj.getComment(index);
+    const tasks: OperationTask[] = [];
 
-        page.flags.quiz = true;
+    const isCurrentQuiz = text.startsWith('#Q=');
+    if (isCurrentQuiz) {
+        // Quizにする
+
+        if (prevPage !== undefined && isQuizCommentResult(comment) && comment.quiz === text) {
+            // refにする
+            if (page.comment.text !== undefined) {
+                // commentをrefに変換する
+                pagesObj.unfreezeComment(index);
+                tasks.push(toUnfreezeCommentTask(index));
+            }
+        } else {
+            // textにする
+            if (page.comment.text === undefined) {
+                // commentをtextに変換する
+                pagesObj.freezeComment(index);
+                tasks.push(toFreezeCommentTask(index));
+            }
+
+            // Quizフラグを更新する
+            if (!page.flags.quiz) {
+                pagesObj.setQuizFlag(index);
+                tasks.push(toSetQuizFlagTask(index));
+            }
+
+            // コメントを更新
+            const primitivePage = toPrimitivePage(page);
+            page.comment = { text };
+            tasks.push(toSinglePageTask(index, primitivePage, page));
+        }
     } else {
-        if (prevPage === undefined || text !== prevPage.comment.text) {
-            page.comment = { text };
-        } else if (prevPage.comment.ref !== undefined) {
-            // 前のページを参照する or 前のページと同じ参照先をコピーする
-            page.comment = { ref: prevPage.comment.ref };
-        } else {
-            page.comment = { ref: prevPageIndex };
-        }
+        // テキストにする
 
-        page.flags.quiz = false;
+        if (prevPage !== undefined && isTextCommentResult(comment) && comment.text === text) {
+            // refにする
+            if (page.comment.text !== undefined) {
+                // commentをrefに変換する
+                pagesObj.unfreezeComment(index);
+                tasks.push(toUnfreezeCommentTask(index));
+            }
+        } else {
+            // textにする
+            if (page.comment.text === undefined) {
+                // commentをtextに変換する
+                pagesObj.freezeComment(index);
+                tasks.push(toFreezeCommentTask(index));
+            }
+
+            // Quizフラグを更新する
+            if (page.flags.quiz) {
+                pagesObj.unsetQuizFlag(index);
+                tasks.push(toUnsetQuizFlagTask(index));
+            }
+
+            // コメントを更新
+            const primitivePage = toPrimitivePage(page);
+            page.comment = { text };
+            tasks.push(toSinglePageTask(index, primitivePage, page));
+        }
     }
 
     return sequence(state, [
@@ -97,6 +143,6 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
             },
         }),
         actions.saveToMemento(),
-        actions.registerHistoryTask({ task: toSinglePageTask(index, primitivePage, page) }),
+        actions.registerHistoryTask({ task: toPageTaskStack(tasks, index) }),
     ]);
 };
