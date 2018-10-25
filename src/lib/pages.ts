@@ -13,7 +13,7 @@ export interface TextCommentResult {
     next: Piece[];
 }
 
-function isTextCommentResult(result: CommentResult): result is TextCommentResult {
+export function isTextCommentResult(result: CommentResult): result is TextCommentResult {
     return (result as TextCommentResult).text !== undefined;
 }
 
@@ -690,6 +690,32 @@ export class Pages {
         };
 
         return getField();
+    }
+
+    setQuizFlag(pageIndex: number): void {
+        this.changeQuizFlag(pageIndex, true);
+    }
+
+    unsetQuizFlag(pageIndex: number): void {
+        this.changeQuizFlag(pageIndex, false);
+    }
+
+    private changeQuizFlag(pageIndex: number, flag: boolean): void {
+        const currentPage = this.pages[pageIndex];
+
+        if (currentPage.comment.text === undefined) {
+            throw new FumenError(`Comment does not exist in page: index=${pageIndex}, flag=${flag}`);
+        }
+
+        currentPage.flags.quiz = flag;
+        for (let index = pageIndex + 1; index < this.pages.length; index += 1) {
+            const page = this.pages[index];
+            if (page.comment.ref === pageIndex) {
+                page.flags.quiz = flag;
+            } else {
+                break;
+            }
+        }
     }
 }
 

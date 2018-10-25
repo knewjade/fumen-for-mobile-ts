@@ -156,6 +156,59 @@ export const toFreezeCommentTask = (index: number): OperationTask => {
     };
 };
 
+export const toUnfreezeCommentTask = (index: number, prevComment: string): OperationTask => {
+    return {
+        replay: (pages: Page[]) => {
+            const pagesObj = new Pages(pages);
+            pagesObj.unfreezeComment(index);
+            return { index, pages: pagesObj.pages };
+        },
+        revert: (pages: Page[]) => {
+            const pagesObj = new Pages(pages);
+            pagesObj.freezeComment(index);
+            const newPages = pagesObj.pages;
+            newPages[index].comment = { text: prevComment };
+            return { index, pages: newPages };
+        },
+        fixed: false,
+        key: generateKey(),
+    };
+};
+
+export const toSetQuizFlagTask = (index: number): OperationTask => {
+    return {
+        replay: (pages: Page[]) => {
+            const pagesObj = new Pages(pages);
+            pagesObj.setQuizFlag(index);
+            return { index, pages: pagesObj.pages };
+        },
+        revert: (pages: Page[]) => {
+            const pagesObj = new Pages(pages);
+            pagesObj.unsetQuizFlag(index);
+            return { index, pages: pagesObj.pages };
+        },
+        fixed: false,
+        key: generateKey(),
+    };
+};
+
+export const toUnsetQuizFlagTask = (index: number): OperationTask => {
+    return {
+        replay: (pages: Page[]) => {
+            const pagesObj = new Pages(pages);
+            pagesObj.unsetQuizFlag(index);
+            return { index, pages: pagesObj.pages };
+        },
+        revert: (pages: Page[]) => {
+            const pagesObj = new Pages(pages);
+            pagesObj.setQuizFlag(index);
+            return { index, pages: pagesObj.pages };
+        },
+        fixed: false,
+        key: generateKey(),
+    };
+};
+
 export const toPageTaskStack = (tasks: OperationTask[], pageIndexAfterReverting?: number): OperationTask => {
     return {
         replay: (pages: Page[]) => {
