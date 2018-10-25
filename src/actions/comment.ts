@@ -71,7 +71,7 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
     const prevPage = pages[prevPageIndex];
 
     const pagesObj = new Pages(pages);
-    const comment = pagesObj.getComment(index);
+    const comment = prevPage !== undefined ? pagesObj.getComment(index - 1) : undefined;
     const tasks: OperationTask[] = [];
 
     if (page.comment.text === text) {
@@ -82,7 +82,10 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
     if (isCurrentQuiz) {
         // Quizにする
 
-        if (prevPage !== undefined && isQuizCommentResult(comment) && comment.quiz === text) {
+        console.log(comment);
+        console.log(comment !== undefined && isQuizCommentResult(comment) ? comment.quizAfterOperation.format().toString() : '');
+        if (comment !== undefined && isQuizCommentResult(comment)
+            && comment.quizAfterOperation.format().toString() === text) {
             // refにする
             if (page.comment.text !== undefined) {
                 // commentをrefに変換する
@@ -114,8 +117,7 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
         }
     } else {
         // テキストにする
-
-        if (prevPage !== undefined && isTextCommentResult(comment) && comment.text === text) {
+        if (comment !== undefined && isTextCommentResult(comment) && comment.text === text) {
             // refにする
             if (page.comment.text !== undefined) {
                 // commentをrefに変換する
