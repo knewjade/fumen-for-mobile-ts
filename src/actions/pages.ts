@@ -476,7 +476,28 @@ const insertNewPage = ({ index }: { index: number }) => (state: Readonly<State>)
 
     const tasks = [];
 
-    // 次のページにKeyPageを追加
+    // 次のページをKeyにする
+    const nextPage = pages[index];
+    if (nextPage !== undefined && nextPage.field.ref !== undefined) {
+        const pagesObj = new Pages(pages);
+        pagesObj.toKeyPage(index);
+        pages = pagesObj.pages;
+
+        const task = toKeyPageTask(index);
+        tasks.push(task);
+    }
+
+    // 次のページのコメントを固定する
+    if (nextPage !== undefined && nextPage.comment.ref !== undefined) {
+        const pagesObj = new Pages(pages);
+        pagesObj.freezeComment(index);
+        pages = pagesObj.pages;
+
+        const task = toFreezeCommentTask(index);
+        tasks.push(task);
+    }
+
+    // 次のページの前にKeyPageを追加
     {
         const pagesObj = new Pages(pages);
         pagesObj.insertKeyPage(index);
@@ -486,9 +507,9 @@ const insertNewPage = ({ index }: { index: number }) => (state: Readonly<State>)
         tasks.push(task);
     }
 
-    // 次のページのコメントをtextにする
-    const page = pages[index];
-    if (page !== undefined && page.comment.text === undefined) {
+    // 追加したページのコメントを固定する
+    const insertedPage = pages[index];
+    if (insertedPage !== undefined && insertedPage.comment.text === undefined) {
         const pagesObj = new Pages(pages);
         pagesObj.freezeComment(index);
         pages = pagesObj.pages;
@@ -497,21 +518,21 @@ const insertNewPage = ({ index }: { index: number }) => (state: Readonly<State>)
         tasks.push(task);
     }
 
-    const primitivePage = toPrimitivePage(pages[index]);
+    const primitivePage = toPrimitivePage(insertedPage);
 
     // フィールドをリセットする
-    if (page.field.obj !== undefined) {
-        page.field.obj = new Field({});
+    if (insertedPage.field.obj !== undefined) {
+        insertedPage.field.obj = new Field({});
     }
 
     // コメントをリセットする
-    if (page.comment.text !== undefined) {
-        page.comment.text = '';
+    if (insertedPage.comment.text !== undefined) {
+        insertedPage.comment.text = '';
     }
 
     // ページの変更を記録する
     {
-        const task = toSinglePageTask(index, primitivePage, page);
+        const task = toSinglePageTask(index, primitivePage, insertedPage);
         tasks.push(task);
     }
 

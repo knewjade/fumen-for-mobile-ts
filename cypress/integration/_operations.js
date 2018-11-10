@@ -177,6 +177,9 @@ export const operations = {
             removePage: () => {
                 cy.get(datatest('btn-remove-page')).click();
             },
+            addNewPage: () => {
+                cy.get(datatest('btn-insert-new-page')).click();
+            },
             undo: () => {
                 cy.get(datatest('btn-undo')).click();
             },
