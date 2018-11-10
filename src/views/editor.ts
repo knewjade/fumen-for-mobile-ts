@@ -153,6 +153,7 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
         removePage: (data: { index: number }) => void;
         duplicatePage: (data: { index: number }) => void;
         openPage: (data: { index: number }) => void;
+        insertNewPage: (data: { index: number }) => void;
         changeToDrawingMode: () => void;
         changeToFlagsMode: () => void;
         changeToShiftMode: () => void;
@@ -179,6 +180,23 @@ const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
             margin: toolButtonMargin,
             key: 'div-space',
         }),
+        toolButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'white',
+            textColor: '#333',
+            borderColor: '#333',
+            datatest: 'btn-insert-new-page',
+            key: 'btn-insert-new-page',
+            onclick: () => {
+                actions.insertNewPage({ index: currentIndex + 1 });
+            },
+        }, iconContents({
+            description: 'add',
+            iconSize: 22,
+            iconName: 'note_add',
+        })),
         toolButton({
             borderWidth: 1,
             width: layout.buttons.size.width,

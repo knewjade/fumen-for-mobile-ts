@@ -26,6 +26,7 @@ export interface PageActions {
     insertPage: (data: { index: number }) => action;
     insertRefPage: (data: { index: number }) => action;
     insertKeyPage: (data: { index: number }) => action;
+    insertNewPage: (data: { index: number }) => action;
     removePage: (data: { index: number }) => action;
     duplicatePage: (data: { index: number }) => action;
     backLoopPage: () => action;
@@ -151,6 +152,21 @@ export const pageActions: Readonly<PageActions> = {
             actions.clearInferencePiece(),
             actions.commitCommentText(),
             insertKeyPage({ index }),
+            actions.reopenCurrentPage(),
+        ]);
+    },
+    insertNewPage: ({ index }) => (state): NextState => {
+        const fumen = state.fumen;
+        const pages = fumen.pages;
+        if (pages.length < index) {
+            return undefined;
+        }
+
+        return sequence(state, [
+            actions.fixInferencePiece(),
+            actions.clearInferencePiece(),
+            actions.commitCommentText(),
+            insertNewPage({ index }),
             actions.reopenCurrentPage(),
         ]);
     },
@@ -450,6 +466,63 @@ const insertKeyPage = ({ index }: { index: number }) => (state: Readonly<State>)
                 ...state.fumen,
                 pages: newPages,
                 maxPage: newPages.length,
+            },
+        }),
+    ]);
+};
+
+const insertNewPage = ({ index }: { index: number }) => (state: Readonly<State>): NextState => {
+    let pages = state.fumen.pages;
+
+    const tasks = [];
+
+    // 次のページにKeyPageを追加
+    {
+        const pagesObj = new Pages(pages);
+        pagesObj.insertKeyPage(index);
+        pages = pagesObj.pages;
+
+        const task = toInsertPageTask(index, [toPrimitivePage(pages[index])], state.fumen.currentIndex);
+        tasks.push(task);
+    }
+
+    // 次のページのコメントをtextにする
+    const page = pages[index];
+    if (page !== undefined && page.comment.text === undefined) {
+        const pagesObj = new Pages(pages);
+        pagesObj.freezeComment(index);
+        pages = pagesObj.pages;
+
+        const task = toFreezeCommentTask(index);
+        tasks.push(task);
+    }
+
+    const primitivePage = toPrimitivePage(pages[index]);
+
+    // フィールドをリセットする
+    if (page.field.obj !== undefined) {
+        page.field.obj = new Field({});
+    }
+
+    // コメントをリセットする
+    if (page.comment.text !== undefined) {
+        page.comment.text = '';
+    }
+
+    // ページの変更を記録する
+    {
+        const task = toSinglePageTask(index, primitivePage, page);
+        tasks.push(task);
+    }
+
+    return sequence(state, [
+        actions.registerHistoryTask({ task: toPageTaskStack(tasks, state.fumen.currentIndex) }),
+        () => ({
+            fumen: {
+                ...state.fumen,
+                pages,
+                maxPage: pages.length,
+                currentIndex: index,
             },
         }),
     ]);
