@@ -650,6 +650,28 @@ describe('fumen', () => {
                 },
             } as Page);
         });
+
+        test('Quiz flag', async () => {
+            const fumen = 'v115@' +
+                'BgQ4EeAtBewhR4CeBtBewhg0Q4CeAtglRpwhi0Aeil?RpwhTeQ4zhAtDeR4RpBtDeg0Q4RpAtglDei0ilNeF1WmAlv?s2AEqD' +
+                'fETYJIBlvs2ABDhRA1AS6BFYnQB2HMSASYVxCzXBA?AteywHewwXeR4BeBtCeR4DeBteewhhlwhh0AtRpQ4xhglwh?g0BtRpQ' +
+                '4glwhglwhg0Atg0xwQ4ilwhi0xwQ4TewhT4Ath0h?lxhxwBtg0RphlwhxwAth0Rpjli0zhJeAgH';
+            const pages = await decode(fumen);
+
+            expect(pages).toHaveLength(2);
+
+            expect(pages[0]).toMatchObject({
+                flags: {
+                    quiz: false,
+                },
+            } as Page);
+
+            expect(pages[1]).toMatchObject({
+                flags: {
+                    quiz: false,
+                },
+            } as Page);
+        });
     });
 
     describe('encode', async () => {

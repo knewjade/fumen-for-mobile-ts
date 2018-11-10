@@ -11,6 +11,10 @@ export class Quiz {
         return name;
     }
 
+    static isQuizComment(comment: string) {
+        return comment.startsWith('#Q=');
+    }
+
     static create(nexts: string): Quiz;
     static create(hold: string, nexts: string): Quiz;
     static create(first: string, second?: string): Quiz {

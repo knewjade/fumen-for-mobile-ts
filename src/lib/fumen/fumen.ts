@@ -227,9 +227,14 @@ export async function innerDecode(
             comment = { text: commentText };
             store.refIndex.comment = pageIndex;
 
-            try {
-                store.quiz = new Quiz(comment.text);
-            } catch (e) {
+            const text = comment.text;
+            if (Quiz.isQuizComment(text)) {
+                try {
+                    store.quiz = new Quiz(text);
+                } catch (e) {
+                    store.quiz = undefined;
+                }
+            } else {
                 store.quiz = undefined;
             }
         } else if (pageIndex === 0) {

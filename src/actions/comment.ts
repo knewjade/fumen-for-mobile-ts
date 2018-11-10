@@ -12,6 +12,7 @@ import {
 } from '../history_task';
 import { resources, State } from '../states';
 import { isQuizCommentResult, isTextCommentResult, Pages } from '../lib/pages';
+import { Quiz } from '../lib/fumen/quiz';
 
 export interface CommentActions {
     updateCommentText: (data: { text?: string, pageIndex: number }) => action;
@@ -78,7 +79,7 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
         return;
     }
 
-    const isCurrentQuiz = text.startsWith('#Q=');
+    const isCurrentQuiz = Quiz.isQuizComment(text);
     if (isCurrentQuiz) {
         // Quizにする
 
