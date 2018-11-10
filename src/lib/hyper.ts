@@ -39,7 +39,7 @@ export class HyperStage {
             const stage = this.stage;
 
             // Layerを隠す
-            setImmediate(async () => {
+            setTimeout(async () => {
                 const sleep = async (wait: number) => new Promise(resolved => setTimeout(resolved, wait));
                 const hide = async (layer: konva.Layer) => {
                     layer.hide();
@@ -63,15 +63,15 @@ export class HyperStage {
                     const time = waitMillSeconds !== undefined ? waitMillSeconds : 30;
 
                     // waitしたあと、Layerを表示する
-                    setImmediate(async () => {
+                    setTimeout(async () => {
                         await sleep(time);
 
                         await show(layers.background);
                         await show(layers.field);
                         await show(layers.boxes);
-                    });
+                    }, 0);
                 });
-            });
+            }, 0);
         }
     }
 }

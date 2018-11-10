@@ -25,9 +25,9 @@ export const setterActions: Readonly<SetterActions> = {
         }
 
         if (open) {
-            setImmediate(() => {
+            setTimeout(() => {
                 main.openPage({ index: 0 });
-            });
+            }, 0);
         }
 
         return {

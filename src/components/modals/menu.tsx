@@ -78,9 +78,22 @@ export const MenuModal: Component<MenuProps> = (
         const encoded = await encode(pages);
         const data = `v115@${encoded}`;
 
+        // selection
+        const selection = document.getSelection();
+        if (selection === null) {
+            M.toast({ html: 'Failed to copy: no selection', classes: 'mytoast', displayLength: 2000 });
+            return;
+        }
+
         // コピー用のelementを作成
         const domain = i18n.Domains.Fumen();
         const element = document.createElement('pre');
+
+        if (element === undefined || element === null) {
+            M.toast({ html: 'Failed to copy: no element', classes: 'mytoast', displayLength: 2000 });
+            return;
+        }
+
         {
             const style = element.style;
             style.position = 'fixed';
@@ -90,17 +103,13 @@ export const MenuModal: Component<MenuProps> = (
         }
 
         // クリップボードにコピーする
-        if (element !== undefined && element !== null) {
-            document.getSelection().selectAllChildren(element);
-            const success = document.execCommand('copy');
-            if (!success) {
-                console.error('Cannot copy fumen');
-            }
+        selection.selectAllChildren(element);
+        const success = document.execCommand('copy');
+        if (success) {
+            M.toast({ html: 'Copied to clipboard', classes: 'mytoast', displayLength: 600 });
         } else {
-            console.error('Unexpected element to copy');
+            M.toast({ html: 'Failed to copy: command error', classes: 'mytoast', displayLength: 2000 });
         }
-
-        M.toast({ html: 'Copied to clipboard', classes: 'mytoast', displayLength: 600 });
 
         // コピー用のelementを削除
         document.body.removeChild(element);

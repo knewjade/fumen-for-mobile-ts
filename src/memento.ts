@@ -35,7 +35,7 @@ const saver = (() => {
                 isSaved = true;
 
                 const data = await sequentialEncode(pages);
-                setImmediate(() => saveCallback(data));
+                setTimeout(() => saveCallback(data), 0);
 
                 const last = saverState.last;
                 if (last.saverObj !== undefined) {
