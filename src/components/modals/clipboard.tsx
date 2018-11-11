@@ -203,7 +203,7 @@ export const ClipboardButton: ComponentWithText<ClipboardButtonProps> = (
     return (
         <a href="#" key={key} datatest={key} id={key} fontSize={px(textSize)}
            style={style({
-               minWidth: px(185),
+               minWidth: px(165),
                margin: px(5),
                paddingLeft: px(padding),
                paddingRight: px(padding),
