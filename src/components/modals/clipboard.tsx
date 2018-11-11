@@ -164,7 +164,7 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
                         </div>
 
                         <div>
-                            <ClipboardButton key="btn-raw-fumen"
+                            <ClipboardButton key="btn-raw-fumen" colorName="white black-text"
                                              onclick={clipboard('')}>
                                 Raw data
                             </ClipboardButton>
@@ -186,12 +186,13 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
 interface ClipboardButtonProps {
     key: string;
     onclick: () => void;
+    colorName?: string
     textSize?: number;
     padding?: number;
 }
 
 export const ClipboardButton: ComponentWithText<ClipboardButtonProps> = (
-    { key, onclick, padding = 8, textSize = 17 }, text,
+    { key, onclick, colorName = 'red white-text', padding = 8, textSize = 17 }, text,
 ) => {
     const onClickFunc = (event: MouseEvent) => {
         onclick();
@@ -207,7 +208,7 @@ export const ClipboardButton: ComponentWithText<ClipboardButtonProps> = (
                paddingLeft: px(padding),
                paddingRight: px(padding),
            })}
-           className="waves-effect waves-teal btn red white-text" onclick={onClickFunc}>
+           className={`waves-effect waves-teal btn ${colorName}`} onclick={onClickFunc}>
             {text}
         </a>
     );
