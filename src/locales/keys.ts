@@ -28,6 +28,11 @@ export const i18n = {
             Unexpected: (message: string) => t('AppendFumen.Errors.Unexpected', { message }),
         },
     },
+    Clipboard: {
+        Buttons: {
+            Cancel: () => t('Clipboard.Buttons.Cancel'),
+        },
+    },
     Menu: {
         Title: () => t('Menu.Title'),
         Build: (version: string) => t('Menu.Build', { version }),

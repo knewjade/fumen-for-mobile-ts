@@ -23,6 +23,11 @@ export const resources = {
             Unexpected: 'Unexpected error: {{message}}',
         },
     },
+    Clipboard: {
+        Buttons: {
+            Cancel: 'Cancel',
+        },
+    },
     Menu: {
         Title: 'Menu',
         Build: 'build {{version}}',

@@ -2,7 +2,7 @@ import { Component, ComponentWithText, px, style } from '../../lib/types';
 import { h } from 'hyperapp';
 import { resources } from '../../states';
 import { i } from '@hyperapp/html';
-import { encode, Page } from '../../lib/fumen/fumen';
+import { Page } from '../../lib/fumen/fumen';
 import { CommentType, Screens } from '../../lib/enums';
 import { i18n } from '../../locales/keys';
 
@@ -29,6 +29,7 @@ interface MenuProps {
         clearToEnd: () => void;
         clearPast: () => void;
         openAppendModal: () => void;
+        openClipboardModal: () => void;
     };
 }
 
@@ -71,54 +72,6 @@ export const MenuModal: Component<MenuProps> = (
         alignItems: 'center',
     });
 
-    const copyOnClick = async () => {
-        actions.fixInferencePiece();
-
-        // テト譜の変換
-        const encoded = await encode(pages);
-        const data = `v115@${encoded}`;
-
-        // selection
-        const selection = document.getSelection();
-        if (selection === null) {
-            M.toast({ html: 'Failed to copy: no selection', classes: 'mytoast', displayLength: 2000 });
-            return;
-        }
-
-        // コピー用のelementを作成
-        const domain = i18n.Domains.Fumen();
-        const element = document.createElement('pre');
-
-        if (element === undefined || element === null) {
-            M.toast({ html: 'Failed to copy: no element', classes: 'mytoast', displayLength: 2000 });
-            return;
-        }
-
-        {
-            const style = element.style;
-            style.position = 'fixed';
-            style.left = '-100%';
-            element.textContent = domain + data;
-            document.body.appendChild(element);
-        }
-
-        // クリップボードにコピーする
-        selection.selectAllChildren(element);
-        const success = document.execCommand('copy');
-        if (success) {
-            M.toast({ html: 'Copied to clipboard', classes: 'mytoast', displayLength: 600 });
-        } else {
-            M.toast({ html: 'Failed to copy: command error', classes: 'mytoast', displayLength: 2000 });
-        }
-
-        // コピー用のelementを削除
-        document.body.removeChild(element);
-
-        // データをElementに保存する // 主にテスト用
-        document.body.setAttribute('datatest', 'copied-fumen-data');
-        document.body.setAttribute('data', data);
-    };
-
     return (
         <div key="menu-modal-top">
             <div key="mdl-open-fumen" datatest="mdl-open-fumen"
@@ -152,7 +105,10 @@ export const MenuModal: Component<MenuProps> = (
 
                         <SettingButton key="btn-copy-fumen" datatest="btn-copy-fumen" href="#"
                                        icons={[{ name: 'content_copy', size: 29.3 }]}
-                                       onclick={copyOnClick}>
+                                       onclick={() => {
+                                           actions.closeMenuModal();
+                                           actions.openClipboardModal();
+                                       }}>
                             {i18n.Menu.Buttons.Clipboard()}
                         </SettingButton>
 

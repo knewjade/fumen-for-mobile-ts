@@ -8,6 +8,7 @@ import { view as editorView } from './views/editor';
 import { OpenFumenModal } from './components/modals/open';
 import { MenuModal } from './components/modals/menu';
 import { AppendFumenModal } from './components/modals/append';
+import { ClipboardModal } from './components/modals/clipboard';
 
 export const view: View<State, Actions> = (state, actions) => {
     const selectView = () => {
@@ -47,6 +48,10 @@ export const view: View<State, Actions> = (state, actions) => {
             textAreaValue: state.fumen.value !== undefined ? state.fumen.value : '',
             currentIndex: state.fumen.currentIndex,
             maxPage: state.fumen.maxPage,
+        }) : undefined as any,
+
+        state.modal.clipboard ? ClipboardModal({
+            actions,
         }) : undefined as any,
     ]);
 };
