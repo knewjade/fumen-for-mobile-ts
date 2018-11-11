@@ -129,7 +129,7 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
                         <div>
                             <ClipboardButton key="btn-knewjade"
                                              onclick={clipboard('https://knewjade.github.io/fumen-for-mobile/#?d=')}>
-                                knewjade.github.io
+                                THIS SITE
                             </ClipboardButton>
 
                             <ClipboardIconButton
@@ -142,7 +142,7 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
                         <div>
                             <ClipboardButton key="btn-zui-jp"
                                              onclick={clipboard('http://fumen.zui.jp/?')}>
-                                fumen.zui.jp
+                                FUMEN.ZUI.JP
                             </ClipboardButton>
 
                             <ClipboardIconButton key="btn-zui-jp-tinyurl"
@@ -154,7 +154,7 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
                         <div>
                             <ClipboardButton key="btn-harddrop"
                                              onclick={clipboard('http://harddrop.com/fumen/?')}>
-                                harddrop.com
+                                HARDDROP
                             </ClipboardButton>
 
                             <ClipboardIconButton key="btn-harddrop-tinyurl"
@@ -166,7 +166,7 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
                         <div>
                             <ClipboardButton key="btn-raw-fumen" colorName="white black-text"
                                              onclick={clipboard('')}>
-                                Raw data
+                                RAW DATA
                             </ClipboardButton>
                         </div>
                     </div>
@@ -186,7 +186,7 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
 interface ClipboardButtonProps {
     key: string;
     onclick: () => void;
-    colorName?: string
+    colorName?: string;
     textSize?: number;
     padding?: number;
 }
