@@ -16,6 +16,6 @@ describe('Langauge', () => {
 
         operations.mode.reader.openPage();
 
-        cy.get(datatest('open-fumen-label')).should('have.text', 'Open Fumen');
+        cy.get(datatest('open-fumen-label')).should('have.text', 'Open fumen');
     });
 });
