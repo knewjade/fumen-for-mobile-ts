@@ -5,10 +5,12 @@ export interface ModalActions {
     showOpenErrorMessage: (data: { message: string }) => action;
     openFumenModal: () => action;
     openMenuModal: () => action;
+    openAppendModal: () => action;
+    openClipboardModal: () => action;
     closeFumenModal: () => action;
     closeMenuModal: () => action;
-    openAppendModal: () => action;
     closeAppendModal: () => action;
+    closeClipboardModal: () => action;
     closeAllModals: () => action;
 }
 
@@ -39,6 +41,22 @@ export const modalActions: Readonly<ModalActions> = {
             },
         };
     },
+    openAppendModal: () => (state): NextState => {
+        return {
+            modal: {
+                ...state.modal,
+                append: true,
+            },
+        };
+    },
+    openClipboardModal: () => (state): NextState => {
+        return {
+            modal: {
+                ...state.modal,
+                clipboard: true,
+            },
+        };
+    },
     closeFumenModal: () => (state): NextState => {
         return {
             modal: {
@@ -55,19 +73,19 @@ export const modalActions: Readonly<ModalActions> = {
             },
         };
     },
-    openAppendModal: () => (state): NextState => {
-        return {
-            modal: {
-                ...state.modal,
-                append: true,
-            },
-        };
-    },
     closeAppendModal: () => (state): NextState => {
         return {
             modal: {
                 ...state.modal,
                 append: false,
+            },
+        };
+    },
+    closeClipboardModal: () => (state): NextState => {
+        return {
+            modal: {
+                ...state.modal,
+                clipboard: false,
             },
         };
     },
@@ -77,6 +95,7 @@ export const modalActions: Readonly<ModalActions> = {
                 append: false,
                 fumen: false,
                 menu: false,
+                clipboard: false,
             },
         };
     },

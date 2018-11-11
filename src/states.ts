@@ -46,6 +46,7 @@ export interface State {
         fumen: boolean;
         menu: boolean;
         append: boolean;
+        clipboard: boolean;
     };
     handlers: {
         animation?: number;
@@ -110,6 +111,7 @@ export const initState: Readonly<State> = {
         fumen: false,
         menu: false,
         append: false,
+        clipboard: false,
     },
     handlers: {
         animation: undefined,
@@ -141,6 +143,7 @@ export const resources = {
         menu: undefined as any,
         fumen: undefined as any,
         append: undefined as any,
+        clipboard: undefined as any,
     },
     konva: createKonvaObjects(),
     comment: undefined as ({ text: string, pageIndex: number } | undefined),

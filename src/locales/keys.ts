@@ -28,6 +28,12 @@ export const i18n = {
             Unexpected: (message: string) => t('AppendFumen.Errors.Unexpected', { message }),
         },
     },
+    Clipboard: {
+        Title: () => t('Clipboard.Title'),
+        Buttons: {
+            Close: () => t('Clipboard.Buttons.Close'),
+        },
+    },
     Menu: {
         Title: () => t('Menu.Title'),
         Build: (version: string) => t('Menu.Build', { version }),
@@ -50,8 +56,5 @@ export const i18n = {
         Messages: {
             NoAvailableCommentButton: () => t('Menu.Messages.NoAvailableCommentButton'),
         },
-    },
-    Domains: {
-        Fumen: () => t('Domains.Fumen'),
     },
 };

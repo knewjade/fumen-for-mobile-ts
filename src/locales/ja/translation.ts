@@ -15,12 +15,12 @@ export const resources = {
             FailedToLoad: 'テト譜を読み込めませんでした',
         },
     },
+    Clipboard: {
+        Title: 'クリップボードにコピー',
+    },
     Menu: {
         Messages: {
             NoAvailableCommentButton: 'Writableモードのときだけ変更できます',
         },
-    },
-    Domains: {
-        Fumen: 'http://fumen.zui.jp/?',
     },
 };
