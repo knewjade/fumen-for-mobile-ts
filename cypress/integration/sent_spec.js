@@ -2,6 +2,7 @@ import {
     block,
     ClassicColor,
     datatest,
+    expectFumen,
     leftTap,
     mino,
     pages,
@@ -340,23 +341,6 @@ describe('Sent line', () => {
             fumen: 'v110@7eMSWPaAFLDmClcJSAVDEHBEooRBMoAVBqHDMCzOBA?AWoBUeBTfBXcBJdBVXBpEPaAFLDmClcJSAVDEHBEooRBJoA?VBvHUxCqCBAAzTB0NBPJBOVB6MBxeA3gbH3A6SUAFLDmClc?JSAVDEHBEooRBUoAVB7eDlIPUAFLDmClcJSAVDEHBEooRBU?oAVBtdBebBF/ExeC3kzIwssQp0lYi8eAAAteEYsbAuB7eCA?gbAAAAAA',
         });
 
-        // 設定を開く
-        {
-            cy.get(datatest('btn-open-menu')).click();
-        }
-
-        // テト譜をコピー
-        {
-            cy.get(datatest('btn-copy-fumen')).click();
-        }
-
-        cy.wait(500);
-
-        leftTap();
-
-        // v110のデータを取り出す
-        {
-            cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@vhMSwQaAFLDmClcJSAVDEHBEooRBMoAVBqHDMCzOBA?AWyBUoBTpBXmBJnBVhBpeQaAFLDmClcJSAVDEHBEooRBJoA?VBvHUxCqCBAAzdB0XBPTBOfB6WBlhA8AeH8AoUUAFLDmClc?JSAVDEHBEooRBUoAVBvhDliQUAFLDmClcJSAVDEHBEooRBU?oAVBtnBelBFdFlhC8Q4g0wwAtQpglwhAAAhhQaMeA4BvhCA?AeAAAAAA');
-        }
+        expectFumen('v115@vhMSwQaAFLDmClcJSAVDEHBEooRBMoAVBqHDMCzOBA?AWyBUoBTpBXmBJnBVhBpeQaAFLDmClcJSAVDEHBEooRBJoA?VBvHUxCqCBAAzdB0XBPTBOfB6WBlhA8AeH8AoUUAFLDmClc?JSAVDEHBEooRBUoAVBvhDliQUAFLDmClcJSAVDEHBEooRBU?oAVBtnBelBFdFlhC8Q4g0wwAtQpglwhAAAhhQaMeA4BvhCA?AeAAAAAA')
     });
 });

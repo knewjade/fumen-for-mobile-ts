@@ -498,11 +498,7 @@ const testCallback = (field: Field, piece: Piece, rotation: Rotation) => {
             return false;
         }
 
-        const isConflicted = positions.map(toPositionIndex).some(i => field.getAtIndex(i) !== Piece.Empty);
-        if (isConflicted) {
-            return false;
-        }
-
-        return true;
+        const isConflicted = positions.map(toPositionIndex).some(i => field.getAtIndex(i, true) !== Piece.Empty);
+        return !isConflicted;
     };
 };

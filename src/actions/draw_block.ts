@@ -58,7 +58,7 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
             const key = `${type}-${index}`;
 
             // フィールドのみ
-            if (state.cache.currentInitField.getAtIndex(index) !== piece) {
+            if (state.cache.currentInitField.getAtIndex(index, true) !== piece) {
                 // 操作の結果、最初のフィールドの状態から変化するとき
                 page.commands.pre[key] = { x, y, piece, type };
             } else {
@@ -256,7 +256,7 @@ const moveDrawingField = (state: State, index: number, isField: boolean): NextSt
         const type = isField ? 'block' : 'sentBlock';
         const key = `${type}-${index}`;
 
-        const initPiece = state.cache.currentInitField.getAtIndex(isField ? index : -index);
+        const initPiece = state.cache.currentInitField.getAtIndex(index, isField);
         if (initPiece !== piece) {
             // 操作の結果、最初のフィールドの状態から変化するとき
             page.commands.pre[key] = { x, y, piece, type };

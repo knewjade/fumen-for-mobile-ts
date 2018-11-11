@@ -39,9 +39,9 @@ describe('Drawing', () => {
         operations.mode.block.S();
 
         operations.mode.block.dragToRight({ from: 1, to: 9 }, 0);
-        operations.mode.block.dragToRight({ from: 1, to: 9 }, -1);
+        operations.mode.block.dragToRight({ from: 0, to: 9 }, -1);
 
-        expectFumen('v115@qeA8UeA8QeA8ceg0Jeg0Jeg0Jeg0Jeg0RfAgHygQpQ?eQpQeQpEeY4AeY4AgH');
+        expectFumen('v115@qeA8UeA8QeA8ceg0Jeg0Jeg0Jeg0Jeg0RfAgHygQpQ?eQpQeQpEei4AgH');
     });
 
     it('Draw blocks 2', () => {

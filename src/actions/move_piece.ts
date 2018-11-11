@@ -53,7 +53,7 @@ export const movePieceActions: Readonly<MovePieceActions> = {
 
         const pagesObj = new Pages(pages);
         const field = pagesObj.getField(pageIndex, PageFieldOperation.Command);
-        const isConflicted = positions.map(toPositionIndex).some(i => field.getAtIndex(i) !== Piece.Empty);
+        const isConflicted = positions.map(toPositionIndex).some(i => field.getAtIndex(i, true) !== Piece.Empty);
 
         if (isConflicted) {
             return undefined;
