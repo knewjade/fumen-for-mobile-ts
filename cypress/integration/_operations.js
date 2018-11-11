@@ -265,7 +265,7 @@ export const operations = {
             operations.menu.open();
             cy.get(datatest('btn-copy-fumen')).click();
             cy.wait(150);
-            cy.get(datatest('btn-knewjade')).click();
+            cy.get(datatest('btn-raw-fumen')).click();
             cy.wait(10);
 
             {

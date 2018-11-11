@@ -162,6 +162,13 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
                                 archive
                             </ClipboardIconButton>
                         </div>
+
+                        <div>
+                            <ClipboardButton key="btn-raw-fumen"
+                                             onclick={clipboard('')}>
+                                Raw data
+                            </ClipboardButton>
+                        </div>
                     </div>
                 </div>
 
