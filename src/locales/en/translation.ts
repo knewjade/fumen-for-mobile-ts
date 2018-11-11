@@ -1,6 +1,6 @@
 export const resources = {
     OpenFumen: {
-        Title: 'Open Fumen',
+        Title: 'Open fumen',
         PlaceHolder: 'URL or v115@~ / Support v115 or v110',
         Buttons: {
             Open: 'Open',
@@ -12,7 +12,7 @@ export const resources = {
         },
     },
     AppendFumen: {
-        Title: 'Append Fumen',
+        Title: 'Append fumen',
         PlaceHolder: 'URL or v115@~ / Support v115 or v110',
         Buttons: {
             AppendToEnd: 'End',
@@ -24,8 +24,9 @@ export const resources = {
         },
     },
     Clipboard: {
+        Title: 'Copy to clipboard',
         Buttons: {
-            Cancel: 'Cancel',
+            Close: 'Close',
         },
     },
     Menu: {
@@ -50,8 +51,5 @@ export const resources = {
         Messages: {
             NoAvailableCommentButton: 'Available only when writable mode',
         },
-    },
-    Domains: {
-        Fumen: 'http://harddrop.com/fumen/?',
     },
 };

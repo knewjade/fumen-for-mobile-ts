@@ -264,7 +264,27 @@ export const operations = {
         copyToClipboard: () => {
             operations.menu.open();
             cy.get(datatest('btn-copy-fumen')).click();
-            cy.wait(100);
+            cy.wait(150);
+            cy.get(datatest('btn-knewjade')).click();
+            cy.wait(10);
+
+            {
+                let body = cy.get('body');
+                const from = 10;
+                const to = 350;
+                const y = 640;
+                body = body.trigger('mousedown', from, y);
+
+                const maxCount = 10;
+                const dx = (to - from) / maxCount;
+                for (let count = 0; count <= maxCount; count++) {
+                    body = body.trigger('mousemove', dx * count + from, y);
+                }
+
+                body.trigger('mouseup', to, y);
+            }
+
+            cy.get(datatest('btn-clipboard-cancel')).click();
         },
         firstPage: () => {
             operations.menu.open();

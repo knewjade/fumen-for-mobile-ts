@@ -29,8 +29,9 @@ export const i18n = {
         },
     },
     Clipboard: {
+        Title: () => t('Clipboard.Title'),
         Buttons: {
-            Cancel: () => t('Clipboard.Buttons.Cancel'),
+            Close: () => t('Clipboard.Buttons.Close'),
         },
     },
     Menu: {
@@ -55,8 +56,5 @@ export const i18n = {
         Messages: {
             NoAvailableCommentButton: () => t('Menu.Messages.NoAvailableCommentButton'),
         },
-    },
-    Domains: {
-        Fumen: () => t('Domains.Fumen'),
     },
 };

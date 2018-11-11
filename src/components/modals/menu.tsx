@@ -106,6 +106,7 @@ export const MenuModal: Component<MenuProps> = (
                         <SettingButton key="btn-copy-fumen" datatest="btn-copy-fumen" href="#"
                                        icons={[{ name: 'content_copy', size: 29.3 }]}
                                        onclick={() => {
+                                           actions.fixInferencePiece();
                                            actions.closeMenuModal();
                                            actions.openClipboardModal();
                                        }}>
@@ -219,7 +220,7 @@ export const MenuModal: Component<MenuProps> = (
                                            } : () => {
                                                M.toast({
                                                    html: i18n.Menu.Messages.NoAvailableCommentButton(),
-                                                   classes: 'mytoast',
+                                                   classes: 'top-toast',
                                                    displayLength: 3000,
                                                });
                                            }}>

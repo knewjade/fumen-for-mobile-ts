@@ -52,6 +52,7 @@ export const view: View<State, Actions> = (state, actions) => {
 
         state.modal.clipboard ? ClipboardModal({
             actions,
+            pages: state.fumen.pages,
         }) : undefined as any,
     ]);
 };
