@@ -1,5 +1,5 @@
-import { datatest, minoPosition, Piece, rightTap, Rotation, visit } from './_common';
-import { operations } from './_operations';
+import { datatest, minoPosition, Piece, rightTap, Rotation, visit } from '../support/common';
+import { operations } from '../support/operations';
 
 describe('Key/Ref', () => {
     it('key/ref undo/redo', () => {
@@ -12,12 +12,12 @@ describe('Key/Ref', () => {
         });
 
         // 次ページ
-        operations.mode.editor.nextPage();
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
+        operations.mode.tools.nextPage();
 
         // 戻るページ
-        operations.mode.editor.backPage();
-        operations.mode.editor.backPage();
+        operations.mode.tools.backPage();
+        operations.mode.tools.backPage();
 
         minoPosition(Piece.O, Rotation.Spawn)(1, 1).forEach(([x, y]) => {
             operations.mode.block.click(x, y);
@@ -32,7 +32,7 @@ describe('Key/Ref', () => {
         });
 
         // 次ページ
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         minoPosition(Piece.O, Rotation.Spawn)(1, 2).forEach(([x, y]) => {
             operations.mode.block.click(x, y);
@@ -47,7 +47,7 @@ describe('Key/Ref', () => {
         });
 
         // 次ページ
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         minoPosition(Piece.J, Rotation.Reverse)(2, 3).forEach(([x, y]) => {
             operations.mode.block.click(x, y);
@@ -61,14 +61,16 @@ describe('Key/Ref', () => {
             operations.mode.block.click(x, y);
         });
 
-        operations.mode.editor.toRef();
+        operations.mode.tools.home();
+        operations.mode.tools.toRef();
 
         // 戻るページ
-        operations.mode.editor.backPage();
-        operations.mode.editor.toRef();
+        operations.mode.tools.backPage();
+        operations.mode.tools.toRef();
 
         // 戻るページ
-        operations.mode.editor.backPage();
+        operations.mode.tools.backPage();
+        operations.mode.block.open();
 
         minoPosition(Piece.T, Rotation.Left)(9, 1).forEach(([x, y]) => {
             operations.mode.block.click(x, y);
@@ -132,12 +134,12 @@ describe('Key/Ref', () => {
         rightTap();
 
         // 次ページ
-        operations.mode.editor.nextPage();
-        operations.mode.editor.nextPage();
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
+        operations.mode.tools.nextPage();
+        operations.mode.tools.nextPage();
 
         // 戻るページ
-        operations.mode.editor.backPage();
+        operations.mode.tools.backPage();
 
         minoPosition(Piece.I, Rotation.Left)(4, 1).forEach(([x, y]) => {
             operations.mode.block.click(x, y);

@@ -1,4 +1,4 @@
-import { Color, datatest, mino, pages, Piece, rightTap, Rotation, visit } from './_common.js';
+import { Color, datatest, mino, pages, Piece, rightTap, Rotation, visit } from '../support/common.js';
 
 // 接着なしのテスト
 describe('No lock', () => {

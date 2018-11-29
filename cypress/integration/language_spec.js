@@ -1,5 +1,5 @@
-import { datatest, visit } from './_common.js';
-import { operations } from './_operations';
+import { datatest, visit } from '../support/common.js';
+import { operations } from '../support/operations';
 
 // Hold & Nextのテスト
 describe('Langauge', () => {

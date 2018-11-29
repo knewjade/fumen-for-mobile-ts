@@ -1,5 +1,5 @@
-import { block, Color, expectFumen, mino, minoPosition, Piece, Rotation, visit } from './_common';
-import { operations } from './_operations';
+import { block, Color, expectFumen, mino, minoPosition, Piece, Rotation, visit } from '../support/common';
+import { operations } from '../support/operations';
 
 // テト譜を開く
 describe('Put pieces', () => {
@@ -19,7 +19,7 @@ describe('Put pieces', () => {
 
         operations.mode.tools.undo();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         operations.mode.piece.drawOn();
 
@@ -29,7 +29,7 @@ describe('Put pieces', () => {
 
         operations.mode.tools.undo();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         minoPosition(Piece.J, Rotation.Right)(4, 14).forEach(position => {
             operations.mode.block.click(position[0], position[1]);
@@ -55,7 +55,7 @@ describe('Put pieces', () => {
             operations.mode.block.click(position[0], position[1]);
         });
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         minoPosition(Piece.Z, Rotation.Spawn)(4, 1).forEach(position => {
             operations.mode.block.click(position[0], position[1]);
@@ -84,33 +84,33 @@ describe('Put pieces', () => {
         operations.mode.tools.home();
         operations.mode.piece.open();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
         operations.mode.piece.resetPiece();
 
         minoPosition(Piece.T, Rotation.Reverse)(2, 10).forEach(position => {
             operations.mode.block.click(position[0], position[1]);
         });
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
         operations.mode.piece.resetPiece();
 
         minoPosition(Piece.T, Rotation.Reverse)(2, 5).forEach(position => {
             operations.mode.block.click(position[0], position[1]);
         });
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
         operations.mode.piece.resetPiece();
 
         minoPosition(Piece.T, Rotation.Reverse)(2, 1).forEach(position => {
             operations.mode.block.click(position[0], position[1]);
         });
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
         operations.mode.tools.home();
         operations.mode.flags.open();
         operations.mode.flags.lockToOn();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         expectFumen('v115@vhKRQJUGJKJJTNJvMJFEmFdmF2mFKnFKJAgH');
     });
@@ -148,7 +148,7 @@ describe('Put pieces', () => {
             });
         }
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         // SZ
         {
@@ -177,7 +177,7 @@ describe('Put pieces', () => {
             });
         }
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         // LJ
         {
@@ -204,7 +204,7 @@ describe('Put pieces', () => {
             });
         }
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         // I
         {
@@ -243,7 +243,7 @@ describe('Put pieces', () => {
         operations.mode.tools.undo();
         operations.mode.tools.redo();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         // I
         minoPosition(Piece.I, Rotation.Spawn)(4, 4).forEach(position => {
@@ -259,7 +259,7 @@ describe('Put pieces', () => {
         operations.mode.tools.undo();
         operations.mode.tools.redo();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         // O
         minoPosition(Piece.O, Rotation.Spawn)(3, 10).forEach(position => {
@@ -289,7 +289,7 @@ describe('Put pieces', () => {
         operations.mode.piece.rotateToLeft();
         operations.mode.piece.harddrop();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         // I
         minoPosition(Piece.I, Rotation.Spawn)(2, 21).forEach(position => {

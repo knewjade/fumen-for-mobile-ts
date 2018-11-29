@@ -1,5 +1,17 @@
-import { block, Color, datatest, expectFumen, minoPosition, Piece, px, py, rightTap, Rotation, visit } from './_common';
-import { operations } from './_operations';
+import {
+    block,
+    Color,
+    datatest,
+    expectFumen,
+    minoPosition,
+    Piece,
+    px,
+    py,
+    rightTap,
+    Rotation,
+    visit
+} from '../support/common';
+import { operations } from '../support/operations';
 
 describe('Drawing Tools', () => {
     it('Duplicate page', () => {
@@ -9,10 +21,10 @@ describe('Drawing Tools', () => {
         });
 
         operations.mode.tools.open();
-        operations.mode.editor.nextPage();
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
+        operations.mode.tools.nextPage();
         operations.mode.tools.duplicatePage();
-        operations.mode.editor.toRef();
+        operations.mode.tools.toRef();
 
         operations.menu.lastPage();
         operations.mode.tools.duplicatePage();
@@ -39,7 +51,7 @@ describe('Drawing Tools', () => {
         expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAARhgHIeiHQe2OJvhB3rBzkBIhxSHexSaezkBvhCsqBif?BAAAkhAAJeAAA');
 
         operations.menu.lastPage();
-        operations.mode.editor.backPage();
+        operations.mode.tools.backPage();
 
         operations.mode.tools.home();
         operations.mode.piece.open();
@@ -83,54 +95,54 @@ describe('Drawing Tools', () => {
         operations.mode.tools.removePage();
         operations.mode.tools.removePage();
 
-        operations.mode.editor.nextPage();
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
+        operations.mode.tools.nextPage();
 
         operations.mode.tools.removePage();
 
-        operations.mode.editor.nextPage();
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
+        operations.mode.tools.nextPage();
 
         operations.mode.tools.removePage();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         operations.mode.tools.removePage();
         operations.mode.tools.removePage();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         operations.mode.tools.removePage();
 
         // 新規ページ
         operations.mode.block.open();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
         operations.mode.block.L();
         operations.mode.block.dragToRight({ from: 0, to: 5 }, 1);
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
         operations.mode.block.J();
         operations.mode.block.dragToRight({ from: 0, to: 5 }, 2);
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
         operations.mode.block.S();
         operations.mode.block.dragToRight({ from: 0, to: 5 }, 3);
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
         operations.mode.block.Z();
         operations.mode.block.dragToRight({ from: 0, to: 5 }, -1);
 
         // 書き込んだページを削除
         operations.mode.tools.open();
 
-        operations.mode.editor.backPage();
+        operations.mode.tools.backPage();
         operations.mode.tools.removePage();
 
-        operations.mode.editor.backPage();
+        operations.mode.tools.backPage();
         operations.mode.tools.removePage();
 
-        operations.mode.editor.backPage();
+        operations.mode.tools.backPage();
         operations.mode.tools.removePage();
 
         expectFumen('v115@QhwwFeBtxwGeBtwwJeXDYYAFLDmClcJSAVDEHBEooR?BToAVBv/7LCvhA2uBIhRpHeRpaeifQVAFLDmClcJSAVzbSA?VG88A4N88AZAAAAvhAplBLhwwFeRpAewwAeAPAeQaAegHhl?Q4C8BtQpJeHiuFA3XaDEEBAAA9giWQaDexDwwBtg0QLAewh?RLwSQahWQaQLwwwhhlwhA8HeAAJeHmQFA3XaDEEBAAA9gV4?Del0DellNeFtDeAAPFA3XaDEEBAAA');
@@ -144,7 +156,7 @@ describe('Drawing Tools', () => {
 
         operations.mode.tools.open();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         operations.mode.block.open();
 
@@ -225,7 +237,7 @@ describe('Drawing Tools', () => {
         // Remove page
         operations.mode.tools.open();
 
-        operations.mode.editor.backPage();
+        operations.mode.tools.backPage();
         operations.mode.tools.removePage();
 
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 1');
@@ -242,7 +254,7 @@ describe('Drawing Tools', () => {
 
         operations.mode.tools.undo();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '2 / 2');
         cy.get(block(6, 0)).should('have.attr', 'color', Color.I.Normal);
@@ -281,7 +293,7 @@ describe('Drawing Tools', () => {
 
         operations.mode.tools.open();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         operations.mode.block.open();
 
@@ -299,7 +311,7 @@ describe('Drawing Tools', () => {
 
         operations.menu.lastPage();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         operations.mode.block.T();
         operations.mode.block.dragToRight({ from: 7, to: 9 }, 2);
@@ -321,7 +333,7 @@ describe('Drawing Tools', () => {
 
         operations.menu.lastPage();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         operations.mode.block.L();
         operations.mode.block.dragToRight({ from: 7, to: 9 }, 4);
@@ -362,7 +374,7 @@ describe('Drawing Tools', () => {
         operations.mode.flags.riseToOn();
         operations.mode.flags.mirrorToOn();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         // 2ページ目
         operations.mode.tools.home();
@@ -385,12 +397,12 @@ describe('Drawing Tools', () => {
         operations.mode.flags.riseToOff();
         operations.mode.flags.mirrorToOff();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         // 3ページ目
         operations.mode.flags.lockToOn();
         operations.mode.flags.mirrorToOn();
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         expectFumen('v115@RhA8IeB8HewhglQpAtwwg0Q4A8BeAINbhxwHewwIeA?glvhBAQLAgH');
 
@@ -433,7 +445,7 @@ describe('Drawing Tools', () => {
         operations.mode.flags.mirrorToOn();
 
         for (let i = 0; i < 10; i++) {
-            operations.mode.editor.nextPage();
+            operations.mode.tools.nextPage();
         }
 
         minoPosition(Piece.I, Rotation.Spawn)(1, 0).forEach((p) => {
@@ -443,7 +455,7 @@ describe('Drawing Tools', () => {
         expectFumen('v115@bhzhPeAIrvhJAIrAIrAIrAIrAIrAIrAIrAIrAIrAIr');
     });
 
-    it('Shift', () => {
+    it('Slide', () => {
         visit({
             fumen: 'v115@heB8GeD8FeD8GeB8hfB8GeD8FeD8GeB8rexyHjeTaH?hxwIfgTaLfJHJDhQaIeQaIeQaIeQaMepmH',
         });
@@ -451,36 +463,39 @@ describe('Drawing Tools', () => {
         // MenuからWritableモードにして開く
         operations.screen.writable();
 
-        operations.mode.shift.open();
+        operations.mode.slide.open();
 
-        operations.mode.shift.right();
-        operations.mode.shift.left();
+        operations.mode.slide.right();
+        operations.mode.slide.left();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
-        operations.mode.shift.left();
-        operations.mode.shift.right();
+        operations.mode.slide.left();
+        operations.mode.slide.right();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
-        operations.mode.shift.down();
-        operations.mode.shift.up();
+        operations.mode.slide.down();
+        operations.mode.slide.up();
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
-        operations.mode.shift.up();
-        operations.mode.shift.down();
+        operations.mode.slide.up();
+        operations.mode.slide.down();
 
         expectFumen('v115@heB8GeD8FeD8GeB8hfB8GeD8FeD8GeB8reAgHvhCAg?HAgHAgH');
 
-        operations.mode.editor.nextPage();
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
+        operations.mode.tools.nextPage();
 
-        operations.mode.editor.backPage();
-        operations.mode.editor.toRef();
+        operations.mode.tools.backPage();
+        operations.mode.tools.home();
+        operations.mode.tools.toRef();
 
-        operations.mode.editor.backPage();
-        operations.mode.shift.down();
+        operations.mode.tools.backPage();
+
+        operations.mode.slide.open();
+        operations.mode.slide.down();
 
         expectFumen('v115@heB8GeD8FeD8GeB8hfB8GeD8FeD8GeB8reAgHvhBAg?HAgHheBAGeAABeAAPeA8BeA8GeB8XfBAGeAABeAAPeA8BeA?8GeB8heAgHvhAAgHheB8GeA8BeA8PeAABeAAGeBAXfB8GeA?8BeA8PeAABeAAGeBAheAgH');
     });
@@ -514,7 +529,7 @@ describe('Drawing Tools', () => {
         rightTap();
 
         {
-            operations.mode.editor.backPage();
+            operations.mode.tools.backPage();
 
             operations.menu.open();
 

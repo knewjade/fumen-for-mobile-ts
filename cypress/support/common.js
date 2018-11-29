@@ -1,4 +1,4 @@
-import { operations } from './_operations';
+import { operations } from './operations';
 
 export const HighlightType = {
     Normal: 'Normal',

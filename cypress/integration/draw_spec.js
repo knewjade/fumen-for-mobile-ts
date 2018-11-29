@@ -1,5 +1,16 @@
-import { block, Color, datatest, expectFumen, mino, minoPosition, Piece, Rotation, sentBlock, visit } from './_common';
-import { operations } from './_operations';
+import {
+    block,
+    Color,
+    datatest,
+    expectFumen,
+    mino,
+    minoPosition,
+    Piece,
+    Rotation,
+    sentBlock,
+    visit
+} from '../support/common';
+import { operations } from '../support/operations';
 
 // テト譜を開く
 describe('Drawing', () => {
@@ -205,7 +216,7 @@ describe('Drawing', () => {
             }
 
             // 次のボタン
-            operations.mode.editor.nextPage();
+            operations.mode.tools.nextPage();
 
             // 補完が消えている
             {
@@ -225,7 +236,7 @@ describe('Drawing', () => {
             }
 
             // 戻るボタン
-            operations.mode.editor.backPage();
+            operations.mode.tools.backPage();
 
             // 補完が消えている
             {
@@ -274,9 +285,11 @@ describe('Drawing', () => {
         operations.mode.block.open();
 
         // 次のページ
-        operations.mode.editor.nextPage();
-        operations.mode.editor.toRef();
+        operations.mode.tools.nextPage();
+        operations.mode.tools.home();
+        operations.mode.tools.toRef();
 
+        operations.mode.block.open();
         operations.mode.block.O();
 
         // Oミノを置く
@@ -300,7 +313,7 @@ describe('Drawing', () => {
         operations.mode.block.click(7, 1);
 
         // 前のページ
-        operations.mode.editor.backPage();
+        operations.mode.tools.backPage();
 
         operations.mode.block.I();
 
@@ -310,7 +323,7 @@ describe('Drawing', () => {
         });
 
         // 次のページ
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         // Iミノの確認
         mino(Piece.I, Rotation.Spawn)(4, 0).forEach((block) => {
@@ -354,7 +367,7 @@ describe('Drawing', () => {
 
         operations.mode.block.dragToRight({ from: 3, to: 6 }, 0);
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         operations.mode.block.dragToRight({ from: 0, to: 9 }, -1);
 

@@ -11,7 +11,7 @@ import {
     rightTap,
     Rotation,
     visit,
-} from './_common';
+} from '../support/common';
 
 // Quizのテスト
 describe('Quiz', () => {
