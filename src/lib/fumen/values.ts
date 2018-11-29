@@ -13,7 +13,7 @@ export class Values {
     poll(max: number): number {
         let value = 0;
         for (let count = 0; count < max; count += 1) {
-            const v = this.values.slide();
+            const v = this.values.shift();
             if (v === undefined) {
                 throw new FumenError('Unexpected');
             }

@@ -92,7 +92,7 @@ export const memento = (() => {
                 if (undoQueue.length < 200) {
                     undoQueue.push(task);
                 } else {
-                    undoQueue.slide();
+                    undoQueue.shift();
                     undoQueue.push(task);
                 }
             }
