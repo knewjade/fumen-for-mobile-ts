@@ -11,7 +11,7 @@ import {
     Rotation,
     sentBlock,
     visit
-} from './_common';
+} from '../support/common';
 
 // テト譜を開く
 describe('Sent line', () => {

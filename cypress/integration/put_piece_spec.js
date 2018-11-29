@@ -1,5 +1,5 @@
-import { block, Color, expectFumen, mino, minoPosition, Piece, Rotation, visit } from './_common';
-import { operations } from './_operations';
+import { block, Color, expectFumen, mino, minoPosition, Piece, Rotation, visit } from '../support/common';
+import { operations } from '../support/operations';
 
 // テト譜を開く
 describe('Put pieces', () => {

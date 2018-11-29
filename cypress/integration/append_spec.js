@@ -1,5 +1,5 @@
-import { datatest, expectFumen, visit } from './_common';
-import { operations } from './_operations';
+import { datatest, expectFumen, visit } from '../support/common';
+import { operations } from '../support/operations';
 
 // テト譜を追加
 describe('Append fumen', () => {

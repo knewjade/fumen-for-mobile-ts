@@ -1,6 +1,6 @@
 import { px, style } from '../lib/types';
 import { a, div, i, img, span } from '@hyperapp/html';
-import { EditorLayout } from './editor';
+import { EditorLayout } from './editor/editor';
 import { VNode } from 'hyperapp';
 import { parsePieceName, Piece } from '../lib/enums';
 

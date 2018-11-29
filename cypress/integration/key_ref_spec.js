@@ -1,5 +1,5 @@
-import { datatest, minoPosition, Piece, rightTap, Rotation, visit } from './_common';
-import { operations } from './_operations';
+import { datatest, minoPosition, Piece, rightTap, Rotation, visit } from '../support/common';
+import { operations } from '../support/operations';
 
 describe('Key/Ref', () => {
     it('key/ref undo/redo', () => {

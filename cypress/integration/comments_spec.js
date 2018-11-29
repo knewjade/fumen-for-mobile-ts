@@ -1,5 +1,5 @@
-import { datatest, expectFumen, minoPosition, Piece, Rotation, visit } from './_common';
-import { operations } from './_operations';
+import { datatest, expectFumen, minoPosition, Piece, Rotation, visit } from '../support/common';
+import { operations } from '../support/operations';
 
 describe('Comments', () => {
     it('Should not apply comment to other pages', () => {

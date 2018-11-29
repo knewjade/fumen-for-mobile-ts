@@ -1,4 +1,4 @@
-import { datatest } from './_common';
+import { datatest } from './common';
 
 // 中央少し下クリックを想定
 const px = (x) => 35 + 24 * x;
@@ -190,21 +190,21 @@ export const operations = {
                 cy.get(datatest('btn-drawing-tool')).click();
             },
         },
-        shift: {
+        slide: {
             open: () => {
-                cy.get(datatest('btn-shift-mode')).click();
+                cy.get(datatest('btn-slide-mode')).click();
             },
             right: () => {
-                cy.get(datatest('btn-shift-to-right')).click();
+                cy.get(datatest('btn-slide-to-right')).click();
             },
             left: () => {
-                cy.get(datatest('btn-shift-to-left')).click();
+                cy.get(datatest('btn-slide-to-left')).click();
             },
             up: () => {
-                cy.get(datatest('btn-shift-to-up')).click();
+                cy.get(datatest('btn-slide-to-up')).click();
             },
             down: () => {
-                cy.get(datatest('btn-shift-to-down')).click();
+                cy.get(datatest('btn-slide-to-down')).click();
             },
         },
         fillRow: {

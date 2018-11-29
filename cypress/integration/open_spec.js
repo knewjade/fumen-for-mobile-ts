@@ -1,5 +1,5 @@
-import { block, Color, datatest, holdBox, leftTap, nextBox, pages, Piece, rightTap, visit } from './_common';
-import { operations } from './_operations';
+import { block, Color, datatest, holdBox, leftTap, nextBox, pages, Piece, rightTap, visit } from '../support/common';
+import { operations } from '../support/operations';
 
 // テト譜を開く
 describe('Open fumen', () => {

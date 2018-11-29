@@ -1,5 +1,5 @@
-import { datatest, expectFumen, minoPosition, Piece, Rotation, visit } from './_common';
-import { operations } from './_operations';
+import { datatest, expectFumen, minoPosition, Piece, Rotation, visit } from '../support/common';
+import { operations } from '../support/operations';
 
 describe('History', () => {
     const play = (fumen, history) => {
@@ -288,7 +288,7 @@ describe('History', () => {
         play('v115@vhAAgH', testCases);
     });
 
-    it('Shift', () => {
+    it('Slide', () => {
         const testCases = [
             {
                 callback: () => {
@@ -302,34 +302,34 @@ describe('History', () => {
             },
             {
                 callback: () => {
-                    operations.mode.shift.open();
-                    operations.mode.shift.right();
+                    operations.mode.slide.open();
+                    operations.mode.slide.right();
                 },
                 fumen: 'v115@AehlFewhAehlFewh+gRpFeAtAeRpFeAtg0HewwxQJ',
                 count: 1,
             },
             {
                 callback: () => {
-                    operations.mode.shift.open();
-                    operations.mode.shift.up();
+                    operations.mode.slide.open();
+                    operations.mode.slide.up();
                 },
                 fumen: 'v115@AehlFewh+gRpFeAtAeRpFeAtJeg0HewwxLJ',
                 count: 1,
             },
             {
                 callback: () => {
-                    operations.mode.shift.open();
-                    operations.mode.shift.left();
-                    operations.mode.shift.left();
+                    operations.mode.slide.open();
+                    operations.mode.slide.left();
+                    operations.mode.slide.left();
                 },
                 fumen: 'v115@glFewh/gQpFeAtBeQpFeAtLeg0HewwxKJ',
                 count: 2,
             },
             {
                 callback: () => {
-                    operations.mode.shift.open();
-                    operations.mode.shift.down();
-                    operations.mode.shift.down();
+                    operations.mode.slide.open();
+                    operations.mode.slide.down();
+                    operations.mode.slide.down();
                 },
                 fumen: 'v115@TeglFewh/gQpFeAtBeg0HewwAgH',
                 count: 2,

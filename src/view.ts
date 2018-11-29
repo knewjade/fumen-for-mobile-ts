@@ -4,7 +4,7 @@ import { Actions } from './actions';
 import { State } from './states';
 import { Screens } from './lib/enums';
 import { view as readerView } from './views/reader';
-import { view as editorView } from './views/editor';
+import { view as editorView } from './views/editor/editor';
 import { OpenFumenModal } from './components/modals/open';
 import { MenuModal } from './components/modals/menu';
 import { AppendFumenModal } from './components/modals/append';

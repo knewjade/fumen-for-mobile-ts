@@ -1,5 +1,17 @@
-import { block, Color, datatest, expectFumen, minoPosition, Piece, px, py, rightTap, Rotation, visit } from './_common';
-import { operations } from './_operations';
+import {
+    block,
+    Color,
+    datatest,
+    expectFumen,
+    minoPosition,
+    Piece,
+    px,
+    py,
+    rightTap,
+    Rotation,
+    visit
+} from '../support/common';
+import { operations } from '../support/operations';
 
 describe('Drawing Tools', () => {
     it('Duplicate page', () => {
@@ -443,7 +455,7 @@ describe('Drawing Tools', () => {
         expectFumen('v115@bhzhPeAIrvhJAIrAIrAIrAIrAIrAIrAIrAIrAIrAIr');
     });
 
-    it('Shift', () => {
+    it('Slide', () => {
         visit({
             fumen: 'v115@heB8GeD8FeD8GeB8hfB8GeD8FeD8GeB8rexyHjeTaH?hxwIfgTaLfJHJDhQaIeQaIeQaIeQaMepmH',
         });
@@ -451,25 +463,25 @@ describe('Drawing Tools', () => {
         // MenuからWritableモードにして開く
         operations.screen.writable();
 
-        operations.mode.shift.open();
+        operations.mode.slide.open();
 
-        operations.mode.shift.right();
-        operations.mode.shift.left();
-
-        operations.mode.editor.nextPage();
-
-        operations.mode.shift.left();
-        operations.mode.shift.right();
+        operations.mode.slide.right();
+        operations.mode.slide.left();
 
         operations.mode.editor.nextPage();
 
-        operations.mode.shift.down();
-        operations.mode.shift.up();
+        operations.mode.slide.left();
+        operations.mode.slide.right();
 
         operations.mode.editor.nextPage();
 
-        operations.mode.shift.up();
-        operations.mode.shift.down();
+        operations.mode.slide.down();
+        operations.mode.slide.up();
+
+        operations.mode.editor.nextPage();
+
+        operations.mode.slide.up();
+        operations.mode.slide.down();
 
         expectFumen('v115@heB8GeD8FeD8GeB8hfB8GeD8FeD8GeB8reAgHvhCAg?HAgHAgH');
 
@@ -480,7 +492,7 @@ describe('Drawing Tools', () => {
         operations.mode.editor.toRef();
 
         operations.mode.editor.backPage();
-        operations.mode.shift.down();
+        operations.mode.slide.down();
 
         expectFumen('v115@heB8GeD8FeD8GeB8hfB8GeD8FeD8GeB8reAgHvhBAg?HAgHheBAGeAABeAAPeA8BeA8GeB8XfBAGeAABeAAPeA8BeA?8GeB8heAgHvhAAgHheB8GeA8BeA8PeAABeAAGeBAXfB8GeA?8BeA8PeAABeAAGeBAheAgH');
     });

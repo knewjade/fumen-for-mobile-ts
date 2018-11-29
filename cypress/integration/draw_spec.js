@@ -1,5 +1,16 @@
-import { block, Color, datatest, expectFumen, mino, minoPosition, Piece, Rotation, sentBlock, visit } from './_common';
-import { operations } from './_operations';
+import {
+    block,
+    Color,
+    datatest,
+    expectFumen,
+    mino,
+    minoPosition,
+    Piece,
+    Rotation,
+    sentBlock,
+    visit
+} from '../support/common';
+import { operations } from '../support/operations';
 
 // テト譜を開く
 describe('Drawing', () => {

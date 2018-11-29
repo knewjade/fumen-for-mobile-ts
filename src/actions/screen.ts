@@ -58,7 +58,7 @@ export const modeActions: Readonly<ScreenActions> = {
     changeToShiftMode: () => (state): NextState => {
         return sequence(state, [
             changeTouchType({ type: TouchTypes.None }),
-            changeModeType({ type: ModeTypes.Shift }),
+            changeModeType({ type: ModeTypes.Slide }),
         ]);
     },
     changeToFillRowMode: () => (state): NextState => {

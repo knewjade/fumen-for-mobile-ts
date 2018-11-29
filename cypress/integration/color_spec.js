@@ -1,4 +1,4 @@
-import { block, ClassicColor, Color, rightTap, visit } from './_common';
+import { block, ClassicColor, Color, rightTap, visit } from '../support/common';
 
 describe('Color', () => {
     it('Guide line color', () => {
