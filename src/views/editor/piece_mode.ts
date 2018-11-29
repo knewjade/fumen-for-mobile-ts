@@ -1,5 +1,5 @@
 import { Piece, TouchTypes } from '../../lib/enums';
-import { div } from '@hyperapp/@hyperapp/html';
+import { div } from '@hyperapp/html';
 import { dualButton, iconContents, radioIconContents, switchButton, toolButton, toolSpace } from '../editor_buttons';
 import { EditorLayout, toolStyle } from './editor';
 

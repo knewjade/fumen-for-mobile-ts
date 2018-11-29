@@ -1,4 +1,4 @@
-import { div } from '@hyperapp/@hyperapp/html';
+import { div } from '@hyperapp/html';
 import { switchButton, switchIconContents, toolSpace } from '../editor_buttons';
 import { EditorLayout, toolStyle } from './editor';
 
