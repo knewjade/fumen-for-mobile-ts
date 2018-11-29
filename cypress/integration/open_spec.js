@@ -225,10 +225,10 @@ describe('Open fumen', () => {
         dragNDrop(8);
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '8 / 10');
 
-        operations.mode.editor.backPage();
+        operations.mode.tools.backPage();
         cy.get(datatest('range-page-slider')).should('have.value', '7');
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
         cy.get(datatest('range-page-slider')).should('have.value', '8');
 
         dragNDrop(1);

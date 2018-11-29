@@ -81,14 +81,14 @@ describe('History', () => {
             },
             {
                 callback: () => {
-                    operations.mode.editor.nextPage();
+                    operations.mode.tools.nextPage();
                 },
                 fumen: 'v115@vhDRQJUGJKJJAgH',
                 count: 1,
             },
             {
                 callback: () => {
-                    operations.mode.editor.nextPage();
+                    operations.mode.tools.nextPage();
                 },
                 fumen: 'v115@vhERQJUGJKJJAgHAgH',
                 count: 1,
@@ -113,7 +113,7 @@ describe('History', () => {
             },
             {
                 callback: () => {
-                    operations.mode.editor.nextPage();
+                    operations.mode.tools.nextPage();
                 },
                 fumen: 'v115@vhFRQJUGJKJJAgHTNnTNn',
                 count: 1,
@@ -157,7 +157,7 @@ describe('History', () => {
             {
                 callback: () => {
                     operations.menu.firstPage();
-                    operations.mode.editor.nextPage();
+                    operations.mode.tools.nextPage();
                     operations.mode.tools.removePage();
                 },
                 fumen: 'v115@3gwwHeywwhGeR4whBtAeRpAeR4glwhg0BtRpAeilwh?i0JeO/IygwhIewhIewhIewhde6WQAAvhAFlB',
@@ -262,7 +262,7 @@ describe('History', () => {
             },
             {
                 callback: () => {
-                    operations.mode.editor.nextPage();
+                    operations.mode.tools.nextPage();
                 },
                 fumen: 'v115@vhGzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOJJx/XVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA9NJ0MJXD?JAgH',
                 count: 1,
@@ -277,7 +277,7 @@ describe('History', () => {
             {
                 callback: () => {
                     operations.menu.firstPage();
-                    operations.mode.editor.nextPage();
+                    operations.mode.tools.nextPage();
                     cy.get(datatest('text-comment')).clear().type('こんにちは');
                 },
                 fumen: 'v115@vhGzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOJYeAlvs2A1sDfEToABBlvs2AWDEfET4J6Alvs2AW5AAAx?/XVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA9NJ0MJXDJAgWN?AooMDEvoo2A3XaDEEBAAA',
@@ -394,9 +394,9 @@ describe('History', () => {
         const testCases = [
             {
                 callback: () => {
-                    operations.mode.editor.nextPage();
-                    operations.mode.editor.nextPage();
-                    operations.mode.editor.nextPage();
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.nextPage();
                     operations.menu.clearPast();
                 },
                 fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYFAooMDEPBAAAv?hBToQFA3XaDEEBAAAPnB',
@@ -449,7 +449,7 @@ describe('History', () => {
             },
             {
                 callback: () => {
-                    operations.mode.editor.backPage();
+                    operations.mode.tools.backPage();
                     operations.menu.clearToEnd();
                 },
                 fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYWAFLDmClcJSAV?DEHBEooRBPoAVBUNBAAvhBTIJFKJ',
@@ -487,8 +487,8 @@ describe('History', () => {
             {
                 callback: () => {
                     operations.menu.firstPage();
-                    operations.mode.editor.nextPage();
-                    operations.mode.editor.nextPage();
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.nextPage();
 
                     operations.menu.append();
 
@@ -506,10 +506,10 @@ describe('History', () => {
             {
                 callback: () => {
                     operations.menu.firstPage();
-                    operations.mode.editor.nextPage();
-                    operations.mode.editor.nextPage();
-                    operations.mode.editor.nextPage();
-                    operations.mode.editor.nextPage();
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.nextPage();
 
                     operations.menu.append();
 
@@ -535,15 +535,15 @@ describe('History', () => {
                 callback: () => {
                     cy.get(datatest('text-comment')).clear().type('test1');
 
-                    operations.mode.editor.nextPage();
-                    operations.mode.editor.nextPage();
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.nextPage();
 
                     cy.get(datatest('text-comment')).clear().type('test2');
 
-                    operations.mode.editor.nextPage();
-                    operations.mode.editor.nextPage();
-                    operations.mode.editor.nextPage();
-                    operations.mode.editor.nextPage();
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.nextPage();
 
                     cy.get(datatest('text-comment')).clear().type('test3');
                 },
@@ -552,14 +552,14 @@ describe('History', () => {
             },
             {
                 callback: () => {
-                    operations.mode.editor.backPage();
-                    operations.mode.editor.backPage();
-                    operations.mode.editor.backPage();
-                    operations.mode.editor.backPage();
+                    operations.mode.tools.backPage();
+                    operations.mode.tools.backPage();
+                    operations.mode.tools.backPage();
+                    operations.mode.tools.backPage();
 
                     cy.get(datatest('text-comment')).clear().type('test1');
 
-                    operations.mode.editor.backPage();
+                    operations.mode.tools.backPage();
 
                     cy.get(datatest('text-comment')).clear().type('hello');
                 },
@@ -570,7 +570,7 @@ describe('History', () => {
                 callback: () => {
                     operations.mode.piece.open();
 
-                    operations.mode.editor.nextPage();
+                    operations.mode.tools.nextPage();
 
                     cy.get(datatest('text-comment')).clear().type('#Q=[](O)LTS');
 
@@ -578,13 +578,13 @@ describe('History', () => {
                         operations.mode.block.click(x, y);
                     });
 
-                    operations.mode.editor.nextPage();
+                    operations.mode.tools.nextPage();
 
                     minoPosition(Piece.T, Rotation.Left)(9, 1).forEach(([x, y]) => {
                         operations.mode.block.click(x, y);
                     });
 
-                    operations.mode.editor.nextPage();
+                    operations.mode.tools.nextPage();
 
                     minoPosition(Piece.S, Rotation.Spawn)(8, 2).forEach(([x, y]) => {
                         operations.mode.block.click(x, y);
@@ -609,7 +609,7 @@ describe('History', () => {
             },
             {
                 callback: () => {
-                    operations.mode.editor.backPage();
+                    operations.mode.tools.backPage();
 
                     cy.get(datatest('text-comment')).clear().type('world');
                 },
@@ -632,7 +632,7 @@ describe('History', () => {
             },
             {
                 callback: () => {
-                    operations.mode.editor.nextPage();
+                    operations.mode.tools.nextPage();
                     operations.mode.tools.addNewPage();
                 },
                 fumen: 'v115@RhB8HeB8Re+NYFAooMDEPBAAAQhgHBAGegHBAFehHJ?eAgWAAQhg0B8Geg0B8Feh0Je3MYFAooMDEPBAAAQhgHBAEe?xDgHBADexDhHJeAgWAAQhg0B8EeR4g0B8DeR4h0JesLYFA3?XaDEEBAAAmhI8AINvhGAgHm7XYAFLDmClcJSAVDEHBEooRB?KoAVBaX9wC06ITHJpBJ9NJAgH',
@@ -640,8 +640,8 @@ describe('History', () => {
             },
             {
                 callback: () => {
-                    operations.mode.editor.nextPage();
-                    operations.mode.editor.nextPage();
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.nextPage();
                     operations.mode.tools.addNewPage();
                 },
                 fumen: 'v115@RhB8HeB8Re+NYFAooMDEPBAAAQhgHBAGegHBAFehHJ?eAgWAAQhg0B8Geg0B8Feh0Je3MYFAooMDEPBAAAQhgHBAEe?xDgHBADexDhHJeAgWAAQhg0B8EeR4g0B8DeR4h0JesLYFA3?XaDEEBAAAmhI8AIN9ggHBeAPFegHxDBPCeBAhHxDAPCeKAK?eAgWAA9gg0BeAtFeg0R4BtCeB8h0R4AtCeK8KeAgWFA3XaD?EEBAAAvhFm7XYAFLDmClcJSAVDEHBEooRBKoAVBaX9wC06I?THJpBJ9NJAgH',
@@ -649,8 +649,8 @@ describe('History', () => {
             },
             {
                 callback: () => {
-                    operations.mode.editor.nextPage();
-                    operations.mode.editor.nextPage();
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.nextPage();
                     operations.mode.tools.addNewPage();
                 },
                 fumen: 'v115@RhB8HeB8Re+NYFAooMDEPBAAAQhgHBAGegHBAFehHJ?eAgWAAQhg0B8Geg0B8Feh0Je3MYFAooMDEPBAAAQhgHBAEe?xDgHBADexDhHJeAgWAAQhg0B8EeR4g0B8DeR4h0JesLYFA3?XaDEEBAAAmhI8AIN9ggHBeAPFegHxDBPCeBAhHxDAPCeKAK?eAgWAA9gg0BeAtFeg0R4BtCeB8h0R4AtCeK8KeAgWFA3XaD?EEBAAAvhAm7XYAFLDmClcJSAVDEHBEooRBKoAVBaX9wC1gi?HEegHBeAPgHEegHxDBPCeBAhHxDAPCeKAKeAgWAA1gi0Eeg?0BeAtg0Eeg0R4BtCeB8h0R4AtCeK8Ke06XXAFLDmClcJSAV?DEHBEooRBaoAVBP+1BAvhDTHJpBJ9NJAgH',

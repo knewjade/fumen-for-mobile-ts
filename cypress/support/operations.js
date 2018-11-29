@@ -23,20 +23,6 @@ export const operations = {
                 cy.get(datatest('btn-open-fumen')).click();
             },
         },
-        editor: {
-            nextPage: () => {
-                cy.get(datatest('btn-next-page')).click();
-            },
-            backPage: () => {
-                cy.get(datatest('btn-back-page')).click();
-            },
-            toRef: () => {
-                cy.get(datatest('btn-key-page-on')).click();
-            },
-            toKey: () => {
-                cy.get(datatest('btn-key-page-off')).click();
-            },
-        },
         block: {
             open: () => {
                 cy.get(datatest('btn-block-mode')).click();
@@ -188,6 +174,18 @@ export const operations = {
             },
             home: () => {
                 cy.get(datatest('btn-drawing-tool')).click();
+            },
+            nextPage: () => {
+                cy.get(datatest('btn-next-page')).click();
+            },
+            backPage: () => {
+                cy.get(datatest('btn-back-page')).click();
+            },
+            toRef: () => {
+                cy.get(datatest('btn-key-page-on')).click();
+            },
+            toKey: () => {
+                cy.get(datatest('btn-key-page-off')).click();
             },
         },
         slide: {

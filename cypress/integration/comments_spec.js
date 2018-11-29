@@ -5,17 +5,17 @@ describe('Comments', () => {
     it('Should not apply comment to other pages', () => {
         visit({ mode: 'writable' });
 
-        operations.mode.editor.nextPage();
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
+        operations.mode.tools.nextPage();
 
         cy.get(datatest('text-comment')).type('こんにちは');
         cy.get(datatest('text-comment')).should('have.value', 'こんにちは');
 
-        operations.mode.editor.backPage();
+        operations.mode.tools.backPage();
 
         cy.get(datatest('text-comment')).should('have.value', '');
 
-        operations.mode.editor.backPage();
+        operations.mode.tools.backPage();
 
         cy.get(datatest('text-comment')).should('have.value', '');
 
@@ -92,12 +92,12 @@ describe('Comments', () => {
         cy.get(datatest('text-comment')).clear().type('TSD');
 
         // 8ページ目
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         cy.get(datatest('text-comment')).clear();
 
         // 9ページ目
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         cy.get(datatest('text-comment')).clear().type('ここから2巡目');
 
@@ -124,7 +124,7 @@ describe('Comments', () => {
 
         cy.get(datatest('text-comment')).type('#Q=[](T)ZSIOLJ');
 
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         // 2ページ目
         minoPosition(Piece.Z, Rotation.Spawn)(3, 0).forEach(([x, y]) => {
@@ -168,33 +168,33 @@ describe('Comments', () => {
 
         // 1ページ目
         cy.get(datatest('text-comment')).should('have.value', '#Q=[O](L)J;#Q=[S](Z)T;hello');
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         // 2ページ目
         cy.get(datatest('text-comment')).should('have.value', '#Q=[O](J);#Q=[S](Z)T;hello');
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         // 3ページ目
         cy.get(datatest('text-comment')).should('have.value', '#Q=[](J);#Q=[S](Z)T;hello');
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         // 4ページ目
         cy.get(datatest('text-comment')).should('have.value', '#Q=[S](Z)T;hello');
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         // 5ページ目
         cy.get(datatest('text-comment')).should('have.value', '#Q=[Z](T);hello');
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         // 6ページ目
         cy.get(datatest('text-comment')).should('have.value', '#Q=[](Z);hello');
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         // 7ページ目
         cy.get(datatest('text-comment')).should('have.value', 'hello');
 
         // 新規ページ追加
-        operations.mode.editor.nextPage();
+        operations.mode.tools.nextPage();
 
         // 8ページ目
         cy.get(datatest('text-comment')).should('have.value', 'hello');
