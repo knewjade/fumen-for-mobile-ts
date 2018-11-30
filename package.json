@@ -4,14 +4,14 @@
   "private": true,
   "scripts": {
     "webpack": "webpack --mode development",
-    "webpack:prod": "webpack --mode production",
+    "webpack-prod": "webpack --mode production",
     "serve": "http-server",
     "lint": "tslint --project tsconfig.json --config tslint.json",
     "test": "jest",
-    "cypress": "cypress run",
-    "open": "cypress open",
+    "cy-run": "cypress run",
+    "cy-open": "cypress open",
     "test-ci": "yarn test",
-    "cypress-ci": "yarn cypress"
+    "cy-run-ci": "yarn cypress"
   },
   "devDependencies": {
     "@hyperapp/html": "1.1.1",
