@@ -89,12 +89,47 @@ window.onload = () => {
         }
     }
 
+    // クエリーの抽出
+    const url = decodeURIComponent(search);
+    const paramQueryStrings = url.split('&');
+
+    // i18nの設定
+    const languageDetector = new LanguageDetector(null, {
+        order: [
+            'querystring', 'cookie', 'localStorage', 'navigator', 'htmlTag', 'path', 'subdomain', 'myQueryDetector',
+        ],
+    });
+    languageDetector.addDetector({
+        name: 'myQueryDetector',
+        lookup() {
+            const lng = paramQueryStrings.find(value => value.startsWith('lng='));
+            return lng !== undefined ? lng.substr(4) : undefined;
+        },
+        cacheUserLanguage() {
+            // do nothing
+        },
+    });
+    i18next
+        .use(languageDetector)
+        .init({
+            fallbackLng: 'en',
+            resources: {
+                en: { translation: resourcesEn },
+                ja: { translation: resourcesJa },
+            },
+        }, (error) => {
+            if (error) {
+                console.error('Failed to load i18n');
+            } else {
+                main.refresh();
+            }
+        });
+
     // URLからロードする
     {
-        const url = decodeURIComponent(search);
-        const paramQuery = url.split('&').find(value => value.startsWith('d='));
-        if (paramQuery !== undefined) {
-            return main.loadFumen({ fumen: paramQuery.substr(2) });
+        const data = paramQueryStrings.find(value => value.startsWith('d='));
+        if (data !== undefined) {
+            return main.loadFumen({ fumen: data.substr(2) });
         }
     }
 
