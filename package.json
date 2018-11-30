@@ -11,7 +11,7 @@
     "cy-run": "cypress run",
     "cy-open": "cypress open",
     "test-ci": "yarn test",
-    "cy-run-ci": "yarn cypress"
+    "cy-run-ci": "yarn cy-run"
   },
   "devDependencies": {
     "@hyperapp/html": "1.1.1",
