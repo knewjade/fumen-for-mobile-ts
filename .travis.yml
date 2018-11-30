@@ -1,9 +1,9 @@
 stages:
-  - name: deploy-dev
-    if: branch != master
-  - test
-  - name: deploy-prod
-    if: branch = master
+- name: deploy-dev
+  if: branch != master
+- test
+- name: deploy-prod
+  if: branch = master
 
 jobs:
   include:
@@ -13,18 +13,19 @@ jobs:
     cache:
       yarn: true
       directories:
-        - node_modules
-        - ~/.cache
+      - node_modules
+      - ~/.cache
     install:
       yarn install --frozen-lockfile
     script:
-      - yarn test-ci
-      - yarn webpack:prod
-      - yarn cypress-ci
+    - yarn test-ci
+    - yarn webpack-prod
+    - yarn serve &
+    - yarn cy-run-ci
     addons:
       artifacts:
         paths:
-          - /home/travis/build/knewjade/fumen-for-mobile-ts/cypress/videos/
+        - /home/travis/build/knewjade/fumen-for-mobile-ts/cypress/videos/
 
   - stage: deploy-dev
     language: node_js
@@ -32,24 +33,24 @@ jobs:
     cache:
       yarn: true
       directories:
-        - node_modules
-        - ~/.cache
+      - node_modules
+      - ~/.cache
     install:
       yarn install --frozen-lockfile
     script:
-      - yarn webpack:prod
+    - yarn webpack-prod
     before_deploy:
-      - touch public/.nojekyll
+    - touch public/.nojekyll
     deploy:
-      - provider: pages
-        skip-cleanup: true
-        github-token: ${GITHUB_TOKEN}
-        keep-history: true
-        repo: knewjade/fumen-for-mobile-dev
-        local-dir: public/
-        target-branch: master
-        on:
-          all_branches: true
+    - provider: pages
+      skip-cleanup: true
+      github-token: ${GITHUB_TOKEN}
+      keep-history: true
+      repo: knewjade/fumen-for-mobile-dev
+      local-dir: public/
+      target-branch: master
+      on:
+        all_branches: true
 
   - stage: deploy-prod
     language: node_js
@@ -57,21 +58,21 @@ jobs:
     cache:
       yarn: true
       directories:
-        - node_modules
-        - ~/.cache
+      - node_modules
+      - ~/.cache
     install:
       yarn install --frozen-lockfile
     script:
-      - yarn webpack:prod
+    - yarn webpack-prod
     before_deploy:
-      - touch public/.nojekyll
+    - touch public/.nojekyll
     deploy:
-      - provider: pages
-        skip-cleanup: true
-        github-token: ${GITHUB_TOKEN}
-        keep-history: true
-        repo: knewjade/fumen-for-mobile
-        local-dir: public/
-        target-branch: master
-        on:
-          branch: master
+    - provider: pages
+      skip-cleanup: true
+      github-token: ${GITHUB_TOKEN}
+      keep-history: true
+      repo: knewjade/fumen-for-mobile
+      local-dir: public/
+      target-branch: master
+      on:
+        branch: master

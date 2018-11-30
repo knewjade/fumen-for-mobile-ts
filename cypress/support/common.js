@@ -158,12 +158,10 @@ const getPieces = (piece) => {
 };
 
 export const visit = ({ fumen, sleepInMill = 500, lng = 'en', mode = 'readonly' }) => {
-    let baseUrl;
+    let baseUrl = '';
 
     if (mode === 'writable') {
-        baseUrl = './public/#/writable';
-    } else {
-        baseUrl = './public/index.html';
+        baseUrl = '#/writable';
     }
 
     const params = {};
