@@ -102,8 +102,6 @@ window.onload = () => {
         name: 'myQueryDetector',
         lookup() {
             const lng = paramQueryStrings.find(value => value.startsWith('lng='));
-            console.log(lng);
-            console.log('hello');
             return lng !== undefined ? lng.substr(4) : undefined;
         },
         cacheUserLanguage() {

@@ -161,7 +161,7 @@ export const visit = ({ fumen, sleepInMill = 500, lng = 'en', mode = 'readonly' 
     let baseUrl = '#';
 
     if (mode !== 'readonly') {
-        baseUrl = `/${mode}`;
+        baseUrl += `/${mode}`;
     }
 
     const params = {};
