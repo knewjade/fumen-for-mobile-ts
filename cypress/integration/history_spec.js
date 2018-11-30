@@ -7,7 +7,7 @@ describe('History', () => {
             {
                 fumen,
                 callback: () => {
-                    visit({ fumen });
+                    visit({ fumen, reload: true });
                     operations.screen.writable();
                 },
                 count: 0,

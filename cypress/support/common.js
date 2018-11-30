@@ -157,7 +157,7 @@ const getPieces = (piece) => {
     }
 };
 
-export const visit = ({ fumen, sleepInMill = 500, lng = 'en', mode = 'readonly' }) => {
+export const visit = ({ fumen, sleepInMill = 500, lng = 'en', mode = 'readonly', reload = false }) => {
     let baseUrl = '#';
 
     if (mode !== 'readonly') {
@@ -179,6 +179,10 @@ export const visit = ({ fumen, sleepInMill = 500, lng = 'en', mode = 'readonly' 
         cy.visit(baseUrl + '?' + query);
     } else {
         cy.visit(baseUrl);
+    }
+
+    if (reload) {
+        cy.reload();
     }
 
     cy.wait(sleepInMill);
