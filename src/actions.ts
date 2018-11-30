@@ -95,14 +95,15 @@ window.onload = () => {
 
     // i18nの設定
     const languageDetector = new LanguageDetector(null, {
-        order: [
-            'querystring', 'cookie', 'localStorage', 'navigator', 'htmlTag', 'path', 'subdomain', 'myQueryDetector',
-        ],
+        order: ['myQueryDetector', 'querystring', 'navigator', 'path', 'subdomain'],
+        cookieMinutes: 0,
     });
     languageDetector.addDetector({
         name: 'myQueryDetector',
         lookup() {
             const lng = paramQueryStrings.find(value => value.startsWith('lng='));
+            console.log(lng);
+            console.log('hello');
             return lng !== undefined ? lng.substr(4) : undefined;
         },
         cacheUserLanguage() {
