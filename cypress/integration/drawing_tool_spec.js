@@ -305,9 +305,11 @@ describe('Drawing Tools', () => {
 
         cy.wait(1000);
 
-        visit({ mode: 'writable' });
+        visit({ mode: 'writable', reload: true });
 
         expectFumen('v115@HhglIeglIehlAezhMeAgHYhi0GeSpJeAgH');
+
+        operations.mode.block.open();
 
         operations.menu.lastPage();
 
@@ -323,7 +325,7 @@ describe('Drawing Tools', () => {
 
         cy.wait(1000);
 
-        visit({});
+        visit({ reload: true });
 
         expectFumen('v115@HhglIeglIehlAezhMeAgHYhi0GeSpJeAgHOhywdeAg?H');
 
@@ -347,7 +349,7 @@ describe('Drawing Tools', () => {
 
         cy.wait(1000);
 
-        visit({});
+        visit({ reload: true });
 
         expectFumen('v115@HhglIeglIehlAezhMeAgHYhi0GeSpJeAgHOhywdeAg?H6gilxeAgH');
     });
