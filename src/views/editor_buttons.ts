@@ -40,8 +40,8 @@ export const rotationButton = ({ layout, rotation, highlight }: {
         highlight,
         height: 0.85 * layout.buttons.size.height,
         borderWidth: 0,
-        datatest: `btn-rotation-${rotationName.toLowerCase()}`,
-        key: `btn-rotation-${rotationName.toLowerCase()}`,
+        datatest: `img-rotation-${rotationName.toLowerCase()}`,
+        key: `img-rotation-${rotationName.toLowerCase()}`,
     });
 };
 
