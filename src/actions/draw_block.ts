@@ -91,6 +91,10 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
         ]);
     },
     ontouchStartField: ({ index }) => (state): NextState => {
+        if (state.events.piece !== undefined) {
+            return undefined;
+        }
+
         if (state.mode.piece !== undefined) {
             return sequence(state, [
                 actions.fixInferencePiece(),
@@ -106,11 +110,9 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
             newState => ({
                 events: {
                     ...newState.events,
-                    touch: {
-                        piece: newState.events.inferences.find(e => e === index) === undefined
-                            ? Piece.Gray
-                            : Piece.Empty,
-                    },
+                    piece: newState.events.inferences.find(e => e === index) === undefined
+                        ? Piece.Gray
+                        : Piece.Empty,
                     updated: false,
                 },
             }),
@@ -118,11 +120,15 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
         ]);
     },
     ontouchMoveField: ({ index }) => (state): NextState => {
+        if (state.events.piece === undefined) {
+            return undefined;
+        }
+
         if (state.mode.piece !== undefined) {
             return moveDrawingField(state, index, true);
         }
 
-        const piece = state.events.touch.piece;
+        const piece = state.events.piece;
         if (piece === undefined) {
             return undefined;
         }
@@ -173,6 +179,10 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
         return undefined;
     },
     ontouchEnd: () => (state): NextState => {
+        if (state.events.piece === undefined) {
+            return undefined;
+        }
+
         const currentIndex = state.fumen.currentIndex;
         const page = state.fumen.pages[currentIndex];
         const updated = state.events.updated;
@@ -185,6 +195,10 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
         ]);
     },
     ontouchStartSentLine: ({ index }) => (state): NextState => {
+        if (state.events.piece !== undefined) {
+            return undefined;
+        }
+
         if (state.mode.piece !== undefined) {
             return sequence(state, [
                 () => startDrawingField(state, index, false),
@@ -195,6 +209,10 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
         return undefined;
     },
     ontouchMoveSentLine: ({ index }) => (state): NextState => {
+        if (state.events.piece === undefined) {
+            return undefined;
+        }
+
         if (state.mode.piece !== undefined) {
             return moveDrawingField(state, index, false);
         }
@@ -217,7 +235,7 @@ const startDrawingField = (state: State, index: number, isField: boolean): NextS
         () => ({
             events: {
                 ...state.events,
-                touch: { piece },
+                piece,
                 prevPage: toPrimitivePage(state.fumen.pages[state.fumen.currentIndex]),
                 updated: false,
             },
@@ -231,7 +249,7 @@ const moveDrawingField = (state: State, index: number, isField: boolean): NextSt
     const currentPageIndex = state.fumen.currentIndex;
 
     // 塗りつぶすpieceを決める
-    const piece = state.events.touch.piece;
+    const piece = state.events.piece;
     if (piece === undefined) {
         return undefined;
     }
@@ -274,7 +292,6 @@ const moveDrawingField = (state: State, index: number, isField: boolean): NextSt
             },
             events: {
                 ...state.events,
-                touch: { piece },
                 updated: true,
             },
         }),
@@ -286,7 +303,7 @@ const endDrawingField = (state: State): NextState => {
     return {
         events: {
             ...state.events,
-            touch: { piece: undefined },
+            piece: undefined,
             prevPage: undefined,
             updated: false,
         },

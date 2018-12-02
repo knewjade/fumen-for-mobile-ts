@@ -207,3 +207,17 @@ export function nextRotationToRight(rotation: Rotation): Rotation {
     }
     throw new FumenError('Unsupported rotation');
 }
+
+export function parseRotationName(rotation: Rotation) {
+    switch (rotation) {
+    case Rotation.Spawn:
+        return 'Spawn';
+    case Rotation.Left:
+        return 'Left';
+    case Rotation.Right:
+        return 'Right';
+    case Rotation.Reverse:
+        return 'Reverse';
+    }
+    throw new FumenError('Unexpected rotation');
+}

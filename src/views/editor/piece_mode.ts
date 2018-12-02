@@ -1,14 +1,27 @@
 import { Piece, TouchTypes } from '../../lib/enums';
 import { div } from '@hyperapp/html';
-import { dualButton, iconContents, radioIconContents, switchButton, toolButton, toolSpace } from '../editor_buttons';
+import {
+    dualButton,
+    dualSwitchButton,
+    iconContents,
+    rotationButton,
+    switchButton,
+    switchIconContents,
+    toolButton,
+    toolSpace,
+} from '../editor_buttons';
 import { EditorLayout, toolStyle } from './editor';
+import { Move } from '../../lib/fumen/fumen';
 
-export const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePiece, actions }: {
+export const pieceMode = ({ layout, keyPage, currentIndex, touchType, move, flags, actions }: {
     layout: EditorLayout;
     keyPage: boolean;
     currentIndex: number;
     touchType: TouchTypes;
-    operatePiece: boolean;
+    move?: Move;
+    flags: {
+        lock: boolean;
+    },
     actions: {
         selectPieceColor: (data: { piece: Piece }) => void;
         selectInferencePieceColor: () => void;
@@ -22,9 +35,12 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePie
         moveToRight: () => void;
         moveToRightEnd: () => void;
         harddrop: () => void;
+        changeLockFlag: (data: { index: number, enable: boolean }) => void;
     };
 }) => {
     const toolButtonMargin = 5;
+    const operate = move !== undefined;
+    const operateRotation = move !== undefined ? move.rotation : undefined;
 
     return div({ style: toolStyle(layout) }, [
         toolSpace({
@@ -32,6 +48,27 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePie
             width: layout.buttons.size.width,
             margin: toolButtonMargin,
             key: 'div-space',
+        }),
+        switchButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'red',
+            textColor: '#333',
+            borderColor: '#f44336',
+            datatest: 'btn-lock-flag',
+            key: 'btn-lock-flag',
+            onclick: () => actions.changeLockFlag({ index: currentIndex, enable: !flags.lock }),
+            enable: flags.lock,
+        }, switchIconContents({
+            description: 'lock',
+            iconSize: 22,
+            enable: flags.lock,
+        })),
+        rotationButton({
+            layout,
+            rotation: operateRotation,
+            highlight: false,
         }),
         dualButton({
             borderWidth: 1,
@@ -43,7 +80,7 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePie
         }, {
             datatest: 'btn-move-to-left-end',
             key: 'btn-move-to-left-end',
-            enable: operatePiece,
+            enable: operate,
             onclick: () => actions.moveToLeftEnd(),
             contents: iconContents({
                 description: '',
@@ -53,7 +90,7 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePie
         }, {
             datatest: 'btn-move-to-right-end',
             key: 'btn-move-to-right-end',
-            enable: operatePiece,
+            enable: operate,
             onclick: () => actions.moveToRightEnd(),
             contents: iconContents({
                 description: '',
@@ -71,7 +108,7 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePie
         }, {
             datatest: 'btn-move-to-left',
             key: 'btn-move-to-left',
-            enable: operatePiece,
+            enable: operate,
             onclick: () => actions.moveToLeft(),
             contents: iconContents({
                 description: '',
@@ -81,12 +118,40 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePie
         }, {
             datatest: 'btn-move-to-right',
             key: 'btn-move-to-right',
-            enable: operatePiece,
+            enable: operate,
             onclick: () => actions.moveToRight(),
             contents: iconContents({
                 description: '',
                 iconSize: 24,
                 iconName: 'keyboard_arrow_right',
+            }),
+        }),
+        dualButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'white',
+            textColor: '#333',
+            borderColor: '#333',
+        }, {
+            datatest: 'btn-rotate-to-left',
+            key: 'btn-rotate-to-left',
+            enable: operate,
+            onclick: () => actions.rotateToLeft(),
+            contents: iconContents({
+                description: '',
+                iconSize: 23,
+                iconName: 'rotate_left',
+            }),
+        }, {
+            datatest: 'btn-rotate-to-right',
+            key: 'btn-rotate-to-right',
+            enable: operate,
+            onclick: () => actions.rotateToRight(),
+            contents: iconContents({
+                description: '',
+                iconSize: 23,
+                iconName: 'rotate_right',
             }),
         }),
         toolButton({
@@ -98,41 +163,13 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePie
             borderColor: '#333',
             datatest: 'btn-harddrop',
             key: 'btn-harddrop',
-            enable: operatePiece,
+            enable: operate,
             onclick: () => actions.harddrop(),
         }, iconContents({
             description: 'drop',
             iconSize: 22,
             iconName: 'vertical_align_bottom',
         })),
-        dualButton({
-            borderWidth: 1,
-            width: layout.buttons.size.width,
-            margin: toolButtonMargin,
-            backgroundColorClass: 'white',
-            textColor: '#333',
-            borderColor: '#333',
-        }, {
-            datatest: 'btn-rotate-to-left',
-            key: 'btn-rotate-to-left',
-            enable: operatePiece,
-            onclick: () => actions.rotateToLeft(),
-            contents: iconContents({
-                description: '',
-                iconSize: 23,
-                iconName: 'rotate_left',
-            }),
-        }, {
-            datatest: 'btn-rotate-to-right',
-            key: 'btn-rotate-to-right',
-            enable: operatePiece,
-            onclick: () => actions.rotateToRight(),
-            contents: iconContents({
-                description: '',
-                iconSize: 23,
-                iconName: 'rotate_right',
-            }),
-        }),
         toolButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
@@ -148,37 +185,33 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, operatePie
             iconSize: 22,
             iconName: 'clear',
         })),
-        switchButton({
+        dualSwitchButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
             margin: toolButtonMargin,
             backgroundColorClass: 'red',
             textColor: '#333',
             borderColor: '#f44336',
+        }, {
             datatest: 'btn-move-piece',
             key: 'btn-move-piece',
+            enable: touchType === TouchTypes.MovePiece,
             onclick: () => actions.changeToMovePieceMode(),
-            enable: touchType === TouchTypes.MovePiece,
-        }, radioIconContents({
-            description: 'move',
-            iconSize: 22,
-            enable: touchType === TouchTypes.MovePiece,
-        })),
-        switchButton({
-            borderWidth: 1,
-            width: layout.buttons.size.width,
-            margin: toolButtonMargin,
-            backgroundColorClass: 'red',
-            textColor: '#333',
-            borderColor: '#f44336',
+            contents: iconContents({
+                description: '',
+                iconSize: 18,
+                iconName: 'pan_tool',
+            }),
+        }, {
             datatest: 'btn-draw-piece',
             key: 'btn-draw-piece',
+            enable: touchType === TouchTypes.Piece,
             onclick: () => actions.changeToDrawPieceMode(),
-            enable: touchType === TouchTypes.Piece,
-        }, radioIconContents({
-            description: 'draw',
-            iconSize: 22,
-            enable: touchType === TouchTypes.Piece,
-        })),
+            contents: iconContents({
+                description: '',
+                iconSize: 21,
+                iconName: 'edit',
+            }),
+        }),
     ]);
 };

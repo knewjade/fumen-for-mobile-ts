@@ -125,11 +125,11 @@ export const operations = {
             resetPiece: () => {
                 cy.get(datatest('btn-reset-piece')).click();
             },
-            moveOn: () => {
-                cy.get(datatest('btn-move-piece-off')).click();
+            move: () => {
+                cy.get(datatest('btn-move-piece')).click();
             },
-            drawOn: () => {
-                cy.get(datatest('btn-draw-piece-off')).click();
+            draw: () => {
+                cy.get(datatest('btn-draw-piece')).click();
             },
             rotateToRight: () => {
                 cy.get(datatest('btn-rotate-to-right')).click();
@@ -151,6 +151,12 @@ export const operations = {
             },
             harddrop: () => {
                 cy.get(datatest('btn-harddrop')).click();
+            },
+            lockToOn: () => {
+                cy.get(datatest('btn-lock-flag-off')).click();
+            },
+            lockToOff: () => {
+                cy.get(datatest('btn-lock-flag-on')).click();
             },
         },
         tools: {

@@ -1,4 +1,4 @@
-import { block, Color, expectFumen, mino, minoPosition, Piece, Rotation, visit } from '../support/common';
+import { block, Color, datatest, expectFumen, mino, minoPosition, Piece, Rotation, visit } from '../support/common';
 import { operations } from '../support/operations';
 
 // テト譜を開く
@@ -12,7 +12,7 @@ describe('Put pieces', () => {
             operations.mode.block.click(position[0], position[1]);
         });
 
-        operations.mode.piece.moveOn();
+        operations.mode.piece.move();
 
         operations.mode.block.click(0, 10);
         operations.mode.block.click(4, 10);
@@ -21,7 +21,7 @@ describe('Put pieces', () => {
 
         operations.mode.tools.nextPage();
 
-        operations.mode.piece.drawOn();
+        operations.mode.piece.draw();
 
         minoPosition(Piece.O, Rotation.Spawn)(4, 0).forEach(position => {
             operations.mode.block.click(position[0], position[1]);
@@ -301,5 +301,85 @@ describe('Put pieces', () => {
         operations.mode.piece.harddrop();
 
         expectFumen('v115@vhEVPJxMJTLJ5/IJ+I');
+
+        operations.mode.piece.lockToOff();
+
+        operations.mode.tools.nextPage();
+
+        operations.mode.piece.rotateToRight();
+
+        operations.mode.tools.nextPage();
+
+        operations.mode.piece.rotateToRight();
+
+        operations.mode.piece.lockToOn();
+
+        operations.mode.tools.nextPage();
+
+        expectFumen('v115@vhHVPJxMJTLJ5/IJ+mhCn59IAgH');
+    });
+
+    it('Show current rotation', () => {
+        visit({ mode: 'writable' });
+
+        operations.mode.piece.open();
+
+        cy.get(datatest('img-rotation-empty')).should('visible');
+
+        // T
+        minoPosition(Piece.T, Rotation.Right)(3, 3).forEach(position => {
+            operations.mode.block.click(position[0], position[1]);
+        });
+
+        cy.get(datatest('img-rotation-right')).should('visible');
+
+        operations.mode.piece.rotateToLeft();
+
+        cy.get(datatest('img-rotation-spawn')).should('visible');
+
+        operations.mode.piece.rotateToLeft();
+
+        cy.get(datatest('img-rotation-left')).should('visible');
+
+        operations.mode.piece.rotateToLeft();
+
+        cy.get(datatest('img-rotation-reverse')).should('visible');
+
+        operations.mode.piece.rotateToLeft();
+
+        cy.get(datatest('img-rotation-right')).should('visible');
+
+        // 次のページ
+        operations.mode.tools.nextPage();
+
+        cy.get(datatest('img-rotation-empty')).should('visible');
+
+        // O
+        minoPosition(Piece.O, Rotation.Spawn)(6, 18).forEach(position => {
+            operations.mode.block.click(position[0], position[1]);
+        });
+
+        cy.get(datatest('img-rotation-spawn')).should('visible');
+
+        operations.mode.piece.rotateToRight();
+
+        cy.get(datatest('img-rotation-right')).should('visible');
+
+        operations.mode.piece.rotateToRight();
+
+        cy.get(datatest('img-rotation-reverse')).should('visible');
+
+        operations.mode.piece.rotateToRight();
+
+        cy.get(datatest('img-rotation-left')).should('visible');
+
+        operations.mode.piece.rotateToRight();
+
+        cy.get(datatest('img-rotation-spawn')).should('visible');
+
+        // 前のページ
+        operations.mode.tools.backPage();
+
+        cy.get(datatest('img-rotation-right')).should('visible');
     });
 });

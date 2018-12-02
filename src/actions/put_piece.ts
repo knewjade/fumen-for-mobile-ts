@@ -54,7 +54,7 @@ export const putPieceActions: Readonly<PutPieceActions> = {
         ]);
     },
     ontouchStartField: ({ index }) => (state): NextState => {
-        if (state.events.touch.piece !== undefined) {
+        if (state.events.piece !== undefined) {
             return undefined;
         }
 
@@ -83,7 +83,7 @@ export const putPieceActions: Readonly<PutPieceActions> = {
         ]);
     },
     ontouchMoveField: ({ index }) => (state): NextState => {
-        const piece = state.events.touch.piece;
+        const piece = state.events.piece;
         if (piece === undefined) {
             return undefined;
         }
@@ -143,6 +143,10 @@ export const putPieceActions: Readonly<PutPieceActions> = {
         return undefined;
     },
     ontouchEnd: () => (state): NextState => {
+        if (state.events.piece === undefined) {
+            return undefined;
+        }
+
         const inferencePiece = parseInferenceToPage(state);
         return sequence(state, [
             inferencePiece !== undefined
@@ -171,7 +175,7 @@ const commitInferencePiece = (pages: Page[], task: OperationTask, mergeKey?: str
     ]);
 };
 
-const parseInferenceToPage = (state: State): ({ pages: Page[], task: OperationTask } | undefined) => {
+const parseInferenceToPage = (state: State): { pages: Page[], task: OperationTask } | undefined => {
     const inferences = state.events.inferences;
     if (inferences.length < 4) {
         return undefined;
@@ -231,9 +235,7 @@ const ontouchStartField = (state: State, index: number): NextState => {
         events: {
             ...state.events,
             inferences,
-            touch: {
-                piece: isTappedOnInferences ? Piece.Empty : Piece.Gray,
-            },
+            piece: isTappedOnInferences ? Piece.Empty : Piece.Gray,
             updated: false,
         },
     };
@@ -243,7 +245,7 @@ const endDrawingField = (state: State): NextState => {
     return {
         events: {
             ...state.events,
-            touch: { piece: undefined },
+            piece: undefined,
             prevPage: undefined,
             updated: false,
         },
