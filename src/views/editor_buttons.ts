@@ -2,7 +2,7 @@ import { px, style } from '../lib/types';
 import { a, div, i, img, span } from '@hyperapp/html';
 import { EditorLayout } from './editor/editor';
 import { VNode } from 'hyperapp';
-import { parsePieceName, Piece } from '../lib/enums';
+import { parsePieceName, parseRotationName, Piece, Rotation } from '../lib/enums';
 
 export const colorButton = ({ layout, piece, highlight, colorize, onclick }: {
     layout: EditorLayout,
@@ -12,12 +12,53 @@ export const colorButton = ({ layout, piece, highlight, colorize, onclick }: {
     onclick: (data: { piece: Piece }) => void,
 }) => {
     const borderWidth = highlight ? 3 : 1;
-    const pieceName = parsePieceName(piece);
 
+    const pieceName = parsePieceName(piece);
+    const src = colorize ? `img/${pieceName}.svg` : `img/${pieceName}_classic.svg`;
+    return svgButton({
+        src,
+        layout,
+        highlight,
+        borderWidth,
+        height: 0.55 * layout.buttons.size.height,
+        datatest: `btn-piece-${pieceName.toLowerCase()}`,
+        key: `btn-piece-${pieceName.toLowerCase()}`,
+        onclick: () => onclick({ piece }),
+    });
+};
+
+export const rotationButton = ({ layout, rotation, highlight }: {
+    layout: EditorLayout,
+    rotation?: Rotation,
+    highlight: boolean,
+}) => {
+    const rotationName = rotation !== undefined ? parseRotationName(rotation) : 'Empty';
+    const src = `img/rotation_${rotationName}.svg`;
+    return svgButton({
+        src,
+        layout,
+        highlight,
+        height: 0.85 * layout.buttons.size.height,
+        borderWidth: 0,
+        datatest: `btn-rotation-${rotationName.toLowerCase()}`,
+        key: `btn-rotation-${rotationName.toLowerCase()}`,
+    });
+};
+
+export const svgButton = ({ src, datatest, key, layout, highlight, height, borderWidth, onclick }: {
+    src: string;
+    datatest: string;
+    key: string;
+    layout: EditorLayout,
+    highlight: boolean,
+    height: number;
+    borderWidth: number;
+    onclick?: (event: MouseEvent) => void;
+}) => {
     const contents = [
         img({
-            src: colorize ? `img/${pieceName}.svg` : `img/${pieceName}_classic.svg`,
-            height: `${0.55 * layout.buttons.size.height}`,
+            src,
+            height: `${height}`,
             style: style({
                 margin: 'auto',
             }),
@@ -26,14 +67,14 @@ export const colorButton = ({ layout, piece, highlight, colorize, onclick }: {
 
     return toolButton({
         borderWidth,
+        datatest,
+        key,
+        onclick,
         width: layout.buttons.size.width,
         margin: 5,
         backgroundColorClass: 'white',
         textColor: '#333',
         borderColor: highlight ? '#ff5252' : '#333',
-        datatest: `btn-piece-${pieceName.toLowerCase()}`,
-        key: `btn-piece-${pieceName.toLowerCase()}`,
-        onclick: () => onclick({ piece }),
     }, contents);
 };
 
@@ -188,7 +229,7 @@ export const toolButton = (
         datatest: string;
         key: string;
         enable?: boolean;
-        onclick: (event: MouseEvent) => void;
+        onclick?: (event: MouseEvent) => void;
     },
     contents: string | number | (string | number | VNode<{}>)[],
 ) => {
@@ -207,11 +248,11 @@ export const toolButton = (
             maxWidth: px(width),
             textAlign: 'center',
         }),
-        onclick: (event: MouseEvent) => {
+        onclick: onclick !== undefined ? (event: MouseEvent) => {
             onclick(event);
             event.stopPropagation();
             event.preventDefault();
-        },
+        } : undefined,
     }, [
         div({
             style: {

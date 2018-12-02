@@ -174,7 +174,8 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                     layout,
                     actions,
                     keyPage,
-                    operatePiece: page !== undefined && page.piece !== undefined,
+                    move: page !== undefined ? page.piece : undefined,
+                    flags: page.flags,
                     touchType: state.mode.touch,
                     currentIndex: state.fumen.currentIndex,
                 });
