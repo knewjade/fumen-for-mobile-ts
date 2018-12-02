@@ -52,9 +52,8 @@ export interface State {
         animation?: number;
     };
     events: {
-        touch: {
-            piece?: Piece;
-        };
+        piece?: Piece;
+        drawing: boolean;
         inferences: number[];
         prevPage?: PrimitivePage;
         updated: boolean;
@@ -117,9 +116,8 @@ export const initState: Readonly<State> = {
         animation: undefined,
     },
     events: {
-        touch: {
-            piece: undefined,
-        },
+        piece: undefined,
+        drawing: false,
         inferences: [],
         prevPage: undefined,
         updated: false,

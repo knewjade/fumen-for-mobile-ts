@@ -18,7 +18,7 @@ interface FillRowActions {
 
 export const fillRowActions: Readonly<FillRowActions> = {
     ontouchStartField: ({ index }) => (state): NextState => {
-        if (state.events.touch.piece !== undefined) {
+        if (state.events.piece !== undefined) {
             return undefined;
         }
 
@@ -28,12 +28,20 @@ export const fillRowActions: Readonly<FillRowActions> = {
         ]);
     },
     ontouchMoveField: ({ index }) => (state): NextState => {
+        if (state.events.piece === undefined) {
+            return undefined;
+        }
+
         return sequence(state, [
-            newState => ontouchMove(state, index, true),
+            newState => ontouchMove(newState, index, true),
             actions.reopenCurrentPage(),
         ]);
     },
     ontouchEnd: () => (state): NextState => {
+        if (state.events.piece === undefined) {
+            return undefined;
+        }
+
         const pages = state.fumen.pages;
         const currentPageIndex = state.fumen.currentIndex;
         const page = pages[currentPageIndex];
@@ -47,7 +55,7 @@ export const fillRowActions: Readonly<FillRowActions> = {
         ]);
     },
     ontouchStartSentLine: ({ index }) => (state): NextState => {
-        if (state.events.touch.piece !== undefined) {
+        if (state.events.piece !== undefined) {
             return undefined;
         }
 
@@ -57,6 +65,10 @@ export const fillRowActions: Readonly<FillRowActions> = {
         ]);
     },
     ontouchMoveSentLine: ({ index }) => (state): NextState => {
+        if (state.events.piece === undefined) {
+            return undefined;
+        }
+
         return sequence(state, [
             newState => ontouchMove(newState, index, false),
             actions.reopenCurrentPage(),
@@ -70,9 +82,7 @@ const ontouchStartField = (state: State): NextState => {
     return {
         events: {
             ...state.events,
-            touch: {
-                piece: state.mode.piece ? state.mode.piece : Piece.Empty,
-            },
+            piece: state.mode.piece ? state.mode.piece : Piece.Empty,
             updated: false,
             prevPage: toPrimitivePage(pages[currentPageIndex]),
         },
@@ -80,7 +90,7 @@ const ontouchStartField = (state: State): NextState => {
 };
 
 const ontouchMove = (state: State, index: number, isField: boolean): NextState => {
-    const piece = state.events.touch.piece;
+    const piece = state.events.piece;
     if (piece === undefined) {
         return undefined;
     }
@@ -132,7 +142,7 @@ const endDrawingField = (state: State): NextState => {
     return {
         events: {
             ...state.events,
-            touch: { piece: undefined },
+            piece: undefined,
             prevPage: undefined,
             updated: false,
         },

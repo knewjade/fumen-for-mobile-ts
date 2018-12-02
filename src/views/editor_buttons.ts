@@ -74,7 +74,7 @@ export const iconContents = (
     const properties = style({
         display: 'block',
         fontSize: px(iconSize),
-        border: 'solid 0px #000',
+        border: 'solid 0px #333',
         marginRight: px(2),
         cursor: 'pointer',
     });
@@ -349,6 +349,79 @@ export const switchButton = (
                 alignItems: 'center',
             },
         }, contents),
+    ]);
+};
+
+export const dualSwitchButton = (
+    {
+        width, backgroundColorClass, textColor, borderColor, borderWidth = 1, borderType = 'solid', flexGrow, margin,
+    }: {
+        flexGrow?: number;
+        width: number;
+        margin: number;
+        backgroundColorClass: string;
+        textColor: string;
+        borderColor: string;
+        borderWidth?: number;
+        borderType?: string;
+    },
+    left: {
+        datatest: string;
+        key: string;
+        enable?: boolean;
+        contents: string | number | (string | number | VNode<{}>)[];
+        onclick: (event: MouseEvent) => void;
+    },
+    right: typeof left) => {
+
+    const button = ({ datatest, key, contents, onclick, enable = true, margin }: typeof left & { margin: string }) => {
+        return a({
+            datatest,
+            key,
+            href: '#',
+            class: `waves-effect z-depth-0 btn-flat ${enable ? backgroundColorClass : 'white'}`,
+            style: style({
+                margin,
+                color: enable ? '#fff' : textColor,
+                border: enable ? `solid ${borderWidth}px ${borderColor}` : 'dashed 1px #333',
+                padding: px(0),
+                width: '50%',
+                maxWidth: '50%',
+                textAlign: 'center',
+            }),
+            onclick: (event: MouseEvent) => {
+                onclick(event);
+                event.stopPropagation();
+                event.preventDefault();
+            },
+        }, [
+            div({
+                style: {
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                },
+            }, contents),
+        ]);
+    };
+
+    return div({
+        style: style({
+            flexGrow,
+            width: px(width),
+            maxWidth: px(width),
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'row',
+            alignItems: 'center',
+            margin: `${px(margin)} 0px`,
+            padding: px(0),
+        }),
+    }, [
+        button({ ...left, margin: '0px 2px 0px 0px' }),
+        button({ ...right, margin: '0px 0px 0px 2px' }),
     ]);
 };
 

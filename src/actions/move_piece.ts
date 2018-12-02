@@ -14,10 +14,15 @@ interface MovePieceActions {
 
 export const movePieceActions: Readonly<MovePieceActions> = {
     ontouchStartField: ({ index }) => (state): NextState => {
+        if (state.events.drawing) {
+            return undefined;
+        }
+
         return sequence(state, [
             () => ({
                 events: {
                     ...state.events,
+                    drawing: true,
                     prevPage: toPrimitivePage(state.fumen.pages[state.fumen.currentIndex]),
                     updated: false,
                 },
@@ -26,6 +31,10 @@ export const movePieceActions: Readonly<MovePieceActions> = {
         ]);
     },
     ontouchMoveField: ({ index }) => (state): NextState => {
+        if (!state.events.drawing) {
+            return undefined;
+        }
+
         const pages = state.fumen.pages;
         const pageIndex = state.fumen.currentIndex;
         const page = pages[pageIndex];
@@ -79,6 +88,10 @@ export const movePieceActions: Readonly<MovePieceActions> = {
         ]);
     },
     ontouchEnd: () => (state): NextState => {
+        if (!state.events.drawing) {
+            return undefined;
+        }
+
         const currentIndex = state.fumen.currentIndex;
         const page = state.fumen.pages[currentIndex];
         const updated = state.events.updated;
@@ -92,6 +105,7 @@ export const movePieceActions: Readonly<MovePieceActions> = {
                     ...state.events,
                     prevPage: undefined,
                     updated: false,
+                    drawing: false,
                 },
             }),
         ]);
