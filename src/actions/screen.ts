@@ -14,6 +14,7 @@ export interface ScreenActions {
     changeToFillRowMode: () => action;
     changeToDrawPieceMode: () => action;
     changeToMovePieceMode: () => action;
+    changeToSelectPieceMode: () => action;
     changeScreen: (data: { screen: Screens }) => action;
     changeCommentMode: (data: { type: CommentType }) => action;
 }
@@ -83,6 +84,12 @@ export const modeActions: Readonly<ScreenActions> = {
         return sequence(state, [
             changeTouchType({ type: TouchTypes.MovePiece }),
             changeModeType({ type: ModeTypes.Piece }),
+        ]);
+    },
+    changeToSelectPieceMode: () => (state): NextState => {
+        return sequence(state, [
+            changeTouchType({ type: TouchTypes.Piece }),
+            changeModeType({ type: ModeTypes.SelectPiece }),
         ]);
     },
     changeScreen: ({ screen }) => (state): NextState => {

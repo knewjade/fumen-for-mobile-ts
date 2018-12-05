@@ -19,6 +19,7 @@ import { pieceMode } from './piece_mode';
 import { flagsMode } from './flags_mode';
 import { slideMode } from './slide_mode';
 import { fillMode } from './fill_mode';
+import { pieceSelectMode } from './piece_select_mode';
 
 export interface EditorLayout {
     canvas: {
@@ -175,6 +176,7 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                     actions,
                     keyPage,
                     move: page !== undefined ? page.piece : undefined,
+                    pages: state.fumen.pages,
                     flags: page.flags,
                     touchType: state.mode.touch,
                     currentIndex: state.fumen.currentIndex,
@@ -200,6 +202,16 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
             }
             case ModeTypes.Fill: {
                 return fillMode({
+                    layout,
+                    actions,
+                    keyPage,
+                    currentIndex: state.fumen.currentIndex,
+                    colorize: guideLineColor,
+                    modePiece: state.mode.piece,
+                });
+            }
+            case ModeTypes.SelectPiece: {
+                return pieceSelectMode({
                     layout,
                     actions,
                     keyPage,
