@@ -214,10 +214,9 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                 return pieceSelectMode({
                     layout,
                     actions,
-                    keyPage,
+                    move: page !== undefined ? page.piece : undefined,
                     currentIndex: state.fumen.currentIndex,
                     colorize: guideLineColor,
-                    modePiece: state.mode.piece,
                 });
             }
             }

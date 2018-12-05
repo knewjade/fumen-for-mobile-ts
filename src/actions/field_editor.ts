@@ -32,7 +32,7 @@ export interface FieldEditorActions {
 
     selectInferencePieceColor(): action;
 
-    spawnPiece(data: { piece: Piece }): action;
+    spawnPiece(data: { piece: Piece, guideline: boolean }): action;
 
     respawnPiece(): action;
 
@@ -162,7 +162,7 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             }),
         ]);
     },
-    spawnPiece: ({ piece }) => (state): NextState => {
+    spawnPiece: ({ piece, guideline }) => (state): NextState => {
         if (piece === Piece.Gray || piece === Piece.Empty) {
             throw new ViewError(`Unsupported piece: ${piece}`);
         }
@@ -177,9 +177,15 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
         const pagesObj = new Pages(pages);
         const field = pagesObj.getField(pageIndex, PageFieldOperation.Command);
 
-        const next = { type: piece, rotation: Rotation.Spawn, coordinate: { x: 4, y: 18 } };
-        if (!field.canPut(next.type, next.rotation, next.coordinate.x, next.coordinate.y)) {
-            next.coordinate.y = 19;
+        let next;
+        if (guideline) {
+            next = { type: piece, rotation: Rotation.Spawn, coordinate: { x: 4, y: 20 } };
+        } else if (piece === Piece.I) {
+            next = { type: piece, rotation: Rotation.Reverse, coordinate: { x: 5, y: 20 } };
+        } else if (piece === Piece.O) {
+            next = { type: piece, rotation: Rotation.Reverse, coordinate: { x: 5, y: 21 } };
+        } else {
+            next = { type: piece, rotation: Rotation.Reverse, coordinate: { x: 4, y: 21 } };
         }
 
         const currentMove = page.piece;
@@ -219,7 +225,7 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
         }
 
         return sequence(state, [
-            fieldEditorActions.spawnPiece({ piece }),
+            fieldEditorActions.spawnPiece({ piece, guideline: state.fumen.guideLineColor }),
         ]);
     },
     clearPiece: () => (state): NextState => {

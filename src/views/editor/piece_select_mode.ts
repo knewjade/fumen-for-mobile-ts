@@ -2,17 +2,18 @@ import { Piece } from '../../lib/enums';
 import { div } from '@hyperapp/html';
 import { colorButton, iconContents, toolButton, toolSpace } from '../editor_buttons';
 import { EditorLayout, toolStyle } from './editor';
+import { Move } from '../../lib/fumen/fumen';
+import { action } from '../../actions';
 
-export const pieceSelectMode = ({ layout, keyPage, currentIndex, modePiece, colorize, actions }: {
+export const pieceSelectMode = ({ layout, move, currentIndex, colorize, actions }: {
     layout: EditorLayout;
-    keyPage: boolean;
+    move?: Move;
     currentIndex: number;
-    modePiece: Piece | undefined;
     colorize: boolean;
     actions: {
-        spawnPiece: (data: { piece: Piece }) => void;
+        spawnPiece: (data: { piece: Piece, guideline: boolean }) => void;
         clearPiece: () => void;
-        changeToDrawPieceMode: () => void;
+        changeToPieceMode: () => action;
     };
 }) => {
     const pieces = [Piece.I, Piece.L, Piece.O, Piece.Z, Piece.T, Piece.J, Piece.S];
@@ -34,10 +35,11 @@ export const pieceSelectMode = ({ layout, keyPage, currentIndex, modePiece, colo
             textColor: '#fff',
             borderColor: '#f44336',
             datatest: 'btn-reset-piece',
+            enable: move !== undefined,
             key: 'btn-reset-piece',
             onclick: () => {
-                actions.changeToDrawPieceMode();
                 actions.clearPiece();
+                actions.changeToPieceMode();
             },
         }, iconContents({
             description: 'reset',
@@ -50,10 +52,10 @@ export const pieceSelectMode = ({ layout, keyPage, currentIndex, modePiece, colo
             piece,
             colorize,
             onclick: ({ piece }) => {
-                actions.spawnPiece({ piece });
-                actions.changeToDrawPieceMode();
+                actions.spawnPiece({ piece, guideline: colorize });
+                actions.changeToPieceMode();
             },
-            highlight: modePiece === piece,
+            highlight: false,
         })
     ))).concat([
         toolButton({
@@ -65,7 +67,7 @@ export const pieceSelectMode = ({ layout, keyPage, currentIndex, modePiece, colo
             borderColor: '#f44336',
             datatest: 'btn-piece-mode',
             key: 'btn-piece-mode',
-            onclick: () => actions.changeToDrawPieceMode(),
+            onclick: () => actions.changeToPieceMode(),
         }, iconContents({
             description: 'Back',
             iconSize: 25,
