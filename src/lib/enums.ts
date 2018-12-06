@@ -52,6 +52,7 @@ export enum ModeTypes {
     Flags = 'Flags',
     Slide = 'Slide',
     Fill = 'Fill',
+    SelectPiece = 'SelectPiece',
 }
 
 export enum TouchTypes {

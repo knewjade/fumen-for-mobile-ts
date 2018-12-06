@@ -9,6 +9,7 @@ import { PageFieldOperation, Pages } from '../lib/pages';
 import { testLeftRotation, testRightRotation } from '../lib/srs';
 import { Field } from '../lib/fumen/field';
 import { fillRowActions } from './fill_row';
+import { ViewError } from '../lib/errors';
 
 export interface FieldEditorActions {
     fixInferencePiece(): action;
@@ -30,6 +31,8 @@ export interface FieldEditorActions {
     selectPieceColor(data: { piece: Piece }): action;
 
     selectInferencePieceColor(): action;
+
+    spawnPiece(data: { piece: Piece, guideline: boolean }): action;
 
     clearPiece(): action;
 
@@ -155,6 +158,51 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
                     piece: undefined,
                 },
             }),
+        ]);
+    },
+    spawnPiece: ({ piece, guideline }) => (state): NextState => {
+        if (piece === Piece.Gray || piece === Piece.Empty) {
+            throw new ViewError(`Unsupported piece: ${piece}`);
+        }
+
+        const pages = state.fumen.pages;
+        const pageIndex = state.fumen.currentIndex;
+        const page = pages[pageIndex];
+        if (page === undefined) {
+            return undefined;
+        }
+
+        let next;
+        if (guideline) {
+            next = { type: piece, rotation: Rotation.Spawn, coordinate: { x: 4, y: 20 } };
+        } else if (piece === Piece.I) {
+            next = { type: piece, rotation: Rotation.Reverse, coordinate: { x: 5, y: 20 } };
+        } else if (piece === Piece.O) {
+            next = { type: piece, rotation: Rotation.Reverse, coordinate: { x: 5, y: 21 } };
+        } else {
+            next = { type: piece, rotation: Rotation.Reverse, coordinate: { x: 4, y: 21 } };
+        }
+
+        const currentMove = page.piece;
+        if (currentMove !== undefined
+            && currentMove.type === next.type
+            && currentMove.rotation === next.rotation
+            && currentMove.coordinate.x === next.coordinate.x
+            && currentMove.coordinate.y === next.coordinate.y
+        ) {
+            return sequence(state, [
+                fieldEditorActions.resetInferencePiece(),
+            ]);
+        }
+
+        const prevPage = toPrimitivePage(page);
+        page.piece = next;
+
+        return sequence(state, [
+            fieldEditorActions.resetInferencePiece(),
+            actions.saveToMemento(),
+            actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
+            actions.reopenCurrentPage(),
         ]);
     },
     clearPiece: () => (state): NextState => {

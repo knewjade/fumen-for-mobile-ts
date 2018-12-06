@@ -382,4 +382,162 @@ describe('Put pieces', () => {
 
         cy.get(datatest('img-rotation-right')).should('visible');
     });
+
+    it('Spawn guideline piece', () => {
+        visit({ mode: 'writable' });
+
+        operations.mode.piece.open();
+
+        operations.mode.piece.spawn.T();
+        operations.mode.piece.harddrop();
+
+        operations.mode.piece.spawn.S();
+        operations.mode.piece.harddrop();
+
+        operations.mode.piece.spawn.Z();
+        operations.mode.piece.harddrop();
+
+        operations.mode.piece.spawn.I();
+        operations.mode.piece.harddrop();
+
+        operations.mode.piece.spawn.L();
+        operations.mode.piece.harddrop();
+
+        operations.mode.piece.spawn.J();
+        operations.mode.piece.harddrop();
+
+        operations.mode.piece.spawn.O();
+        operations.mode.piece.harddrop();
+
+        expectFumen('v115@vhGVQJXBJU3IRyIStIWjITZI');
+    });
+
+    it('Spawn classic piece', () => {
+        visit({ fumen: 'v115@vhAAAA', mode: 'writable' });
+
+        operations.mode.piece.open();
+
+        operations.mode.piece.spawn.T();
+        operations.mode.piece.harddrop();
+
+        operations.mode.piece.spawn.S();
+        operations.mode.piece.harddrop();
+
+        operations.mode.piece.spawn.Z();
+        operations.mode.piece.harddrop();
+
+        operations.mode.piece.spawn.I();
+        operations.mode.piece.harddrop();
+
+        operations.mode.piece.spawn.L();
+        operations.mode.piece.harddrop();
+
+        operations.mode.piece.spawn.J();
+        operations.mode.piece.harddrop();
+
+        operations.mode.piece.spawn.O();
+        operations.mode.piece.harddrop();
+
+        expectFumen('v115@vhGFrBHhBEXBBSBCIBG+AD0A');
+    });
+
+    it('Spawn: usecase 1', () => {
+        visit({ mode: 'writable' });
+        operations.mode.piece.open();
+
+        {
+            operations.mode.piece.spawn.I();
+            operations.mode.piece.harddrop();
+        }
+
+        {
+            operations.mode.piece.spawn.Z();
+            operations.mode.piece.harddrop();
+        }
+
+        {
+            operations.mode.piece.spawn.L();
+            operations.mode.piece.rotateToRight();
+            operations.mode.piece.moveToLeftEnd();
+            operations.mode.piece.harddrop();
+        }
+
+        {
+            operations.mode.piece.spawn.O();
+            operations.mode.piece.moveToRightEnd();
+            operations.mode.piece.harddrop();
+        }
+
+        {
+            operations.mode.piece.spawn.S();
+            operations.mode.piece.moveToRightEnd();
+            operations.mode.piece.rotateToLeft();
+            operations.mode.piece.moveToLeft();
+            operations.mode.piece.harddrop();
+        }
+
+        {
+            operations.mode.piece.spawn.T();
+            operations.mode.piece.moveToLeftEnd();
+            operations.mode.piece.rotateToRight();
+            operations.mode.piece.harddrop();
+            operations.mode.piece.rotateToRight();
+        }
+
+        {
+            operations.mode.piece.spawn.J();
+            operations.mode.piece.moveToRightEnd();
+            operations.mode.piece.harddrop();
+        }
+
+        expectFumen('v115@vhGRQJUGJKJJTNJ/MJFKJWSJ');
+    });
+
+    it('Spawn: usecase 2', () => {
+        visit({ mode: 'writable' });
+        operations.mode.piece.open();
+        operations.mode.piece.move();
+
+        {
+            operations.mode.piece.spawn.Z();
+            operations.mode.piece.rotateToLeft();
+            operations.mode.block.click(1, 1);
+        }
+
+        {
+            operations.mode.piece.spawn.J();
+            operations.mode.piece.rotateToLeft();
+            operations.mode.block.click(7, 1);
+        }
+
+        {
+            operations.mode.piece.spawn.O();
+            operations.mode.block.click(8, 0);
+        }
+
+        {
+            operations.mode.piece.spawn.I();
+            operations.mode.block.click(2, 0);
+        }
+
+        {
+            operations.mode.piece.spawn.S();
+            operations.mode.block.click(3, 1);
+        }
+
+        {
+            operations.mode.piece.spawn.T();
+            operations.mode.piece.rotateToRight();
+            operations.mode.piece.rotateToRight();
+            operations.mode.block.click(5, 1);
+        }
+
+        {
+            operations.mode.piece.spawn.L();
+            operations.mode.piece.rotateToRight();
+            operations.mode.block.click(8, 1);
+        }
+
+        expectFumen('v115@vhGcJJ+MJTNJRPJ3FJlLJKNJ');
+    });
 });

@@ -12,8 +12,10 @@ export interface ScreenActions {
     changeToFlagsMode: () => action;
     changeToShiftMode: () => action;
     changeToFillRowMode: () => action;
+    changeToPieceMode: () => action;
     changeToDrawPieceMode: () => action;
     changeToMovePieceMode: () => action;
+    changeToSelectPieceMode: () => action;
     changeScreen: (data: { screen: Screens }) => action;
     changeCommentMode: (data: { type: CommentType }) => action;
 }
@@ -73,6 +75,11 @@ export const modeActions: Readonly<ScreenActions> = {
             }),
         ]);
     },
+    changeToPieceMode: () => (state): NextState => {
+        return sequence(state, [
+            changeModeType({ type: ModeTypes.Piece }),
+        ]);
+    },
     changeToDrawPieceMode: () => (state): NextState => {
         return sequence(state, [
             changeTouchType({ type: TouchTypes.Piece }),
@@ -83,6 +90,11 @@ export const modeActions: Readonly<ScreenActions> = {
         return sequence(state, [
             changeTouchType({ type: TouchTypes.MovePiece }),
             changeModeType({ type: ModeTypes.Piece }),
+        ]);
+    },
+    changeToSelectPieceMode: () => (state): NextState => {
+        return sequence(state, [
+            changeModeType({ type: ModeTypes.SelectPiece }),
         ]);
     },
     changeScreen: ({ screen }) => (state): NextState => {

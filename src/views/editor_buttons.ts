@@ -237,7 +237,8 @@ export const toolButton = (
         datatest,
         key,
         href: '#',
-        class: `waves-effect z-depth-0 btn-flat ${backgroundColorClass} ${enable ? '' : 'disabled'}`,
+        class: `${onclick !== undefined ? 'waves-effect ' : ''}`
+            + `z-depth-0 btn-flat ${backgroundColorClass} ${enable ? '' : 'disabled'}`,
         style: style({
             flexGrow,
             color: enable ? textColor : '#9e9e9e',

@@ -1,4 +1,4 @@
-import { FieldConstants, getBlocks, parsePiece, Piece, Rotation } from '../enums';
+import { FieldConstants, getBlockPositions, getBlocks, parsePiece, Piece, Rotation } from '../enums';
 import { FumenError } from '../errors';
 
 const FIELD_WIDTH = FieldConstants.Width;
@@ -95,6 +95,17 @@ export class Field {
 
     equals(other: Field): boolean {
         return this.playField.equals(other.playField) && this.sentLine.equals(other.sentLine);
+    }
+
+    canPut(piece: Piece, rotation: Rotation, x: number, y: number) {
+        const positions = getBlockPositions(piece, rotation, x, y);
+        return positions.every(([px, py]) => {
+            return 0 <= px && px < 10 && 0 <= py && this.get(px, py) === Piece.Empty;
+        });
+    }
+
+    isOnGround(piece: Piece, rotation: Rotation, x: number, y: number) {
+        return !this.canPut(piece, rotation, x, y - 1);
     }
 }
 

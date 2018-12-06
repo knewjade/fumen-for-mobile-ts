@@ -721,7 +721,7 @@ export class Pages {
 
 export enum PageFieldOperation {
     None = 'None',
-    Command = 'Command',
+    Command = 'Command',  // ミノをおく前のコマンドまで
     All = 'All',
 }
 

@@ -1,4 +1,4 @@
-import { Piece, TouchTypes } from '../../lib/enums';
+import { TouchTypes } from '../../lib/enums';
 import { div } from '@hyperapp/html';
 import {
     dualButton,
@@ -11,22 +11,24 @@ import {
     toolSpace,
 } from '../editor_buttons';
 import { EditorLayout, toolStyle } from './editor';
-import { Move } from '../../lib/fumen/fumen';
+import { Move, Page } from '../../lib/fumen/fumen';
+import { PageFieldOperation, Pages } from '../../lib/pages';
 
-export const pieceMode = ({ layout, keyPage, currentIndex, touchType, move, flags, actions }: {
+export const pieceMode = ({ layout, keyPage, currentIndex, touchType, move, pages, existInferences, flags, actions }: {
     layout: EditorLayout;
     keyPage: boolean;
     currentIndex: number;
     touchType: TouchTypes;
     move?: Move;
+    pages: Page[],
+    existInferences: boolean,
     flags: {
         lock: boolean;
     },
     actions: {
-        selectPieceColor: (data: { piece: Piece }) => void;
-        selectInferencePieceColor: () => void;
         changeToDrawPieceMode: () => void;
         changeToMovePieceMode: () => void;
+        changeToSelectPieceMode: () => void;
         clearPiece: () => void;
         rotateToLeft: () => void;
         rotateToRight: () => void;
@@ -36,6 +38,8 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, move, flag
         moveToRightEnd: () => void;
         harddrop: () => void;
         changeLockFlag: (data: { index: number, enable: boolean }) => void;
+        openPage: (data: { index: number }) => void;
+        insertPage: (data: { index: number }) => void;
     };
 }) => {
     const toolButtonMargin = 5;
@@ -48,6 +52,11 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, move, flag
             width: layout.buttons.size.width,
             margin: toolButtonMargin,
             key: 'div-space',
+        }),
+        rotationButton({
+            layout,
+            rotation: operateRotation,
+            highlight: false,
         }),
         switchButton({
             borderWidth: 1,
@@ -65,11 +74,6 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, move, flag
             iconSize: 22,
             enable: flags.lock,
         })),
-        rotationButton({
-            layout,
-            rotation: operateRotation,
-            highlight: false,
-        }),
         dualButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
@@ -178,11 +182,14 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, move, flag
             textColor: '#333',
             borderColor: '#333',
             datatest: 'btn-reset-piece',
+            enable: existInferences || move !== undefined,
             key: 'btn-reset-piece',
-            onclick: () => actions.clearPiece(),
+            onclick: () => {
+                actions.clearPiece();
+            },
         }, iconContents({
             description: 'reset',
-            iconSize: 22,
+            iconSize: 23,
             iconName: 'clear',
         })),
         dualSwitchButton({
@@ -213,5 +220,32 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, move, flag
                 iconName: 'edit',
             }),
         }),
+        toolButton({
+            borderWidth: 3,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'red',
+            textColor: '#fff',
+            borderColor: '#f44336',
+            datatest: 'btn-piece-select-mode',
+            key: 'btn-piece-select-mode',
+            onclick: () => {
+                const pagesObj = new Pages(pages);
+                const field = pagesObj.getField(currentIndex, PageFieldOperation.Command);
+
+                // 次のページを挿入してから、ミノ選択画面に移動
+                if (flags.lock && move !== undefined
+                    && field.isOnGround(move.type, move.rotation, move.coordinate.x, move.coordinate.y)) {
+                    actions.insertPage({ index: currentIndex + 1 });
+                    actions.openPage({ index: currentIndex + 1 });
+                }
+
+                actions.changeToSelectPieceMode();
+            },
+        }, iconContents({
+            description: 'spawn',
+            iconSize: 22,
+            iconName: 'add',
+        })),
     ]);
 };

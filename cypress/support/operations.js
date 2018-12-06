@@ -158,6 +158,36 @@ export const operations = {
             lockToOff: () => {
                 cy.get(datatest('btn-lock-flag-on')).click();
             },
+            spawn: {
+                T: () => {
+                    cy.get(datatest('btn-piece-select-mode')).click();
+                    cy.get(datatest('btn-piece-t')).click();
+                },
+                S: () => {
+                    cy.get(datatest('btn-piece-select-mode')).click();
+                    cy.get(datatest('btn-piece-s')).click();
+                },
+                Z: () => {
+                    cy.get(datatest('btn-piece-select-mode')).click();
+                    cy.get(datatest('btn-piece-z')).click();
+                },
+                O: () => {
+                    cy.get(datatest('btn-piece-select-mode')).click();
+                    cy.get(datatest('btn-piece-o')).click();
+                },
+                I: () => {
+                    cy.get(datatest('btn-piece-select-mode')).click();
+                    cy.get(datatest('btn-piece-i')).click();
+                },
+                L: () => {
+                    cy.get(datatest('btn-piece-select-mode')).click();
+                    cy.get(datatest('btn-piece-l')).click();
+                },
+                J: () => {
+                    cy.get(datatest('btn-piece-select-mode')).click();
+                    cy.get(datatest('btn-piece-j')).click();
+                },
+            },
         },
         tools: {
             open: () => {
