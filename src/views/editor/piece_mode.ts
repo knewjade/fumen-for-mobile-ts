@@ -53,6 +53,11 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, move, page
             margin: toolButtonMargin,
             key: 'div-space',
         }),
+        rotationButton({
+            layout,
+            rotation: operateRotation,
+            highlight: false,
+        }),
         switchButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
@@ -69,11 +74,6 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, move, page
             iconSize: 22,
             enable: flags.lock,
         })),
-        rotationButton({
-            layout,
-            rotation: operateRotation,
-            highlight: false,
-        }),
         dualButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
