@@ -10,6 +10,7 @@ export const pieceSelectMode = ({ layout, currentIndex, colorize, actions }: {
     actions: {
         spawnPiece: (data: { piece: Piece, guideline: boolean }) => void;
         changeToPieceMode: () => void;
+        changeToMovePieceMode: () => void;
     };
 }) => {
     const pieces = [Piece.I, Piece.L, Piece.O, Piece.Z, Piece.T, Piece.J, Piece.S];
@@ -30,6 +31,7 @@ export const pieceSelectMode = ({ layout, currentIndex, colorize, actions }: {
             colorize,
             onclick: ({ piece }) => {
                 actions.spawnPiece({ piece, guideline: colorize });
+                actions.changeToMovePieceMode();
                 actions.changeToPieceMode();
             },
             highlight: false,

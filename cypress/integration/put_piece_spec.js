@@ -496,7 +496,7 @@ describe('Put pieces', () => {
     it('Spawn: usecase 2', () => {
         visit({ mode: 'writable' });
         operations.mode.piece.open();
-        operations.mode.piece.move();
+        operations.mode.piece.draw();  // 自動でmoveに切り替わることを期待
 
         {
             operations.mode.piece.spawn.Z();
@@ -539,5 +539,82 @@ describe('Put pieces', () => {
         }
 
         expectFumen('v115@vhGcJJ+MJTNJRPJ3FJlLJKNJ');
+    });
+
+    it('Reset', () => {
+        visit({ mode: 'writable' });
+        operations.mode.piece.open();
+        operations.mode.piece.draw();
+
+        // Disable: all
+        cy.get(datatest('btn-reset-piece')).should('have.class', 'disabled');
+        cy.get(datatest('btn-rotate-to-right')).should('have.class', 'disabled');
+        cy.get(datatest('btn-rotate-to-left')).should('have.class', 'disabled');
+        cy.get(datatest('btn-move-to-right')).should('have.class', 'disabled');
+        cy.get(datatest('btn-move-to-left')).should('have.class', 'disabled');
+        cy.get(datatest('btn-move-to-right-end')).should('have.class', 'disabled');
+        cy.get(datatest('btn-move-to-left-end')).should('have.class', 'disabled');
+        cy.get(datatest('btn-harddrop')).should('have.class', 'disabled');
+
+        operations.mode.block.click(5, 5);
+
+        // Enable: reset only
+        cy.get(datatest('btn-reset-piece')).should('not.have.class', 'disabled');
+        cy.get(datatest('btn-rotate-to-right')).should('have.class', 'disabled');
+        cy.get(datatest('btn-rotate-to-left')).should('have.class', 'disabled');
+        cy.get(datatest('btn-move-to-right')).should('have.class', 'disabled');
+        cy.get(datatest('btn-move-to-left')).should('have.class', 'disabled');
+        cy.get(datatest('btn-move-to-right-end')).should('have.class', 'disabled');
+        cy.get(datatest('btn-move-to-left-end')).should('have.class', 'disabled');
+        cy.get(datatest('btn-harddrop')).should('have.class', 'disabled');
+
+        operations.mode.piece.spawn.Z();
+
+        // Enable: all
+        cy.get(datatest('btn-reset-piece')).should('not.have.class', 'disabled');
+        cy.get(datatest('btn-rotate-to-right')).should('not.have.class', 'disabled');
+        cy.get(datatest('btn-rotate-to-left')).should('not.have.class', 'disabled');
+        cy.get(datatest('btn-move-to-right')).should('not.have.class', 'disabled');
+        cy.get(datatest('btn-move-to-left')).should('not.have.class', 'disabled');
+        cy.get(datatest('btn-move-to-right-end')).should('not.have.class', 'disabled');
+        cy.get(datatest('btn-move-to-left-end')).should('not.have.class', 'disabled');
+        cy.get(datatest('btn-harddrop')).should('not.have.class', 'disabled');
+
+        operations.mode.piece.resetPiece();
+
+        // Disable: all
+        cy.get(datatest('btn-reset-piece')).should('have.class', 'disabled');
+        cy.get(datatest('btn-rotate-to-right')).should('have.class', 'disabled');
+        cy.get(datatest('btn-rotate-to-left')).should('have.class', 'disabled');
+        cy.get(datatest('btn-move-to-right')).should('have.class', 'disabled');
+        cy.get(datatest('btn-move-to-left')).should('have.class', 'disabled');
+        cy.get(datatest('btn-move-to-right-end')).should('have.class', 'disabled');
+        cy.get(datatest('btn-move-to-left-end')).should('have.class', 'disabled');
+        cy.get(datatest('btn-harddrop')).should('have.class', 'disabled');
+    });
+
+    it('Inference', () => {
+        visit({ mode: 'writable' });
+        operations.mode.piece.open();
+        operations.mode.piece.draw();
+
+        operations.mode.block.click(5, 5);
+
+        cy.get(block(5, 5)).should('have.attr', 'color', Color.Completion.Highlight2);
+
+        // 消えない
+        cy.get(datatest('btn-piece-select-mode')).click();
+
+        cy.get(block(5, 5)).should('have.attr', 'color', Color.Completion.Highlight2);
+
+        // 消えない
+        cy.get(datatest('btn-piece-mode')).click();
+
+        cy.get(block(5, 5)).should('have.attr', 'color', Color.Completion.Highlight2);
+
+        // 消える
+        operations.mode.piece.spawn.T();
+
+        cy.get(block(5, 5)).should('not.have.attr', 'color', Color.Completion.Highlight2);
     });
 });
