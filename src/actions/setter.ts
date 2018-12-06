@@ -1,8 +1,8 @@
 import { NextState } from './commons';
 import { action, main } from '../actions';
-import { FieldConstants, Piece } from '../lib/enums';
+import { FieldConstants, getBlockPositions, isInPlayField, Piece } from '../lib/enums';
 import { Block, HighlightType } from '../state_types';
-import { Page } from '../lib/fumen/fumen';
+import { Move, Page } from '../lib/fumen/fumen';
 import { inferPiece } from '../lib/inference';
 import { generateKey } from '../lib/random';
 
@@ -11,7 +11,13 @@ export interface SetterActions {
     inputFumenData: (args: { value?: string }) => action;
     clearFumenData: () => action;
     setComment: (data: { comment: string }) => action;
-    setField: (data: { field: Block[], filledHighlight: boolean, inferences: number[] }) => action;
+    setField: (data: {
+        field: Block[],
+        move?: Move,
+        filledHighlight: boolean,
+        inferences: number[],
+        ghost: boolean,
+    }) => action;
     setFieldColor: (data: { guideLineColor: boolean }) => action;
     setSentLine: (data: { sentLine: Block[] }) => action;
     setHold: (data: { hold?: Piece }) => action;
@@ -59,9 +65,38 @@ export const setterActions: Readonly<SetterActions> = {
             },
         };
     },
-    setField: ({ field, filledHighlight, inferences }) => (): NextState => {
-        // 列が揃っているか確認
+    setField: ({ field, move, filledHighlight, inferences, ghost }) => (): NextState => {
         const drawnField: Block[] = field.concat();
+
+        // ゴーストの計算
+        // 操作しているミノに重ならないように先に計算する
+        let ghostY: number | undefined = undefined;
+        if (move !== undefined && ghost) {
+            const piece = move.type;
+            for (let pieceY = move.coordinate.y - 1; 0 <= pieceY; pieceY -= 1) {
+                const positions = getBlockPositions(piece, move.rotation, move.coordinate.x, pieceY);
+                const canPut = positions.every(
+                    ([x, y]) => isInPlayField(x, y) && drawnField[x + y * 10].piece === Piece.Empty,
+                );
+
+                if (!canPut) {
+                    break;
+                }
+
+                ghostY = pieceY;
+            }
+        }
+
+        // 操作しているミノ
+        if (move !== undefined) {
+            const piece = move.type;
+            const positions = getBlockPositions(piece, move.rotation, move.coordinate.x, move.coordinate.y);
+            for (const [x, y] of positions) {
+                if (isInPlayField(x, y)) {
+                    drawnField[x + y * 10] = { piece, highlight: HighlightType.Highlight2 };
+                }
+            }
+        }
 
         if (filledHighlight) {
             // 列が揃っているか確認
@@ -86,6 +121,16 @@ export const setterActions: Readonly<SetterActions> = {
                         };
                     }
                 }
+            }
+        }
+
+        // ゴーストの表示
+        if (move !== undefined && ghostY !== undefined) {
+            const piece = move.type;
+            const positions = getBlockPositions(piece, move.rotation, move.coordinate.x, ghostY);
+
+            for (const [x, y] of positions) {
+                drawnField[x + y * 10] = { piece };
             }
         }
 
