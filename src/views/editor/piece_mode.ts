@@ -14,13 +14,14 @@ import { EditorLayout, toolStyle } from './editor';
 import { Move, Page } from '../../lib/fumen/fumen';
 import { PageFieldOperation, Pages } from '../../lib/pages';
 
-export const pieceMode = ({ layout, keyPage, currentIndex, touchType, move, pages, flags, actions }: {
+export const pieceMode = ({ layout, keyPage, currentIndex, touchType, move, pages, existInferences, flags, actions }: {
     layout: EditorLayout;
     keyPage: boolean;
     currentIndex: number;
     touchType: TouchTypes;
     move?: Move;
     pages: Page[],
+    existInferences: boolean,
     flags: {
         lock: boolean;
     },
@@ -37,7 +38,6 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, move, page
         moveToRightEnd: () => void;
         harddrop: () => void;
         changeLockFlag: (data: { index: number, enable: boolean }) => void;
-        respawnPiece: () => void;
         openPage: (data: { index: number }) => void;
         insertPage: (data: { index: number }) => void;
     };
@@ -174,6 +174,24 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, move, page
             iconSize: 22,
             iconName: 'vertical_align_bottom',
         })),
+        toolButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'white',
+            textColor: '#333',
+            borderColor: '#333',
+            datatest: 'btn-reset-piece',
+            enable: existInferences || move !== undefined,
+            key: 'btn-reset-piece',
+            onclick: () => {
+                actions.clearPiece();
+            },
+        }, iconContents({
+            description: 'reset',
+            iconSize: 23,
+            iconName: 'clear',
+        })),
         dualSwitchButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
@@ -202,22 +220,6 @@ export const pieceMode = ({ layout, keyPage, currentIndex, touchType, move, page
                 iconName: 'edit',
             }),
         }),
-        toolButton({
-            borderWidth: 1,
-            width: layout.buttons.size.width,
-            margin: toolButtonMargin,
-            backgroundColorClass: 'red',
-            textColor: '#fff',
-            borderColor: '#f44336',
-            datatest: 'btn-respawn-piece',
-            key: 'btn-respawn-piece',
-            enable: move !== undefined,
-            onclick: () => actions.respawnPiece(),
-        }, iconContents({
-            description: 'respawn',
-            iconSize: 20,
-            iconName: 'replay',
-        })),
         toolButton({
             borderWidth: 3,
             width: layout.buttons.size.width,

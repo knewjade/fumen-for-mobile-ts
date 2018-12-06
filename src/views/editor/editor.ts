@@ -176,6 +176,7 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                     actions,
                     keyPage,
                     move: page !== undefined ? page.piece : undefined,
+                    existInferences: 0 < state.events.inferences.length,
                     pages: state.fumen.pages,
                     flags: page.flags,
                     touchType: state.mode.touch,
@@ -214,7 +215,6 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                 return pieceSelectMode({
                     layout,
                     actions,
-                    move: page !== undefined ? page.piece : undefined,
                     currentIndex: state.fumen.currentIndex,
                     colorize: guideLineColor,
                 });

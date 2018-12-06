@@ -34,8 +34,6 @@ export interface FieldEditorActions {
 
     spawnPiece(data: { piece: Piece, guideline: boolean }): action;
 
-    respawnPiece(): action;
-
     clearPiece(): action;
 
     rotateToLeft(): action;
@@ -174,9 +172,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return undefined;
         }
 
-        const pagesObj = new Pages(pages);
-        const field = pagesObj.getField(pageIndex, PageFieldOperation.Command);
-
         let next;
         if (guideline) {
             next = { type: piece, rotation: Rotation.Spawn, coordinate: { x: 4, y: 20 } };
@@ -208,24 +203,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
-        ]);
-    },
-    respawnPiece: () => (state): NextState => {
-        const pages = state.fumen.pages;
-        const pageIndex = state.fumen.currentIndex;
-        const page = pages[pageIndex];
-        if (page === undefined || page.piece === undefined) {
-            return undefined;
-        }
-
-        const piece = page.piece.type;
-
-        if (piece === Piece.Gray || piece === Piece.Empty) {
-            return undefined;
-        }
-
-        return sequence(state, [
-            fieldEditorActions.spawnPiece({ piece, guideline: state.fumen.guideLineColor }),
         ]);
     },
     clearPiece: () => (state): NextState => {
