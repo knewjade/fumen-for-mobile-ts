@@ -617,4 +617,26 @@ describe('Put pieces', () => {
 
         cy.get(block(5, 5)).should('not.have.attr', 'color', Color.Completion.Highlight2);
     });
+
+    it('Swap current piece', () => {
+        visit({ mode: 'writable' });
+        operations.mode.piece.open();
+
+        {
+            operations.mode.piece.spawn.Z();
+            operations.mode.block.click(5, 10);
+        }
+
+        {
+            operations.mode.piece.spawn.J();
+            operations.mode.piece.harddrop();
+        }
+
+        {
+            operations.mode.piece.spawn.J();
+            operations.mode.piece.harddrop();
+        }
+
+        expectFumen('v115@vhBWQJWGJ');
+    });
 });
