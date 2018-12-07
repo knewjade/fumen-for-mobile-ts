@@ -129,7 +129,7 @@ export const initState: Readonly<State> = {
         touch: TouchTypes.Drawing,
         piece: undefined,
         comment: CommentType.Writable,
-        ghostVisible: false,
+        ghostVisible: true,
     },
     history: {
         undoCount: 0,
