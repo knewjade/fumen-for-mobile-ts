@@ -7,6 +7,7 @@ import { fieldEditorActions } from './field_editor';
 import { inferPiece } from '../lib/inference';
 import { Page } from '../lib/fumen/fumen';
 import { memento } from '../memento';
+import { HighlightType } from '../state_types';
 
 interface PutPieceActions {
     fixInferencePiece(): action;
@@ -106,7 +107,7 @@ export const putPieceActions: Readonly<PutPieceActions> = {
             }
 
             // すでに表示上にブロックがある
-            if (state.field[index].piece !== Piece.Empty) {
+            if (state.field[index].piece !== Piece.Empty && state.field[index].highlight !== HighlightType.Lighter) {
                 return undefined;
             }
 

@@ -64,6 +64,7 @@ export interface State {
         touch: TouchTypes;
         piece: Piece | undefined;
         comment: CommentType;
+        ghostVisible: boolean;
     };
     history: {
         undoCount: number;
@@ -128,6 +129,7 @@ export const initState: Readonly<State> = {
         touch: TouchTypes.Drawing,
         piece: undefined,
         comment: CommentType.Writable,
+        ghostVisible: false,
     },
     history: {
         undoCount: 0,

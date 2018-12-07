@@ -9,4 +9,5 @@ export enum HighlightType {
     Normal = 0,
     Highlight1 = 1,
     Highlight2 = 2,
+    Lighter = 3,
 }

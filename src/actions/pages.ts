@@ -91,7 +91,7 @@ export const pageActions: Readonly<PageActions> = {
                 move: page.piece,
                 filledHighlight: page.flags.lock,
                 inferences: state.events.inferences,
-                ghost: true,
+                ghost: state.mode.ghostVisible,
             }),
             actions.setFieldColor({ guideLineColor }),
             actions.setSentLine({ sentLine: blocks.sentLine }),

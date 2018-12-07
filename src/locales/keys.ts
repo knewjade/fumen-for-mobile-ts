@@ -52,6 +52,8 @@ export const i18n = {
             ClearToEnd: () => t('Menu.Buttons.ClearToEnd'),
             ClearPast: () => t('Menu.Buttons.ClearPast'),
             Append: () => t('Menu.Buttons.Append'),
+            GhostOn: () => t('Menu.Buttons.GhostOn'),
+            GhostOff: () => t('Menu.Buttons.GhostOff'),
         },
         Messages: {
             NoAvailableCommentButton: () => t('Menu.Messages.NoAvailableCommentButton'),
