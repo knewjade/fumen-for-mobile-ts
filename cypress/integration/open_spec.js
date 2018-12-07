@@ -1,4 +1,17 @@
-import { Color, datatest, mino, Piece, Rotation, visit } from '../support/common';
+import {
+    block,
+    Color,
+    datatest,
+    holdBox,
+    leftTap,
+    mino,
+    nextBox,
+    pages,
+    Piece,
+    rightTap,
+    Rotation,
+    visit
+} from '../support/common';
 import { operations } from '../support/operations';
 
 // テト譜を開く
@@ -10,7 +23,7 @@ describe('Open fumen', () => {
             .trigger('input')
             .trigger('mouseleave');
     };
-/*
+
     it('Error -> success', () => {
         visit({ lng: 'ja' });
 
@@ -244,52 +257,6 @@ describe('Open fumen', () => {
             operations.menu.firstPage();
 
             mino(Piece.I, Rotation.Spawn)(4, 2).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.I.Lighter);
-            });
-
-            rightTap();
-
-            mino(Piece.L, Rotation.Spawn)(4, 2).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.L.Lighter);
-            });
-
-            rightTap();
-
-            mino(Piece.O, Rotation.Spawn)(4, 1).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.O.Lighter);
-            });
-
-            rightTap();
-
-            mino(Piece.Z, Rotation.Spawn)(4, 1).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Z.Lighter);
-            });
-
-            rightTap();
-
-            mino(Piece.T, Rotation.Spawn)(4, 2).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.T.Lighter);
-            });
-
-            rightTap();
-
-            mino(Piece.J, Rotation.Spawn)(4, 2).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.J.Lighter);
-            });
-
-            rightTap();
-
-            mino(Piece.S, Rotation.Spawn)(4, 2).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.S.Lighter);
-            });
-        }
-
-        operations.menu.ghostToggle();
-
-        {
-            operations.menu.firstPage();
-
-            mino(Piece.I, Rotation.Spawn)(4, 2).forEach((block) => {
                 cy.get(block).should('not.have.attr', 'color', Color.I.Lighter);
             });
 
@@ -327,6 +294,52 @@ describe('Open fumen', () => {
 
             mino(Piece.S, Rotation.Spawn)(4, 2).forEach((block) => {
                 cy.get(block).should('not.have.attr', 'color', Color.S.Lighter);
+            });
+        }
+
+        operations.menu.ghostToggle();
+
+        {
+            operations.menu.firstPage();
+
+            mino(Piece.I, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.I.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.L, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.L.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.O, Rotation.Spawn)(4, 1).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.O.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.Z, Rotation.Spawn)(4, 1).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Z.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.T, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.T.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.J, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.J.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.S, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.S.Lighter);
             });
         }
     });
@@ -343,52 +356,6 @@ describe('Open fumen', () => {
             operations.menu.firstPage();
 
             mino(Piece.I, Rotation.Spawn)(4, 2).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.I.Lighter);
-            });
-
-            operations.mode.tools.nextPage();
-
-            mino(Piece.L, Rotation.Spawn)(4, 2).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.L.Lighter);
-            });
-
-            operations.mode.tools.nextPage();
-
-            mino(Piece.O, Rotation.Spawn)(4, 1).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.O.Lighter);
-            });
-
-            operations.mode.tools.nextPage();
-
-            mino(Piece.Z, Rotation.Spawn)(4, 1).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.Z.Lighter);
-            });
-
-            operations.mode.tools.nextPage();
-
-            mino(Piece.T, Rotation.Spawn)(4, 2).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.T.Lighter);
-            });
-
-            operations.mode.tools.nextPage();
-
-            mino(Piece.J, Rotation.Spawn)(4, 2).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.J.Lighter);
-            });
-
-            operations.mode.tools.nextPage();
-
-            mino(Piece.S, Rotation.Spawn)(4, 2).forEach((block) => {
-                cy.get(block).should('have.attr', 'color', Color.S.Lighter);
-            });
-        }
-
-        operations.menu.ghostToggle();
-
-        {
-            operations.menu.firstPage();
-
-            mino(Piece.I, Rotation.Spawn)(4, 2).forEach((block) => {
                 cy.get(block).should('not.have.attr', 'color', Color.I.Lighter);
             });
 
@@ -428,8 +395,54 @@ describe('Open fumen', () => {
                 cy.get(block).should('not.have.attr', 'color', Color.S.Lighter);
             });
         }
+
+        operations.menu.ghostToggle();
+
+        {
+            operations.menu.firstPage();
+
+            mino(Piece.I, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.I.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.L, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.L.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.O, Rotation.Spawn)(4, 1).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.O.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.Z, Rotation.Spawn)(4, 1).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Z.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.T, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.T.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.J, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.J.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.S, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.S.Lighter);
+            });
+        }
     });
-*/
+
     it('Ghost: draw', () => {
         visit({
             fumen: 'v115@RhD8FeE8OeRsHWeTaUhSsHOegWGeiWVhTnHNexSHex?SVhUnHMeBPIeBPVhVsHNeQLHeSLVhWsHMegHIeiHVhXnH',
@@ -438,8 +451,6 @@ describe('Open fumen', () => {
 
         operations.mode.block.open();
         operations.mode.block.Gray();
-
-        operations.menu.ghostToggle();
 
         {
             operations.menu.firstPage();
@@ -485,6 +496,13 @@ describe('Open fumen', () => {
         mino(Piece.Z, Rotation.Spawn)(4, 11).forEach((block) => {
             cy.get(block).should('have.attr', 'color', Color.Z.Lighter);
         });
+
+        operations.mode.block.click(4, 12);
+
+        cy.get(block(3, 12)).should('have.attr', 'color', Color.Z.Lighter);
+        cy.get(block(4, 12)).should('have.attr', 'color', Color.Z.Highlight2);
+        cy.get(block(4, 11)).should('have.attr', 'color', Color.Z.Lighter);
+        cy.get(block(5, 11)).should('have.attr', 'color', Color.Z.Lighter);
 
         operations.mode.piece.resetPiece();
 

@@ -128,7 +128,10 @@ export const setterActions: Readonly<SetterActions> = {
             const positions = getBlockPositions(piece, move.rotation, move.coordinate.x, ghostY);
 
             for (const [x, y] of positions) {
-                drawnField[x + y * 10] = { piece, highlight: HighlightType.Lighter };
+                const currentBlock = drawnField[x + y * 10];
+                if (currentBlock === undefined || currentBlock.piece === Piece.Empty) {
+                    drawnField[x + y * 10] = { piece, highlight: HighlightType.Lighter };
+                }
             }
         }
 
