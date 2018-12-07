@@ -106,19 +106,17 @@ export const setterActions: Readonly<SetterActions> = {
                 const filled = line.every(block => block.piece !== Piece.Empty);
                 if (filled) {
                     for (let index = start; index < end; index += 1) {
-                        let nextHighlight;
                         const currentBlock = drawnField[index];
                         if (currentBlock !== undefined) {
                             const highlight = currentBlock.highlight;
-                            nextHighlight = highlight !== undefined && HighlightType.Highlight1 < highlight
-                                ? highlight
-                                : HighlightType.Highlight1;
+                            drawnField[index].highlight = (
+                                highlight !== undefined && HighlightType.Highlight1 < highlight
+                                    ? highlight
+                                    : HighlightType.Highlight1
+                            );
+                        } else {
+                            drawnField[index] = { ...field[index] };
                         }
-
-                        drawnField[index] = {
-                            ...field[index],
-                            highlight: nextHighlight,
-                        };
                     }
                 }
             }
