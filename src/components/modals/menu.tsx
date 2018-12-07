@@ -237,6 +237,7 @@ export const MenuModal: Component<MenuProps> = (
                                        onclick={() => {
                                            actions.changeGhostVisible({ visible: !ghostVisible });
                                            actions.reopenCurrentPage();
+                                           actions.closeMenuModal();
                                        }}>
                             {ghostVisible ? i18n.Menu.Buttons.GhostOff() : i18n.Menu.Buttons.GhostOn()}
                         </SettingButton>

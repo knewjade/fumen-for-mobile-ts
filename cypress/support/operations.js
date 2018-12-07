@@ -354,5 +354,9 @@ export const operations = {
             operations.menu.open();
             cy.get(datatest('btn-page-slider')).click();
         },
+        ghostToggle: () => {
+            operations.menu.open();
+            cy.get(datatest('btn-ghost-toggle')).click();
+        },
     },
 };

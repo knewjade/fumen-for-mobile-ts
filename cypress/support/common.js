@@ -4,6 +4,7 @@ export const HighlightType = {
     Normal: 'Normal',
     Highlight1: 'Highlight1',
     Highlight2: 'Highlight2',
+    Lighter: 'Lighter',
 };
 
 export const Color = {
@@ -11,51 +12,61 @@ export const Color = {
         [HighlightType.Normal]: '#ffffff',
         [HighlightType.Highlight1]: '#ffffff',
         [HighlightType.Highlight2]: '#ffffff',
+        [HighlightType.Lighter]: '#ffffff',
     },
     Gray: {
         [HighlightType.Normal]: '#999999',
         [HighlightType.Highlight1]: '#cccccc',
         [HighlightType.Highlight2]: '#ffffff',
+        [HighlightType.Lighter]: '#333333',
     },
     I: {
         [HighlightType.Normal]: '#009999',
         [HighlightType.Highlight1]: '#33cccc',
         [HighlightType.Highlight2]: '#00ffff',
+        [HighlightType.Lighter]: '#003333',
     },
     T: {
         [HighlightType.Normal]: '#990099',
         [HighlightType.Highlight1]: '#cc33cc',
         [HighlightType.Highlight2]: '#ff00ff',
+        [HighlightType.Lighter]: '#4d004d',
     },
     S: {
         [HighlightType.Normal]: '#009900',
         [HighlightType.Highlight1]: '#33cc33',
         [HighlightType.Highlight2]: '#00ff00',
+        [HighlightType.Lighter]: '#003300',
     },
     Z: {
         [HighlightType.Normal]: '#990000',
         [HighlightType.Highlight1]: '#cc3333',
         [HighlightType.Highlight2]: '#ff0000',
+        [HighlightType.Lighter]: '#4d0000',
     },
     L: {
         [HighlightType.Normal]: '#996600',
         [HighlightType.Highlight1]: '#cc9933',
         [HighlightType.Highlight2]: '#ff9900',
+        [HighlightType.Lighter]: '#3b1d00',
     },
     J: {
         [HighlightType.Normal]: '#0000BB',
         [HighlightType.Highlight1]: '#3333cc',
         [HighlightType.Highlight2]: '#0000ff',
+        [HighlightType.Lighter]: '#000061',
     },
     O: {
         [HighlightType.Normal]: '#999900',
         [HighlightType.Highlight1]: '#cccc33',
         [HighlightType.Highlight2]: '#ffff00',
+        [HighlightType.Lighter]: '#333300',
     },
     Empty: {
         [HighlightType.Normal]: '#000000',
         [HighlightType.Highlight1]: '#000000',
         [HighlightType.Highlight2]: '#000000',
+        [HighlightType.Lighter]: '#000000',
     },
 };
 

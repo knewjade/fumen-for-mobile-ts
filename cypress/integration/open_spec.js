@@ -1,4 +1,4 @@
-import { block, Color, datatest, holdBox, leftTap, nextBox, pages, Piece, rightTap, visit } from '../support/common';
+import { Color, datatest, mino, Piece, Rotation, visit } from '../support/common';
 import { operations } from '../support/operations';
 
 // テト譜を開く
@@ -10,7 +10,7 @@ describe('Open fumen', () => {
             .trigger('input')
             .trigger('mouseleave');
     };
-
+/*
     it('Error -> success', () => {
         visit({ lng: 'ja' });
 
@@ -233,6 +233,264 @@ describe('Open fumen', () => {
 
         dragNDrop(1);
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 10');
+    });
+
+    it('Ghost: readonly', () => {
+        visit({ fumen: 'v115@RhD8FeE8OeRsHWeTaUhSsHOegWGeiWVhTnHNexSHex?SVhUnHMeBPIeBPVhVsHNeQLHeSLVhWsHMegHIeiHVhXnH' });
+
+        operations.menu.ghostToggle();
+
+        {
+            operations.menu.firstPage();
+
+            mino(Piece.I, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.I.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.L, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.L.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.O, Rotation.Spawn)(4, 1).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.O.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.Z, Rotation.Spawn)(4, 1).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Z.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.T, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.T.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.J, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.J.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.S, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.S.Lighter);
+            });
+        }
+
+        operations.menu.ghostToggle();
+
+        {
+            operations.menu.firstPage();
+
+            mino(Piece.I, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('not.have.attr', 'color', Color.I.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.L, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('not.have.attr', 'color', Color.L.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.O, Rotation.Spawn)(4, 1).forEach((block) => {
+                cy.get(block).should('not.have.attr', 'color', Color.O.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.Z, Rotation.Spawn)(4, 1).forEach((block) => {
+                cy.get(block).should('not.have.attr', 'color', Color.Z.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.T, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('not.have.attr', 'color', Color.T.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.J, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('not.have.attr', 'color', Color.J.Lighter);
+            });
+
+            rightTap();
+
+            mino(Piece.S, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('not.have.attr', 'color', Color.S.Lighter);
+            });
+        }
+    });
+
+    it('Ghost: writable', () => {
+        visit({
+            fumen: 'v115@RhD8FeE8OeRsHWeTaUhSsHOegWGeiWVhTnHNexSHex?SVhUnHMeBPIeBPVhVsHNeQLHeSLVhWsHMegHIeiHVhXnH',
+            mode: 'writable',
+        });
+
+        operations.menu.ghostToggle();
+
+        {
+            operations.menu.firstPage();
+
+            mino(Piece.I, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.I.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.L, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.L.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.O, Rotation.Spawn)(4, 1).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.O.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.Z, Rotation.Spawn)(4, 1).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.Z.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.T, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.T.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.J, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.J.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.S, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.S.Lighter);
+            });
+        }
+
+        operations.menu.ghostToggle();
+
+        {
+            operations.menu.firstPage();
+
+            mino(Piece.I, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('not.have.attr', 'color', Color.I.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.L, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('not.have.attr', 'color', Color.L.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.O, Rotation.Spawn)(4, 1).forEach((block) => {
+                cy.get(block).should('not.have.attr', 'color', Color.O.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.Z, Rotation.Spawn)(4, 1).forEach((block) => {
+                cy.get(block).should('not.have.attr', 'color', Color.Z.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.T, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('not.have.attr', 'color', Color.T.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.J, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('not.have.attr', 'color', Color.J.Lighter);
+            });
+
+            operations.mode.tools.nextPage();
+
+            mino(Piece.S, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('not.have.attr', 'color', Color.S.Lighter);
+            });
+        }
+    });
+*/
+    it('Ghost: draw', () => {
+        visit({
+            fumen: 'v115@RhD8FeE8OeRsHWeTaUhSsHOegWGeiWVhTnHNexSHex?SVhUnHMeBPIeBPVhVsHNeQLHeSLVhWsHMegHIeiHVhXnH',
+            mode: 'writable',
+        });
+
+        operations.mode.block.open();
+        operations.mode.block.Gray();
+
+        operations.menu.ghostToggle();
+
+        {
+            operations.menu.firstPage();
+
+            mino(Piece.I, Rotation.Spawn)(4, 2).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.I.Lighter);
+            });
+
+            operations.mode.block.click(3, 2);
+
+            mino(Piece.I, Rotation.Spawn)(4, 3).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.I.Lighter);
+            });
+
+            operations.mode.block.click(4, 10);
+
+            mino(Piece.I, Rotation.Spawn)(4, 11).forEach((block) => {
+                cy.get(block).should('have.attr', 'color', Color.I.Lighter);
+            });
+        }
+
+        operations.mode.tools.home();
+        operations.mode.piece.open();
+
+        operations.mode.block.click(5, 11);
+
+        mino(Piece.I, Rotation.Spawn)(4, 11).forEach((block) => {
+            cy.get(block).should('not.have.attr', 'color', Color.I.Lighter);
+        });
+
+        operations.mode.block.click(6, 11);
+        operations.mode.block.click(5, 12);
+        operations.mode.block.click(6, 12);
+
+        mino(Piece.O, Rotation.Spawn)(5, 0).forEach((block) => {
+            cy.get(block).should('have.attr', 'color', Color.O.Lighter);
+        });
+
+        operations.mode.piece.spawn.Z();
+
+        operations.mode.block.click(4, 18);
+
+        mino(Piece.Z, Rotation.Spawn)(4, 11).forEach((block) => {
+            cy.get(block).should('have.attr', 'color', Color.Z.Lighter);
+        });
+
+        operations.mode.piece.resetPiece();
+
+        mino(Piece.Z, Rotation.Spawn)(4, 11).forEach((block) => {
+            cy.get(block).should('not.have.attr', 'color', Color.Z.Lighter);
+        });
     });
 });
 
