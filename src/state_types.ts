@@ -5,8 +5,10 @@ export interface Block {
     highlight?: HighlightType;
 }
 
+// ラインが揃ったとき、Highlight1より小さい値は上書きされる
 export enum HighlightType {
     Normal = 0,
-    Highlight1 = 1,
-    Highlight2 = 2,
+    Lighter = 1,
+    Highlight1 = 10,
+    Highlight2 = 11,
 }

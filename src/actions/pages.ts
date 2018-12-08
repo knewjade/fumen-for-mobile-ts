@@ -1,10 +1,10 @@
 import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
-import { AnimationState, getBlocks, isMinoPiece, Piece } from '../lib/enums';
+import { AnimationState, Piece } from '../lib/enums';
 import { Move, Page, PreCommand } from '../lib/fumen/fumen';
 import { Field } from '../lib/fumen/field';
-import { Block, HighlightType } from '../state_types';
-import { Pages, QuizCommentResult, TextCommentResult } from '../lib/pages';
+import { Block } from '../state_types';
+import { PageFieldOperation, Pages, QuizCommentResult, TextCommentResult } from '../lib/pages';
 import {
     OperationTask,
     toFreezeCommentTask,
@@ -72,7 +72,7 @@ export const pageActions: Readonly<PageActions> = {
             hold = undefined;
         }
 
-        const field = pages.getField(index);
+        const field = pages.getField(index, PageFieldOperation.None);
 
         const page = state.fumen.pages[index];
         const blocks = parseToBlocks(field, page.piece, page.commands);
@@ -88,8 +88,10 @@ export const pageActions: Readonly<PageActions> = {
             actions.setComment({ comment: text }),
             actions.setField({
                 field: blocks.playField,
+                move: page.piece,
                 filledHighlight: page.flags.lock,
                 inferences: state.events.inferences,
+                ghost: state.mode.ghostVisible,
             }),
             actions.setFieldColor({ guideLineColor }),
             actions.setSentLine({ sentLine: blocks.sentLine }),
@@ -418,18 +420,6 @@ export const parseToBlocks = (field: Field, move?: Move, commands?: Page['comman
                 }
                 }
             });
-    }
-
-    if (move !== undefined && isMinoPiece(move.type)) {
-        const coordinate = move.coordinate;
-        const blocks = getBlocks(move.type, move.rotation);
-        for (const block of blocks) {
-            const [x, y] = [coordinate.x + block[0], coordinate.y + block[1]];
-            playField[x + y * 10] = {
-                piece: move.type,
-                highlight: HighlightType.Highlight2,
-            };
-        }
     }
 
     return { playField, sentLine };

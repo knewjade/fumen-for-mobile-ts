@@ -15,6 +15,7 @@ interface MenuProps {
     currentIndex: number;
     maxPageIndex: number;
     comment: CommentType;
+    ghostVisible: boolean;
     actions: {
         closeMenuModal: () => void;
         changeToReaderScreen: () => void;
@@ -30,11 +31,13 @@ interface MenuProps {
         clearPast: () => void;
         openAppendModal: () => void;
         openClipboardModal: () => void;
+        changeGhostVisible: (data: { visible: boolean }) => void;
+        reopenCurrentPage: () => void;
     };
 }
 
 export const MenuModal: Component<MenuProps> = (
-    { version, pages, screen, currentIndex, maxPageIndex, comment, actions },
+    { version, pages, screen, currentIndex, maxPageIndex, comment, ghostVisible, actions },
 ) => {
     const oncreate = (element: HTMLDivElement) => {
         const instance = M.Modal.init(element, {
@@ -227,6 +230,17 @@ export const MenuModal: Component<MenuProps> = (
                                 {i18n.Menu.Buttons.ReadonlyComment()}
                             </SettingButton>
                             : undefined}
+
+                        <SettingButton key="btn-ghost-toggle" href="#"
+                                       datatest="btn-ghost-toggle"
+                                       icons={[{ name: ghostVisible ? 'visibility_off' : 'pageview', size: 32 }]}
+                                       onclick={() => {
+                                           actions.changeGhostVisible({ visible: !ghostVisible });
+                                           actions.reopenCurrentPage();
+                                           actions.closeMenuModal();
+                                       }}>
+                            {ghostVisible ? i18n.Menu.Buttons.GhostOff() : i18n.Menu.Buttons.GhostOn()}
+                        </SettingButton>
 
                         <SettingButton key="btn-help" datatest="btn-help" href="./help.html"
                                        icons={[{ name: 'help_outline', size: 31.25 }]}>

@@ -47,6 +47,8 @@ export const resources = {
             ClearToEnd: 'ClearToEnd',
             ClearPast: 'ClearPast',
             Append: 'Append',
+            GhostOn: 'GhostOn',
+            GhostOff: 'GhostOff',
         },
         Messages: {
             NoAvailableCommentButton: 'Available only when writable mode',

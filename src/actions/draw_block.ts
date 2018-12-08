@@ -5,6 +5,7 @@ import { NextState, sequence } from './commons';
 import { toPrimitivePage, toSinglePageTask } from '../history_task';
 import { fieldEditorActions } from './field_editor';
 import { inferPiece } from '../lib/inference';
+import { HighlightType } from '../state_types';
 
 interface DrawBlockActions {
     fixInferencePiece(): action;
@@ -142,7 +143,7 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
             }
 
             // すでに表示上にブロックがある
-            if (state.field[index].piece !== Piece.Empty) {
+            if (state.field[index].piece !== Piece.Empty && state.field[index].highlight !== HighlightType.Lighter) {
                 return undefined;
             }
 

@@ -18,6 +18,7 @@ export interface ScreenActions {
     changeToSelectPieceMode: () => action;
     changeScreen: (data: { screen: Screens }) => action;
     changeCommentMode: (data: { type: CommentType }) => action;
+    changeGhostVisible: (data: { visible: boolean }) => action;
 }
 
 export const modeActions: Readonly<ScreenActions> = {
@@ -110,6 +111,14 @@ export const modeActions: Readonly<ScreenActions> = {
             mode: {
                 ...state.mode,
                 comment: type,
+            },
+        };
+    },
+    changeGhostVisible: ({ visible }) => (state): NextState => {
+        return {
+            mode: {
+                ...state.mode,
+                ghostVisible: visible,
             },
         };
     },

@@ -222,3 +222,7 @@ export function parseRotationName(rotation: Rotation) {
     }
     throw new FumenError('Unexpected rotation');
 }
+
+export function isInPlayField(x: number, y: number) {
+    return 0 <= x && x < FieldConstants.Width && 0 <= y && y < FieldConstants.Height;
+}
