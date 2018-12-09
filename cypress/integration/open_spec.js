@@ -1,4 +1,17 @@
-import { datatest, visit } from '../support/common';
+import {
+    block,
+    Color,
+    datatest,
+    holdBox,
+    leftTap,
+    mino,
+    nextBox,
+    pages,
+    Piece,
+    rightTap,
+    Rotation,
+    visit
+} from '../support/common';
 import { operations } from '../support/operations';
 
 // テト譜を開く
@@ -87,6 +100,10 @@ describe('Open fumen', () => {
         open('http://fumen.zui.jp/old/110e/?m110@7eEA4GAAAAAAAAAAAA');
         open('http://fumen.zui.jp/old/110f/?m110@7eEA4GAAAAAAAAAAAA');
         open('http://fumen.zui.jp/old/110g/?m110@7eEA4GAAAAAAAAAAAA');
+
+        open('http://harddrop.com/fumen/?v115@vhEAgHAAAAAAAAAAAA');
+        open('http://harddrop.com/fumen/?m115@vhEAgHAAAAAAAAAAAA');
+        open('http://harddrop.com/fumen/?d115@vhEAgHAAAAAAAAAAAA');
     });
 
     it('Open modal: Unsupported', () => {
