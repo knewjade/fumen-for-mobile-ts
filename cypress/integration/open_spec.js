@@ -63,30 +63,30 @@ describe('Open fumen', () => {
         open('d115@vhEAgHAAAAAAAAAAAA');
         open('http://fumen.zui.jp/?d115@vhEAgHAAAAAAAAAAAA');
 
-        // open('http://fumen.zui.jp/old/115/?v115@vhAAgH');
-        // open('http://fumen.zui.jp/old/115/?m115@vhAAgH');
-        // open('http://fumen.zui.jp/old/115/?d115@vhAAgH');
+        open('http://fumen.zui.jp/old/115/?v115@vhEAgHAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/115/?m115@vhEAgHAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/115/?d115@vhEAgHAAAAAAAAAAAA');
 
         open('v110@7eEA4GAAAAAAAAAAAA');
         open('m110@7eEA4GAAAAAAAAAAAA');
 
-        // open('http://fumen.zui.jp/old/110/?v110@7eEA4GAAAAAAAAAAAA');
-        // open('http://fumen.zui.jp/old/110a/?v110@7eEA4GAAAAAAAAAAAA');
-        // open('http://fumen.zui.jp/old/110b/?v110@7eEA4GAAAAAAAAAAAA');
-        // open('http://fumen.zui.jp/old/110c/?v110@7eEA4GAAAAAAAAAAAA');
-        // open('http://fumen.zui.jp/old/110d/?v110@7eEA4GAAAAAAAAAAAA');
-        // open('http://fumen.zui.jp/old/110e/?v110@7eEA4GAAAAAAAAAAAA');
-        // open('http://fumen.zui.jp/old/110f/?v110@7eEA4GAAAAAAAAAAAA');
-        // open('http://fumen.zui.jp/old/110g/?v110@7eEA4GAAAAAAAAAAAA');
-        //
-        // open('http://fumen.zui.jp/old/110/?m110@7eEA4GAAAAAAAAAAAA');
-        // open('http://fumen.zui.jp/old/110a/?m110@7eEA4GAAAAAAAAAAAA');
-        // open('http://fumen.zui.jp/old/110b/?m110@7eEA4GAAAAAAAAAAAA');
-        // open('http://fumen.zui.jp/old/110c/?m110@7eEA4GAAAAAAAAAAAA');
-        // open('http://fumen.zui.jp/old/110d/?m110@7eEA4GAAAAAAAAAAAA');
-        // open('http://fumen.zui.jp/old/110e/?m110@7eEA4GAAAAAAAAAAAA');
-        // open('http://fumen.zui.jp/old/110f/?m110@7eEA4GAAAAAAAAAAAA');
-        // open('http://fumen.zui.jp/old/110g/?m110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110/?v110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110a/?v110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110b/?v110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110c/?v110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110d/?v110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110e/?v110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110f/?v110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110g/?v110@7eEA4GAAAAAAAAAAAA');
+
+        open('http://fumen.zui.jp/old/110/?m110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110a/?m110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110b/?m110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110c/?m110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110d/?m110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110e/?m110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110f/?m110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110g/?m110@7eEA4GAAAAAAAAAAAA');
     });
 
     it('Open modal: Unsupported', () => {
@@ -106,8 +106,6 @@ describe('Open fumen', () => {
         openError('http://fumen.zui.jp/old/105a/?m105@7eEAAAAAAAAAAAAAAA');
         openError('http://fumen.zui.jp/old/105b/?m105@7eEAAAAAAAAAAAAAAA');
     });
-
-    /*
 
     it('Error -> success', () => {
         visit({ lng: 'ja' });
@@ -595,6 +593,5 @@ describe('Open fumen', () => {
             cy.get(block).should('not.have.attr', 'color', Color.Z.Lighter);
         });
     });
-    */
 });
 

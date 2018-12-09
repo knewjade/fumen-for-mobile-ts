@@ -86,20 +86,18 @@ export function extract(str: string): { version: '115' | '110', data: string } {
 
     // v115@~
     {
-        const prefix = '115@';
-        const prefixIndex = str.indexOf(prefix);
-        if (0 <= prefixIndex) {
-            const sub = data.substr(prefixIndex + prefix.length);
+        const match = str.match(/[vmd]115@/);
+        if (match !== undefined && match !== null && match.index !== undefined) {
+            const sub = data.substr(match.index + 5);
             return format('115', sub);
         }
     }
 
     // v110@~
     {
-        const prefix = '110@';
-        const prefixIndex = str.indexOf(prefix);
-        if (0 <= prefixIndex) {
-            const sub = data.substr(prefixIndex + prefix.length);
+        const match = str.match(/[vmd]110@/);
+        if (match !== undefined && match !== null && match.index !== undefined) {
+            const sub = data.substr(match.index + 5);
             return format('110', sub);
         }
     }
