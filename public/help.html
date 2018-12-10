@@ -95,13 +95,13 @@
             <ul>
                 <li style="margin: 5px;"> 同じタブで開く - ↓コードをタップすると全選択されます<br>
                     <input onfocus="focusInput(this);" readonly
-                           value="javascript:(function(){var value=window.location.href;(value.match(/fumen.zui.jp\/\?v115@/)||value.match(/fumen.zui.jp\/old\/110/)||value.match(/harddrop.com\/fumentool/))&&(encode(1),value=document.getElementById('tx').value),window.location.href='https://knewjade.github.io/fumen-for-mobile/index.html?d='+value;})();"
+                           value="javascript:(function(){var value=window.location.href;if(value.match(/harddrop.com\/fumentool/)){var iframe=document.querySelector('#main_body iframe');iframe.contentWindow.encode(1),value=iframe.contentDocument.getElementById('tx').value}else(value.match(/fumen.zui.jp\/\?v115@/)||value.match(/fumen.zui.jp\/old\/110/)||value.match(/harddrop.com\/fumen/))&&(encode(1),value=document.getElementById('tx').value);window.open('https://knewjade.github.io/fumen-for-mobile/#?d='+value,'_blank');})()"
                            title="open in active tab">
                 </li>
 
                 <li style="margin: 5px;"> 新しいタブで開く - ↓コードをタップすると全選択されます<br>
                     <input onfocus="focusInput(this);" readonly
-                           value="javascript:(function(){var value=window.location.href;(value.match(/fumen.zui.jp\/\?v115@/)||value.match(/fumen.zui.jp\/old\/110/)||value.match(/harddrop.com\/fumentool/))&&(encode(1),value=document.getElementById('tx').value),window.open('https://knewjade.github.io/fumen-for-mobile/index.html?d='+value,'_blank');})();"
+                           value="javascript:(function(){var value=window.location.href;if(value.match(/harddrop.com\/fumentool/)){var iframe=document.querySelector('#main_body iframe');iframe.contentWindow.encode(1),value=iframe.contentDocument.getElementById('tx').value}else(value.match(/fumen.zui.jp\/\?v115@/)||value.match(/fumen.zui.jp\/old\/110/)||value.match(/harddrop.com\/fumen/))&&(encode(1),value=document.getElementById('tx').value);window.location.href='https://knewjade.github.io/fumen-for-mobile/#?d='+value;})()"
                            title="open in new tab">
                 </li>
             </ul>
