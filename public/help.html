@@ -41,10 +41,11 @@
     <script language="JavaScript" type="text/JavaScript">
         <!--
         function focusInput(e) {
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 e.setSelectionRange(0, 9999);
             }, 10);
         }
+
         //-->
     </script>
 
@@ -64,13 +65,11 @@
 <section>
     <h4>操作方法</h4>
 
-    <p>
     <ol>
         <li>画面右半分をタップ →　次のページに進む</li>
         <li>画面左半分をタップ →　前のページに戻る</li>
         <li><i class="material-icons">play_arrow</i>をタップ → 自動再生</li>
     </ol>
-    </p>
 
 </section>
 
@@ -81,7 +80,6 @@
 
     <h5>UI上から直接から開く</h5>
 
-    <p>
     <ol>
         <li> 下メニューの<i class="material-icons">open_in_new</i>をタップする</li>
 
@@ -89,20 +87,22 @@
 
         <li>Openボタンをタップする</li>
     </ol>
-    </p>
 
     <h5>ブックマークレットから開く</h5>
 
-    <p>
     <ol>
         <li> 以下のいずれかのコードをコピーする (「<a href="http://fumen.zui.jp">連続テト譜エディタ</a>」から本ツールへ移動するとき、どこのタブで開くか選んでください)
             <ul>
                 <li style="margin: 5px;"> 同じタブで開く - ↓コードをタップすると全選択されます<br>
-                    <input onfocus="focusInput(this);" readonly value="javascript:(function(){encode(1);window.location.href='https://knewjade.github.io/fumen-for-mobile/index.html?d='+document.getElementById('tx').value;})();">
+                    <input onfocus="focusInput(this);" readonly
+                           value="javascript:(function(){var value=window.location.href;if(value.match(/harddrop.com\/fumentool/)){var iframe=document.querySelector('#main_body iframe');iframe.contentWindow.encode(1),value=iframe.contentDocument.getElementById('tx').value}else(value.match(/fumen.zui.jp\/\?v115@/)||value.match(/fumen.zui.jp\/old\/110/)||value.match(/harddrop.com\/fumen/))&&(encode(1),value=document.getElementById('tx').value);window.open('https://knewjade.github.io/fumen-for-mobile/#?d='+value,'_blank');})()"
+                           title="open in active tab">
                 </li>
 
                 <li style="margin: 5px;"> 新しいタブで開く - ↓コードをタップすると全選択されます<br>
-                    <input onfocus="focusInput(this);" readonly value="javascript:(function(){encode(1);window.open('https://knewjade.github.io/fumen-for-mobile/index.html?d='+document.getElementById('tx').value, '_blank');})();">
+                    <input onfocus="focusInput(this);" readonly
+                           value="javascript:(function(){var value=window.location.href;if(value.match(/harddrop.com\/fumentool/)){var iframe=document.querySelector('#main_body iframe');iframe.contentWindow.encode(1),value=iframe.contentDocument.getElementById('tx').value}else(value.match(/fumen.zui.jp\/\?v115@/)||value.match(/fumen.zui.jp\/old\/110/)||value.match(/harddrop.com\/fumen/))&&(encode(1),value=document.getElementById('tx').value);window.location.href='https://knewjade.github.io/fumen-for-mobile/#?d='+value;})()"
+                           title="open in new tab">
                 </li>
             </ul>
         </li>
@@ -111,9 +111,10 @@
 
         <li>開きたいフィールドデータを<a href="http://fumen.zui.jp">連続テト譜エディタ</a>で開く</li>
 
-    <li>2. で保存したブックマークを開く (Android+Chromeの方は検索バーから開く必要があるかもしれません。ご注意ください。<a href="http://ametuku.com/archives/6858" target="_blank">参考：外部サイト/あめつくのブログ</a>)</li>
+        <li>2. で保存したブックマークを開く (Android+Chromeの方は検索バーから開く必要があるかもしれません。ご注意ください。<a href="http://ametuku.com/archives/6858"
+                                                                                target="_blank">参考：外部サイト/あめつくのブログ</a>)
+        </li>
     </ol>
-    </p>
 
 </section>
 

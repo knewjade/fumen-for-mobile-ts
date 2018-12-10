@@ -24,6 +24,106 @@ describe('Open fumen', () => {
             .trigger('mouseleave');
     };
 
+    const inputData = (data, maxPage) => {
+        // モーダルを開く
+        operations.mode.reader.openPage();
+
+        // 入力に成功するパターン
+        cy.get(datatest('mdl-open-fumen')).should('visible')
+            .within(() => {
+                // テト譜を開く
+                cy.get(datatest('input-fumen')).clear().type(data);
+                cy.get(datatest('btn-open')).click();
+            });
+
+        // Assertion: モーダルが閉じられている
+        cy.get(datatest('mdl-open-fumen')).should('not.exist');
+
+        // Assertion: ページ番号の確認
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / ' + maxPage);
+    };
+
+    const open = (data) => {
+        inputData('v115@vhAAgH', 1);
+        inputData(data, 5);
+    };
+
+    const openError = (data) => {
+        // 入力に失敗するパターン
+        cy.get(datatest('mdl-open-fumen')).should('visible')
+            .within(() => {
+                // テト譜を開く
+                cy.get(datatest('input-fumen')).clear().type(data);
+                cy.get(datatest('btn-open')).click();
+
+                // Assertion: エラーメッセージ
+                cy.get(datatest('text-message')).should('contain', 'Failed to load');
+
+                cy.get(datatest('btn-open')).should('have.class', 'disabled');
+            });
+    };
+
+    // 空の5ページ
+    it('Open modal', () => {
+        visit({});
+
+        open('v115@vhEAgHAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/?v115@vhEAgHAAAAAAAAAAAA');
+
+        open('m115@vhEAgHAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/?m115@vhEAgHAAAAAAAAAAAA');
+
+        open('d115@vhEAgHAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/?d115@vhEAgHAAAAAAAAAAAA');
+
+        open('http://fumen.zui.jp/old/115/?v115@vhEAgHAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/115/?m115@vhEAgHAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/115/?d115@vhEAgHAAAAAAAAAAAA');
+
+        open('v110@7eEA4GAAAAAAAAAAAA');
+        open('m110@7eEA4GAAAAAAAAAAAA');
+
+        open('http://fumen.zui.jp/old/110/?v110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110a/?v110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110b/?v110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110c/?v110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110d/?v110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110e/?v110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110f/?v110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110g/?v110@7eEA4GAAAAAAAAAAAA');
+
+        open('http://fumen.zui.jp/old/110/?m110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110a/?m110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110b/?m110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110c/?m110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110d/?m110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110e/?m110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110f/?m110@7eEA4GAAAAAAAAAAAA');
+        open('http://fumen.zui.jp/old/110g/?m110@7eEA4GAAAAAAAAAAAA');
+
+        open('http://harddrop.com/fumen/?v115@vhEAgHAAAAAAAAAAAA');
+        open('http://harddrop.com/fumen/?m115@vhEAgHAAAAAAAAAAAA');
+        open('http://harddrop.com/fumen/?d115@vhEAgHAAAAAAAAAAAA');
+    });
+
+    it('Open modal: Unsupported', () => {
+        visit({});
+
+        // モーダルを開く
+        operations.mode.reader.openPage();
+
+        openError('v105@7eEAAAAAAAAAAAAAAA');
+        openError('m105@7eEAAAAAAAAAAAAAAA');
+
+        openError('http://fumen.zui.jp/old/105/?v105@7eEAAAAAAAAAAAAAAA');
+        openError('http://fumen.zui.jp/old/105a/?v105@7eEAAAAAAAAAAAAAAA');
+        openError('http://fumen.zui.jp/old/105b/?v105@7eEAAAAAAAAAAAAAAA');
+
+        openError('http://fumen.zui.jp/old/105/?m105@7eEAAAAAAAAAAAAAAA');
+        openError('http://fumen.zui.jp/old/105a/?m105@7eEAAAAAAAAAAAAAAA');
+        openError('http://fumen.zui.jp/old/105b/?m105@7eEAAAAAAAAAAAAAAA');
+    });
+
     it('Error -> success', () => {
         visit({ lng: 'ja' });
 
