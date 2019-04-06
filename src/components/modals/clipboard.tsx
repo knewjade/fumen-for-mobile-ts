@@ -1,9 +1,9 @@
-import { Component, ComponentWithText, px, style } from 'src/lib/types';
+import { Component, ComponentWithText, px, style } from '../../lib/types';
 import { h } from 'hyperapp';
-import { resources } from 'src/states';
-import { i18n } from 'src/locales/keys';
-import { encode, Page } from 'src/lib/fumen/fumen';
-import { FumenError } from 'src/lib/errors';
+import { resources } from '../../states';
+import { i18n } from '../../locales/keys';
+import { encode, Page } from '../../lib/fumen/fumen';
+import { FumenError } from '../../lib/errors';
 
 declare const M: any;
 
