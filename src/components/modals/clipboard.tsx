@@ -1,9 +1,9 @@
-import { Component, ComponentWithText, px, style } from '../../lib/types';
+import { Component, ComponentWithText, px, style } from 'src/lib/types';
 import { h } from 'hyperapp';
-import { resources } from '../../states';
-import { i18n } from '../../locales/keys';
-import { encode, Page } from '../../lib/fumen/fumen';
-import { FumenError } from '../../lib/errors';
+import { resources } from 'src/states';
+import { i18n } from 'src/locales/keys';
+import { encode, Page } from 'src/lib/fumen/fumen';
+import { FumenError } from 'src/lib/errors';
 
 declare const M: any;
 
@@ -22,6 +22,12 @@ const buttonsStyle = () => {
         justifyContent: 'flex-end',
         flexDirection: 'column',
         alignItems: 'center',
+    });
+};
+
+const formStyle = () => {
+    return style({
+        margin: '0px',
     });
 };
 
@@ -107,8 +113,20 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
     const tinyurl = (domain: string) => () => {
         encodePromise
             .then(data => `${domain}${data}`)
-            .then(encodeURIComponent)
-            .then(url => window.open(`http://tinyurl.com/create.php?url=${url}`))
+            .then((data) => {
+                const form = document.querySelector('form[name=clipboard-form]') as HTMLFormElement;
+                if (form === undefined || form === null) {
+                    throw new Error('Not found form element');
+                }
+
+                const url = form.querySelector('input[name=url]') as HTMLInputElement;
+                if (url === undefined || url === null) {
+                    throw new Error('Not found url element');
+                }
+
+                url.value = data;
+                form.submit();
+            })
             .catch((error) => {
                 M.toast({
                     html: `Failed to open tinyurl: ${error}`,
@@ -126,49 +144,59 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
                     <h4 key="clipboard-label" dataTest="clipboard-label">{i18n.Clipboard.Title()}</h4>
 
                     <div style={buttonsStyle()}>
-                        <div>
-                            <ClipboardButton key="btn-knewjade"
-                                             onclick={clipboard('https://knewjade.github.io/fumen-for-mobile/#?d=')}>
-                                THIS SITE
-                            </ClipboardButton>
+                        <form name="clipboard-form" style={formStyle()} action="http://tinyurl.com/create.php"
+                              method="post" target="_blank"
+                        >
+                            <input type="hidden" name="url" id="url"
+                                   value="https://knewjade.github.io/fumen-for-mobile/#?d=v115@vhAAgH"
+                            />
 
-                            <ClipboardIconButton
-                                key="btn-knewjade-tinyurl"
-                                onclick={tinyurl('https://knewjade.github.io/fumen-for-mobile/#?d=')}>
-                                archive
-                            </ClipboardIconButton>
-                        </div>
+                            <div>
+                                <ClipboardButton
+                                    key="btn-knewjade"
+                                    onclick={clipboard('https://knewjade.github.io/fumen-for-mobile/#?d=')}
+                                >
+                                    THIS SITE
+                                </ClipboardButton>
 
-                        <div>
-                            <ClipboardButton key="btn-zui-jp"
-                                             onclick={clipboard('http://fumen.zui.jp/?')}>
-                                FUMEN.ZUI.JP
-                            </ClipboardButton>
+                                <ClipboardIconButton
+                                    key="btn-knewjade-tinyurl"
+                                    onclick={tinyurl('https://knewjade.github.io/fumen-for-mobile/#?d=')}>
+                                    archive
+                                </ClipboardIconButton>
+                            </div>
 
-                            <ClipboardIconButton key="btn-zui-jp-tinyurl"
-                                                 onclick={tinyurl('http://fumen.zui.jp/?')}>
-                                archive
-                            </ClipboardIconButton>
-                        </div>
+                            <div>
+                                <ClipboardButton key="btn-zui-jp"
+                                                 onclick={clipboard('http://fumen.zui.jp/?')}>
+                                    FUMEN.ZUI.JP
+                                </ClipboardButton>
 
-                        <div>
-                            <ClipboardButton key="btn-harddrop"
-                                             onclick={clipboard('http://harddrop.com/fumen/?')}>
-                                HARDDROP
-                            </ClipboardButton>
+                                <ClipboardIconButton key="btn-zui-jp-tinyurl"
+                                                     onclick={tinyurl('http://fumen.zui.jp/?')}>
+                                    archive
+                                </ClipboardIconButton>
+                            </div>
 
-                            <ClipboardIconButton key="btn-harddrop-tinyurl"
-                                                 onclick={tinyurl('http://harddrop.com/fumen/?')}>
-                                archive
-                            </ClipboardIconButton>
-                        </div>
+                            <div>
+                                <ClipboardButton key="btn-harddrop"
+                                                 onclick={clipboard('http://harddrop.com/fumen/?')}>
+                                    HARDDROP
+                                </ClipboardButton>
 
-                        <div>
-                            <ClipboardButton key="btn-raw-fumen" colorName="white black-text"
-                                             onclick={clipboard('')}>
-                                RAW DATA
-                            </ClipboardButton>
-                        </div>
+                                <ClipboardIconButton key="btn-harddrop-tinyurl"
+                                                     onclick={tinyurl('http://harddrop.com/fumen/?')}>
+                                    archive
+                                </ClipboardIconButton>
+                            </div>
+
+                            <div>
+                                <ClipboardButton key="btn-raw-fumen" colorName="white black-text"
+                                                 onclick={clipboard('')}>
+                                    RAW DATA
+                                </ClipboardButton>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
