@@ -22,7 +22,7 @@ export const KonvaCanvas: Component<Props> = ({ canvas, hyperStage, actions }) =
         height: px(canvas.height),
     });
 
-    const oncreate = (element: HTMLMainElement) => {
+    const oncreate = (element: HTMLElement) => {
         // この時点でcontainer内に新しい要素が作られるため、
         // この要素内には hyperapp 管理下の要素を作らないこと
         const stage = new konva.Stage({
