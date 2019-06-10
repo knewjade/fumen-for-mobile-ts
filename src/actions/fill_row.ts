@@ -118,7 +118,11 @@ const ontouchMove = (state: State, index: number, isField: boolean): NextState =
         const key = `${type}-${i}`;
 
         // フィールドのみ
-        if (touchX !== x && state.cache.currentInitField.getAtIndex(index, true) !== piece) {
+        const atIndex = state.cache.currentInitField.getAtIndex(index, true);
+        if (touchX !== x && atIndex !== piece) {
+            // 操作の結果、最初のフィールドの状態から変化するとき
+            page.commands.pre[key] = { x, piece, type, y: touchY };
+        } else if (touchX === x && atIndex !== Piece.Empty) {
             // 操作の結果、最初のフィールドの状態から変化するとき
             page.commands.pre[key] = { x, piece, type, y: touchY };
         } else {
