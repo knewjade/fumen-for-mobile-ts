@@ -7,7 +7,7 @@ import { Block } from './state_types';
 import { Field } from './lib/fumen/field';
 import { PrimitivePage } from './history_task';
 import { generateKey } from './lib/random';
-import konva = require('konva');
+import konva from 'konva';
 
 const VERSION = PageEnv.Version;
 
