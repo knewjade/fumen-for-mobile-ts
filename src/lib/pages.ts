@@ -532,6 +532,7 @@ export class Pages {
                             const quizAfterOperation = nextQuiz.operate(operation);
 
                             result = { quizAfterOperation, quiz: cache.comment };
+                            console.log(result);
                             cache = { quiz: quizAfterOperation, comment: quizAfterOperation.format().toString() };
                         } catch (e) {
                             console.error(e);
@@ -546,6 +547,8 @@ export class Pages {
                         const nextQuiz = currentQuiz.format();
                         cache = { quiz: nextQuiz, comment: nextQuiz.toString() };
                     }
+                } else {
+                    result = { quizAfterOperation: cache.quiz, quiz: cache.comment };
                 }
             }
 
