@@ -1,6 +1,6 @@
 import { Component } from '../../lib/types';
 import { h } from 'hyperapp';
-import konva = require('konva');
+import konva from 'konva';
 
 interface Props {
     rect: konva.Rect;

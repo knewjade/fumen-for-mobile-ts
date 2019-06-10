@@ -1,7 +1,7 @@
 import { h } from 'hyperapp';
 import { getPieces, Piece } from '../lib/enums';
 import { Component } from '../lib/types';
-import konva = require('konva');
+import konva from 'konva';
 
 interface Size {
     width: number;

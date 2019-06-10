@@ -4,7 +4,7 @@ import { Block } from '../state_types';
 import { Piece } from '../lib/enums';
 import { decideBackgroundColor, decidePieceColor } from '../lib/colors';
 import { resources } from '../states';
-import konva = require('konva');
+import konva from 'konva';
 
 interface Props {
     topLeft: {
