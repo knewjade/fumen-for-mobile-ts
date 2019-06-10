@@ -368,4 +368,16 @@ describe('Quiz', () => {
 
         expectFumen('v115@vhJAg0aAFLDmClcJSAVDEHBEooRBFrYwCv3ntCpCBA?AAAAzrBMtBmqB3hBJkBClBlnBAAA');
     });
+
+    it('Lock is off in last page', () => {
+        visit({ fumen: 'v115@HhRpEeh0whRpilBeh0whBtglAeywh0whJezGYWAFLD?mClcJSAVjrSAVG88A4W88AZOBAAvhBlqBXHe' });
+
+        rightTap(() => {
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[S](T)');
+        });
+
+        rightTap(() => {
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[](S)');
+        });
+    });
 });
