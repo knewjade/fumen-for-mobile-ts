@@ -2,7 +2,7 @@ import { HyperStage } from '../lib/hyper';
 import { Component, px, style } from '../lib/types';
 import { resources } from '../states';
 import { h } from 'hyperapp';
-import konva = require('konva');
+import konva from 'konva';
 
 interface Props {
     hyperStage: HyperStage;
@@ -22,7 +22,7 @@ export const KonvaCanvas: Component<Props> = ({ canvas, hyperStage, actions }) =
         height: px(canvas.height),
     });
 
-    const oncreate = (element: HTMLMainElement) => {
+    const oncreate = (element: HTMLDivElement) => {
         // この時点でcontainer内に新しい要素が作られるため、
         // この要素内には hyperapp 管理下の要素を作らないこと
         const stage = new konva.Stage({
@@ -53,6 +53,6 @@ export const KonvaCanvas: Component<Props> = ({ canvas, hyperStage, actions }) =
         hyperStage.removeStage();
     };
 
-    return <main canvas={canvas} id="canvas-container" style={properties}
-                 oncreate={oncreate} onupdate={onupdate} ondestroy={ondestroy}/>;
+    return <div canvas={canvas} id="canvas-container" style={properties}
+                oncreate={oncreate} onupdate={onupdate} ondestroy={ondestroy}/>;
 };

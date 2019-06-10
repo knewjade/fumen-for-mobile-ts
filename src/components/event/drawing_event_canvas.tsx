@@ -1,7 +1,7 @@
 import { Component } from '../../lib/types';
 import { h } from 'hyperapp';
 import { main } from '../../actions';
-import konva = require('konva');
+import konva from 'konva';
 
 interface Props {
     fieldBlocks: konva.Rect[];
