@@ -124,7 +124,7 @@ const ontouchMove = (state: State, index: number, isField: boolean): NextState =
             page.commands.pre[key] = { x, piece, type, y: touchY };
         } else if (touchX === x && atIndex !== Piece.Empty) {
             // 操作の結果、最初のフィールドの状態から変化するとき
-            page.commands.pre[key] = { x, piece, type, y: touchY };
+            page.commands.pre[key] = { x, type, piece: Piece.Empty, y: touchY };
         } else {
             // 操作の結果、最初のフィールドの状態に戻るとき
             delete page.commands.pre[key];

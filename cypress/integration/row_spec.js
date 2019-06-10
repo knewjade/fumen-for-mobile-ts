@@ -10,8 +10,10 @@ describe('Fill row', () => {
 
         operations.mode.fillRow.open();
 
-        operations.mode.block.dragToUp(7, {from: 0, to: 6});
+        operations.mode.block.dragToUp(7, {from: 0, to: 3});
+        operations.mode.block.dragToUp(9, {from: 4, to: 5});
+        operations.mode.block.dragToUp(0, {from: 6, to: 8});
 
-        expectFumen('v115@zgG8AeI8AeI8AeI8AeI8AeB8JeAgH')
+        expectFumen('v115@MgI8AeI8AeR8AeI8AeG8AeI8AeI8AeI8AeB8JeAgH')
     });
 });
