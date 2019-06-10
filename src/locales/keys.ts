@@ -1,6 +1,6 @@
-import { default as i18next, TranslationFunction } from 'i18next';
+import { default as i18next } from 'i18next';
 
-const t: TranslationFunction = (key, options) => i18next.t(key, options);
+const t: (key: string, options?: object) => string = (key, options) => i18next.t(key, options);
 
 // Top Level = Screen name
 export const i18n = {
