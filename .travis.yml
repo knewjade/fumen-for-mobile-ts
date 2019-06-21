@@ -45,7 +45,7 @@ jobs:
     - provider: pages
       skip-cleanup: true
       github-token: ${GITHUB_TOKEN}
-      keep-history: true
+      keep-history: false
       repo: knewjade/fumen-for-mobile-dev
       local-dir: public/
       target-branch: master
