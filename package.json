@@ -27,18 +27,20 @@
     "string-replace-loader": "2.2.0",
     "ts-jest": "24.0.2",
     "ts-loader": "6.0.4",
+    "tslib": "1.10.0",
     "tslint": "5.17.0",
     "tslint-config-airbnb": "5.11.1",
     "typescript": "3.5.2",
     "typestyle": "2.0.2",
     "webpack": "4.35.0",
-    "webpack-cli": "3.3.4"
+    "webpack-cli": "3.3.4",
+    "workbox-sw": "4.3.1",
+    "workbox-webpack-plugin": "4.3.1"
   },
   "dependencies": {
     "@hyperapp/logger": "0.5.0",
     "hyperapp": "1.2.10",
     "i18next": "17.0.4",
-    "i18next-browser-languagedetector": "3.0.1",
-    "tslib": "1.10.0"
+    "i18next-browser-languagedetector": "3.0.1"
   }
 }

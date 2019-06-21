@@ -5,6 +5,8 @@ yarn-*.log
 src/**/*.js
 src/**/*.js.map
 public/*.bundle.js
+public/sw.js
+public/precache-*.js
 coverage/
 cypress/videos/
 cypress/screenshots/
