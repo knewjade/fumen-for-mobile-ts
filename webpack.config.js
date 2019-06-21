@@ -51,7 +51,7 @@ module.exports = {
             cacheId: cacheId,
             swDest: 'sw.js',
             globDirectory: './public/',
-            globPatterns: ['**/*.{png,html,css,svg,json}'],
+            globPatterns: ['**/*.{png,html,css,svg,json,bundle.js}'],
             globIgnores: ['*.js'],
             clientsClaim: true,
             skipWaiting: true,
