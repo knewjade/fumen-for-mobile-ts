@@ -40,6 +40,6 @@
     }
   ],
   "start_url": "\/fumen-for-mobile",
-  "display": "fullscreen",
+  "display": "standalone",
   "orientation": "portrait"
 }
