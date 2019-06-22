@@ -41,6 +41,8 @@ jobs:
     - yarn webpack-prod
     before_deploy:
     - touch public/.nojekyll
+    - git checkout public/manifest.json
+    - sed s/fumen-for-mobile/fumen-for-mobile-dev/ public/manifest.json > public/manifest.json
     deploy:
     - provider: pages
       skip-cleanup: true
@@ -66,6 +68,7 @@ jobs:
     - yarn webpack-prod
     before_deploy:
     - touch public/.nojekyll
+    - git checkout public/manifest.json
     deploy:
     - provider: pages
       skip-cleanup: true
