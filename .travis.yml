@@ -41,11 +41,13 @@ jobs:
     - yarn webpack-prod
     before_deploy:
     - touch public/.nojekyll
+    - git checkout public/manifest.json
+    - sed s/fumen-for-mobile/fumen-for-mobile-dev/ public/manifest.json > public/manifest.json
     deploy:
     - provider: pages
       skip-cleanup: true
       github-token: ${GITHUB_TOKEN}
-      keep-history: true
+      keep-history: false
       repo: knewjade/fumen-for-mobile-dev
       local-dir: public/
       target-branch: master
@@ -66,11 +68,12 @@ jobs:
     - yarn webpack-prod
     before_deploy:
     - touch public/.nojekyll
+    - git checkout public/manifest.json
     deploy:
     - provider: pages
       skip-cleanup: true
       github-token: ${GITHUB_TOKEN}
-      keep-history: true
+      keep-history: false
       repo: knewjade/fumen-for-mobile
       local-dir: public/
       target-branch: master
