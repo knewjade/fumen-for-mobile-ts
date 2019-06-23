@@ -42,7 +42,9 @@ jobs:
     before_deploy:
     - touch public/.nojekyll
     - git checkout public/manifest.json
-    - sed s/fumen-for-mobile/fumen-for-mobile-dev/ public/manifest.json > public/manifest.json
+    - sed s/fumen-for-mobile/fumen-for-mobile-dev/ public/manifest.json > public/manifest_copy.json
+    - mv -f public/manifest_copy.json public/manifest.json
+    - cat public/manifest.json
     deploy:
     - provider: pages
       skip-cleanup: true
