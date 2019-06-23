@@ -63,7 +63,7 @@ module.exports = {
                     options: {
                         cacheName: cacheId + "-materialize-cache",
                         expiration: {
-                            maxAgeSeconds: 60 * 60 * 24 * 30,
+                            maxAgeSeconds: 60 * 60 * 24 * 180,
                         },
                     },
                 },
@@ -73,7 +73,7 @@ module.exports = {
                     options: {
                         cacheName: cacheId + "-materialize-font-cache",
                         expiration: {
-                            maxAgeSeconds: 60 * 60 * 24 * 30,
+                            maxAgeSeconds: 60 * 60 * 24 * 180,
                         },
                     },
                 },
