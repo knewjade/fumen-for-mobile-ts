@@ -52,7 +52,6 @@ module.exports = {
             swDest: 'sw.js',
             globDirectory: './public/',
             globPatterns: ['**/*.{png,html,css,svg,json,bundle.js}'],
-            globIgnores: ['*.js'],
             clientsClaim: true,
             skipWaiting: true,
             offlineGoogleAnalytics: true,
@@ -63,7 +62,7 @@ module.exports = {
                     options: {
                         cacheName: cacheId + "-materialize-cache",
                         expiration: {
-                            maxAgeSeconds: 60 * 60 * 24 * 180,
+                            maxAgeSeconds: 60 * 60 * 24 * 14,
                         },
                     },
                 },
@@ -73,7 +72,7 @@ module.exports = {
                     options: {
                         cacheName: cacheId + "-materialize-font-cache",
                         expiration: {
-                            maxAgeSeconds: 60 * 60 * 24 * 180,
+                            maxAgeSeconds: 60 * 60 * 24 * 14,
                         },
                     },
                 },
