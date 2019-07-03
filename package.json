@@ -41,5 +41,6 @@
     "hyperapp": "1.2.10",
     "i18next": "17.0.4",
     "i18next-browser-languagedetector": "3.0.1",
-    "tslib": "1.10.0"}
+    "tslib": "1.10.0"
+  }
 }
