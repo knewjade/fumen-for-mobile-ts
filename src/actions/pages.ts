@@ -1,8 +1,7 @@
 import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
 import { AnimationState, Piece } from '../lib/enums';
-import { Move, Page, PreCommand } from '../lib/fumen/fumen';
-import { Field } from '../lib/fumen/field';
+import { Page, Move, PreCommand  } from '../lib/fumen/types';
 import { Block } from '../state_types';
 import { PageFieldOperation, Pages, QuizCommentResult, TextCommentResult } from '../lib/pages';
 import {
@@ -18,6 +17,7 @@ import {
 } from '../history_task';
 import { State } from '../states';
 import { FumenError } from '../lib/errors';
+import { Field } from '../lib/fumen/field';
 
 export interface PageActions {
     reopenCurrentPage: () => action;

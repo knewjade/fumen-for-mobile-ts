@@ -2,7 +2,7 @@ import { NextState, sequence } from './commons';
 import { action, actions, main } from '../actions';
 import { memento } from '../memento';
 import { HistoryTask } from '../history_task';
-import { Page } from '../lib/fumen/fumen';
+import { Page } from '../lib/fumen/types';
 
 export interface MementoActions {
     saveToMemento: () => action;

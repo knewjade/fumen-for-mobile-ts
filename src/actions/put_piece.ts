@@ -1,13 +1,14 @@
 import { State } from '../states';
-import { getBlockPositions, Piece, toPositionIndex } from '../lib/enums';
+import {  Piece, toPositionIndex } from '../lib/enums';
 import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
 import { OperationTask, toPrimitivePage, toSinglePageTask } from '../history_task';
 import { fieldEditorActions } from './field_editor';
 import { inferPiece } from '../lib/inference';
-import { Page } from '../lib/fumen/fumen';
+import { Page } from '../lib/fumen/types';
 import { memento } from '../memento';
 import { HighlightType } from '../state_types';
+import { getBlockPositions } from '../lib/piece';
 
 interface PutPieceActions {
     fixInferencePiece(): action;

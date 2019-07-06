@@ -1,6 +1,7 @@
-import { encode, Page } from './lib/fumen/fumen';
 import { HistoryTask, isOperationTask, toDecoratorOperationTask } from './history_task';
 import { generateKey } from './lib/random';
+import { Page } from './lib/fumen/types';
+import { encode } from './lib/fumen/fumen';
 
 interface SaverProp {
     saveKey: string;

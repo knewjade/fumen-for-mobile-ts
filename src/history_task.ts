@@ -1,8 +1,9 @@
-import { decode, Move, Page, PreCommand } from './lib/fumen/fumen';
 import { Piece } from './lib/enums';
-import { Field, PlayField } from './lib/fumen/field';
 import { Pages } from './lib/pages';
 import { generateKey } from './lib/random';
+import { Move, Page, PreCommand } from './lib/fumen/types';
+import { decode } from './lib/fumen/fumen';
+import { Field, PlayField } from './lib/fumen/field';
 
 export type HistoryTask = OperationTask | FixedTask;
 

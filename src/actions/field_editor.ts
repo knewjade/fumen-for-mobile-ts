@@ -1,4 +1,4 @@
-import { getBlockPositions, Piece, Rotation, toPositionIndex, TouchTypes } from '../lib/enums';
+import { Piece, Rotation, toPositionIndex, TouchTypes } from '../lib/enums';
 import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
 import { putPieceActions } from './put_piece';
@@ -7,9 +7,10 @@ import { toPrimitivePage, toSinglePageTask } from '../history_task';
 import { movePieceActions } from './move_piece';
 import { PageFieldOperation, Pages } from '../lib/pages';
 import { testLeftRotation, testRightRotation } from '../lib/srs';
-import { Field } from '../lib/fumen/field';
 import { fillRowActions } from './fill_row';
 import { ViewError } from '../lib/errors';
+import { Field } from '../lib/fumen/field';
+import { getBlockPositions } from '../lib/piece';
 
 export interface FieldEditorActions {
     fixInferencePiece(): action;

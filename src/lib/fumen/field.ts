@@ -1,9 +1,6 @@
-import { FieldConstants, getBlockPositions, getBlocks, parsePiece, Piece, Rotation } from '../enums';
+import { FieldConstants, parsePiece, Piece, Rotation } from '../enums';
 import { FumenError } from '../errors';
-
-const FIELD_WIDTH = FieldConstants.Width;
-const FIELD_TOP = FieldConstants.Height;
-const PLAY_FIELD_BLOCKS = FIELD_TOP * FIELD_WIDTH;
+import { getBlockPositions, getBlocks } from '../piece';
 
 export class Field {
     private readonly playField: PlayField;
@@ -13,7 +10,7 @@ export class Field {
         return new PlayField({ length });
     }
 
-    constructor({ field = Field.create(PLAY_FIELD_BLOCKS), sentLine = Field.create(FIELD_WIDTH) }: {
+    constructor({ field = Field.create(FieldConstants.PlayBlocks), sentLine = Field.create(FieldConstants.Width) }: {
         field?: PlayField,
         sentLine?: PlayField,
     }) {
@@ -137,7 +134,7 @@ export class PlayField {
     private readonly length: number;
     private pieces: Piece[];
 
-    constructor({ pieces, length = PLAY_FIELD_BLOCKS }: {
+    constructor({ pieces, length = FieldConstants.PlayBlocks }: {
         pieces?: Piece[],
         length?: number,
     }) {
@@ -150,15 +147,15 @@ export class PlayField {
     }
 
     get(x: number, y: number): Piece {
-        return this.pieces[x + y * FIELD_WIDTH];
+        return this.pieces[x + y * FieldConstants.Width];
     }
 
     add(x: number, y: number, value: number) {
-        this.pieces[x + y * FIELD_WIDTH] += value;
+        this.pieces[x + y * FieldConstants.Width] += value;
     }
 
     set(x: number, y: number, piece: Piece) {
-        this.setAt(x + y * FIELD_WIDTH, piece);
+        this.setAt(x + y * FieldConstants.Width, piece);
     }
 
     setAt(index: number, piece: Piece) {
@@ -175,14 +172,14 @@ export class PlayField {
 
     clearLine() {
         let newField = this.pieces.concat();
-        const top = this.pieces.length / FIELD_WIDTH - 1;
+        const top = this.pieces.length / FieldConstants.Width - 1;
         for (let y = top; 0 <= y; y -= 1) {
-            const line = this.pieces.slice(y * FIELD_WIDTH, (y + 1) * FIELD_WIDTH);
+            const line = this.pieces.slice(y * FieldConstants.Width, (y + 1) * FieldConstants.Width);
             const isFilled = line.every(value => value !== Piece.Empty);
             if (isFilled) {
-                const bottom = newField.slice(0, y * FIELD_WIDTH);
-                const over = newField.slice((y + 1) * FIELD_WIDTH);
-                newField = bottom.concat(over, Array.from({ length: FIELD_WIDTH }).map(() => Piece.Empty));
+                const bottom = newField.slice(0, y * FieldConstants.Width);
+                const over = newField.slice((y + 1) * FieldConstants.Width);
+                newField = bottom.concat(over, Array.from({ length: FieldConstants.Width }).map(() => Piece.Empty));
             }
         }
         this.pieces = newField;
@@ -195,7 +192,7 @@ export class PlayField {
     mirror() {
         const newField: Piece[] = [];
         for (let y = 0; y < this.pieces.length; y += 1) {
-            const line = this.pieces.slice(y * FIELD_WIDTH, (y + 1) * FIELD_WIDTH);
+            const line = this.pieces.slice(y * FieldConstants.Width, (y + 1) * FieldConstants.Width);
             line.reverse();
             for (const obj of line) {
                 newField.push(obj);
@@ -207,20 +204,20 @@ export class PlayField {
     shiftToLeft(): void {
         const height = this.pieces.length / 10;
         for (let y = 0; y < height; y += 1) {
-            for (let x = 0; x < FIELD_WIDTH - 1; x += 1) {
-                this.pieces[x + y * FIELD_WIDTH] = this.pieces[x + 1 + y * FIELD_WIDTH];
+            for (let x = 0; x < FieldConstants.Width - 1; x += 1) {
+                this.pieces[x + y * FieldConstants.Width] = this.pieces[x + 1 + y * FieldConstants.Width];
             }
-            this.pieces[9 + y * FIELD_WIDTH] = Piece.Empty;
+            this.pieces[9 + y * FieldConstants.Width] = Piece.Empty;
         }
     }
 
     shiftToRight(): void {
         const height = this.pieces.length / 10;
         for (let y = 0; y < height; y += 1) {
-            for (let x = FIELD_WIDTH - 1; 1 <= x; x -= 1) {
-                this.pieces[x + y * FIELD_WIDTH] = this.pieces[x - 1 + y * FIELD_WIDTH];
+            for (let x = FieldConstants.Width - 1; 1 <= x; x -= 1) {
+                this.pieces[x + y * FieldConstants.Width] = this.pieces[x - 1 + y * FieldConstants.Width];
             }
-            this.pieces[y * FIELD_WIDTH] = Piece.Empty;
+            this.pieces[y * FieldConstants.Width] = Piece.Empty;
         }
     }
 

@@ -1,28 +1,9 @@
-import { FieldConstants, isMinoPiece, Piece, Rotation } from '../enums';
 import { FumenError } from '../errors';
-
-const FIELD_WIDTH = FieldConstants.Width;
-const FIELD_TOP = FieldConstants.Height;
-const FIELD_BLOCKS = (FIELD_TOP + FieldConstants.SentLine) * FIELD_WIDTH;
-
-export interface Action {
-    piece: {
-        type: Piece;
-        rotation: Rotation;
-        coordinate: {
-            x: number,
-            y: number,
-        };
-    };
-    rise: boolean;
-    mirror: boolean;
-    colorize: boolean;
-    comment: boolean;
-    lock: boolean;
-}
+import { Action } from './types';
+import { FieldConstants, isMinoPiece, Piece, Rotation } from '../enums';
 
 export function decodeAction(v: number, fieldTop: number): Action {
-    const fieldBlocks = (fieldTop + FieldConstants.SentLine) * FIELD_WIDTH;
+    const fieldBlocks = (fieldTop + FieldConstants.SentLine) * FieldConstants.Width;
 
     let value = v;
     const type = decodePiece(value % 8);
@@ -94,7 +75,7 @@ function decodeRotation(n: number) {
 }
 
 function decodeCoordinate(n: number, piece: Piece, rotation: Rotation, fieldTop: number) {
-    let x = n % FIELD_WIDTH;
+    let x = n % FieldConstants.Width;
     const originY = Math.floor(n / 10);
     let y = fieldTop - originY - 1;
 
@@ -138,7 +119,7 @@ export function encodeAction(action: Action): number {
     value += encodeBool(mirror);
     value *= 2;
     value += encodeBool(rise);
-    value *= FIELD_BLOCKS;
+    value *= FieldConstants.AllBlocks;
     value += encodePosition(piece);
     value *= 4;
     value += encodeRotation(piece);
@@ -181,7 +162,7 @@ function encodePosition(
         x -= 1;
     }
 
-    return (FIELD_TOP - y - 1) * FIELD_WIDTH + x;
+    return (FieldConstants.Height - y - 1) * FieldConstants.Width + x;
 }
 
 function encodeRotation({ type, rotation }: { type: Piece, rotation: Rotation }): number {

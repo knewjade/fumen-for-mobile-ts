@@ -1,10 +1,11 @@
 import { NextState } from './commons';
 import { action, main } from '../actions';
-import { FieldConstants, getBlockPositions, isInPlayField, Piece } from '../lib/enums';
+import { FieldConstants, isInPlayField, Piece } from '../lib/enums';
 import { Block, HighlightType } from '../state_types';
-import { Move, Page } from '../lib/fumen/fumen';
+import { Move, Page } from '../lib/fumen/types';
 import { inferPiece } from '../lib/inference';
 import { generateKey } from '../lib/random';
+import { getBlockPositions } from '../lib/piece';
 
 export interface SetterActions {
     setPages: (args: { pages: Page[], open?: boolean }) => action;
