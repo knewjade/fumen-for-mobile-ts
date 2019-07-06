@@ -1,6 +1,7 @@
 import { h } from 'hyperapp';
-import { getPieces, Piece } from '../lib/enums';
+import { Piece } from '../lib/enums';
 import { Component } from '../lib/types';
+import { getPieces } from '../lib/piece';
 import konva from 'konva';
 
 interface Size {

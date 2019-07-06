@@ -1,6 +1,6 @@
 import { NextState, sequence } from './commons';
 import { action, actions, main } from '../actions';
-import { decode, Page } from '../lib/fumen/fumen';
+import { decode } from '../lib/fumen/fumen';
 import { i18n } from '../locales/keys';
 import { FumenError } from '../lib/errors';
 import {
@@ -15,6 +15,7 @@ import {
 } from '../history_task';
 import { State } from '../states';
 import { Pages } from '../lib/pages';
+import { Page } from '../lib/fumen/types';
 
 export interface UtilsActions {
     resize: (data: { width: number, height: number }) => action;

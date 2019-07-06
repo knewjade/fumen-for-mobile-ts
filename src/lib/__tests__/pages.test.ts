@@ -1,7 +1,7 @@
 import { Piece, Rotation } from '../enums';
 import { Quiz } from '../fumen/quiz';
 import { Field } from '../fumen/field';
-import { Move } from '../fumen/fumen';
+import { Move } from '../fumen/types';
 import { Pages } from '../pages';
 
 describe('comment', () => {

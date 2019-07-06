@@ -1,7 +1,7 @@
 import { FumenError, ViewError } from './errors';
 import { isMinoPiece, Piece } from './enums';
 import { Quiz } from './fumen/quiz';
-import { Page, PreCommand } from './fumen/fumen';
+import { Page, PreCommand } from './fumen/types';
 import { Field } from './fumen/field';
 
 const NEXT_PIECES = 5;

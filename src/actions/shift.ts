@@ -2,7 +2,8 @@ import { NextState, sequence } from './commons';
 import { action, actions } from '../actions';
 import { toPrimitivePage, toSinglePageTask } from '../history_task';
 import { PageFieldOperation, Pages, parseToCommands } from '../lib/pages';
-import { FieldConstants, getBlockPositions } from '../lib/enums';
+import { FieldConstants } from '../lib/enums';
+import { getBlockPositions } from '../lib/piece';
 
 export interface ShiftActions {
     shiftToLeft: () => action;

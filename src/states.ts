@@ -1,13 +1,13 @@
 import { AnimationState, CommentType, ModeTypes, Piece, Screens, TouchTypes } from './lib/enums';
-import { Page } from './lib/fumen/fumen';
 import { HyperStage } from './lib/hyper';
 import { Box } from './components/box';
 import { PageEnv } from './env';
 import { Block } from './state_types';
-import { Field } from './lib/fumen/field';
 import { PrimitivePage } from './history_task';
 import { generateKey } from './lib/random';
 import konva from 'konva';
+import { Page } from './lib/fumen/types';
+import { Field } from './lib/fumen/field';
 
 const VERSION = PageEnv.Version;
 

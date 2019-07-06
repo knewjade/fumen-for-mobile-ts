@@ -2,7 +2,7 @@ import { Component, ComponentWithText, px, style } from '../../lib/types';
 import { h } from 'hyperapp';
 import { resources } from '../../states';
 import { i } from '@hyperapp/html';
-import { Page } from '../../lib/fumen/fumen';
+import { Page } from '../../lib/fumen/types';
 import { CommentType, Screens } from '../../lib/enums';
 import { i18n } from '../../locales/keys';
 

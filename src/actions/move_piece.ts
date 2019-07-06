@@ -1,8 +1,9 @@
 import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
-import { getBlockPositions, isMinoPiece, Piece, toPositionIndex } from '../lib/enums';
+import { isMinoPiece, Piece, toPositionIndex } from '../lib/enums';
 import { toPrimitivePage, toSinglePageTask } from '../history_task';
 import { PageFieldOperation, Pages } from '../lib/pages';
+import { getBlockPositions } from '../lib/piece';
 
 interface MovePieceActions {
     ontouchStartField(data: { index: number }): action;

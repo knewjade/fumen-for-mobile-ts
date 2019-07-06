@@ -1,7 +1,8 @@
-import { decode, encode, extract, Page } from '../fumen';
+import { decode, encode, extract } from '../fumen';
 import { Field, PlayField } from '../field';
-import { Piece, Rotation } from '../../enums';
 import { FumenError } from '../../errors';
+import { Page } from '../types';
+import { Piece, Rotation } from '../../enums';
 
 describe('fumen', () => {
     describe('decode v115', () => {

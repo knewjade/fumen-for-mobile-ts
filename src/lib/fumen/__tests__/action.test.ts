@@ -1,6 +1,7 @@
-import { Action, decodeAction } from '../action';
-import { Piece, Rotation } from '../../enums';
+import { decodeAction } from '../action';
 import { Values } from '../values';
+import { Action } from '../types';
+import { Piece, Rotation } from '../../enums';
 
 describe('action', () => {
     describe('get', () => {

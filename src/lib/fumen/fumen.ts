@@ -5,49 +5,7 @@ import { decodeAction, encodeAction } from './action';
 import { ENCODE_TABLE_LENGTH, Values } from './values';
 import { FumenError } from '../errors';
 import { Pages } from '../pages';
-
-export interface Move {
-    type: Piece;
-    rotation: Rotation;
-    coordinate: {
-        x: number;
-        y: number;
-    };
-}
-
-export interface Page {
-    index: number;
-    field: {
-        obj?: Field;
-        ref?: number;
-    };
-    piece?: Move;
-    comment: {
-        text?: string;
-        ref?: number;
-    };
-    commands?: {
-        pre: {
-            [key in string]: PreCommand;
-        };
-    };
-    flags: {
-        lock: boolean;
-        mirror: boolean;
-        colorize: boolean;
-        rise: boolean;
-        quiz: boolean;
-    };
-}
-
-export type PreCommand = BlockAction;
-
-export interface BlockAction {
-    type: 'block' | 'sentBlock';
-    x: number;
-    y: number;
-    piece: Piece;
-}
+import { Move, Page, PreCommand } from './types';
 
 const COMMENT_TABLE =
     ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';

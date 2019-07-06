@@ -2,7 +2,8 @@ import { Component, ComponentWithText, px, style } from '../../lib/types';
 import { h } from 'hyperapp';
 import { resources } from '../../states';
 import { i18n } from '../../locales/keys';
-import { encode, Page } from '../../lib/fumen/fumen';
+import { encode } from '../../lib/fumen/fumen';
+import { Page } from '../../lib/fumen/types';
 import { FumenError } from '../../lib/errors';
 
 declare const M: any;
