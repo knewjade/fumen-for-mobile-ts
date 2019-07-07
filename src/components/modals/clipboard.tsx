@@ -146,7 +146,7 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
 
                     <div style={buttonsStyle()}>
                         <form name="clipboard-form" style={formStyle()} action="http://tinyurl.com/create.php"
-                              method="post" target="_blank"
+                              method="get" target="_blank"
                         >
                             <input type="hidden" name="url" id="url"
                                    value="https://knewjade.github.io/fumen-for-mobile/#?d=v115@vhAAgH"
