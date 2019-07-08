@@ -4,8 +4,7 @@ import { Field } from './field';
 import { decodeAction, encodeAction } from './action';
 import { ENCODE_TABLE_LENGTH, Values } from './values';
 import { FumenError } from '../errors';
-import { Pages } from '../pages';
-import { Move, Page, PreCommand } from './types';
+import { EncodePage, Move, Page } from './types';
 
 const COMMENT_TABLE =
     ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
@@ -294,7 +293,7 @@ export async function innerDecode(
     return pages;
 }
 
-export async function encode(inputPages: Page[], isAsync: boolean = false): Promise<string> {
+export async function encode(inputPages: EncodePage[], isAsync: boolean = false): Promise<string> {
     const updateField = (prev: Field, current: Field) => {
         const { changed, values } = encodeField(prev, current);
 
@@ -318,40 +317,15 @@ export async function encode(inputPages: Page[], isAsync: boolean = false): Prom
     const allValues = new Values();
     let prevField = new Field({});
 
-    const pages = new Pages(inputPages);
-
     const innerEncode = (index: number) => {
-        const field = pages.getField(index);
-
         const currentPage = inputPages[index];
-        const currentField = field !== undefined ? field.copy() : prevField.copy();
-
-        // コマンドの反映
-        const commands = currentPage.commands;
-        if (commands !== undefined) {
-            Object.keys(commands.pre)
-                .map(key => commands.pre[key])
-                .forEach((command: PreCommand) => {
-                    switch (command.type) {
-                    case 'block': {
-                        const { x, y, piece } = command;
-                        currentField.setToPlayField(x + y * 10, piece);
-                        return;
-                    }
-                    case 'sentBlock': {
-                        const { x, y, piece } = command;
-                        currentField.setToSentLine(x + y * 10, piece);
-                        return;
-                    }
-                    }
-                });
-        }
+        const currentField = currentPage.fieldObj !== undefined ? currentPage.fieldObj.copy() : prevField.copy();
 
         // フィールドの更新
         updateField(prevField, currentField);
 
         // アクションの更新
-        const isComment = currentPage.comment.text !== undefined && (index !== 0 || currentPage.comment.text !== '');
+        const isComment = currentPage.commentText !== undefined && (index !== 0 || currentPage.commentText !== '');
         const piece = currentPage.piece !== undefined ? currentPage.piece : {
             type: Piece.Empty,
             rotation: Rotation.Reverse,
@@ -373,8 +347,8 @@ export async function encode(inputPages: Page[], isAsync: boolean = false): Prom
         allValues.push(actionNumber, 3);
 
         // コメントの更新
-        if (currentPage.comment.text !== undefined && isComment) {
-            const comment = escape(currentPage.comment.text);
+        if (currentPage.commentText !== undefined && isComment) {
+            const comment = escape(currentPage.commentText);
             const commentLength = Math.min(comment.length, 4095);
 
             allValues.push(commentLength, 2);
