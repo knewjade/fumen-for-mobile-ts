@@ -5,6 +5,7 @@ import { i18n } from '../../locales/keys';
 import { encode } from '../../lib/fumen/fumen';
 import { Page } from '../../lib/fumen/types';
 import { FumenError } from '../../lib/errors';
+import { CachePages } from '../../lib/fumen/cache';
 
 declare const M: any;
 
@@ -59,7 +60,8 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
 
     // テト譜の変換
     const encodePromise = (async () => {
-        const encoded = await encode(pages);
+        const cachePages = new CachePages(pages);
+        const encoded = await encode(cachePages.encode);
         return `v115@${encoded}`;
     })();
 

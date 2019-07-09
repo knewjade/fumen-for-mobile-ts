@@ -52,9 +52,9 @@ export interface Page {
 }
 
 export interface EncodePage {
-    fieldObj?: Field;
+    field?: Field;
     piece?: Move;
-    commentText?: string;
+    comment?: string;
     flags: {
         lock: boolean;
         mirror: boolean;

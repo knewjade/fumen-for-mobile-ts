@@ -62,7 +62,7 @@ export function extract(str: string): { version: '115' | '110', data: string } {
     throw new FumenError('Fumen is not supported');
 }
 
-type Callback = (field: Field, move: Move | undefined, comment: string) => void;
+type Callback = (field: Field, move: Move | undefined, comment: string, flags: Page['flags']) => void;
 
 export async function decode(fumen: string, callback: Callback = () => {
 }): Promise<Page[]> {
@@ -264,9 +264,10 @@ export async function innerDecode(
         pages.push(page);
 
         callback(
-            currentFieldObj.field.copy()
-            , currentPiece
-            , store.quiz !== undefined ? store.quiz.format().toString() : store.lastCommentText,
+            currentFieldObj.field.copy(),
+            currentPiece,
+            store.quiz !== undefined ? store.quiz.format().toString() : store.lastCommentText,
+            page.flags,
         );
 
         pageIndex += 1;
@@ -316,16 +317,18 @@ export async function encode(inputPages: EncodePage[], isAsync: boolean = false)
     let lastRepeatIndex = -1;
     const allValues = new Values();
     let prevField = new Field({});
+    let prevText = '';
 
     const innerEncode = (index: number) => {
         const currentPage = inputPages[index];
-        const currentField = currentPage.fieldObj !== undefined ? currentPage.fieldObj.copy() : prevField.copy();
+        const currentField = currentPage.field !== undefined ? currentPage.field.copy() : prevField.copy();
 
         // フィールドの更新
         updateField(prevField, currentField);
 
         // アクションの更新
-        const isComment = currentPage.commentText !== undefined && (index !== 0 || currentPage.commentText !== '');
+        const comment = escape(currentPage.comment !== undefined ? currentPage.comment : '');
+        const isComment = comment !== prevText;
         const piece = currentPage.piece !== undefined ? currentPage.piece : {
             type: Piece.Empty,
             rotation: Rotation.Reverse,
@@ -347,8 +350,7 @@ export async function encode(inputPages: EncodePage[], isAsync: boolean = false)
         allValues.push(actionNumber, 3);
 
         // コメントの更新
-        if (currentPage.commentText !== undefined && isComment) {
-            const comment = escape(currentPage.commentText);
+        if (isComment) {
             const commentLength = Math.min(comment.length, 4095);
 
             allValues.push(commentLength, 2);
@@ -368,6 +370,7 @@ export async function encode(inputPages: EncodePage[], isAsync: boolean = false)
                 allValues.push(value, 5);
             }
         }
+        prevText = comment;
 
         // 地形の更新
         if (action.lock) {
