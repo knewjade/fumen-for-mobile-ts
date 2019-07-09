@@ -2,6 +2,7 @@ import { Field } from './field';
 import { EncodePage, Move, Page, PreCommand } from './types';
 import { generateKey } from '../random';
 import { isMinoPiece } from '../enums';
+import { Quiz } from './quiz';
 
 interface CachePage {
     field: {
@@ -18,6 +19,7 @@ interface CachePage {
             [key in string]: PreCommand;
         };
     };
+    quiz: { enable: false } | { enable: true, quiz: Quiz, quizAfterOperation: Quiz };
     flags: {
         lock: boolean;
         mirror: boolean;
@@ -40,6 +42,10 @@ export class CachePages {
 
         let field = new Field({});
         let comment = '';
+        let quiz: { enable: false } | { enable: true, quiz: Quiz, quizAfterOperation: Quiz } = {
+            enable: false,
+        };
+
         for (const page of pages) {
             if (page.field.obj !== undefined) {
                 field = page.field.obj.copy();
@@ -47,6 +53,36 @@ export class CachePages {
 
             if (page.comment.text !== undefined) {
                 comment = page.comment.text;
+
+                if (page.flags.quiz) {
+                    quiz = {
+                        enable: true,
+                        quiz: new Quiz(page.comment.text),
+                        quizAfterOperation: new Quiz(page.comment.text),
+                    };
+                } else {
+                    quiz = {
+                        enable: false,
+                    };
+                }
+            }
+
+            if (quiz.enable && page.flags.lock) {
+                if (page.piece !== undefined && isMinoPiece(page.piece.type)) {
+                    try {
+                        // ミノを操作をする
+                        const nextQuiz = quiz.quiz.nextIfEnd();
+                        const operation = nextQuiz.getOperation(page.piece.type);
+                        quiz.quizAfterOperation = nextQuiz.operate(operation);
+                    } catch (e) {
+                        console.error(e);
+
+                        // Quizの解釈ができない
+                        quiz.quizAfterOperation = quiz.quiz.format();
+                    }
+                } else {
+                    quiz.quizAfterOperation = quiz.quiz.format();
+                }
             }
 
             const p2: CachePage = {
@@ -63,6 +99,7 @@ export class CachePages {
                     ...page.commands,
                 } : undefined,
                 flags: { ...page.flags },
+                quiz: { ...quiz },
             };
 
             // 地形の更新
@@ -84,7 +121,6 @@ export class CachePages {
 
             this.cache.push({ hash, page: p2 });
         }
-        console.log(this.cache);
     }
 
     get encode() {
