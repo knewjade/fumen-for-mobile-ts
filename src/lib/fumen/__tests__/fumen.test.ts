@@ -731,6 +731,13 @@ describe('fumen', () => {
             await expect(encode(cache.encode)).resolves.toEqual('vhCWSYVAFLDmClcJSAVDEHBEooRBKoAVB6AAAAUoBT?pB');
         });
 
+        test('sample1', async () => {
+            const fumen = 'v115@vhAzKJ9gi0EeR4Rpg0DeR4wwRpglxSAeBtxwilxSBe?BtwwJeAAAvhERmBuqBMrBXsBAAAUhRpHeRpOeCsB';
+            const pages = await decode(fumen);
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual(fumen.substr(5));
+        });
+
         test('Long', async () => {
             const fumen = 'v115@' +
                 'vhHRQYfDFLDmClcJSAVDEHBEooRBaoAVBJt/wCMnbM?CKHExCTHmPCsnltCzHLxCqS9VCKHOMCz3/wC6ybgCpyLM' +

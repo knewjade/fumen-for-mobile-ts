@@ -328,7 +328,7 @@ export async function encode(inputPages: EncodePage[], isAsync: boolean = false)
 
         // アクションの更新
         const comment = escape(currentPage.comment !== undefined ? currentPage.comment : '');
-        const isComment = comment !== prevText;
+        const isComment = comment !== prevText && (index !== 0 || comment !== '');
         const piece = currentPage.piece !== undefined ? currentPage.piece : {
             type: Piece.Empty,
             rotation: Rotation.Reverse,
