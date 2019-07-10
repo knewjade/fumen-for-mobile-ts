@@ -327,8 +327,16 @@ export async function encode(inputPages: EncodePage[], isAsync: boolean = false)
         updateField(prevField, currentField);
 
         // アクションの更新
-        const comment = escape(currentPage.comment !== undefined ? currentPage.comment : '');
-        const isComment = comment !== prevText && (index !== 0 || comment !== '');
+        let comment: string;
+        let isComment: boolean;
+        if (currentPage.comment !== undefined) {
+            comment = escape(currentPage.comment);
+            isComment = comment !== prevText;
+        } else {
+            comment = prevText;
+            isComment = false;
+        }
+
         const piece = currentPage.piece !== undefined ? currentPage.piece : {
             type: Piece.Empty,
             rotation: Rotation.Reverse,
@@ -370,6 +378,7 @@ export async function encode(inputPages: EncodePage[], isAsync: boolean = false)
                 allValues.push(value, 5);
             }
         }
+
         prevText = comment;
 
         // 地形の更新

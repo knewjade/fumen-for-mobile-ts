@@ -738,6 +738,13 @@ describe('fumen', () => {
             await expect(encode(cache.encode)).resolves.toEqual(fumen.substr(5));
         });
 
+        test('sample2', async () => {
+            const fumen = 'v115@vhAzKJ';
+            const pages = await decode(fumen);
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual(fumen.substr(5));
+        });
+
         test('Long', async () => {
             const fumen = 'v115@' +
                 'vhHRQYfDFLDmClcJSAVDEHBEooRBaoAVBJt/wCMnbM?CKHExCTHmPCsnltCzHLxCqS9VCKHOMCz3/wC6ybgCpyLM' +

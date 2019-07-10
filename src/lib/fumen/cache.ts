@@ -19,7 +19,7 @@ interface CachePage {
             [key in string]: PreCommand;
         };
     };
-    quiz: { enable: false } | { enable: true, quiz: Quiz, quizAfterOperation: Quiz };
+    quiz: { enable: false } | { enable: true, continue: boolean, quiz: Quiz, quizAfterOperation: Quiz };
     flags: {
         lock: boolean;
         mirror: boolean;
@@ -42,7 +42,7 @@ export class CachePages {
 
         let field = new Field({});
         let comment = '';
-        let quiz: { enable: false } | { enable: true, quiz: Quiz, quizAfterOperation: Quiz } = {
+        let quiz: CachePage['quiz'] = {
             enable: false,
         };
 
@@ -55,11 +55,21 @@ export class CachePages {
                 comment = page.comment.text;
 
                 if (page.flags.quiz) {
-                    quiz = {
-                        enable: true,
-                        quiz: new Quiz(page.comment.text),
-                        quizAfterOperation: new Quiz(page.comment.text),
-                    };
+                    if (quiz.enable && quiz.quizAfterOperation.format().toString() === page.comment.text) {
+                        quiz = {
+                            enable: true,
+                            continue: true,
+                            quiz: quiz.quiz,
+                            quizAfterOperation: quiz.quizAfterOperation,
+                        };
+                    } else {
+                        quiz = {
+                            enable: true,
+                            continue: false,
+                            quiz: new Quiz(page.comment.text),
+                            quizAfterOperation: new Quiz(page.comment.text),
+                        };
+                    }
                 } else {
                     quiz = {
                         enable: false,
@@ -125,13 +135,18 @@ export class CachePages {
 
     get encode() {
         const pages: EncodePage[] = [];
-        for (const cache of this.cache) {
+        for (let index = 0; index < this.cache.length; index += 1) {
+            const cache = this.cache[index];
             const page = cache.page;
+            const quiz = page.quiz;
             pages.push({
                 field: page.field.obj,
-                comment: page.comment.text,
+                comment: quiz.enable && quiz.continue ? undefined : page.comment.text,
                 piece: page.piece,
-                flags: page.flags,
+                flags: {
+                    ...page.flags,
+                    colorize: index === 0 ? page.flags.colorize : false,
+                },
             });
         }
         return pages;
