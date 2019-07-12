@@ -1,4 +1,4 @@
-import { datatest, minoPosition, Piece, rightTap, Rotation, visit } from '../support/common';
+import {datatest, expectFumen, minoPosition, Piece, rightTap, Rotation, visit} from '../support/common';
 import { operations } from '../support/operations';
 
 describe('Key/Ref', () => {
@@ -84,20 +84,14 @@ describe('Key/Ref', () => {
             operations.mode.block.click(x, y);
         });
 
-        // データを確認
-        operations.menu.copyToClipboard();
-        cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@9gh0hlDeR4g0RpglCeR4wwg0RpglBeBtxwzhCeBtww?JeAgH9gAPwSwhAtFeAPBeAtFeAPQaQpAtZeAgH+gRpHexhI?ehWZeAgH');
-        rightTap();
+        expectFumen('v115@9gh0hlDeR4g0RpglCeR4wwg0RpglBeBtxwzhCeBtww?JeAgH9gAPwSwhAtFeAPBeAtFeAPQaQpAtZeAAA+gRpHexhI?ehWZeAAA');
 
         // Undo
         operations.mode.tools.undo();
         operations.mode.tools.undo();
         operations.mode.tools.undo();
 
-        // データを確認
-        operations.menu.copyToClipboard();
-        cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@9gh0hlFeg0RpglFeg0RpglFezhPeAgH9gAPwSwhAtF?eAPBeAtFeAPQaQpAtZeAgH+gRpHexhIehWZeAgH');
-        rightTap();
+        expectFumen('v115@9gh0hlFeg0RpglFeg0RpglFezhPeAgH9gAPwSwhAtF?eAPBeAtFeAPQaQpAtZeAAA+gRpHexhIehWZeAAA');
 
         // Undo
         operations.mode.tools.undo();
@@ -106,10 +100,7 @@ describe('Key/Ref', () => {
         operations.mode.tools.undo();
         operations.mode.tools.undo();
 
-        // データを確認
-        operations.menu.copyToClipboard();
-        cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@9gh0hlFeg0RpglFeg0RpglFezhPeAgH9gAPwSwhAtF?eAPBeAtFeAPQaQpAtZeAgH9ggWxSgHFegWxSgHFehWhHZeA?gH');
-        rightTap();
+        expectFumen('v115@9gh0hlFeg0RpglFeg0RpglFezhPeAgH9gAPwSwhAtF?eAPBeAtFeAPQaQpAtZeAAA9ggWxSgHFegWxSgHFehWhHZeA?AA');
 
         // Redo
         operations.mode.tools.redo();
@@ -118,20 +109,14 @@ describe('Key/Ref', () => {
         operations.mode.tools.redo();
         operations.mode.tools.redo();
 
-        // データを確認
-        operations.menu.copyToClipboard();
-        cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@9gh0hlFeg0RpglFeg0RpglFezhPeAgH9gAPwSwhAtF?eAPBeAtFeAPQaQpAtZeAgH+gRpHexhIehWZeAgH');
-        rightTap();
+        expectFumen('v115@9gh0hlFeg0RpglFeg0RpglFezhPeAgH9gAPwSwhAtF?eAPBeAtFeAPQaQpAtZeAAA+gRpHexhIehWZeAAA');
 
         // Redo
         operations.mode.tools.redo();
         operations.mode.tools.redo();
         operations.mode.tools.redo();
 
-        // データを確認
-        operations.menu.copyToClipboard();
-        cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@9gh0hlDeR4g0RpglCeR4wwg0RpglBeBtxwzhCeBtww?JeAgH9gAPwSwhAtFeAPBeAtFeAPQaQpAtZeAgH+gRpHexhI?ehWZeAgH');
-        rightTap();
+        expectFumen('v115@9gh0hlDeR4g0RpglCeR4wwg0RpglBeBtxwzhCeBtww?JeAgH9gAPwSwhAtFeAPBeAtFeAPQaQpAtZeAAA+gRpHexhI?ehWZeAAA');
 
         // 次ページ
         operations.mode.tools.nextPage();
@@ -145,9 +130,6 @@ describe('Key/Ref', () => {
             operations.mode.block.click(x, y);
         });
 
-        // データを確認
-        operations.menu.copyToClipboard();
-        cy.get(datatest('copied-fumen-data')).should('have.attr', 'data', 'v115@9gh0hlDeR4g0RpglCeR4wwg0RpglBeBtxwzhCeBtww?JeAgH9gAPwSwhAtFeAPBeAtFeAPQaQpAtZeAgH+gRpAewhF?exhAewhGehWwhIewhOeAgHvhAAgH');
-        rightTap();
+        expectFumen('v115@9gh0hlDeR4g0RpglCeR4wwg0RpglBeBtxwzhCeBtww?JeAgH9gAPwSwhAtFeAPBeAtFeAPQaQpAtZeAAA+gRpAewhF?exhAewhGehWwhIewhOeAAAvhAAAA');
     });
 });
