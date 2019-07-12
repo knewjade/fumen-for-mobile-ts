@@ -207,6 +207,9 @@ export class CachePages {
                 piece: page.piece,
                 flags: {
                     ...page.flags,
+
+                    // 公式テト譜は最初のページ以外でcolorize=trueにならない
+                    // 各ページに色フラグが必要になるまで仕様を統一する
                     colorize: index === 0 ? page.flags.colorize : false,
                 },
             });
