@@ -19,7 +19,7 @@ describe('Comments', () => {
 
         cy.get(datatest('text-comment')).should('have.value', '');
 
-        expectFumen('v115@vhCAgHAgHAgWeAlvs2A1sDfEToABBlvs2AWDEfET4J?6Alvs2AW5AAA');
+        expectFumen('v115@vhCAgHAAAAAPeAlvs2A1sDfEToABBlvs2AWDEfET4J?6Alvs2AW5AAA');
     });
 
     it('Comment readonly/writable', () => {
@@ -101,15 +101,15 @@ describe('Comments', () => {
 
         cy.get(datatest('text-comment')).clear().type('ここから2巡目');
 
-        expectFumen('v115@vhIzKYFAooMDEPBAAACMJmHYKAooMDEvzjXEMnBAAp?IYTAooMDEvzjXEM388AxnA6AFrmAAUBJvJYlAlvs2A1sDfE?To3ABlvs2A3HEfET4ZOBxX3JBEIfRA1Dq9BlAAAAFFYDAUN?SBAAgWAAAgWlAlvs2A1sDfETo3ABlvs2AUDEfETYOVByX3J?BEIfRA1Dq9BlAAAA');
+        expectFumen('v115@vhIzKYFAooMDEPBAAACsBmnQKAooMDEvzjXEMnBAAp?oQTAooMDEvzjXEM388AxnA6AFrmAAUhBvpQlAlvs2A1sDfE?To3ABlvs2A3HEfET4ZOBxX3JBEIfRA1Dq9BlAAAAFlQDAUN?SBAAAPAAAAPlAlvs2A1sDfETo3ABlvs2AUDEfETYOVByX3J?BEIfRA1Dq9BlAAAA');
 
         operations.mode.tools.undo();
 
-        expectFumen('v115@vhIzKYFAooMDEPBAAACMJmHYKAooMDEvzjXEMnBAAp?IYTAooMDEvzjXEM388AxnA6AFrmAAUBJvJYlAlvs2A1sDfE?To3ABlvs2A3HEfET4ZOBxX3JBEIfRA1Dq9BlAAAAFFYDAUN?SBAAgWAAAgH');
+        expectFumen('v115@vhIzKYFAooMDEPBAAACsBmnQKAooMDEvzjXEMnBAAp?oQTAooMDEvzjXEM388AxnA6AFrmAAUhBvpQlAlvs2A1sDfE?To3ABlvs2A3HEfET4ZOBxX3JBEIfRA1Dq9BlAAAAFlQDAUN?SBAAAPAAAAA');
 
         operations.mode.tools.redo();
 
-        expectFumen('v115@vhIzKYFAooMDEPBAAACMJmHYKAooMDEvzjXEMnBAAp?IYTAooMDEvzjXEM388AxnA6AFrmAAUBJvJYlAlvs2A1sDfE?To3ABlvs2A3HEfET4ZOBxX3JBEIfRA1Dq9BlAAAAFFYDAUN?SBAAgWAAAgWlAlvs2A1sDfETo3ABlvs2AUDEfETYOVByX3J?BEIfRA1Dq9BlAAAA');
+        expectFumen('v115@vhIzKYFAooMDEPBAAACsBmnQKAooMDEvzjXEMnBAAp?oQTAooMDEvzjXEM388AxnA6AFrmAAUhBvpQlAlvs2A1sDfE?To3ABlvs2A3HEfET4ZOBxX3JBEIfRA1Dq9BlAAAAFlQDAUN?SBAAAPAAAAPlAlvs2A1sDfETo3ABlvs2AUDEfETYOVByX3J?BEIfRA1Dq9BlAAAA');
     });
 
     it('Quiz', () => {
@@ -136,7 +136,7 @@ describe('Comments', () => {
             operations.mode.block.click(x, y);
         });
 
-        expectFumen('v115@vhC1OYaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AA?A0KJXBJ');
+        expectFumen('v115@vhC1OYaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AA?A0qBXhB');
 
         // 4ページ目
         minoPosition(Piece.Z, Rotation.Spawn)(5, 0).forEach(([x, y]) => {
@@ -155,7 +155,7 @@ describe('Comments', () => {
             operations.mode.block.click(x, y);
         });
 
-        expectFumen('v115@vhF1OYaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AA?A0KJXBJ0LYaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AAA?dHJpIJ');
+        expectFumen('v115@vhF1OYaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AA?A0qBXhB0rQaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AAA?dnBpoB');
     });
 
     it('Multi quiz', () => {
@@ -199,6 +199,6 @@ describe('Comments', () => {
         // 8ページ目
         cy.get(datatest('text-comment')).should('have.value', 'hello');
 
-        expectFumen('v115@vhHyOY3AFLDmClcJSAVjiSAVG88AYS88AZPUABCowA?BR4K6Bl/UtClfJSASE7SAyltSATzarDMjzCATEJm/I3LJtK?JUBJAgHAgH');
+        expectFumen('v115@vhHyOY3AFLDmClcJSAVjiSAVG88AYS88AZPUABCowA?BR4K6Bl/UtClfJSASE7SAyltSATzarDMjzCATkBmfB3rBtq?BUhBAAAAAA');
     });
 });

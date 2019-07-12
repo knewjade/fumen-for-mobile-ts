@@ -52,7 +52,7 @@ describe('Drawing', () => {
         operations.mode.block.dragToRight({ from: 1, to: 9 }, 0);
         operations.mode.block.dragToRight({ from: 0, to: 9 }, -1);
 
-        expectFumen('v115@qeA8UeA8QeA8ceg0Jeg0Jeg0Jeg0Jeg0RfAgHygQpQ?eQpQeQpEei4AgH');
+        expectFumen('v115@qeA8UeA8QeA8ceg0Jeg0Jeg0Jeg0Jeg0RfAgHygQpQ?eQpQeQpEei4AAA');
     });
 
     it('Draw blocks 2', () => {
@@ -144,7 +144,7 @@ describe('Drawing', () => {
         // Go to next page
         cy.get(datatest('btn-next-page')).click();
 
-        expectFumen('v115@ygwhh0BewwDewhg0BeywwhBewhg0ywR4whBtwhRpww?R4glwhg0BtRpAeilwhi0JeAgHvhAAgH');
+        expectFumen('v115@ygwhh0BewwDewhg0BeywwhBewhg0ywR4whBtwhRpww?R4glwhg0BtRpAeilwhi0JeAgHvhAAAA');
     });
 
     it('Completion blocks 2', () => {
@@ -273,7 +273,7 @@ describe('Drawing', () => {
             }
         }
 
-        expectFumen('v115@AhG8CeG8BtAeH8BtG8JeAgHvhAAgH');
+        expectFumen('v115@AhG8CeG8BtAeH8BtG8JeAgHvhAAAA');
     });
 
     it('Completion blocks 3', () => {
