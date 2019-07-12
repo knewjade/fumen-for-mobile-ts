@@ -745,6 +745,15 @@ describe('fumen', () => {
             await expect(encode(cache.encode)).resolves.toEqual(fumen.substr(5));
         });
 
+        test('sample3', async () => {
+            const fumen = 'v115@vhF1OYaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AA?A0KJXBJ0LYaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AAA?dHJpIJ';
+            const pages = await decode(fumen);
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual(
+                'vhF1OYaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AA?A0qBXhB0rQaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AAA?dnBpoB',
+            );
+        });
+
         test('Long', async () => {
             const fumen = 'v115@' +
                 'vhHRQYfDFLDmClcJSAVDEHBEooRBaoAVBJt/wCMnbM?CKHExCTHmPCsnltCzHLxCqS9VCKHOMCz3/wC6ybgCpyLM' +

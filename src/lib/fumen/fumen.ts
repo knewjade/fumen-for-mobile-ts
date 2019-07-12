@@ -317,7 +317,6 @@ export async function encode(inputPages: EncodePage[], isAsync: boolean = false)
     let lastRepeatIndex = -1;
     const allValues = new Values();
     let prevField = new Field({});
-    let prevText = '';
 
     const innerEncode = (index: number) => {
         const currentPage = inputPages[index];
@@ -331,9 +330,9 @@ export async function encode(inputPages: EncodePage[], isAsync: boolean = false)
         let isComment: boolean;
         if (currentPage.comment !== undefined) {
             comment = escape(currentPage.comment);
-            isComment = comment !== prevText;
+            isComment = true;
         } else {
-            comment = prevText;
+            comment = '';
             isComment = false;
         }
 
@@ -378,8 +377,6 @@ export async function encode(inputPages: EncodePage[], isAsync: boolean = false)
                 allValues.push(value, 5);
             }
         }
-
-        prevText = comment;
 
         // 地形の更新
         if (action.lock) {

@@ -3,6 +3,7 @@ import { EncodePage, Move, Page, PreCommand } from './types';
 import { generateKey } from '../random';
 import { isMinoPiece } from '../enums';
 import { Quiz } from './quiz';
+import { FumenError } from '../errors';
 
 interface CachePage {
     field: {
@@ -19,7 +20,7 @@ interface CachePage {
             [key in string]: PreCommand;
         };
     };
-    quiz: { enable: false } | { enable: true, continue: boolean, quiz: Quiz, quizAfterOperation: Quiz };
+    quiz: { enable: false } | { enable: true, quiz: Quiz, quizAfterOperation: Quiz };
     flags: {
         lock: boolean;
         mirror: boolean;
@@ -41,39 +42,79 @@ export class CachePages {
         const hash = generateKey();
 
         let field = new Field({});
-        let comment = '';
+        let comment: { text: string, ref: number } = { text: '', ref: -1 };
         let quiz: CachePage['quiz'] = {
             enable: false,
         };
 
-        for (const page of pages) {
+        for (let index = 0; index < pages.length; index += 1) {
+            const page = pages[index];
+
             if (page.field.obj !== undefined) {
                 field = page.field.obj.copy();
             }
 
             if (page.comment.text !== undefined) {
-                comment = page.comment.text;
+                console.log(page);
 
                 if (page.flags.quiz) {
+                    // Quiz comment
+
                     if (quiz.enable && quiz.quizAfterOperation.format().toString() === page.comment.text) {
+                        console.log('continue');
+                        // Quiz on at prev page
+                        comment = {
+                            text: quiz.quizAfterOperation.format().toString(),
+                            ref: comment.ref,
+                        };
                         quiz = {
                             enable: true,
-                            continue: true,
-                            quiz: quiz.quiz,
+                            quiz: quiz.quizAfterOperation,
                             quizAfterOperation: quiz.quizAfterOperation,
                         };
                     } else {
+                        console.log('first');
+                        // Quiz on first
+                        comment = {
+                            text: page.comment.text,
+                            ref: index,
+                        };
                         quiz = {
                             enable: true,
-                            continue: false,
                             quiz: new Quiz(page.comment.text),
                             quizAfterOperation: new Quiz(page.comment.text),
                         };
                     }
                 } else {
+                    console.log('normal');
+
+                    // Normal comment
+                    comment = {
+                        text: page.comment.text,
+                        ref: page.comment.text === comment.text ? comment.ref : index,
+                    };
                     quiz = {
                         enable: false,
                     };
+                }
+            } else {
+                if (page.flags.quiz) {
+                    // Quiz on at prev page
+
+                    if (quiz.enable) {
+                        // Quiz on at prev page
+                        comment = {
+                            text: quiz.quizAfterOperation.format().toString(),
+                            ref: comment.ref,
+                        };
+                        quiz = {
+                            enable: true,
+                            quiz: quiz.quizAfterOperation,
+                            quizAfterOperation: quiz.quizAfterOperation,
+                        };
+                    } else {
+                        throw new FumenError('No reachable');
+                    }
                 }
             }
 
@@ -95,6 +136,26 @@ export class CachePages {
                 }
             }
 
+            if (page.commands !== undefined) {
+                const commands = page.commands;
+                Object.keys(commands.pre)
+                    .map(key => commands.pre[key])
+                    .forEach((command: PreCommand) => {
+                        switch (command.type) {
+                        case 'block': {
+                            const { x, y, piece } = command;
+                            field.setToPlayField(x + y * 10, piece);
+                            return;
+                        }
+                        case 'sentBlock': {
+                            const { x, y, piece } = command;
+                            field.setToSentLine(x + y * 10, piece);
+                            return;
+                        }
+                        }
+                    });
+            }
+
             const p2: CachePage = {
                 field: {
                     obj: field.copy(),
@@ -102,8 +163,8 @@ export class CachePages {
                 },
                 piece: page.piece,
                 comment: {
-                    text: comment,
-                    ref: page.comment.ref,
+                    text: comment.text,
+                    ref: comment.ref,
                 },
                 commands: page.commands !== undefined ? {
                     ...page.commands,
@@ -111,6 +172,8 @@ export class CachePages {
                 flags: { ...page.flags },
                 quiz: { ...quiz },
             };
+            console.log('p2');
+            console.log(p2);
 
             // 地形の更新
             if (page.flags.lock) {
@@ -138,10 +201,9 @@ export class CachePages {
         for (let index = 0; index < this.cache.length; index += 1) {
             const cache = this.cache[index];
             const page = cache.page;
-            const quiz = page.quiz;
             pages.push({
                 field: page.field.obj,
-                comment: quiz.enable && quiz.continue ? undefined : page.comment.text,
+                comment: page.comment.ref === index ? page.comment.text : undefined,
                 piece: page.piece,
                 flags: {
                     ...page.flags,
