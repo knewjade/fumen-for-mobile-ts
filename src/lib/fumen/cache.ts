@@ -55,13 +55,11 @@ export class CachePages {
             }
 
             if (page.comment.text !== undefined) {
-                console.log(page);
 
                 if (page.flags.quiz) {
                     // Quiz comment
 
                     if (quiz.enable && quiz.quizAfterOperation.format().toString() === page.comment.text) {
-                        console.log('continue');
                         // Quiz on at prev page
                         comment = {
                             text: quiz.quizAfterOperation.format().toString(),
@@ -73,7 +71,6 @@ export class CachePages {
                             quizAfterOperation: quiz.quizAfterOperation,
                         };
                     } else {
-                        console.log('first');
                         // Quiz on first
                         comment = {
                             text: page.comment.text,
@@ -86,8 +83,6 @@ export class CachePages {
                         };
                     }
                 } else {
-                    console.log('normal');
-
                     // Normal comment
                     comment = {
                         text: page.comment.text,
@@ -172,8 +167,6 @@ export class CachePages {
                 flags: { ...page.flags },
                 quiz: { ...quiz },
             };
-            console.log('p2');
-            console.log(p2);
 
             // 地形の更新
             if (page.flags.lock) {
