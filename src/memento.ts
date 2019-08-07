@@ -2,6 +2,7 @@ import { HistoryTask, isOperationTask, toDecoratorOperationTask } from './histor
 import { generateKey } from './lib/random';
 import { Page } from './lib/fumen/types';
 import { encode } from './lib/fumen/fumen';
+import { CachePages } from './lib/fumen/cache';
 
 interface SaverProp {
     saveKey: string;
@@ -21,7 +22,8 @@ const saver = (() => {
 
     const sequentialEncode = async (pages: Page[]): Promise<string> => {
         saverState.isWorking = true;
-        const data = await encode(pages, true);
+        const cachePages = new CachePages(pages);
+        const data = await encode(cachePages.encode, true);
         saverState.isWorking = false;
         return `v115@${data}`;
     };

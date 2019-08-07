@@ -40,7 +40,7 @@ describe('Append fumen', () => {
         // Assertion: ページ番号の確認
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '2 / 8');
 
-        expectFumen('v115@vhAzKJ9gi0EeR4Rpg0DeR4wwRpglxSAeBtxwilxSBe?BtwwJeAgWAAvhERmBuqBMrBXsBAAAUhRpHeRpOeCMYAA');
+        expectFumen('v115@vhAzKJ9gi0EeR4Rpg0DeR4wwRpglxSAeBtxwilxSBe?BtwwJeAAAvhERmBuqBMrBXsBAAAUhRpHeRpOeCsB');
     });
 
     it('To End: Error -> success', () => {
@@ -79,7 +79,7 @@ describe('Append fumen', () => {
         // Assertion: ページ番号の確認
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '3 / 8');
 
-        expectFumen('v115@vhBzKJCsB9gi0EeR4Rpg0DeR4wwRpglxSgWhlxwilx?SgWAeBtwwJeAgWAAvhERmBuqBMrBXsBAAA');
+        expectFumen('v115@vhBzKJCsB9gi0EeR4Rpg0DeR4wwRpglxSgWhlxwilx?SgWAeBtwwJeAAAvhERmBuqBMrBXsBAAA');
     });
 
     it('Cancel', () => {

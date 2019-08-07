@@ -37,7 +37,7 @@ describe('Put pieces', () => {
 
         operations.mode.piece.harddrop();
 
-        expectFumen('v115@vhCTXIAgHOLJ');
+        expectFumen('v115@vhCTXIAAAOrB');
     });
 
     it('Put pieces', () => {
@@ -112,7 +112,7 @@ describe('Put pieces', () => {
 
         operations.mode.tools.nextPage();
 
-        expectFumen('v115@vhKRQJUGJKJJTNJvMJFEmFdmF2mFKnFKJAgH');
+        expectFumen('v115@vhKRQJUmBKpBTtBvsBFkeF9eFWfFqfFqBAAA');
     });
 
     it('Move pieces', () => {
@@ -219,7 +219,7 @@ describe('Put pieces', () => {
             });
         }
 
-        expectFumen('v115@zgB8EeD8HeB8AeE8AeC8BeC8BeC8AeE8AeB8Je9MJz?gBAEeDAHeBAAeEAQLBAAeA8AeAABeRLDeAADeQLAAKekMJ0?gB8DeB8AeB8FeD8AeD8AeB8CeA8BeAtAPCeA8AeAABeAAAP?AtKe+MJ0gBAD8BeA8BAAeE8BeBAEeglBeBAEeglBeBADehl?LehOJ');
+        expectFumen('v115@zgB8EeD8HeB8AeE8AeC8BeC8BeC8AeE8AeB8Je9MJz?gBAEeDAHeBAAeEAQLBAAeA8AeAABeRLDeAADeQLAAKeksB0?gB8DeB8AeB8FeD8AeD8AeB8CeA8BeAtAPCeA8AeAABeAAAP?AtKe+sB0gBAD8BeA8BAAeE8BeBAEeglBeBAEeglBeBADehl?LehuB');
     });
 
     it('Move pieces 2', () => {
@@ -278,7 +278,7 @@ describe('Put pieces', () => {
         operations.mode.piece.moveToLeft();
         operations.mode.piece.moveToLeft();
 
-        expectFumen('v115@vhCVPJxMJTLJ');
+        expectFumen('v115@vhCVPJxsBTrB');
 
         // I
         minoPosition(Piece.I, Rotation.Spawn)(6, 18).forEach(position => {
@@ -300,7 +300,7 @@ describe('Put pieces', () => {
         operations.mode.piece.rotateToRight();
         operations.mode.piece.harddrop();
 
-        expectFumen('v115@vhEVPJxMJTLJ5/IJ+I');
+        expectFumen('v115@vhEVPJxsBTrB5fBJeB');
 
         operations.mode.piece.lockToOff();
 
@@ -316,7 +316,7 @@ describe('Put pieces', () => {
 
         operations.mode.tools.nextPage();
 
-        expectFumen('v115@vhHVPJxMJTLJ5/IJ+mhCn59IAgH');
+        expectFumen('v115@vhHVPJxsBTrB5fBJefhif5dBAAA');
     });
 
     it('Show current rotation', () => {
@@ -409,7 +409,7 @@ describe('Put pieces', () => {
         operations.mode.piece.spawn.O();
         operations.mode.piece.harddrop();
 
-        expectFumen('v115@vhGVQJXBJU3IRyIStIWjITZI');
+        expectFumen('v115@vhGVQJXhBUXBRSBSNBWDBT5A');
     });
 
     it('Spawn classic piece', () => {
@@ -490,7 +490,7 @@ describe('Put pieces', () => {
             operations.mode.piece.harddrop();
         }
 
-        expectFumen('v115@vhGRQJUGJKJJTNJ/MJFKJWSJ');
+        expectFumen('v115@vhGRQJUmBKpBTtB/sBFqBWyB');
     });
 
     it('Spawn: usecase 2', () => {
@@ -538,7 +538,7 @@ describe('Put pieces', () => {
             operations.mode.block.click(8, 1);
         }
 
-        expectFumen('v115@vhGcJJ+MJTNJRPJ3FJlLJKNJ');
+        expectFumen('v115@vhGcJJ+sBTtBRvB3lBlrBKtB');
     });
 
     it('Reset', () => {
@@ -637,6 +637,6 @@ describe('Put pieces', () => {
             operations.mode.piece.harddrop();
         }
 
-        expectFumen('v115@vhBWQJWGJ');
+        expectFumen('v115@vhBWQJWmB');
     });
 });

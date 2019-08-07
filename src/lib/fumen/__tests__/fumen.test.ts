@@ -3,6 +3,7 @@ import { Field, PlayField } from '../field';
 import { FumenError } from '../../errors';
 import { Page } from '../types';
 import { Piece, Rotation } from '../../enums';
+import { CachePages } from '../cache';
 
 describe('fumen', () => {
     describe('decode v115', () => {
@@ -557,21 +558,19 @@ describe('fumen', () => {
                 quiz: true,
             },
         } as Page);
-
-        // Encode
-        const encoded = await encode(pages);
-        await expect(encoded.replace(/[?]/g, '')).toEqual(data.substr(5));
     });
 
     describe('decode v110', () => {
         test('case1', async () => {
             const pages = await decode('v110@7eAA4G');
-            await expect(encode(pages)).resolves.toEqual('vhAAgH');
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual('vhAAgH');
         });
 
         test('case2', async () => {
             const pages = await decode('v110@7eMSeIJdBWoBEeBHcBVXBDfB6MBOVBpUBjTBvNBMOB?');
-            await expect(encode(pages)).resolves.toEqual('vhMSQJJnBWyBEoBHmBVhBDpB6WBOfBpeBjdBvXBMYB');
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual('vhMSQJJnBWyBEoBHmBVhBDpB6WBOfBpeBjdBvXBMYB');
         });
     });
 
@@ -678,47 +677,81 @@ describe('fumen', () => {
     describe('encode', () => {
         test('empty', async () => {
             const pages = await decode('v115@vhAAgH');
-            await expect(encode(pages)).resolves.toEqual('vhAAgH');
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual('vhAAgH');
         });
 
         test('last page', async () => {
             const pages = await decode('v115@vhBAgHAAA');
-            await expect(encode(pages)).resolves.toEqual('vhBAgHAAA');
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual('vhBAgHAAA');
         });
 
         test('mirror', async () => {
             const pages = await decode('v115@RhA8IeB8HeC8GeAQLvhAAAA');
-            await expect(encode(pages)).resolves.toEqual('RhA8IeB8HeC8GeAQLvhAAAA');
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual('RhA8IeB8HeC8GeAQLvhAAAA');
         });
 
         test('send', async () => {
             const pages = await decode('v115@RhA8IeB8HeC8GeAYJvhAAAA');
-            await expect(encode(pages)).resolves.toEqual('RhA8IeB8HeC8GeAYJvhAAAA');
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual('RhA8IeB8HeC8GeAYJvhAAAA');
         });
 
         test('I-Spawn', async () => {
             const pages = await decode('v115@vhARQJ');
-            await expect(encode(pages)).resolves.toEqual('vhARQJ');
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual('vhARQJ');
         });
 
         test('Comment', async () => {
             const pages = await decode('v115@vhDAgWFAooMDEPBAAAAAPFA3XaDEEBAAAAAAAAPDAF?rmAA');
-            await expect(encode(pages)).resolves.toEqual('vhDAgWFAooMDEPBAAAAAPFA3XaDEEBAAAAAAAAPDAF?rmAA');
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual('vhDAgWFAooMDEPBAAAAAPFA3XaDEEBAAAAAAAAPDAF?rmAA');
         });
 
         test('Quiz', async () => {
             const pages = await decode('v115@vhGSSYXAFLDmClcJSAVDEHBEooRBMoAVBUtfBAXsBA?AANrBmnBAAAAAA');
-            await expect(encode(pages)).resolves.toEqual('vhGSSYXAFLDmClcJSAVDEHBEooRBMoAVBUtfBAXsBA?AANrBmnBAAAAAA');
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual(
+                'vhGSSYXAFLDmClcJSAVDEHBEooRBMoAVBUtfBAXsBA?AANrBmnBAAAAAA',
+            );
         });
 
         test('No lock', async () => {
             const pages = await decode('v115@vhAAgl');
-            await expect(encode(pages)).resolves.toEqual('vhAAgl');
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual('vhAAgl');
         });
 
         test('Lock after quiz', async () => {
             const pages = await decode('v115@vhCWSYVAFLDmClcJSAVDEHBEooRBKoAVB6AAAAUoBT?pB');
-            await expect(encode(pages)).resolves.toEqual('vhCWSYVAFLDmClcJSAVDEHBEooRBKoAVB6AAAAUoBT?pB');
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual('vhCWSYVAFLDmClcJSAVDEHBEooRBKoAVB6AAAAUoBT?pB');
+        });
+
+        test('sample1', async () => {
+            const fumen = 'v115@vhAzKJ9gi0EeR4Rpg0DeR4wwRpglxSAeBtxwilxSBe?BtwwJeAAAvhERmBuqBMrBXsBAAAUhRpHeRpOeCsB';
+            const pages = await decode(fumen);
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual(fumen.substr(5));
+        });
+
+        test('sample2', async () => {
+            const fumen = 'v115@vhAzKJ';
+            const pages = await decode(fumen);
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual(fumen.substr(5));
+        });
+
+        test('sample3', async () => {
+            const fumen = 'v115@vhF1OYaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AA?A0KJXBJ0LYaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AAA?dHJpIJ';
+            const pages = await decode(fumen);
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual(
+                'vhF1OYaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AA?A0qBXhB0rQaAFLDmClcJSAVDEHBEooRBUoAVBadFgCs/AAA?dnBpoB',
+            );
         });
 
         test('Long', async () => {
@@ -730,7 +763,8 @@ describe('fumen', () => {
                 'YBvhVRSBKVBFWB/VBTUBTTBeSBSPBMFBpNBNJB//AM7A?TGBFRB3RBaWB5lB+rBipBOmBliBPgh0ywAtDeh0Q4wwBtil?Aeh0R' +
                 '4BtilAeh0wwQ4BtC8AeI8AehlSpAtC8AehlwhQpBti?0AehlxhBti0AehlQpwhBtJezGBvhHZBBs8A+AB3/As+AlCB?XABT8A';
             const pages = await decode(fumen);
-            await expect(encode(pages)).resolves.toEqual(fumen.substr(5));
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual(fumen.substr(5));
         });
 
         test('ほｗｙISO', async () => {
@@ -766,7 +800,8 @@ describe('fumen', () => {
                 'fETY12Blv12AWDEfEVrozBlP?J6AGyAAAAAPaBlvs2AU0DfEmJYOBlvs2A3vDfETY1ABlvs2?AU0DfETIk9Alvs2AUrDfETY1' +
                 '2Blvs2A0EEfETY9KBlvs2A0?yDfETY12Blvs2AUxDfETYVOBlfnBCVbAAA';
             const pages = await decode(fumen);
-            await expect(encode(pages)).resolves.toEqual(fumen.substr(5));
+            const cache = new CachePages(pages);
+            await expect(encode(cache.encode)).resolves.toEqual(fumen.substr(5));
         });
     });
 });

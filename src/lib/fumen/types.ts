@@ -51,6 +51,19 @@ export interface Page {
     };
 }
 
+export interface EncodePage {
+    field?: Field;
+    piece?: Move;
+    comment?: string;
+    flags: {
+        lock: boolean;
+        mirror: boolean;
+        colorize: boolean;
+        rise: boolean;
+        quiz: boolean;
+    };
+}
+
 export type PreCommand = BlockAction;
 
 export interface BlockAction {

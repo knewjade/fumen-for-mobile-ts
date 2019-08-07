@@ -40,7 +40,7 @@ describe('Drawing Tools', () => {
         operations.mode.tools.home();
         operations.mode.tools.duplicatePage();
 
-        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAARhgHIeiHQe2OJvhB3rBzkBIhxSHexSaezkBvhCsqBif?BAAAkhAAJeAAA');
+        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAARhgHIeiHQe2uBvhB3rBzkBIhxSHexSaezkBvhCsqBif?BAAAkhAAJeAAA');
 
         operations.mode.tools.undo();
 
@@ -48,7 +48,7 @@ describe('Drawing Tools', () => {
 
         operations.mode.tools.redo();
 
-        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAARhgHIeiHQe2OJvhB3rBzkBIhxSHexSaezkBvhCsqBif?BAAAkhAAJeAAA');
+        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAARhgHIeiHQe2uBvhB3rBzkBIhxSHexSaezkBvhCsqBif?BAAAkhAAJeAAA');
 
         operations.menu.lastPage();
         operations.mode.tools.backPage();
@@ -63,7 +63,7 @@ describe('Drawing Tools', () => {
         operations.mode.tools.home();
         operations.mode.tools.duplicatePage();
 
-        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAARhgHIeiHQe2OJvhB3rBzkBIhxSHexSaezkBvhCsqBif?BVtB9gilHexhAeAtEeAtBeAtAeR4AeQLUeVtB9gilHexhAe?AtEeAtBeAtAeR4AeQLJeAAJeAAA');
+        expectFumen('v115@khA8Je2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDs?OBAARhgHIeiHQe2uBvhB3rBzkBIhxSHexSaezkBvhCsqBif?BVtB9gilHexhAeAtEeAtBeAtAeR4AeQLUeVtB9gilHexhAe?AtEeAtBeAtAeR4AeQLJeAAJeAAA');
     });
 
     it('Update by lock flag', () => {
@@ -145,7 +145,7 @@ describe('Drawing Tools', () => {
         operations.mode.tools.backPage();
         operations.mode.tools.removePage();
 
-        expectFumen('v115@QhwwFeBtxwGeBtwwJeXDYYAFLDmClcJSAVDEHBEooR?BToAVBv/7LCvhA2uBIhRpHeRpaeifQVAFLDmClcJSAVzbSA?VG88A4N88AZAAAAvhAplBLhwwFeRpAewwAeAPAeQaAegHhl?Q4C8BtQpJeHiuFA3XaDEEBAAA9giWQaDexDwwBtg0QLAewh?RLwSQahWQaQLwwwhhlwhA8HeAAJeHmQFA3XaDEEBAAA9gV4?Del0DellNeFtDeAAPFA3XaDEEBAAA');
+        expectFumen('v115@QhwwFeBtxwGeBtwwJeXDYYAFLDmClcJSAVDEHBEooR?BToAVBv/7LCvhA2uBIhRpHeRpaeifQVAFLDmClcJSAVzbSA?VG88A4N88AZAAAAvhAplBLhwwFeRpAewwAeAPAeQaAegHhl?Q4C8BtQpJeHiuFA3XaDEEBAAA9giWQaDexDwwBtg0QLAewh?RLwSQahWQaQLwwwhhlwhA8HeAAJeHmB9gV4Del0DellNeFt?DeAAA');
     });
 
     it('Undo/Redo', () => {
@@ -282,10 +282,10 @@ describe('Drawing Tools', () => {
         operations.mode.tools.undo();
 
         // http://harddrop.com/fumen/?
-        expectFumen('v115@HhglIeglIehlAezhMeAgHihS4JeAgH');
+        expectFumen('v115@HhglIeglIehlAezhMeAgHihS4JeAAA');
     });
 
-    it('Auto save', () => {
+    it.only('Auto save', () => {
         visit({
             fumen: 'v115@HhglIeglIehlAezhMeAgH',
             mode: 'writable',
@@ -307,7 +307,7 @@ describe('Drawing Tools', () => {
 
         visit({ mode: 'writable', reload: true });
 
-        expectFumen('v115@HhglIeglIehlAezhMeAgHYhi0GeSpJeAgH');
+        expectFumen('v115@HhglIeglIehlAezhMeAgHYhi0GeSpJeAAA');
 
         operations.mode.block.open();
 
@@ -327,7 +327,7 @@ describe('Drawing Tools', () => {
 
         visit({ reload: true });
 
-        expectFumen('v115@HhglIeglIehlAezhMeAgHYhi0GeSpJeAgHOhywdeAg?H');
+        expectFumen('v115@HhglIeglIehlAezhMeAgHYhi0GeSpJeAAAOhywdeAA?A');
 
         operations.screen.writable();
 
@@ -351,7 +351,7 @@ describe('Drawing Tools', () => {
 
         visit({ reload: true });
 
-        expectFumen('v115@HhglIeglIehlAezhMeAgHYhi0GeSpJeAgHOhywdeAg?H6gilxeAgH');
+        expectFumen('v115@HhglIeglIehlAezhMeAgHYhi0GeSpJeAAAOhywdeAA?A6gilxeAAA');
     });
 
     it('Flags', () => {
@@ -406,7 +406,7 @@ describe('Drawing Tools', () => {
         operations.mode.flags.mirrorToOn();
         operations.mode.tools.nextPage();
 
-        expectFumen('v115@RhA8IeB8HewhglQpAtwwg0Q4A8BeAINbhxwHewwIeA?glvhBAQLAgH');
+        expectFumen('v115@RhA8IeB8HewhglQpAtwwg0Q4A8BeAINbhxwHewwIeA?AevhBAwDAAA');
 
         // 3ページ目
         operations.mode.flags.lockToOff();
@@ -417,13 +417,13 @@ describe('Drawing Tools', () => {
         operations.mode.tools.undo();
         operations.mode.tools.undo();
 
-        expectFumen('v115@RhA8IeB8HewhglQpAtwwg0Q4A8BeAINbhxwHewwIeA?glvhBAQLAgH');
+        expectFumen('v115@RhA8IeB8HewhglQpAtwwg0Q4A8BeAINbhxwHewwIeA?AevhBAwDAAA');
 
         operations.mode.tools.redo();
         operations.mode.tools.redo();
         operations.mode.tools.redo();
 
-        expectFumen('v115@RhA8IeB8HewhglQpAtwwg0Q4A8BeAINbhxwHewwIeA?glvhBAQLAIr');
+        expectFumen('v115@RhA8IeB8HewhglQpAtwwg0Q4A8BeAINbhxwHewwIeA?AevhBAwDAoj');
     });
 
     it('Flags 2', () => {
@@ -454,7 +454,7 @@ describe('Drawing Tools', () => {
             cy.get(block(p[0], p[1])).should('have.attr', 'color', Color.I.Normal);
         });
 
-        expectFumen('v115@bhzhPeAIrvhJAIrAIrAIrAIrAIrAIrAIrAIrAIrAIr');
+        expectFumen('v115@bhzhPeAIrvhJAojAojAojAojAojAojAojAojAojAoj');
     });
 
     it('Slide', () => {
@@ -485,7 +485,7 @@ describe('Drawing Tools', () => {
         operations.mode.slide.up();
         operations.mode.slide.down();
 
-        expectFumen('v115@heB8GeD8FeD8GeB8hfB8GeD8FeD8GeB8reAgHvhCAg?HAgHAgH');
+        expectFumen('v115@heB8GeD8FeD8GeB8hfB8GeD8FeD8GeB8reAgHvhCAA?AAAAAAA');
 
         operations.mode.tools.nextPage();
         operations.mode.tools.nextPage();
@@ -499,7 +499,7 @@ describe('Drawing Tools', () => {
         operations.mode.slide.open();
         operations.mode.slide.down();
 
-        expectFumen('v115@heB8GeD8FeD8GeB8hfB8GeD8FeD8GeB8reAgHvhBAg?HAgHheBAGeAABeAAPeA8BeA8GeB8XfBAGeAABeAAPeA8BeA?8GeB8heAgHvhAAgHheB8GeA8BeA8PeAABeAAGeBAXfB8GeA?8BeA8PeAABeAAGeBAheAgH');
+        expectFumen('v115@heB8GeD8FeD8GeB8hfB8GeD8FeD8GeB8reAgHvhBAA?AAAAheBAGeAABeAAPeA8BeA8GeB8XfBAGeAABeAAPeA8BeA?8GeB8heAAAvhAAAAheB8GeA8BeA8PeAABeAAGeBAXfB8GeA?8BeA8PeAABeAAGeBAheAAA');
     });
 
     it('Clear button visibility', () => {

@@ -66,7 +66,7 @@ describe('History', () => {
                         operations.mode.block.click(x, y);
                     });
                 },
-                fumen: 'v115@vhBRQJUGJ',
+                fumen: 'v115@vhBRQJUmB',
                 count: 1,
             },
             {
@@ -76,21 +76,21 @@ describe('History', () => {
                         operations.mode.block.click(x, y);
                     });
                 },
-                fumen: 'v115@vhCRQJUGJKJJ',
+                fumen: 'v115@vhCRQJUmBKpB',
                 count: 1,
             },
             {
                 callback: () => {
                     operations.mode.tools.nextPage();
                 },
-                fumen: 'v115@vhDRQJUGJKJJAgH',
+                fumen: 'v115@vhDRQJUmBKpBAAA',
                 count: 1,
             },
             {
                 callback: () => {
                     operations.mode.tools.nextPage();
                 },
-                fumen: 'v115@vhERQJUGJKJJAgHAgH',
+                fumen: 'v115@vhERQJUmBKpBAAAAAA',
                 count: 1,
             },
             {
@@ -100,7 +100,7 @@ describe('History', () => {
                         operations.mode.block.click(x, y);
                     });
                 },
-                fumen: 'v115@vhERQJUGJKJJAgHTNJ',
+                fumen: 'v115@vhERQJUmBKpBAAATtB',
                 count: 1,
             },
             {
@@ -108,14 +108,14 @@ describe('History', () => {
                     operations.mode.flags.open();
                     operations.mode.flags.lockToOff();
                 },
-                fumen: 'v115@vhERQJUGJKJJAgHTNn',
+                fumen: 'v115@vhERQJUmBKpBAAATtf',
                 count: 1,
             },
             {
                 callback: () => {
                     operations.mode.tools.nextPage();
                 },
-                fumen: 'v115@vhFRQJUGJKJJAgHTNnTNn',
+                fumen: 'v115@vhFRQJUmBKpBAAATtfTtf',
                 count: 1,
             },
             {
@@ -123,7 +123,7 @@ describe('History', () => {
                     operations.mode.flags.open();
                     operations.mode.flags.lockToOn();
                 },
-                fumen: 'v115@vhFRQJUGJKJJAgHTNnTNJ',
+                fumen: 'v115@vhFRQJUmBKpBAAATtfTtB',
                 count: 1,
             },
         ];
@@ -140,7 +140,7 @@ describe('History', () => {
                         operations.mode.block.click(x, y);
                     });
                 },
-                fumen: 'v115@3gwwHeywwhGeR4whBtAeRpAeR4glwhg0BtRpAeilwh?i0JeO/IvhBp+I6WB',
+                fumen: 'v115@3gwwHeywwhGeR4whBtAeRpAeR4glwhg0BtRpAeilwh?i0JeO/IvhBpeB6WB',
                 count: 1,
             },
             {
@@ -151,7 +151,7 @@ describe('History', () => {
                         operations.mode.block.click(x, y);
                     });
                 },
-                fumen: 'v115@3gwwHeywwhGeR4whBtAeRpAeR4glwhg0BtRpAeilwh?i0JeO/IvhCp+I6WBFlB',
+                fumen: 'v115@3gwwHeywwhGeR4whBtAeRpAeR4glwhg0BtRpAeilwh?i0JeO/IvhCpeB6WBFlB',
                 count: 1,
             },
             {
@@ -160,7 +160,7 @@ describe('History', () => {
                     operations.mode.tools.nextPage();
                     operations.mode.tools.removePage();
                 },
-                fumen: 'v115@3gwwHeywwhGeR4whBtAeRpAeR4glwhg0BtRpAeilwh?i0JeO/IygwhIewhIewhIewhde6WQAAvhAFlB',
+                fumen: 'v115@3gwwHeywwhGeR4whBtAeRpAeR4glwhg0BtRpAeilwh?i0JeO/IygwhIewhIewhIewhde6WBvhAFlB',
                 count: 1,
             },
             {
@@ -210,7 +210,7 @@ describe('History', () => {
                         operations.mode.block.click(x, y);
                     });
                 },
-                fumen: 'v115@vhBzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOJJ',
+                fumen: 'v115@vhBzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOpB',
                 count: 1,
             },
             {
@@ -220,14 +220,14 @@ describe('History', () => {
                         operations.mode.block.click(x, y);
                     });
                 },
-                fumen: 'v115@vhCzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOJJx/I',
+                fumen: 'v115@vhCzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOpBxfB',
                 count: 1,
             },
             {
                 callback: () => {
                     cy.get(datatest('text-comment')).clear().type('#Q=[](T)S');
                 },
-                fumen: 'v115@vhCzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOJJx/XVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA',
+                fumen: 'v115@vhCzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOpBxfQVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA',
                 count: 1,
             },
             {
@@ -237,7 +237,7 @@ describe('History', () => {
                         operations.mode.block.click(x, y);
                     });
                 },
-                fumen: 'v115@vhDzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOJJx/XVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA9NJ',
+                fumen: 'v115@vhDzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOpBxfQVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA9tB',
                 count: 1,
             },
             {
@@ -247,7 +247,7 @@ describe('History', () => {
                         operations.mode.block.click(x, y);
                     });
                 },
-                fumen: 'v115@vhEzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOJJx/XVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA9NJ0MJ',
+                fumen: 'v115@vhEzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOpBxfQVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA9tB0sB',
                 count: 1,
             },
             {
@@ -257,21 +257,21 @@ describe('History', () => {
                         operations.mode.block.click(x, y);
                     });
                 },
-                fumen: 'v115@vhFzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOJJx/XVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA9NJ0MJXD?J',
+                fumen: 'v115@vhFzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOpBxfQVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA9tB0sBXj?B',
                 count: 1,
             },
             {
                 callback: () => {
                     operations.mode.tools.nextPage();
                 },
-                fumen: 'v115@vhGzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOJJx/XVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA9NJ0MJXD?JAgH',
+                fumen: 'v115@vhGzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOpBxfQVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA9tB0sBXj?BAAA',
                 count: 1,
             },
             {
                 callback: () => {
                     cy.get(datatest('text-comment')).clear().type('hello world');
                 },
-                fumen: 'v115@vhGzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOJJx/XVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA9NJ0MJXD?JAgWNAooMDEvoo2A3XaDEEBAAA',
+                fumen: 'v115@vhGzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOpBxfQVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA9tB0sBXj?BAAPNAooMDEvoo2A3XaDEEBAAA',
                 count: 1,
             },
             {
@@ -280,7 +280,7 @@ describe('History', () => {
                     operations.mode.tools.nextPage();
                     cy.get(datatest('text-comment')).clear().type('こんにちは');
                 },
-                fumen: 'v115@vhGzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOJYeAlvs2A1sDfEToABBlvs2AWDEfET4J6Alvs2AW5AAAx?/XVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA9NJ0MJXDJAgWN?AooMDEvoo2A3XaDEEBAAA',
+                fumen: 'v115@vhGzJYaAFLDmClcJSAVDEHBEooRBJoAVBv/rtC0XBA?AOpQeAlvs2A1sDfEToABBlvs2AWDEfET4J6Alvs2AW5AAAx?fQVAFLDmClcJSAVDEHBEooRBUoAVBzAAAA9tB0sBXjBAAPN?AooMDEvoo2A3XaDEEBAAA',
                 count: 1,
             },
         ];
@@ -424,7 +424,7 @@ describe('History', () => {
                         operations.mode.block.click(block[0], block[1]);
                     });
                 },
-                fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYWAFLDmClcJSAV?DEHBEooRBPoAVBUNBAAvhATIJ',
+                fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYWAFLDmClcJSAV?DEHBEooRBPoAVBUNBAAvhAToB',
                 count: 1,
             },
             {
@@ -434,7 +434,7 @@ describe('History', () => {
                         operations.mode.block.click(block[0], block[1]);
                     });
                 },
-                fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYWAFLDmClcJSAV?DEHBEooRBPoAVBUNBAAvhBTIJFKJ',
+                fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYWAFLDmClcJSAV?DEHBEooRBPoAVBUNBAAvhBToBFqB',
                 count: 1,
             },
             {
@@ -444,7 +444,7 @@ describe('History', () => {
                         operations.mode.block.click(block[0], block[1]);
                     });
                 },
-                fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYWAFLDmClcJSAV?DEHBEooRBPoAVBUNBAAvhCTIJFKJPMJ',
+                fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYWAFLDmClcJSAV?DEHBEooRBPoAVBUNBAAvhCToBFqBPsB',
                 count: 1,
             },
             {
@@ -452,7 +452,7 @@ describe('History', () => {
                     operations.mode.tools.backPage();
                     operations.menu.clearToEnd();
                 },
-                fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYWAFLDmClcJSAV?DEHBEooRBPoAVBUNBAAvhBTIJFKJ',
+                fumen: 'v115@HhglBeBtEeglCeBtDehlAezhMeWSYWAFLDmClcJSAV?DEHBEooRBPoAVBUNBAAvhBToBFqB',
                 count: 1,
             },
             {
@@ -481,7 +481,7 @@ describe('History', () => {
 
                     cy.wait(500);
                 },
-                fumen: 'v115@vhJ2OYYAFLDmClcJSAVzbSAVG88AYP88A5tSgCRqBT?sBTtBSwBxOYZAFLDmClcJSAVjiSAVG88A4N88A5N1LCpAAA?AxpBTrBxxBxxB',
+                fumen: 'v115@vhJ2OYYAFLDmClcJSAVzbSAVG88AYP88A5tSgCRqBT?sBTtBSwBxuQZAFLDmClcJSAVjiSAVG88A4N88A5N1LCpAAA?AxpBTrBxxBxxB',
                 count: 1,
             },
             {
@@ -500,7 +500,7 @@ describe('History', () => {
 
                     cy.wait(500);
                 },
-                fumen: 'v115@vhC2OYYAFLDmClcJSAVzbSAVG88AYP88A5tSgCRqBT?sBRhgHTaAexSBeilC8xwA8KeAgWFAooMDEPBAAARhI8UeAA?AHhI8eeAAAHhIAAegWzDAARLAAAeiWCARLAAKeTNYVAFLDm?ClcJSAVzbSAVG88A4W88AZAAAAvhFSwBxOYZAFLDmClcJSA?VjiSAVG88A4N88A5N1LCpAAAAxpBTrBxxBxxB',
+                fumen: 'v115@vhC2OYYAFLDmClcJSAVzbSAVG88AYP88A5tSgCRqBT?sBRhgHTaAexSBeilC8xwA8KeAAPFAooMDEPBAAARhI8UeAA?AHhI8eeAAAHhIAAegWzDAARLAAAeiWCARLAAKeTtQVAFLDm?ClcJSAVzbSAVG88A4W88AZAAAAvhFSwBxuQZAFLDmClcJSA?VjiSAVG88A4N88A5N1LCpAAAAxpBTrBxxBxxB',
                 count: 1,
             },
             {
@@ -521,7 +521,7 @@ describe('History', () => {
 
                     cy.wait(500);
                 },
-                fumen: 'v115@vhC2OYYAFLDmClcJSAVzbSAVG88AYP88A5tSgCRqBT?sBRhgHTaAexSBeilC8xwA8KeAgWFAooMDEPBAAARhI8UeAA?AzgwhIewhIewhIewDHAAewDHAKeAgWAA0gwhIewhIewhIew?hIewhReAAA1gwhIewhIewhIewhIewhQeAAAzgSaGeSaGeS4?F8AeS4F8AeS4F8KeAgWFAooMDEPBAAAHhIAAegWzDAARLAA?AeiWCARLAAKeTNYVAFLDmClcJSAVzbSAVG88A4W88AZAAAA?vhFSwBxOYZAFLDmClcJSAVjiSAVG88A4N88A5N1LCpAAAAx?pBTrBxxBxxB',
+                fumen: 'v115@vhC2OYYAFLDmClcJSAVzbSAVG88AYP88A5tSgCRqBT?sBRhgHTaAexSBeilC8xwA8KeAAPFAooMDEPBAAARhI8UeAA?AzgwhIewhIewhIewDHAAewDHAKeAAPAA0gwhIewhIewhIew?hIewhReAAA1gwhIewhIewhIewhIewhQeAAAzgSaGeSaGeS4?F8AeS4F8AeS4F8KeAAPFAooMDEPBAAAHhIAAegWzDAARLAA?AeiWCARLAAKeTtQVAFLDmClcJSAVzbSAVG88A4W88AZAAAA?vhFSwBxuQZAFLDmClcJSAVjiSAVG88A4N88A5N1LCpAAAAx?pBTrBxxBxxB',
                 count: 1,
             },
         ];
@@ -547,7 +547,7 @@ describe('History', () => {
 
                     cy.get(datatest('text-comment')).clear().type('test3');
                 },
-                fumen: 'v115@vhGAgWFA0YceERAAAAAgHAgWFA0YceESAAAAAgHAgH?AgHAgWFA0YceETAAAA',
+                fumen: 'v115@vhGAgWFA0YceERAAAAAAAAAPFA0YceESAAAAAAAAAA?AAAAAPFA0YceETAAAA',
                 count: 9,
             },
             {
@@ -563,7 +563,7 @@ describe('History', () => {
 
                     cy.get(datatest('text-comment')).clear().type('hello');
                 },
-                fumen: 'v115@vhGAgWFA0YceERAAAAAgWFAooMDEPBAAAAgHAgHAgH?AgHAgWFA0YceETAAAA',
+                fumen: 'v115@vhGAgWFA0YceERAAAAAAPFAooMDEPBAAAAAAAAAAAA?AAAAAPFA0YceETAAAA',
                 count: 2,
             },
             {
@@ -590,21 +590,21 @@ describe('History', () => {
                         operations.mode.block.click(x, y);
                     });
                 },
-                fumen: 'v115@vhCAgWFA0YceERAAAAAgWFAooMDEPBAAATJYXAFLDm?ClcJSAVDEHBEooRBPoAVBs+zBARhxSHexSRe9NJQhQLHeRL?IeQLJeXDJFhxDGexDeeAgHvhAAgWFA0YceETAAAA',
+                fumen: 'v115@vhCAgWFA0YceERAAAAAAPFAooMDEPBAAATpQXAFLDm?ClcJSAVDEHBEooRBPoAVBs+zBARhxSHexSRe9tBQhQLHeRL?IeQLJeXjBFhxDGexDeeAAAvhAAAPFA0YceETAAAA',
                 count: 4,
             },
             {
                 callback: () => {
                     cy.get(datatest('text-comment')).clear().type('#Q=[](I)SZO');
                 },
-                fumen: 'v115@vhCAgWFA0YceERAAAAAgWFAooMDEPBAAATJYXAFLDm?ClcJSAVDEHBEooRBPoAVBs+zBARhxSHexSRe9NJQhQLHeRL?IeQLJeXDYXAFLDmClcJSAVDEHBEooRBJoAVBzHrBAFhxDGe?xDeeAgHvhAAgWFA0YceETAAAA',
+                fumen: 'v115@vhCAgWFA0YceERAAAAAAPFAooMDEPBAAATpQXAFLDm?ClcJSAVDEHBEooRBPoAVBs+zBARhxSHexSRe9tBQhQLHeRL?IeQLJeXjQXAFLDmClcJSAVDEHBEooRBJoAVBzHrBAFhxDGe?xDeeAAAvhAAAPFA0YceETAAAA',
                 count: 1,
             },
             {
                 callback: () => {
                     cy.get(datatest('text-comment')).clear().type('#Q=[L](S)');
                 },
-                fumen: 'v115@vhCAgWFA0YceERAAAAAgWFAooMDEPBAAATJYXAFLDm?ClcJSAVDEHBEooRBPoAVBs+zBARhxSHexSRe9NJQhQLHeRL?IeQLJeXDJFhxDGexDeeAgHvhAAgWFA0YceETAAAA',
+                fumen: 'v115@vhCAgWFA0YceERAAAAAAPFAooMDEPBAAATpQXAFLDm?ClcJSAVDEHBEooRBPoAVBs+zBARhxSHexSRe9tBQhQLHeRL?IeQLJeXjBFhxDGexDeeAAAvhAAAPFA0YceETAAAA',
                 count: 1,
             },
             {
@@ -613,7 +613,7 @@ describe('History', () => {
 
                     cy.get(datatest('text-comment')).clear().type('world');
                 },
-                fumen: 'v115@vhCAgWFA0YceERAAAAAgWFAooMDEPBAAATJYXAFLDm?ClcJSAVDEHBEooRBPoAVBs+zBARhxSHexSRe9NYFA3XaDEE?BAAAQhQLHeRLIeQLJeXDJFhxDGexDeeAgHvhAAgWFA0YceE?TAAAA',
+                fumen: 'v115@vhCAgWFA0YceERAAAAAAPFAooMDEPBAAATpQXAFLDm?ClcJSAVDEHBEooRBPoAVBs+zBARhxSHexSRe9tQFA3XaDEE?BAAAQhQLHeRLIeQLJeXjBFhxDGexDeeAAAvhAAAPFA0YceE?TAAAA',
                 count: 1,
             },
         ];
@@ -627,7 +627,7 @@ describe('History', () => {
                 callback: () => {
                     operations.mode.tools.addNewPage();
                 },
-                fumen: 'v115@RhB8HeB8Re+NYFAooMDEPBAAAQhgHBAGegHBAFehHJ?eAgWAAQhg0B8Geg0B8Feh0Je3MYFAooMDEPBAAAvhAsLYFA?3XaDEEBAAAmhI8AINvhGAgHm7XYAFLDmClcJSAVDEHBEooR?BKoAVBaX9wC06ITHJpBJ9NJAgH',
+                fumen: 'v115@RhB8HeB8Re+NYFAooMDEPBAAAQhgHBAGegHBAFehHJ?eAAPAAQhg0B8Geg0B8Feh0Je3sQFAooMDEPBAAAvhAsrQFA?3XaDEEBAAAmhI8AoFvhGAAAmbQYAFLDmClcJSAVDEHBEooR?BKoAVBaX9wC0aBTnBphB9tBAAA',
                 count: 1,
             },
             {
@@ -635,16 +635,7 @@ describe('History', () => {
                     operations.mode.tools.nextPage();
                     operations.mode.tools.addNewPage();
                 },
-                fumen: 'v115@RhB8HeB8Re+NYFAooMDEPBAAAQhgHBAGegHBAFehHJ?eAgWAAQhg0B8Geg0B8Feh0Je3MYFAooMDEPBAAAQhgHBAEe?xDgHBADexDhHJeAgWAAQhg0B8EeR4g0B8DeR4h0JesLYFA3?XaDEEBAAAmhI8AINvhGAgHm7XYAFLDmClcJSAVDEHBEooRB?KoAVBaX9wC06ITHJpBJ9NJAgH',
-                count: 1,
-            },
-            {
-                callback: () => {
-                    operations.mode.tools.nextPage();
-                    operations.mode.tools.nextPage();
-                    operations.mode.tools.addNewPage();
-                },
-                fumen: 'v115@RhB8HeB8Re+NYFAooMDEPBAAAQhgHBAGegHBAFehHJ?eAgWAAQhg0B8Geg0B8Feh0Je3MYFAooMDEPBAAAQhgHBAEe?xDgHBADexDhHJeAgWAAQhg0B8EeR4g0B8DeR4h0JesLYFA3?XaDEEBAAAmhI8AIN9ggHBeAPFegHxDBPCeBAhHxDAPCeKAK?eAgWAA9gg0BeAtFeg0R4BtCeB8h0R4AtCeK8KeAgWFA3XaD?EEBAAAvhFm7XYAFLDmClcJSAVDEHBEooRBKoAVBaX9wC06I?THJpBJ9NJAgH',
+                fumen: 'v115@RhB8HeB8Re+NYFAooMDEPBAAAQhgHBAGegHBAFehHJ?eAAPAAQhg0B8Geg0B8Feh0Je3sQFAooMDEPBAAAQhgHBAEe?xDgHBADexDhHJeAAPAAQhg0B8EeR4g0B8DeR4h0JesrQFA3?XaDEEBAAAmhI8AoFvhGAAAmbQYAFLDmClcJSAVDEHBEooRB?KoAVBaX9wC0aBTnBphB9tBAAA',
                 count: 1,
             },
             {
@@ -653,11 +644,20 @@ describe('History', () => {
                     operations.mode.tools.nextPage();
                     operations.mode.tools.addNewPage();
                 },
-                fumen: 'v115@RhB8HeB8Re+NYFAooMDEPBAAAQhgHBAGegHBAFehHJ?eAgWAAQhg0B8Geg0B8Feh0Je3MYFAooMDEPBAAAQhgHBAEe?xDgHBADexDhHJeAgWAAQhg0B8EeR4g0B8DeR4h0JesLYFA3?XaDEEBAAAmhI8AIN9ggHBeAPFegHxDBPCeBAhHxDAPCeKAK?eAgWAA9gg0BeAtFeg0R4BtCeB8h0R4AtCeK8KeAgWFA3XaD?EEBAAAvhAm7XYAFLDmClcJSAVDEHBEooRBKoAVBaX9wC1gi?HEegHBeAPgHEegHxDBPCeBAhHxDAPCeKAKeAgWAA1gi0Eeg?0BeAtg0Eeg0R4BtCeB8h0R4AtCeK8Ke06XXAFLDmClcJSAV?DEHBEooRBaoAVBP+1BAvhDTHJpBJ9NJAgH',
+                fumen: 'v115@RhB8HeB8Re+NYFAooMDEPBAAAQhgHBAGegHBAFehHJ?eAAPAAQhg0B8Geg0B8Feh0Je3sQFAooMDEPBAAAQhgHBAEe?xDgHBADexDhHJeAAPAAQhg0B8EeR4g0B8DeR4h0JesrQFA3?XaDEEBAAAmhI8AoF9ggHBeAPFegHxDBPCeBAhHxDAPCeKAK?eAAPAA9gg0BeAtFeg0R4BtCeB8h0R4AtCeK8KeAAPFA3XaD?EEBAAAvhFmbQYAFLDmClcJSAVDEHBEooRBKoAVBaX9wC0aB?TnBphB9tBAAA',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.addNewPage();
+                },
+                fumen: 'v115@RhB8HeB8Re+NYFAooMDEPBAAAQhgHBAGegHBAFehHJ?eAAPAAQhg0B8Geg0B8Feh0Je3sQFAooMDEPBAAAQhgHBAEe?xDgHBADexDhHJeAAPAAQhg0B8EeR4g0B8DeR4h0JesrQFA3?XaDEEBAAAmhI8AoF9ggHBeAPFegHxDBPCeBAhHxDAPCeKAK?eAAPAA9gg0BeAtFeg0R4BtCeB8h0R4AtCeK8KeAAPFA3XaD?EEBAAAvhAmbQYAFLDmClcJSAVDEHBEooRBKoAVBaX9wC1gi?HEegHBeAPgHEegHxDBPCeBAhHxDAPCeKAKeAAPAA1gi0Eeg?0BeAtg0Eeg0R4BtCeB8h0R4AtCeK8Ke0aQXAFLDmClcJSAV?DEHBEooRBaoAVBP+1BAvhDTnBphB9tBAAA',
                 count: 1,
             },
         ];
 
-        play('v115@RhB8HeB8Re+NYFAooMDEPBAAAvhB3MJsLYFA3XaDEE?BAAAmhI8AINvhGAgHm7XYAFLDmClcJSAVDEHBEooRBKoAVB?aX9wC06ITHJpBJ9NJAgH', testCases);
+        play('v115@RhB8HeB8Re+NYFAooMDEPBAAAvhB3sBsrQFA3XaDEE?BAAAmhI8AoFvhGAAAmbQYAFLDmClcJSAVDEHBEooRBKoAVB?aX9wC0aBTnBphB9tBAAA', testCases);
     });
 });

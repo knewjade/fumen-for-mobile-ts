@@ -1,5 +1,6 @@
 import { decode, encode } from '../lib/fumen/fumen';
 import { toFumenTask, toPrimitivePage } from '../history_task';
+import { CachePages } from '../lib/fumen/cache';
 
 describe('history', () => {
     test('fumen', async () => {
@@ -9,7 +10,8 @@ describe('history', () => {
         // replay
         {
             const { pages, index } = await task.replay();
-            const data = await encode(pages);
+            const cachePages = new CachePages(pages);
+            const data = await encode(cachePages.encode);
             expect(data).toEqual('vhAVQJ');
             expect(index).toEqual(0);
         }
@@ -17,7 +19,8 @@ describe('history', () => {
         // revert
         {
             const { pages, index } = await task.revert();
-            const data = await encode(pages);
+            const cachePages = new CachePages(pages);
+            const data = await encode(cachePages.encode);
             expect(data).toEqual('ehzhMeAgH');
             expect(index).toEqual(0);
         }
