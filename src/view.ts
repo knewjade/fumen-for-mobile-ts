@@ -5,10 +5,7 @@ import { State } from './states';
 import { Screens } from './lib/enums';
 import { view as readerView } from './views/reader';
 import { view as editorView } from './views/editor/editor';
-import { OpenFumenModal } from './components/modals/open';
-import { MenuModal } from './components/modals/menu';
-import { AppendFumenModal } from './components/modals/append';
-import { ClipboardModal } from './components/modals/clipboard';
+import { factories } from './repository/factories';
 
 export const view: View<State, Actions> = (state, actions) => {
     const selectView = () => {
@@ -26,34 +23,6 @@ export const view: View<State, Actions> = (state, actions) => {
     return div([
         selectView(),
 
-        state.modal.fumen ? OpenFumenModal({
-            actions,
-            errorMessage: state.fumen.errorMessage,
-            textAreaValue: state.fumen.value !== undefined ? state.fumen.value : '',
-        }) : undefined as any,
-
-        state.modal.menu ? MenuModal({
-            actions,
-            version: state.version,
-            pages: state.fumen.pages,
-            screen: state.mode.screen,
-            currentIndex: state.fumen.currentIndex,
-            maxPageIndex: state.fumen.maxPage,
-            comment: state.mode.comment,
-            ghostVisible: state.mode.ghostVisible,
-        }) : undefined as any,
-
-        state.modal.append ? AppendFumenModal({
-            actions,
-            errorMessage: state.fumen.errorMessage,
-            textAreaValue: state.fumen.value !== undefined ? state.fumen.value : '',
-            currentIndex: state.fumen.currentIndex,
-            maxPage: state.fumen.maxPage,
-        }) : undefined as any,
-
-        state.modal.clipboard ? ClipboardModal({
-            actions,
-            pages: state.fumen.pages,
-        }) : undefined as any,
+        factories.modals.html(state, actions),
     ]);
 };

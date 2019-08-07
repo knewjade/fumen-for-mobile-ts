@@ -1,5 +1,7 @@
 import { NextState, sequence } from './commons';
 import { action } from '../actions';
+import { factories } from '../repository/factories';
+import { Scenes } from '../repository/modals/manager';
 
 export interface ModalActions {
     showOpenErrorMessage: (data: { message: string }) => action;
@@ -25,78 +27,40 @@ export const modalActions: Readonly<ModalActions> = {
             }),
         ]);
     },
-    openFumenModal: () => (state): NextState => {
-        return {
-            modal: {
-                ...state.modal,
-                fumen: true,
-            },
-        };
+    openFumenModal: () => (): NextState => {
+        factories.modals.next(Scenes.Open);
+        return {};
     },
-    openMenuModal: () => (state): NextState => {
-        return {
-            modal: {
-                ...state.modal,
-                menu: true,
-            },
-        };
+    openMenuModal: () => (): NextState => {
+        factories.modals.next(Scenes.Menu);
+        return {};
     },
-    openAppendModal: () => (state): NextState => {
-        return {
-            modal: {
-                ...state.modal,
-                append: true,
-            },
-        };
+    openAppendModal: () => (): NextState => {
+        factories.modals.next(Scenes.Append);
+        return {};
     },
-    openClipboardModal: () => (state): NextState => {
-        return {
-            modal: {
-                ...state.modal,
-                clipboard: true,
-            },
-        };
+    openClipboardModal: () => (): NextState => {
+        factories.modals.next(Scenes.Clipboard);
+        return {};
     },
-    closeFumenModal: () => (state): NextState => {
-        return {
-            modal: {
-                ...state.modal,
-                fumen: false,
-            },
-        };
+    closeFumenModal: () => (): NextState => {
+        factories.modals.close();
+        return {};
     },
-    closeMenuModal: () => (state): NextState => {
-        return {
-            modal: {
-                ...state.modal,
-                menu: false,
-            },
-        };
+    closeMenuModal: () => (): NextState => {
+        factories.modals.close();
+        return {};
     },
-    closeAppendModal: () => (state): NextState => {
-        return {
-            modal: {
-                ...state.modal,
-                append: false,
-            },
-        };
+    closeAppendModal: () => (): NextState => {
+        factories.modals.close();
+        return {};
     },
-    closeClipboardModal: () => (state): NextState => {
-        return {
-            modal: {
-                ...state.modal,
-                clipboard: false,
-            },
-        };
+    closeClipboardModal: () => (): NextState => {
+        factories.modals.close();
+        return {};
     },
     closeAllModals: () => (): NextState => {
-        return {
-            modal: {
-                append: false,
-                fumen: false,
-                menu: false,
-                clipboard: false,
-            },
-        };
+        factories.modals.closeAll();
+        return {};
     },
 };
