@@ -44,19 +44,19 @@ export const modalActions: Readonly<ModalActions> = {
         return {};
     },
     closeFumenModal: () => (): NextState => {
-        factories.modals.close();
+        factories.modals.close(Scenes.Open);
         return {};
     },
     closeMenuModal: () => (): NextState => {
-        factories.modals.close();
+        factories.modals.close(Scenes.Menu);
         return {};
     },
     closeAppendModal: () => (): NextState => {
-        factories.modals.close();
+        factories.modals.close(Scenes.Append);
         return {};
     },
     closeClipboardModal: () => (): NextState => {
-        factories.modals.close();
+        factories.modals.close(Scenes.Clipboard);
         return {};
     },
     closeAllModals: () => (): NextState => {

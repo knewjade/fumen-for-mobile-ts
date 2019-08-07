@@ -14,14 +14,16 @@ export enum Scenes {
 }
 
 export class ModalManager {
-    private scene: string | null = null;
+    private scene: Scenes | null = null;
 
     next(scene: Scenes) {
         this.scene = scene;
     }
 
-    close() {
-        this.scene = null;
+    close(scene: Scenes) {
+        if (this.scene === scene) {
+            this.scene = null;
+        }
     }
 
     closeAll() {
