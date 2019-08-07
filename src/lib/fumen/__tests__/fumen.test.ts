@@ -674,7 +674,7 @@ describe('fumen', () => {
         });
     });
 
-    describe('encode', async () => {
+    describe('encode', () => {
         test('empty', async () => {
             const pages = await decode('v115@vhAAgH');
             const cache = new CachePages(pages);
