@@ -1,6 +1,6 @@
 import { NextState, sequence } from './commons';
 import { action } from '../actions';
-import { factories } from '../repository/factories';
+import { managers } from '../repository/managers';
 import { Scenes } from '../repository/modals/manager';
 
 export interface ModalActions {
@@ -28,39 +28,39 @@ export const modalActions: Readonly<ModalActions> = {
         ]);
     },
     openFumenModal: () => (): NextState => {
-        factories.modals.next(Scenes.Open);
+        managers.modals.next(Scenes.Open);
         return {};
     },
     openMenuModal: () => (): NextState => {
-        factories.modals.next(Scenes.Menu);
+        managers.modals.next(Scenes.Menu);
         return {};
     },
     openAppendModal: () => (): NextState => {
-        factories.modals.next(Scenes.Append);
+        managers.modals.next(Scenes.Append);
         return {};
     },
     openClipboardModal: () => (): NextState => {
-        factories.modals.next(Scenes.Clipboard);
+        managers.modals.next(Scenes.Clipboard);
         return {};
     },
     closeFumenModal: () => (): NextState => {
-        factories.modals.close(Scenes.Open);
+        managers.modals.close(Scenes.Open);
         return {};
     },
     closeMenuModal: () => (): NextState => {
-        factories.modals.close(Scenes.Menu);
+        managers.modals.close(Scenes.Menu);
         return {};
     },
     closeAppendModal: () => (): NextState => {
-        factories.modals.close(Scenes.Append);
+        managers.modals.close(Scenes.Append);
         return {};
     },
     closeClipboardModal: () => (): NextState => {
-        factories.modals.close(Scenes.Clipboard);
+        managers.modals.close(Scenes.Clipboard);
         return {};
     },
     closeAllModals: () => (): NextState => {
-        factories.modals.closeAll();
+        managers.modals.closeAll();
         return {};
     },
 };

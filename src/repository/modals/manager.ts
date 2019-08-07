@@ -1,10 +1,11 @@
 import { VNode } from '@hyperapp/hyperapp';
 import { State } from '../../states';
-import { OpenFumenModal } from '../../components/modals/open';
+import { OpenFumenModal } from '../../componentsv2/modals/open';
 import { Actions } from '../../actions';
 import { MenuModal } from '../../components/modals/menu';
 import { AppendFumenModal } from '../../components/modals/append';
 import { ClipboardModal } from '../../components/modals/clipboard';
+import { managers } from '../managers';
 
 export enum Scenes {
     Open = 'Open',
@@ -30,14 +31,13 @@ export class ModalManager {
         this.scene = null;
     }
 
-    html(state: State, actions: Actions): VNode | undefined {
+    render(state: State, actions: Actions): VNode | undefined {
         switch (this.scene) {
         case Scenes.Open:
-            return OpenFumenModal({
-                actions,
-                errorMessage: state.fumen.errorMessage,
-                textAreaValue: state.fumen.value !== undefined ? state.fumen.value : '',
+            const modal = managers.caches.get('open-fumen-modal', () => {
+                return OpenFumenModal(state, actions);
             });
+            return modal.render(state);
         case Scenes.Menu:
             return MenuModal({
                 actions,

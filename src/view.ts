@@ -5,7 +5,7 @@ import { State } from './states';
 import { Screens } from './lib/enums';
 import { view as readerView } from './views/reader';
 import { view as editorView } from './views/editor/editor';
-import { factories } from './repository/factories';
+import { managers } from './repository/managers';
 
 export const view: View<State, Actions> = (state, actions) => {
     const selectView = () => {
@@ -20,9 +20,11 @@ export const view: View<State, Actions> = (state, actions) => {
         }
     };
 
+    managers.caches.next();
+
     return div([
         selectView(),
 
-        factories.modals.html(state, actions),
+        managers.modals.render(state, actions),
     ]);
 };

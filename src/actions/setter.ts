@@ -45,6 +45,7 @@ export const setterActions: Readonly<SetterActions> = {
             },
         };
     },
+    // TODO: Remove
     inputFumenData: ({ value }) => (state): NextState => {
         return {
             fumen: {
@@ -54,6 +55,7 @@ export const setterActions: Readonly<SetterActions> = {
             },
         };
     },
+    // TODO: Remove
     clearFumenData: () => (state): NextState => {
         return setterActions.inputFumenData({ value: undefined })(state);
     },
