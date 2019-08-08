@@ -16,6 +16,7 @@ export interface ModalActions {
     closeAllModals: () => action;
 }
 
+// TODO: Remove
 export const modalActions: Readonly<ModalActions> = {
     showOpenErrorMessage: ({ message }) => (state): NextState => {
         return sequence(state, [
@@ -29,38 +30,38 @@ export const modalActions: Readonly<ModalActions> = {
     },
     openFumenModal: () => (): NextState => {
         managers.modals.next(Scenes.Open);
-        return {};
+        return undefined;
     },
     openMenuModal: () => (): NextState => {
         managers.modals.next(Scenes.Menu);
-        return {};
+        return undefined;
     },
     openAppendModal: () => (): NextState => {
         managers.modals.next(Scenes.Append);
-        return {};
+        return undefined;
     },
     openClipboardModal: () => (): NextState => {
         managers.modals.next(Scenes.Clipboard);
-        return {};
+        return undefined;
     },
     closeFumenModal: () => (): NextState => {
         managers.modals.close(Scenes.Open);
-        return {};
+        return undefined;
     },
     closeMenuModal: () => (): NextState => {
         managers.modals.close(Scenes.Menu);
-        return {};
+        return undefined;
     },
     closeAppendModal: () => (): NextState => {
         managers.modals.close(Scenes.Append);
-        return {};
+        return undefined;
     },
     closeClipboardModal: () => (): NextState => {
         managers.modals.close(Scenes.Clipboard);
-        return {};
+        return undefined;
     },
     closeAllModals: () => (): NextState => {
         managers.modals.closeAll();
-        return {};
+        return undefined;
     },
 };

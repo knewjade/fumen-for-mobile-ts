@@ -1,5 +1,5 @@
 import { NextState, sequence } from './commons';
-import { action, actions, main } from '../actions';
+import { action, actions, asyncAction, main } from '../actions';
 import { decode } from '../lib/fumen/fumen';
 import { i18n } from '../locales/keys';
 import { FumenError } from '../lib/errors';
@@ -19,8 +19,8 @@ import { Page } from '../lib/fumen/types';
 
 export interface UtilsActions {
     resize: (data: { width: number, height: number }) => action;
-    loadFumen: (data: { fumen: string, purgeOnFailed?: boolean }) => action;
-    loadNewFumen: () => action;
+    loadFumen: (data: { fumen: string, purgeOnFailed?: boolean }) => asyncAction;
+    loadNewFumen: () => asyncAction;
     appendFumen: (data: { fumen: string, pageIndex: number }) => action;
     loadPages: (data: { pages: Page[], loadedFumen: string }) => action;
     appendPages: (data: { pages: Page[], pageIndex: number }) => action;
@@ -34,48 +34,47 @@ export const utilsActions: Readonly<UtilsActions> = {
             display: { ...state.display, width, height },
         };
     },
-    loadFumen: ({ fumen, purgeOnFailed = false }) => (): NextState => {
+
+    loadFumen: ({ fumen, purgeOnFailed = false }) => async () => {
         main.pauseAnimation();
 
         if (fumen === undefined) {
-            main.showOpenErrorMessage({ message: 'データを入力してください' });
-            return undefined;
+            throw new FumenError(i18n.OpenFumen.Errors.NoData());
         }
 
-        (async () => {
-            let pages: Page[];
-            try {
-                pages = await decode(fumen);
-            } catch (e) {
-                console.error(e);
-                if (purgeOnFailed) {
-                    main.loadNewFumen();
-                } else if (e instanceof FumenError) {
-                    main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.FailedToLoad() });
-                } else {
-                    main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.Unexpected(e.message) });
-                }
-                return;
+        let pages: Page[];
+        try {
+            pages = await decode(fumen);
+        } catch (e) {
+            console.error(e);
+
+            if (purgeOnFailed) {
+                await main.loadNewFumen();
+            } else if (e instanceof FumenError) {
+                throw new FumenError(i18n.OpenFumen.Errors.FailedToLoad());
+            } else {
+                throw new FumenError(i18n.OpenFumen.Errors.Unexpected(e.message));
             }
 
-            try {
-                main.loadPages({ pages, loadedFumen: fumen });
-                main.closeAllModals();
-                main.clearFumenData();
-            } catch (e) {
-                console.error(e);
-                if (purgeOnFailed) {
-                    main.loadNewFumen();
-                } else {
-                    main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.Unexpected(e.message) });
-                }
-            }
-        })();
+            return;
+        }
 
-        return undefined;
+        try {
+            main.loadPages({ pages, loadedFumen: fumen });
+            main.closeAllModals();
+            main.clearFumenData();
+        } catch (e) {
+            console.error(e);
+
+            if (purgeOnFailed) {
+                await main.loadNewFumen();
+            } else {
+                throw new FumenError(i18n.OpenFumen.Errors.Unexpected(e.message));
+            }
+        }
     },
-    loadNewFumen: () => (state): NextState => {
-        return utilsActions.loadFumen({ fumen: 'v115@vhAAgH' })(state);
+    loadNewFumen: () => async (state) => {
+        await utilsActions.loadFumen({ fumen: 'v115@vhAAgH' })(state);
     },
     loadPages: ({ pages, loadedFumen }) => (state): NextState => {
         const prevPages = state.fumen.pages.map(toPrimitivePage);

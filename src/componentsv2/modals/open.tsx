@@ -2,15 +2,13 @@ import { h } from 'hyperapp';
 import { i18n } from '../../locales/keys';
 import { style } from '../../lib/types';
 import { componentize } from '../componentize';
+import { managers } from '../../repository/managers';
+import { Scenes } from '../../repository/modals/manager';
 
 declare const M: any;
 
-interface PActions {
-    closeFumenModal: () => void;
-
-    loadFumen(data: { fumen: string }): void;
-
-    refresh: () => void;
+interface Actions {
+    loadFumen: (data: { fumen: string }) => any;
 }
 
 interface Locals {
@@ -18,10 +16,10 @@ interface Locals {
     errorMessage: string | undefined;
 }
 
-export const OpenFumenModal = componentize<{}, PActions, Locals>({
+export const OpenFumenModal = componentize<{}, Actions, Locals>({
     textAreaValue: '',
     errorMessage: undefined,
-}, (initState, actions, hub) => {
+}, (hub, initState, actions) => {
     // Members
 
     let modalInstance: { close: () => void } | undefined;
@@ -34,6 +32,14 @@ export const OpenFumenModal = componentize<{}, PActions, Locals>({
         return element.value !== '' ? element.value : '';
     };
 
+    // Watches
+
+    hub.watch('open-button-disable', (locals) => {
+        return locals.errorMessage === undefined && locals.textAreaValue !== '';
+    });
+
+    hub.watch('error-message', locals => locals.errorMessage);
+
     // Callbacks
 
     const onCreateModal = (element: HTMLDivElement) => {
@@ -45,7 +51,7 @@ export const OpenFumenModal = componentize<{}, PActions, Locals>({
                 }
             },
             onCloseStart: () => {
-                actions.closeFumenModal();
+                managers.modals.close(Scenes.Open);
             },
         });
 
@@ -73,13 +79,7 @@ export const OpenFumenModal = componentize<{}, PActions, Locals>({
         hub.locals.textAreaValue = getText();
         hub.locals.errorMessage = undefined;
 
-        const onChanged = hub.watch('open-button-disable', (
-            hub.locals.errorMessage === undefined && hub.locals.textAreaValue !== ''
-        ));
-
-        if (onChanged) {
-            hub.refresh();
-        }
+        hub.refresh();
     };
 
     const onBlurText = () => {
@@ -87,14 +87,18 @@ export const OpenFumenModal = componentize<{}, PActions, Locals>({
     };
 
     const cancel = () => {
-        actions.closeFumenModal();
+        managers.modals.close(Scenes.Open);
     };
 
     const open = () => {
         const value = getText();
 
         if (value !== undefined) {
-            actions.loadFumen({ fumen: value });
+            actions.loadFumen({ fumen: value })
+                .catch((error: any) => {
+                    hub.locals.errorMessage = error.message;
+                    hub.refresh();
+                });
         }
 
         const element = document.getElementById('input-fumen');
@@ -128,8 +132,8 @@ export const OpenFumenModal = componentize<{}, PActions, Locals>({
 
                             <span key="text-message" datatest="text-message" className="red-text text-accent-2"
                                   style={style({ display: errorMessage !== undefined ? undefined : 'none' })}>
-                    {errorMessage}
-                </span>
+                                {errorMessage}
+                            </span>
                         </div>
 
                         <div key="modal-footer" className="modal-footer">

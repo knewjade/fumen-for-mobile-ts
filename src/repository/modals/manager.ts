@@ -1,7 +1,7 @@
 import { VNode } from '@hyperapp/hyperapp';
 import { State } from '../../states';
 import { OpenFumenModal } from '../../componentsv2/modals/open';
-import { Actions } from '../../actions';
+import { Actions, main } from '../../actions';
 import { MenuModal } from '../../components/modals/menu';
 import { AppendFumenModal } from '../../components/modals/append';
 import { ClipboardModal } from '../../components/modals/clipboard';
@@ -19,16 +19,19 @@ export class ModalManager {
 
     next(scene: Scenes) {
         this.scene = scene;
+        main.refresh();
     }
 
     close(scene: Scenes) {
         if (this.scene === scene) {
             this.scene = null;
         }
+        main.refresh();
     }
 
     closeAll() {
         this.scene = null;
+        main.refresh();
     }
 
     render(state: State, actions: Actions): VNode | undefined {
