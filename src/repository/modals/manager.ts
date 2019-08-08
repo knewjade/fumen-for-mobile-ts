@@ -2,7 +2,7 @@ import { VNode } from '@hyperapp/hyperapp';
 import { State } from '../../states';
 import { OpenFumenModal } from '../../componentsv2/modals/open';
 import { Actions, main } from '../../actions';
-import { MenuModal } from '../../components/modals/menu';
+import { MenuModal } from '../../componentsv2/modals/menu';
 import { AppendFumenModal } from '../../components/modals/append';
 import { ClipboardModal } from '../../components/modals/clipboard';
 import { managers } from '../managers';
@@ -36,14 +36,14 @@ export class ModalManager {
 
     render(state: State, actions: Actions): VNode | undefined {
         switch (this.scene) {
-        case Scenes.Open:
+        case Scenes.Open: {
             const modal = managers.caches.get('open-fumen-modal', () => {
                 return OpenFumenModal(state, actions);
             });
             return modal.render(state);
-        case Scenes.Menu:
-            return MenuModal({
-                actions,
+        }
+        case Scenes.Menu: {
+            const props = {
                 version: state.version,
                 pages: state.fumen.pages,
                 screen: state.mode.screen,
@@ -51,7 +51,12 @@ export class ModalManager {
                 maxPageIndex: state.fumen.maxPage,
                 comment: state.mode.comment,
                 ghostVisible: state.mode.ghostVisible,
+            };
+            const modal = managers.caches.get('open-menu-modal', () => {
+                return MenuModal(props, actions);
             });
+            return modal.render(props);
+        }
         case Scenes.Append:
             return AppendFumenModal({
                 actions,

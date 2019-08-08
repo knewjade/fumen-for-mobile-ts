@@ -2,12 +2,12 @@ import { VNode } from '@hyperapp/hyperapp';
 import { main } from '../actions';
 import { forEach, isEqual } from 'lodash';
 
-interface Component<S, A, L> {
-    render(state: S): VNode<object>;
+interface Component<P, A, L> {
+    render(props: P): VNode<object>;
 }
 
-interface ComponentWithLocals<S, A, L> {
-    render(state: S, locals: L): VNode<object>;
+interface ComponentWithLocals<P, A, L> {
+    render(props: P, locals: L): VNode<object>;
 }
 
 type Primitive = string | number | boolean | undefined | null;
@@ -51,23 +51,23 @@ class Hub<L> {
     }
 }
 
-export function componentize<S, A, L>(
-    initLocals: L, generator: (hub: Hub<L>, initState: S, initActions: A) => ComponentWithLocals<S, A, L>,
-): (state: S, actions: A) => Component<S, A, L> {
-    return (initState, initActions) => {
+export function componentize<P, A, L>(
+    initLocals: L, generator: (hub: Hub<L>, initProps: P, initActions: A) => ComponentWithLocals<P, A, L>,
+): (props: P, actions: A) => Component<P, A, L> {
+    return (initProps, initActions) => {
         const hub = new Hub<L>(initLocals);
-        const g = generator(hub, initState, initActions);
+        const g = generator(hub, initProps, initActions);
 
-        let prev: { state: S, node: VNode<object> | null } = {
-            state: { ...initState },
+        let prev: { props: P, node: VNode<object> | null } = {
+            props: { ...initProps },
             node: null,
         };
 
         return {
-            render: (state: S) => {
-                if (prev.node === null || !isEqual(state, prev.state) || hub.shouldUpdate) {
-                    const node = g.render(state, hub.locals);
-                    prev = { node, state: { ...state } };
+            render: (props: P) => {
+                if (prev.node === null || !isEqual(props, prev.props) || hub.shouldUpdate) {
+                    const node = g.render(props, hub.locals);
+                    prev = { node, props: { ...props } };
                     hub.updated();
                     return node;
                 }

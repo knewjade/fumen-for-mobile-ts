@@ -3,9 +3,11 @@ import { i18n } from '../../locales/keys';
 import { style } from '../../lib/types';
 import { componentize } from '../componentize';
 import { managers } from '../../repository/managers';
-import { Scenes } from '../../repository/modals/manager';
 
 declare const M: any;
+
+interface Props {
+}
 
 interface Actions {
     loadFumen: (data: { fumen: string }) => any;
@@ -16,7 +18,7 @@ interface Locals {
     errorMessage: string | undefined;
 }
 
-export const OpenFumenModal = componentize<{}, Actions, Locals>({
+export const OpenFumenModal = componentize<Props, Actions, Locals>({
     textAreaValue: '',
     errorMessage: undefined,
 }, (hub, initState, actions) => {
@@ -51,7 +53,7 @@ export const OpenFumenModal = componentize<{}, Actions, Locals>({
                 }
             },
             onCloseStart: () => {
-                managers.modals.close(Scenes.Open);
+                managers.modals.closeAll();
             },
         });
 
@@ -87,7 +89,7 @@ export const OpenFumenModal = componentize<{}, Actions, Locals>({
     };
 
     const cancel = () => {
-        managers.modals.close(Scenes.Open);
+        managers.modals.closeAll();
     };
 
     const open = () => {
@@ -108,7 +110,7 @@ export const OpenFumenModal = componentize<{}, Actions, Locals>({
     };
 
     return {
-        render: (state, { errorMessage, textAreaValue }) => {
+        render: (props, { errorMessage, textAreaValue }) => {
             const textAreaStyle = style({
                 width: '100%',
                 border: errorMessage !== undefined ? 'solid 1px #ff5252' : undefined,
