@@ -2,30 +2,30 @@ import { VNode } from '@hyperapp/hyperapp';
 import { main } from '../actions';
 import { forEach, isEqual } from 'lodash';
 
-interface Component<P, A, L> {
-    render(props: P): VNode<object>;
+interface Component<Props> {
+    render(props: Props): VNode<object>;
 }
 
-interface ComponentWithLocals<P, A, L> {
-    render(props: P, locals: L): VNode<object>;
+interface ComponentBase<Props, Locals> {
+    render(props: Props, locals: Locals): VNode<object>;
 }
 
 type Primitive = string | number | boolean | undefined | null;
 
-class Hub<L> {
-    public readonly locals: L;
+class Hub<Locals> {
+    public readonly locals: Locals;
 
     private prevWatchKey_: { [key in string]: Primitive } = {};
     private watchKey_: { [key in string]: Primitive } = {};
-    private watchs_: { [key in string]: (locals: L) => Primitive } = {};
+    private watchs_: { [key in string]: (locals: Locals) => Primitive } = {};
 
     private shouldUpdate_ = true;
 
-    constructor(locals: L) {
+    constructor(locals: Locals) {
         this.locals = { ...locals };
     }
 
-    watch(key: string, func: (locals: L) => Primitive): void {
+    watch(key: string, func: (locals: Locals) => Primitive): void {
         this.watchs_[key] = func;
     }
 
@@ -51,20 +51,21 @@ class Hub<L> {
     }
 }
 
-export function componentize<P, A, L>(
-    initLocals: L, generator: (hub: Hub<L>, initProps: P, initActions: A) => ComponentWithLocals<P, A, L>,
-): (props: P, actions: A) => Component<P, A, L> {
+export function componentize<Props, Actions, Locals>(
+    initLocals: Locals,
+    generator: (hub: Hub<Locals>, initProps: Props, initActions: Actions) => ComponentBase<Props, Locals>,
+): (props: Props, actions: Actions) => Component<Props> {
     return (initProps, initActions) => {
-        const hub = new Hub<L>(initLocals);
+        const hub = new Hub<Locals>(initLocals);
         const g = generator(hub, initProps, initActions);
 
-        let prev: { props: P, node: VNode<object> | null } = {
+        let prev: { props: Props, node: VNode<object> | null } = {
             props: { ...initProps },
             node: null,
         };
 
         return {
-            render: (props: P) => {
+            render: (props: Props) => {
                 if (prev.node === null || !isEqual(props, prev.props) || hub.shouldUpdate) {
                     const node = g.render(props, hub.locals);
                     prev = { node, props: { ...props } };
