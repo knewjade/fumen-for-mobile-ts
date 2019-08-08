@@ -13,7 +13,7 @@ interface ComponentWithLocals<S, A, L> {
 type Primitive = string | number | boolean | undefined | null;
 
 class Hub<L> {
-    public locals: L;
+    public readonly locals: L;
 
     private prevWatchKey_: { [key in string]: Primitive } = {};
     private watchKey_: { [key in string]: Primitive } = {};
