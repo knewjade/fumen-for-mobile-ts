@@ -37,10 +37,11 @@ export class ModalManager {
     render(state: State, actions: Actions): VNode | undefined {
         switch (this.scene) {
         case Scenes.Open: {
+            const props = state;
             const modal = managers.caches.get('open-fumen-modal', () => {
-                return OpenFumenModal(state, actions);
+                return OpenFumenModal(props, actions);
             });
-            return modal.render(state);
+            return modal.render(props);
         }
         case Scenes.Menu: {
             const props = {
