@@ -12,6 +12,7 @@ export const i18n = {
             Cancel: () => t('OpenFumen.Buttons.Cancel'),
         },
         Errors: {
+            NoData: () => t('OpenFumen.Errors.FailedToLoad'),
             FailedToLoad: () => t('OpenFumen.Errors.FailedToLoad'),
             Unexpected: (message: string) => t('OpenFumen.Errors.Unexpected', { message }),
         },

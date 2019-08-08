@@ -6,6 +6,7 @@ export const resources = {
             Cancel: 'キャンセル',
         },
         Errors: {
+            NoData: 'データを入力してください',
             FailedToLoad: 'テト譜を読み込めませんでした',
         },
     },

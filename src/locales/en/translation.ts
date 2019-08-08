@@ -7,6 +7,7 @@ export const resources = {
             Cancel: 'Cancel',
         },
         Errors: {
+            NoData: 'Input fumen data',
             FailedToLoad: 'Failed to load',
             Unexpected: 'Unexpected error: {{message}}',
         },

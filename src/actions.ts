@@ -21,6 +21,8 @@ import { shiftActions, ShiftActions } from './actions/shift';
 
 export type action = (state: Readonly<State>) => NextState;
 
+export type asyncAction = (state: Readonly<State>) => Promise<void>;
+
 export type Actions = AnimationActions
     & ScreenActions
     & ModalActions

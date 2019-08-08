@@ -1,6 +1,6 @@
 import { NextState, sequence } from './commons';
 import { action } from '../actions';
-import { factories } from '../repository/factories';
+import { managers } from '../repository/managers';
 import { Scenes } from '../repository/modals/manager';
 
 export interface ModalActions {
@@ -16,6 +16,7 @@ export interface ModalActions {
     closeAllModals: () => action;
 }
 
+// TODO: Remove
 export const modalActions: Readonly<ModalActions> = {
     showOpenErrorMessage: ({ message }) => (state): NextState => {
         return sequence(state, [
@@ -28,39 +29,39 @@ export const modalActions: Readonly<ModalActions> = {
         ]);
     },
     openFumenModal: () => (): NextState => {
-        factories.modals.next(Scenes.Open);
-        return {};
+        managers.modals.next(Scenes.Open);
+        return undefined;
     },
     openMenuModal: () => (): NextState => {
-        factories.modals.next(Scenes.Menu);
-        return {};
+        managers.modals.next(Scenes.Menu);
+        return undefined;
     },
     openAppendModal: () => (): NextState => {
-        factories.modals.next(Scenes.Append);
-        return {};
+        managers.modals.next(Scenes.Append);
+        return undefined;
     },
     openClipboardModal: () => (): NextState => {
-        factories.modals.next(Scenes.Clipboard);
-        return {};
+        managers.modals.next(Scenes.Clipboard);
+        return undefined;
     },
     closeFumenModal: () => (): NextState => {
-        factories.modals.close(Scenes.Open);
-        return {};
+        managers.modals.close(Scenes.Open);
+        return undefined;
     },
     closeMenuModal: () => (): NextState => {
-        factories.modals.close(Scenes.Menu);
-        return {};
+        managers.modals.close(Scenes.Menu);
+        return undefined;
     },
     closeAppendModal: () => (): NextState => {
-        factories.modals.close(Scenes.Append);
-        return {};
+        managers.modals.close(Scenes.Append);
+        return undefined;
     },
     closeClipboardModal: () => (): NextState => {
-        factories.modals.close(Scenes.Clipboard);
-        return {};
+        managers.modals.close(Scenes.Clipboard);
+        return undefined;
     },
     closeAllModals: () => (): NextState => {
-        factories.modals.closeAll();
-        return {};
+        managers.modals.closeAll();
+        return undefined;
     },
 };
