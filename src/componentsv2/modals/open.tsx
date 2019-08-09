@@ -34,6 +34,14 @@ export const OpenFumenModal = componentize<Props, Actions, Locals>({
         return element.value !== '' ? element.value : '';
     };
 
+    const focusAndSelect = () => {
+        const element = document.getElementById('input-fumen') as HTMLTextAreaElement;
+        if (element !== null) {
+            element.focus();
+            element.select();
+        }
+    };
+
     // Watches
 
     hub.watch('open-button-disable', (locals) => {
@@ -76,12 +84,8 @@ export const OpenFumenModal = componentize<Props, Actions, Locals>({
                 .catch((error: any) => {
                     hub.locals.errorMessage = error.message;
                     hub.refresh();
+                    focusAndSelect();
                 });
-        }
-
-        const element = document.getElementById('input-fumen');
-        if (element !== null) {
-            element.focus();
         }
     };
 

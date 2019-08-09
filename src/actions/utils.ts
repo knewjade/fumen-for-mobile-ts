@@ -21,7 +21,7 @@ export interface UtilsActions {
     resize: (data: { width: number, height: number }) => action;
     loadFumen: (data: { fumen: string, purgeOnFailed?: boolean }) => asyncAction;
     loadNewFumen: () => asyncAction;
-    appendFumen: (data: { fumen: string, pageIndex: number }) => action;
+    appendFumen: (data: { fumen: string, pageIndex: number }) => asyncAction;
     loadPages: (data: { pages: Page[], loadedFumen: string }) => action;
     appendPages: (data: { pages: Page[], pageIndex: number }) => action;
     refresh: () => action;
@@ -84,39 +84,33 @@ export const utilsActions: Readonly<UtilsActions> = {
             actions.registerHistoryTask({ task: toFumenTask(prevPages, loadedFumen, currentIndex) }),
         ]);
     },
-    appendFumen: ({ fumen, pageIndex }) => (): NextState => {
+    appendFumen: ({ fumen, pageIndex }) => async () => {
         main.pauseAnimation();
 
         if (fumen === undefined) {
-            main.showOpenErrorMessage({ message: 'データを入力してください' });
-            return undefined;
+            throw new FumenError(i18n.AppendFumen.Errors.NoData());
         }
 
-        (async () => {
-            let pages: Page[];
-            try {
-                pages = await decode(fumen);
-            } catch (e) {
-                console.error(e);
-                if (e instanceof FumenError) {
-                    main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.FailedToLoad() });
-                } else {
-                    main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.Unexpected(e.message) });
-                }
-                return;
+        let pages: Page[];
+        try {
+            pages = await decode(fumen);
+        } catch (e) {
+            console.error(e);
+            if (e instanceof FumenError) {
+                throw new FumenError(i18n.AppendFumen.Errors.FailedToLoad());
             }
 
-            try {
-                main.appendPages({ pages, pageIndex });
-                main.closeAllModals();
-                main.clearFumenData();
-            } catch (e) {
-                console.error(e);
-                main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.Unexpected(e.message) });
-            }
-        })();
+            throw new FumenError(i18n.AppendFumen.Errors.Unexpected(e.message));
+        }
 
-        return undefined;
+        try {
+            main.appendPages({ pages, pageIndex });
+            main.closeAllModals();
+            main.clearFumenData();
+        } catch (e) {
+            console.error(e);
+            throw new FumenError(i18n.AppendFumen.Errors.Unexpected(e.message));
+        }
     },
     appendPages: ({ pages, pageIndex }) => (state): NextState => {
         return sequence(state, [

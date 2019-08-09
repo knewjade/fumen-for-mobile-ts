@@ -17,7 +17,7 @@ interface Actions {
 
     clearFumenData: () => void;
 
-    appendFumen(data: { fumen: string, pageIndex: number }): void;
+    appendFumen(data: { fumen: string, pageIndex: number }): any;
 }
 
 interface Locals {
@@ -39,6 +39,14 @@ export const AppendFumenModal = componentize<Props, Actions, Locals>({
             return '';
         }
         return element.value !== '' ? element.value : '';
+    };
+
+    const focusAndSelect = () => {
+        const element = document.getElementById('input-fumen') as HTMLTextAreaElement;
+        if (element !== null) {
+            element.focus();
+            element.select();
+        }
     };
 
     // Watches
@@ -84,12 +92,12 @@ export const AppendFumenModal = componentize<Props, Actions, Locals>({
                 actions.inputFumenData({ value });
 
                 if (value !== undefined) {
-                    actions.appendFumen({ fumen: value, pageIndex: maxPage });
-                }
-
-                const element = document.getElementById('input-fumen');
-                if (element !== null) {
-                    element.focus();
+                    actions.appendFumen({ fumen: value, pageIndex: maxPage })
+                        .catch((error: any) => {
+                            hub.locals.errorMessage = error.message;
+                            hub.refresh();
+                            focusAndSelect();
+                        });
                 }
             };
 
@@ -98,12 +106,12 @@ export const AppendFumenModal = componentize<Props, Actions, Locals>({
                 actions.inputFumenData({ value });
 
                 if (value !== undefined) {
-                    actions.appendFumen({ fumen: value, pageIndex: currentIndex + 1 });
-                }
-
-                const element = document.getElementById('input-fumen');
-                if (element !== null) {
-                    element.focus();
+                    actions.appendFumen({ fumen: value, pageIndex: currentIndex + 1 })
+                        .catch((error: any) => {
+                            hub.locals.errorMessage = error.message;
+                            hub.refresh();
+                            focusAndSelect();
+                        });
                 }
             };
 

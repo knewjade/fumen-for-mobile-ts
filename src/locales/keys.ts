@@ -25,6 +25,7 @@ export const i18n = {
             AppendToNext: () => t('AppendFumen.Buttons.AppendToNext'),
         },
         Errors: {
+            NoData: () => t('OpenFumen.Errors.FailedToLoad'),
             FailedToLoad: () => t('AppendFumen.Errors.FailedToLoad'),
             Unexpected: (message: string) => t('AppendFumen.Errors.Unexpected', { message }),
         },
