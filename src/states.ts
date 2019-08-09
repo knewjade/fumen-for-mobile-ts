@@ -127,12 +127,6 @@ export const initState: Readonly<State> = {
 };
 
 export const resources = {
-    modals: {
-        menu: undefined as any,
-        fumen: undefined as any,
-        append: undefined as any,
-        clipboard: undefined as any,
-    },
     konva: createKonvaObjects(),
     comment: undefined as ({ text: string, pageIndex: number } | undefined),
     focussedElement: undefined as (string | undefined),
