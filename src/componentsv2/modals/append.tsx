@@ -34,7 +34,7 @@ export const AppendFumenModal = componentize<Props, Actions, Locals>({
     const modal = createModal('input-fumen', Scenes.Append);
 
     const getText = (): string => {
-        const element = document.getElementById('btn-open') as HTMLTextAreaElement;
+        const element = document.getElementById('input-fumen') as HTMLTextAreaElement;
         if (element === null) {
             return '';
         }
