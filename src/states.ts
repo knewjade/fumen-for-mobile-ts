@@ -1,3 +1,4 @@
+import konva from 'konva';
 import { AnimationState, CommentType, ModeTypes, Piece, Screens, TouchTypes } from './lib/enums';
 import { HyperStage } from './lib/hyper';
 import { Box } from './components/box';
@@ -5,7 +6,6 @@ import { PageEnv } from './env';
 import { Block } from './state_types';
 import { PrimitivePage } from './history_task';
 import { generateKey } from './lib/random';
-import konva from 'konva';
 import { Page } from './lib/fumen/types';
 import { Field } from './lib/fumen/field';
 
@@ -41,12 +41,6 @@ export interface State {
     cache: {
         currentInitField: Field;
         taskKey?: string;
-    };
-    modal: {
-        fumen: boolean;
-        menu: boolean;
-        append: boolean;
-        clipboard: boolean;
     };
     handlers: {
         animation?: number;
@@ -106,12 +100,6 @@ export const initState: Readonly<State> = {
     cache: {
         currentInitField: new Field({}),
         taskKey: undefined,
-    },
-    modal: {
-        fumen: false,
-        menu: false,
-        append: false,
-        clipboard: false,
     },
     handlers: {
         animation: undefined,
