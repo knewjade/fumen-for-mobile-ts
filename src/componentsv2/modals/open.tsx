@@ -3,8 +3,8 @@ import { i18n } from '../../locales/keys';
 import { style } from '../../lib/types';
 import { componentize } from '../componentize';
 import { managers } from '../../repository/managers';
-
-declare const M: any;
+import { createModal } from '../modal';
+import { Scenes } from '../../repository/modals/manager';
 
 interface Props {
 }
@@ -24,7 +24,7 @@ export const OpenFumenModal = componentize<Props, Actions, Locals>({
 }, (hub, initState, actions) => {
     // Members
 
-    let modalInstance: { close: () => void } | undefined;
+    const modal = createModal('input-fumen', Scenes.Open);
 
     const getText = (): string => {
         const element = document.getElementById('input-fumen') as HTMLTextAreaElement;
@@ -43,30 +43,6 @@ export const OpenFumenModal = componentize<Props, Actions, Locals>({
     hub.watch('error-message', locals => locals.errorMessage);
 
     // Callbacks
-
-    const onCreateModal = (element: HTMLDivElement) => {
-        const instance = M.Modal.init(element, {
-            onOpenEnd: () => {
-                const element = document.getElementById('input-fumen');
-                if (element !== null) {
-                    element.focus();
-                }
-            },
-            onCloseStart: () => {
-                managers.modals.closeAll();
-            },
-        });
-
-        instance.open();
-
-        modalInstance = instance;
-    };
-
-    const onDestoryModal = () => {
-        if (modalInstance !== undefined) {
-            modalInstance.close();
-        }
-    };
 
     const onInputText = (e: TextEvent) => {
         const inputType = (e as any).inputType;
@@ -122,7 +98,7 @@ export const OpenFumenModal = componentize<Props, Actions, Locals>({
             return (
                 <div key="open-fumen-modal-top">
                     <div key="mdl-open-fumen" datatest="mdl-open-fumen"
-                         className="modal" oncreate={onCreateModal} ondestroy={onDestoryModal}>
+                         className="modal" oncreate={modal.onCreate} ondestroy={modal.onDestroy}>
                         <div key="modal-content" className="modal-content">
                             <h4 key="open-fumen-label" dataTest="open-fumen-label">{i18n.OpenFumen.Title()}</h4>
 
@@ -144,8 +120,10 @@ export const OpenFumenModal = componentize<Props, Actions, Locals>({
                                 {i18n.OpenFumen.Buttons.Cancel()}
                             </a>
 
-                            <a href="#" key="btn-open" datatest="btn-open" id="btn-open"
+                            <a href="#" key="btn-open"
+                               datatest="btn-open" id="btn-open"
                                className={openClassName} onclick={open}>
+                                <i className="material-icons left">open_in_browser</i>
                                 {i18n.OpenFumen.Buttons.Open()}
                             </a>
                         </div>
