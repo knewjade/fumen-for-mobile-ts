@@ -31,7 +31,7 @@ export const AppendFumenModal = componentize<Props, Actions, Locals>({
 }, (hub, initState, actions) => {
     // Members
 
-    const modal = createModal('input-fumen', Scenes.Append);
+    const modal = createModal(Scenes.Append, 'input-fumen');
 
     const getText = (): string => {
         const element = document.getElementById('input-fumen') as HTMLTextAreaElement;

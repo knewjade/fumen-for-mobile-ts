@@ -4,7 +4,7 @@ import { OpenFumenModal } from '../../componentsv2/modals/open';
 import { Actions, main } from '../../actions';
 import { MenuModal } from '../../componentsv2/modals/menu';
 import { AppendFumenModal } from '../../componentsv2/modals/append';
-import { ClipboardModal } from '../../components/modals/clipboard';
+import { ClipboardModal } from '../../componentsv2/modals/clipboard';
 import { managers } from '../managers';
 
 export enum Scenes {
@@ -68,11 +68,15 @@ export class ModalManager {
             });
             return modal.render(props);
         }
-        case Scenes.Clipboard:
-            return ClipboardModal({
-                actions,
+        case Scenes.Clipboard: {
+            const props = {
                 pages: state.fumen.pages,
+            };
+            const modal = managers.caches.get('managers.modals.append', () => {
+                return ClipboardModal(props, actions);
             });
+            return modal.render(props);
+        }
         }
 
         return undefined;

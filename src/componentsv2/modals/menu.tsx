@@ -41,7 +41,7 @@ interface Locals {
 }
 
 export const MenuModal = componentize<Props, Actions, Locals>({}, (hub, initState, actions) => {
-    const modal = createModal('textarea-fumen', Scenes.Menu);
+    const modal = createModal(Scenes.Menu, 'textarea-fumen');
 
     const divProperties = style({
         margin: 0,
