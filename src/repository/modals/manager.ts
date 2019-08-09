@@ -3,7 +3,7 @@ import { State } from '../../states';
 import { OpenFumenModal } from '../../componentsv2/modals/open';
 import { Actions, main } from '../../actions';
 import { MenuModal } from '../../componentsv2/modals/menu';
-import { AppendFumenModal } from '../../components/modals/append';
+import { AppendFumenModal } from '../../componentsv2/modals/append';
 import { ClipboardModal } from '../../components/modals/clipboard';
 import { managers } from '../managers';
 
@@ -38,7 +38,7 @@ export class ModalManager {
         switch (this.scene) {
         case Scenes.Open: {
             const props = state;
-            const modal = managers.caches.get('open-fumen-modal', () => {
+            const modal = managers.caches.get('managers.modals.open', () => {
                 return OpenFumenModal(props, actions);
             });
             return modal.render(props);
@@ -53,19 +53,21 @@ export class ModalManager {
                 comment: state.mode.comment,
                 ghostVisible: state.mode.ghostVisible,
             };
-            const modal = managers.caches.get('open-menu-modal', () => {
+            const modal = managers.caches.get('managers.modals.menu', () => {
                 return MenuModal(props, actions);
             });
             return modal.render(props);
         }
-        case Scenes.Append:
-            return AppendFumenModal({
-                actions,
-                errorMessage: state.fumen.errorMessage,
-                textAreaValue: state.fumen.value !== undefined ? state.fumen.value : '',
+        case Scenes.Append: {
+            const props = {
                 currentIndex: state.fumen.currentIndex,
                 maxPage: state.fumen.maxPage,
+            };
+            const modal = managers.caches.get('managers.modals.append', () => {
+                return AppendFumenModal(props, actions);
             });
+            return modal.render(props);
+        }
         case Scenes.Clipboard:
             return ClipboardModal({
                 actions,

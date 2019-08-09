@@ -20,6 +20,7 @@ export const resources = {
             AppendToNext: 'Next',
         },
         Errors: {
+            NoData: 'Input fumen data',
             FailedToLoad: 'Failed to load',
             Unexpected: 'Unexpected error: {{message}}',
         },

@@ -13,6 +13,7 @@ export const resources = {
     AppendFumen: {
         Title: 'テト譜を追加',
         Errors: {
+            NoData: 'データを入力してください',
             FailedToLoad: 'テト譜を読み込めませんでした',
         },
     },

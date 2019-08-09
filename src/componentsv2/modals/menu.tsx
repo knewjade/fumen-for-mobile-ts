@@ -6,6 +6,7 @@ import { managers } from '../../repository/managers';
 import { Scenes } from '../../repository/modals/manager';
 import { ComponentWithText, px, style } from '../../lib/types';
 import { i18n } from '../../locales/keys';
+import { createModal } from '../modal';
 
 declare const M: any;
 
@@ -40,9 +41,7 @@ interface Locals {
 }
 
 export const MenuModal = componentize<Props, Actions, Locals>({}, (hub, initState, actions) => {
-    // Members
-
-    let modalInstance: { close: () => void } | undefined;
+    const modal = createModal('textarea-fumen', Scenes.Menu);
 
     const divProperties = style({
         margin: 0,
@@ -54,34 +53,6 @@ export const MenuModal = componentize<Props, Actions, Locals>({}, (hub, initStat
         alignItems: 'center',
     });
 
-    // Watches
-
-    // Callbacks
-
-    const onCreateModal = (element: HTMLDivElement) => {
-        const instance = M.Modal.init(element, {
-            onOpenEnd: () => {
-                const element = document.getElementById('textarea-fumen');
-                if (element !== null) {
-                    element.focus();
-                }
-            },
-            onCloseStart: () => {
-                managers.modals.close(Scenes.Menu);
-            },
-        });
-
-        instance.open();
-
-        modalInstance = instance;
-    };
-
-    const onDestroyModal = () => {
-        if (modalInstance !== undefined) {
-            modalInstance.close();
-        }
-    };
-
     return {
         render: (
             { version, screen, currentIndex, maxPageIndex, comment, ghostVisible },
@@ -89,7 +60,7 @@ export const MenuModal = componentize<Props, Actions, Locals>({}, (hub, initStat
             return (
                 <div key="menu-modal-top">
                     <div key="mdl-open-fumen" datatest="mdl-open-fumen"
-                         className="modal bottom-sheet" oncreate={onCreateModal} ondestroy={onDestroyModal}>
+                         className="modal bottom-sheet" oncreate={modal.onCreate} ondestroy={modal.onDestroy}>
                         <div key="modal-content" className="modal-content">
 
                             <h4 key="memu-title">
