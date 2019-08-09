@@ -129,7 +129,6 @@ export const initState: Readonly<State> = {
 export const resources = {
     konva: createKonvaObjects(),
     comment: undefined as ({ text: string, pageIndex: number } | undefined),
-    focussedElement: undefined as (string | undefined),
 };
 
 interface Box {
