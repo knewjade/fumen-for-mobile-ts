@@ -1,6 +1,6 @@
 import { h } from 'hyperapp';
 import { i18n } from '../../locales/keys';
-import { style } from '../../lib/types';
+import { px, style } from '../../lib/types';
 import { componentize } from '../componentize';
 import { managers } from '../../repository/managers';
 import { createModal } from '../modal';
@@ -97,7 +97,7 @@ export const OpenFumenModal = componentize<Props, Actions, Locals>({
             });
 
             const openClassVisibility = textAreaValue !== '' && errorMessage === undefined ? '' : ' disabled';
-            const openClassName = `waves-effect waves-teal btn-flat${openClassVisibility}`;
+            const openClassName = `waves-effect waves-teal btn red white-text ${openClassVisibility}`;
 
             return (
                 <div key="open-fumen-modal-top">
@@ -127,7 +127,9 @@ export const OpenFumenModal = componentize<Props, Actions, Locals>({
                             <a href="#" key="btn-open"
                                datatest="btn-open" id="btn-open"
                                className={openClassName} onclick={open}>
-                                <i className="material-icons left">open_in_browser</i>
+                                <i className="material-icons left" style={style({
+                                    margin: px(4),
+                                })}>open_in_browser</i>
                                 {i18n.OpenFumen.Buttons.Open()}
                             </a>
                         </div>
