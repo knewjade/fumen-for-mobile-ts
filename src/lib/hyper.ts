@@ -2,13 +2,17 @@ import { resources } from '../states';
 import konva from 'konva';
 
 export class HyperStage {
-    private stage: konva.Stage | undefined;
+    stage: konva.Stage | undefined;
 
     constructor() {
     }
 
     addStage(stage: konva.Stage) {
         this.stage = stage;
+        this.stage.add(resources.konva.layers.background);
+        this.stage.add(resources.konva.layers.field);
+        this.stage.add(resources.konva.layers.boxes);
+        this.stage.add(resources.konva.layers.overlay);
     }
 
     removeStage() {
@@ -36,6 +40,7 @@ export class HyperStage {
 
     reload(completeCallback: (done: (waitMillSeconds?: number) => void) => void) {
         if (this.stage !== undefined) {
+            console.log('reload');
             const stage = this.stage;
 
             // Layerを隠す
