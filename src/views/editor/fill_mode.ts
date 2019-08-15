@@ -1,12 +1,11 @@
 import { Piece } from '../../lib/enums';
 import { div } from '@hyperapp/html';
 import { colorButton, toolSpace } from '../editor_buttons';
-import { EditorLayout, toolStyle } from './editor';
+import { toolStyle } from './editor';
+import { EditorLayout } from '../../componentsv2/editor/layout';
 
-export const fillMode = ({ layout, keyPage, currentIndex, modePiece, colorize, actions }: {
+export const fillMode = ({ layout, modePiece, colorize, actions }: {
     layout: EditorLayout;
-    keyPage: boolean;
-    currentIndex: number;
     modePiece: Piece | undefined;
     colorize: boolean;
     actions: {

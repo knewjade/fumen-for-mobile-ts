@@ -1,16 +1,10 @@
 import { div } from '@hyperapp/html';
 import { dualButton, iconContents, toolButton, toolSpace } from '../editor_buttons';
-import { EditorLayout, toolStyle } from './editor';
+import { toolStyle } from './editor';
+import { EditorLayout } from '../../componentsv2/editor/layout';
 
-export const slideMode = ({ layout, currentIndex, keyPage, flags, actions }: {
+export const slideMode = ({ layout, actions }: {
     layout: EditorLayout;
-    currentIndex: number;
-    keyPage: boolean;
-    flags: {
-        lock: boolean;
-        mirror: boolean;
-        rise: boolean;
-    },
     actions: {
         shiftToLeft: () => void;
         shiftToRight: () => void;

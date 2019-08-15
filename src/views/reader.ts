@@ -55,7 +55,9 @@ export const view: View<State, Actions> = (state, actions) => {
     const layout = getLayout(state.display);
 
     const node = div({ key: 'view' }, [
-        managers.konva.render(layout.canvas.size, actions.refresh),
+        div({ key: 'field-top' }, [
+            managers.konva.render(layout.canvas.size, actions.refresh),
+        ]),
 
         div({ key: 'menu-top' }, [
             getComment(state, actions, layout),

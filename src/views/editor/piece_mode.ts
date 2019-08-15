@@ -10,13 +10,13 @@ import {
     toolButton,
     toolSpace,
 } from '../editor_buttons';
-import { EditorLayout, toolStyle } from './editor';
+import { toolStyle } from './editor';
 import { Move, Page } from '../../lib/fumen/types';
 import { PageFieldOperation, Pages } from '../../lib/pages';
+import { EditorLayout } from '../../componentsv2/editor/layout';
 
-export const pieceMode = ({ layout, keyPage, currentIndex, touchType, move, pages, existInferences, flags, actions }: {
+export const pieceMode = ({ layout, currentIndex, touchType, move, pages, existInferences, flags, actions }: {
     layout: EditorLayout;
-    keyPage: boolean;
     currentIndex: number;
     touchType: TouchTypes;
     move?: Move;

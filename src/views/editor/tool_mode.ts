@@ -1,7 +1,8 @@
 import { TouchTypes } from '../../lib/enums';
 import { div } from '@hyperapp/html';
 import { iconContents, keyButton, toolButton, toolSpace } from '../editor_buttons';
-import { EditorLayout, toolStyle } from './editor';
+import { toolStyle } from './editor';
+import { EditorLayout } from '../../componentsv2/editor/layout';
 
 export const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
     layout: EditorLayout;
@@ -31,7 +32,6 @@ export const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: 
             currentIndex,
             actions,
             width: layout.buttons.size.width,
-            height: layout.buttons.size.height,
         }),
         toolSpace({
             flexGrow: 100,

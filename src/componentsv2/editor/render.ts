@@ -1,18 +1,16 @@
 import konva from 'konva';
 import { managers } from '../../repository/managers';
-import { ReaderLayout } from './layout';
 import { Actions } from '../../actions';
 import { State } from '../../states';
 import { Layers } from '../../repository/konva/manager';
 import { Piece } from '../../lib/enums';
 import { decideBackgroundColor, decidePieceColor } from '../../lib/colors';
-import { getPieces } from '../../lib/piece';
-import { HighlightType } from '../../state_types';
+import { EditorLayout } from './layout';
 
-type ComponentGenerator = (layout: ReaderLayout, state: State, actions: Actions) => KonvaComponent;
+type ComponentGenerator = (layout: EditorLayout, state: State, actions: Actions) => KonvaComponent;
 
 interface KonvaComponent {
-    update: (layout: ReaderLayout, state: State, actions: Actions) => void;
+    update: (layout: EditorLayout, state: State, actions: Actions) => void;
     onDestroy: () => void;
 }
 
@@ -25,10 +23,7 @@ export const render: ComponentGenerator = (layout, state, actions) => {
     const blocks = blocksComponents(layout, state, actions);
     const sentLines = sentLinesComponents(layout, state, actions);
 
-    const hold = holdComponent(layout, state, actions);
-    const nexts = nextComponents(layout, state, actions);
-
-    const wrappers = [background, fieldBottomLine, hold, event].concat(blocks).concat(sentLines).concat(nexts);
+    const wrappers = [background, fieldBottomLine, event].concat(blocks).concat(sentLines);
 
     return {
         update: (layout, state, actions) => {
@@ -143,161 +138,6 @@ const blockComponent = (strokeWidth: number, strokeColor: string) => {
             rect.hide();
         },
     };
-};
-
-// hold
-
-const holdComponent: ComponentGenerator = () => {
-    const box = boxComponent();
-
-    return {
-        update: (layout, state) => {
-            box.update(
-                state.hold,
-                layout.hold.topLeft,
-                layout.hold.size,
-                layout.hold.boxSize / 4 - 1,
-                state.fumen.guideLineColor,
-            );
-        },
-        onDestroy: () => {
-            box.onDestroy();
-        },
-    };
-};
-
-const nextComponents: ComponentGenerator = () => {
-    const boxes = [
-        boxComponent(),
-        boxComponent(),
-        boxComponent(),
-        boxComponent(),
-        boxComponent(),
-    ];
-
-    return {
-        update: (layout, state) => {
-            if (state.nexts !== undefined) {
-                for (let index = 0; index < boxes.length; index += 1) {
-                    boxes[index].update(
-                        state.nexts[index],
-                        layout.nexts.topLeft(index),
-                        layout.nexts.size,
-                        layout.nexts.boxSize / 4 - 1,
-                        state.fumen.guideLineColor,
-                    );
-                }
-            } else {
-                for (const box of boxes) {
-                    box.hide();
-                }
-            }
-        },
-        onDestroy: () => {
-            for (const box of boxes) {
-                box.onDestroy();
-            }
-        },
-    };
-};
-
-const boxComponent = () => {
-    const background = blockComponent(1, '#666');
-    const blocks = [
-        blockComponent(0, '#333'),
-        blockComponent(0, '#333'),
-        blockComponent(0, '#333'),
-        blockComponent(0, '#333'),
-    ];
-
-    const hide = () => {
-        background.hide();
-        for (const block of blocks) {
-            block.hide();
-        }
-    };
-
-    return {
-        hide,
-        update: (
-            piece: Piece | undefined,
-            topLeft: { x: number, y: number },
-            size: { width: number, height: number },
-            pieceSize: number,
-            guideLineColor: boolean,
-        ) => {
-            if (piece === undefined) {
-                hide();
-                return;
-            }
-
-            // background
-            background.update(topLeft.x, topLeft.y, size.width, size.height, '#333');
-
-            // blocks
-            const positions = getPiecePositions(piece, size, pieceSize, 1);
-
-            const color = decidePieceColor(piece, HighlightType.Highlight2, guideLineColor);
-
-            for (let index = 0; index < blocks.length; index += 1) {
-                const position = positions[index];
-                blocks[index].update(
-                    topLeft.x + position.x, topLeft.y + position.y, pieceSize, pieceSize, color,
-                );
-            }
-        },
-        onDestroy: () => {
-            background.onDestroy();
-            for (const block of blocks) {
-                block.onDestroy();
-            }
-        },
-    };
-};
-
-const getPiecePositions = (
-    piece: Piece, size: { width: number, height: number }, pieceSize: number, margin: number,
-) => {
-    // ブロックの相対位置を取得
-    const blocks = getPieces(piece).map(([x, y]) => [x, -y]);
-
-    // 最大値と最小値を取得
-    const mmIndex = {
-        max: { x: 0, y: 0 },
-        min: { x: 0, y: 0 },
-    };
-    for (const [x, y] of blocks) {
-        if (mmIndex.max.x < x) {
-            mmIndex.max.x = x;
-        } else if (x < mmIndex.min.x) {
-            mmIndex.min.x = x;
-        }
-
-        if (mmIndex.max.y < y) {
-            mmIndex.max.y = y;
-        } else if (y < mmIndex.min.y) {
-            mmIndex.min.y = y;
-        }
-    }
-
-    // 中央にあたるIndex
-    const centerIndex = {
-        x: (mmIndex.max.x - mmIndex.min.x + 1) / 2 + mmIndex.min.x,
-        y: (mmIndex.max.y - mmIndex.min.y + 1) / 2 + mmIndex.min.y,
-    };
-
-    const step = (n: number) => n * (pieceSize + margin) + 0.5 * margin;
-
-    // ボックス中央の座標
-    const center = {
-        x: size.width / 2,
-        y: size.height / 2,
-    };
-
-    return blocks.map(([x, y]) => ({
-        x: center.x + step(x - centerIndex.x),
-        y: center.y + step(y - centerIndex.y),
-    }));
 };
 
 // etc

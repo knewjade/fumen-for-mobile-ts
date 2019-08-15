@@ -1,11 +1,11 @@
 import { div } from '@hyperapp/html';
 import { switchButton, switchIconContents, toolSpace } from '../editor_buttons';
-import { EditorLayout, toolStyle } from './editor';
+import { toolStyle } from './editor';
+import { EditorLayout } from '../../componentsv2/editor/layout';
 
-export const flagsMode = ({ layout, currentIndex, keyPage, flags, actions }: {
+export const flagsMode = ({ layout, currentIndex, flags, actions }: {
     layout: EditorLayout;
     currentIndex: number;
-    keyPage: boolean;
     flags: {
         lock: boolean;
         mirror: boolean;

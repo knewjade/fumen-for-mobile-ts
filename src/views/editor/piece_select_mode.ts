@@ -1,11 +1,11 @@
 import { Piece } from '../../lib/enums';
 import { div } from '@hyperapp/html';
 import { colorButton, iconContents, toolButton, toolSpace } from '../editor_buttons';
-import { EditorLayout, toolStyle } from './editor';
+import { toolStyle } from './editor';
+import { EditorLayout } from '../../componentsv2/editor/layout';
 
-export const pieceSelectMode = ({ layout, currentIndex, colorize, actions }: {
+export const pieceSelectMode = ({ layout, colorize, actions }: {
     layout: EditorLayout;
-    currentIndex: number;
     colorize: boolean;
     actions: {
         spawnPiece: (data: { piece: Piece, guideline: boolean }) => void;
