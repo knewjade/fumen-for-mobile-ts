@@ -6,12 +6,15 @@ import { Layers } from '../../repository/konva/manager';
 import { Piece } from '../../lib/enums';
 import { decideBackgroundColor, decidePieceColor } from '../../lib/colors';
 import { EditorLayout } from './layout';
+import { VNode } from '@hyperapp/hyperapp';
+import { param } from '@hyperapp/html';
 
 type ComponentGenerator = (layout: EditorLayout, state: State, actions: Actions) => KonvaComponent;
 
 interface KonvaComponent {
     update: (layout: EditorLayout, state: State, actions: Actions) => void;
     onDestroy: () => void;
+    toNodes: () => (VNode<{}> | undefined)[];
 }
 
 export const render: ComponentGenerator = (layout, state, actions) => {
@@ -36,6 +39,13 @@ export const render: ComponentGenerator = (layout, state, actions) => {
                 wrapper.onDestroy();
             });
         },
+        toNodes: () => {
+            let children: (VNode<{}> | undefined)[] = [];
+            wrappers.forEach((wrapper) => {
+                children = children.concat(wrapper.toNodes());
+            });
+            return children;
+        },
     };
 };
 
@@ -45,6 +55,7 @@ const blocksComponents: ComponentGenerator = (layout, state, actions) => {
     const blocks: any[] = [];
     for (let index = 0; index < 230; index += 1) {
         blocks[index] = blockComponent(
+            `block-${index % 10}-${22 - Math.floor(index / 10)}`,
             0,
             '#333',
             () => {
@@ -90,6 +101,9 @@ const blocksComponents: ComponentGenerator = (layout, state, actions) => {
                 block.onDestroy();
             }
         },
+        toNodes: () => {
+            return blocks.map(block => block.toNode());
+        },
     };
 };
 
@@ -97,6 +111,7 @@ const sentLinesComponents: ComponentGenerator = (layout, state, actions) => {
     const blocks: any[] = [];
     for (let index = 0; index < 10; index += 1) {
         blocks[index] = blockComponent(
+            `sent-block-${index % 10}-0`,
             0,
             '#333',
             () => {
@@ -136,19 +151,25 @@ const sentLinesComponents: ComponentGenerator = (layout, state, actions) => {
                 block.onDestroy();
             }
         },
+        toNodes: () => {
+            return blocks.map(block => block.toNode());
+        },
     };
 };
 
 const blockComponent = (
+    datatest: string,
     strokeWidth: number,
     strokeColor: string,
     onTouchStart: () => void,
     onTouchMove: () => void,
     onTouchEnd: () => void,
 ) => {
+    let fillColor = '#fff';
     const rect = new konva.Rect({
         strokeWidth,
         strokeColor,
+        fillColor,
         opacity: 1,
     });
 
@@ -163,6 +184,7 @@ const blockComponent = (
             rect.setSize({ width, height });
             rect.setPosition({ x, y });
             rect.fill(color);
+            fillColor = color;
             rect.show();
         },
         onDestroy: () => {
@@ -170,6 +192,12 @@ const blockComponent = (
             rect.off('touchmove mouseenter');
             rect.off('touchend mouseup');
             rect.remove();
+        },
+        toNode: () => {
+            return param({
+                datatest,
+                color: fillColor,
+            });
         },
         hide: () => {
             rect.hide();
@@ -196,6 +224,7 @@ const backgroundComponent: ComponentGenerator = () => {
         onDestroy: () => {
             rect.remove();
         },
+        toNodes: () => [],
     };
 };
 
@@ -228,6 +257,7 @@ const fieldBottomLineComponent: ComponentGenerator = ({ field }) => {
         onDestroy: () => {
             line.remove();
         },
+        toNodes: () => [],
     };
 };
 
@@ -272,5 +302,6 @@ const eventComponent: ComponentGenerator = (layout, state, actions) => {
             rect.off('touchenter touchenter');
             rect.remove();
         },
+        toNodes: () => [],
     };
 };

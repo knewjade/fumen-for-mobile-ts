@@ -1,5 +1,5 @@
 import { CommentType, ModeTypes, Screens } from '../../lib/enums';
-import { View } from 'hyperapp';
+import { View, VNode } from 'hyperapp';
 import { resources, State } from '../../states';
 import { EditorTools } from '../../components/tools/editor_tools';
 import { Palette } from '../../lib/colors';
@@ -19,6 +19,7 @@ import { pieceSelectMode } from './piece_select_mode';
 import { managers } from '../../repository/managers';
 import { render } from '../../componentsv2/editor/render';
 import { EditorLayout, getLayout } from '../../componentsv2/editor/layout';
+import { PageEnv } from '../../env';
 
 export const toolStyle = (layout: EditorLayout) => {
     const margin = (layout.canvas.size.height - layout.field.size.height) / 2;
@@ -208,7 +209,7 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
 export const view: View<State, Actions> = (state, actions) => {
     const layout = getLayout(state.display);
 
-    const node = div({ key: 'view' }, [
+    const children = [
         div({
             key: 'field-top',
             style: style({
@@ -229,12 +230,18 @@ export const view: View<State, Actions> = (state, actions) => {
 
             Tools(state, actions, layout.tools.size.height),
         ]),
-    ]);
+    ];
 
     managers.konva.update(() => {
-        managers.caches.get('editor.konva', () => render(layout, state, actions))
-            .update(layout, state, actions);
+        const renderObj = managers.caches.get('editor.konva', () => render(layout, state, actions));
+        renderObj.update(layout, state, actions);
+
+        // Elements for tests
+        if (PageEnv.Debug) {
+            const nodes = div({}, renderObj.toNodes().filter(v => v !== undefined) as VNode<{}>[]);
+            children.push(nodes as any);
+        }
     });
 
-    return node;
+    return div({ key: 'view' }, children);
 };
