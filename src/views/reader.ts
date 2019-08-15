@@ -73,10 +73,8 @@ export const view: View<State, Actions> = (state, actions) => {
         renderObj.update(layout, state, actions);
 
         // Elements for tests
-        if (PageEnv.Debug) {
-            const nodes = div({}, renderObj.toNodes().filter(v => v !== undefined) as VNode<{}>[]);
-            children.push(nodes as any);
-        }
+        const nodes = div({}, renderObj.toNodes().filter(v => v !== undefined) as VNode<{}>[]);
+        children.push(nodes as any);
     });
 
     return div({ key: 'view' }, children);
