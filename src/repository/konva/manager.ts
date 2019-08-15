@@ -112,14 +112,13 @@ export class KonvaManager {
             refresh();
         };
 
-        return div({ key: 'canvas' }, [
-            div({
-                oncreate,
-                ondestroy: this.removeStage,
-                id: 'canvas-container',
-                style: style({ width: px(size.width), height: px(size.height) }),
-            }),
-        ]);
+        return div({
+            oncreate,
+            ondestroy: this.removeStage,
+            key: 'canvas',
+            id: 'canvas-container',
+            style: style({ width: px(size.width), height: px(size.height) }),
+        }, []);
     }
 
     reload(completeCallback: (done: () => void) => void) {

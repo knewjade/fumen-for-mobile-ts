@@ -21,7 +21,7 @@ export function getBlocks(piece: Piece, rotation: Rotation): number[][] {
     case Rotation.Right:
         return rotateRight(blocks);
     }
-    throw new FumenError('Unsupported block');
+    throw new FumenError(`Unsupported block: piece=${piece},rotation=${rotation}`);
 }
 
 export function getPieces(piece: Piece): number[][] {

@@ -4,16 +4,19 @@ import { ReaderLayout } from './layout';
 import { Actions } from '../../actions';
 import { State } from '../../states';
 import { Layers } from '../../repository/konva/manager';
-import { Piece } from '../../lib/enums';
+import { isMinoPiece, Piece } from '../../lib/enums';
 import { decideBackgroundColor, decidePieceColor } from '../../lib/colors';
 import { getPieces } from '../../lib/piece';
 import { HighlightType } from '../../state_types';
+import { param } from '@hyperapp/html';
+import { VNode } from '@hyperapp/hyperapp';
 
 type ComponentGenerator = (layout: ReaderLayout, state: State, actions: Actions) => KonvaComponent;
 
 interface KonvaComponent {
     update: (layout: ReaderLayout, state: State, actions: Actions) => void;
     onDestroy: () => void;
+    toNodes: () => (VNode<{}> | undefined)[];
 }
 
 export const render: ComponentGenerator = (layout, state, actions) => {
@@ -41,6 +44,13 @@ export const render: ComponentGenerator = (layout, state, actions) => {
                 wrapper.onDestroy();
             });
         },
+        toNodes: () => {
+            let children: (VNode<{}> | undefined)[] = [];
+            wrappers.forEach((wrapper) => {
+                children = children.concat(wrapper.toNodes());
+            });
+            return children;
+        },
     };
 };
 
@@ -49,7 +59,7 @@ export const render: ComponentGenerator = (layout, state, actions) => {
 const blocksComponents: ComponentGenerator = () => {
     const blocks: any[] = [];
     for (let index = 0; index < 230; index += 1) {
-        blocks[index] = blockComponent(0, '#333');
+        blocks[index] = blockComponent(`block-${index % 10}-${22 - Math.floor(index / 10)}`, 0, '#333');
     }
 
     return {
@@ -83,13 +93,16 @@ const blocksComponents: ComponentGenerator = () => {
                 block.onDestroy();
             }
         },
+        toNodes: () => {
+            return blocks.map(block => block.toNode());
+        },
     };
 };
 
 const sentLinesComponents: ComponentGenerator = () => {
     const blocks: any[] = [];
     for (let index = 0; index < 10; index += 1) {
-        blocks[index] = blockComponent(0, '#333');
+        blocks[index] = blockComponent(`sent-block-${index % 10}-0`, 0, '#333');
     }
 
     return {
@@ -117,13 +130,18 @@ const sentLinesComponents: ComponentGenerator = () => {
                 block.onDestroy();
             }
         },
+        toNodes: () => {
+            return blocks.map(block => block.toNode());
+        },
     };
 };
 
-const blockComponent = (strokeWidth: number, strokeColor: string) => {
+const blockComponent = (datatest: string, strokeWidth: number, strokeColor: string) => {
+    let fillColor = '#fff';
     const rect = new konva.Rect({
         strokeWidth,
         strokeColor,
+        fillColor,
         opacity: 1,
     });
 
@@ -134,10 +152,17 @@ const blockComponent = (strokeWidth: number, strokeColor: string) => {
             rect.setSize({ width, height });
             rect.setPosition({ x, y });
             rect.fill(color);
+            fillColor = color;
             rect.show();
         },
         onDestroy: () => {
             rect.remove();
+        },
+        toNode: () => {
+            return param({
+                datatest,
+                color: fillColor,
+            });
         },
         hide: () => {
             rect.hide();
@@ -148,7 +173,7 @@ const blockComponent = (strokeWidth: number, strokeColor: string) => {
 // hold
 
 const holdComponent: ComponentGenerator = () => {
-    const box = boxComponent();
+    const box = boxComponent('box-hold');
 
     return {
         update: (layout, state) => {
@@ -163,16 +188,19 @@ const holdComponent: ComponentGenerator = () => {
         onDestroy: () => {
             box.onDestroy();
         },
+        toNodes: () => {
+            return [box.toNode()];
+        },
     };
 };
 
 const nextComponents: ComponentGenerator = () => {
     const boxes = [
-        boxComponent(),
-        boxComponent(),
-        boxComponent(),
-        boxComponent(),
-        boxComponent(),
+        boxComponent('box-next-0'),
+        boxComponent('box-next-1'),
+        boxComponent('box-next-2'),
+        boxComponent('box-next-3'),
+        boxComponent('box-next-4'),
     ];
 
     return {
@@ -198,27 +226,34 @@ const nextComponents: ComponentGenerator = () => {
                 box.onDestroy();
             }
         },
+        toNodes: () => {
+            return boxes.map(box => box.toNode());
+        },
     };
 };
 
-const boxComponent = () => {
-    const background = blockComponent(1, '#666');
+const boxComponent = (datatest: string) => {
+    const background = blockComponent(`${datatest}-background`, 1, '#666');
     const blocks = [
-        blockComponent(0, '#333'),
-        blockComponent(0, '#333'),
-        blockComponent(0, '#333'),
-        blockComponent(0, '#333'),
+        blockComponent(`${datatest}-block-0`, 0, '#333'),
+        blockComponent(`${datatest}-block-1`, 0, '#333'),
+        blockComponent(`${datatest}-block-2`, 0, '#333'),
+        blockComponent(`${datatest}-block-3`, 0, '#333'),
     ];
+    let piece_: Piece | undefined = undefined;
 
-    const hide = () => {
-        background.hide();
+    const hidePiece = () => {
         for (const block of blocks) {
             block.hide();
         }
     };
 
+    const hideAll = () => {
+        background.hide();
+        hidePiece();
+    };
+
     return {
-        hide,
         update: (
             piece: Piece | undefined,
             topLeft: { x: number, y: number },
@@ -226,13 +261,20 @@ const boxComponent = () => {
             pieceSize: number,
             guideLineColor: boolean,
         ) => {
+            piece_ = piece;
+
             if (piece === undefined) {
-                hide();
+                hideAll();
                 return;
             }
 
             // background
             background.update(topLeft.x, topLeft.y, size.width, size.height, '#333');
+
+            if (!isMinoPiece(piece)) {
+                hidePiece();
+                return;
+            }
 
             // blocks
             const positions = getPiecePositions(piece, size, pieceSize, 1);
@@ -251,6 +293,20 @@ const boxComponent = () => {
             for (const block of blocks) {
                 block.onDestroy();
             }
+        },
+        toNode: () => {
+            if (piece_ === undefined) {
+                return undefined;
+            }
+
+            return param({
+                datatest,
+                type: piece_,
+            });
+        },
+        hide: () => {
+            piece_ = undefined;
+            hideAll();
         },
     };
 };
@@ -319,6 +375,7 @@ const backgroundComponent: ComponentGenerator = () => {
         onDestroy: () => {
             rect.remove();
         },
+        toNodes: () => [],
     };
 };
 
@@ -351,6 +408,7 @@ const fieldBottomLineComponent: ComponentGenerator = ({ field }) => {
         onDestroy: () => {
             line.remove();
         },
+        toNodes: () => [],
     };
 };
 
@@ -374,5 +432,6 @@ const eventComponent: ComponentGenerator = (layout, state, actions) => {
         onDestroy: () => {
             rect.remove();
         },
+        toNodes: () => [],
     };
 };

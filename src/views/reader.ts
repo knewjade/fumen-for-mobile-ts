@@ -1,4 +1,4 @@
-import { View } from 'hyperapp';
+import { View, VNode } from 'hyperapp';
 import { State } from '../states';
 import { Actions } from '../actions';
 import { div } from '@hyperapp/html';
@@ -10,6 +10,7 @@ import { pageSlider } from '../components/pageSlider';
 import { managers } from '../repository/managers';
 import { render } from '../componentsv2/reader/render';
 import { getLayout, ReaderLayout } from '../componentsv2/reader/layout';
+import { PageEnv } from '../env';
 
 const Tools = (state: State, actions: Actions, height: number) => {
     return ReaderTools({
@@ -54,9 +55,10 @@ export const getComment = (state: State, actions: Actions, layout: ReaderLayout)
 export const view: View<State, Actions> = (state, actions) => {
     const layout = getLayout(state.display);
 
-    const node = div({ key: 'view' }, [
+    const children = [
         div({ key: 'field-top' }, [
             managers.konva.render(layout.canvas.size, actions.refresh),
+
         ]),
 
         div({ key: 'menu-top' }, [
@@ -64,12 +66,18 @@ export const view: View<State, Actions> = (state, actions) => {
 
             Tools(state, actions, layout.tools.size.height),
         ]),
-    ]);
+    ];
 
     managers.konva.update(() => {
-        managers.caches.get('reader.konva', () => render(layout, state, actions))
-            .update(layout, state, actions);
+        const renderObj = managers.caches.get('reader.konva', () => render(layout, state, actions));
+        renderObj.update(layout, state, actions);
+
+        // Elements for tests
+        if (PageEnv.Debug) {
+            const nodes = div({}, renderObj.toNodes().filter(v => v !== undefined) as VNode<{}>[]);
+            children.push(nodes as any);
+        }
     });
 
-    return node;
+    return div({ key: 'view' }, children);
 };
