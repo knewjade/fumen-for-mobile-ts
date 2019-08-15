@@ -121,48 +121,23 @@ export class KonvaManager {
             }),
         ]);
     }
-}
 
-/**
- reload(completeCallback: (done: (waitMillSeconds?: number) => void) => void) {
-        if (this.stage !== undefined) {
-            const stage = this.stage;
+    reload(completeCallback: (done: () => void) => void) {
+        const stage = this.stage;
+        if (stage !== undefined) {
+            forEach(this.layers, (layer) => {
+                layer.hide();
+            });
+            stage.batchDraw();
 
-            // Layerを隠す
-            setTimeout(async () => {
-                const sleep = async (wait: number) => new Promise(resolved => setTimeout(resolved, wait));
-                const hide = async (layer: konva.Layer) => {
-                    layer.hide();
-                    stage.batchDraw();
-                    await sleep(4);
-                };
-
-                const layers = resources.konva.layers;
-
-                await hide(layers.boxes);
-                await hide(layers.field);
-                await hide(layers.background);
-
-                // callback処理完了を待つ
-                completeCallback((waitMillSeconds) => {
-                    const show = async (layer: konva.Layer) => {
+            completeCallback(() => {
+                setTimeout(() => {
+                    forEach(this.layers, (layer) => {
                         layer.show();
-                        stage.batchDraw();
-                        await sleep(6);
-                    };
-                    const time = waitMillSeconds !== undefined ? waitMillSeconds : 30;
-
-                    // waitしたあと、Layerを表示する
-                    setTimeout(async () => {
-                        await sleep(time);
-
-                        await show(layers.background);
-                        await show(layers.field);
-                        await show(layers.boxes);
-                    }, 0);
-                });
-            }, 0);
+                    });
+                    stage.batchDraw();
+                }, 50);
+            });
         }
     }
-
- **/
+}

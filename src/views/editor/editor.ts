@@ -37,7 +37,7 @@ export const toolStyle = (layout: EditorLayout) => {
     });
 };
 
-const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
+const getMode = (state: State, actions: Actions, layout: EditorLayout) => {
     const pages = state.fumen.pages;
     const page = pages[state.fumen.currentIndex];
     const keyPage = page === undefined || page.field.obj !== undefined;
@@ -45,91 +45,69 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
     // テト譜の仕様により、最初のページのフラグが全体に反映される
     const guideLineColor = state.fumen.pages[0] !== undefined ? state.fumen.pages[0].flags.colorize : true;
 
-    const getChildren = () => {
-        const getMode = () => {
-            switch (state.mode.type) {
-            case ModeTypes.Drawing: {
-                return blockMode({
-                    layout,
-                    actions,
-                    colorize: guideLineColor,
-                    modePiece: state.mode.piece,
-                });
-            }
-            case ModeTypes.DrawingTool: {
-                return toolMode({
-                    layout,
-                    actions,
-                    keyPage,
-                    touchType: state.mode.touch,
-                    currentIndex: state.fumen.currentIndex,
-                });
-            }
-            case ModeTypes.Piece: {
-                const page = state.fumen.pages[state.fumen.currentIndex];
-                return pieceMode({
-                    layout,
-                    actions,
-                    move: page !== undefined ? page.piece : undefined,
-                    existInferences: 0 < state.events.inferences.length,
-                    pages: state.fumen.pages,
-                    flags: page.flags,
-                    touchType: state.mode.touch,
-                    currentIndex: state.fumen.currentIndex,
-                });
-            }
-            case ModeTypes.Flags: {
-                return flagsMode({
-                    layout,
-                    actions,
-                    flags: page.flags,
-                    currentIndex: state.fumen.currentIndex,
-                });
-            }
-            case ModeTypes.Slide: {
-                return slideMode({
-                    layout,
-                    actions,
-                });
-            }
-            case ModeTypes.Fill: {
-                return fillMode({
-                    layout,
-                    actions,
-                    colorize: guideLineColor,
-                    modePiece: state.mode.piece,
-                });
-            }
-            case ModeTypes.SelectPiece: {
-                return pieceSelectMode({
-                    layout,
-                    actions,
-                    colorize: guideLineColor,
-                });
-            }
-            }
+    switch (state.mode.type) {
+    case ModeTypes.Drawing: {
+        return blockMode({
+            layout,
+            actions,
+            colorize: guideLineColor,
+            modePiece: state.mode.piece,
+        });
+    }
+    case ModeTypes.DrawingTool: {
+        return toolMode({
+            layout,
+            actions,
+            keyPage,
+            touchType: state.mode.touch,
+            currentIndex: state.fumen.currentIndex,
+        });
+    }
+    case ModeTypes.Piece: {
+        const page = state.fumen.pages[state.fumen.currentIndex];
+        return pieceMode({
+            layout,
+            actions,
+            move: page !== undefined ? page.piece : undefined,
+            existInferences: 0 < state.events.inferences.length,
+            pages: state.fumen.pages,
+            flags: page.flags,
+            touchType: state.mode.touch,
+            currentIndex: state.fumen.currentIndex,
+        });
+    }
+    case ModeTypes.Flags: {
+        return flagsMode({
+            layout,
+            actions,
+            flags: page.flags,
+            currentIndex: state.fumen.currentIndex,
+        });
+    }
+    case ModeTypes.Slide: {
+        return slideMode({
+            layout,
+            actions,
+        });
+    }
+    case ModeTypes.Fill: {
+        return fillMode({
+            layout,
+            actions,
+            colorize: guideLineColor,
+            modePiece: state.mode.piece,
+        });
+    }
+    case ModeTypes.SelectPiece: {
+        return pieceSelectMode({
+            layout,
+            actions,
+            colorize: guideLineColor,
+        });
+    }
+    }
 
-            throw new ViewError('Illegal mode');
-        };
-
-        return [
-            managers.konva.render(layout.canvas.size, actions.refresh),
-
-            getMode(),
-        ];
-    };
-
-    return div({
-        key: 'field-top',
-        id: 'field-top',
-        style: style({
-            display: 'flex',
-            justifyContent: 'center',
-            flexDirection: 'row',
-            alignItems: 'center',
-            userSelect: 'none',
-        }),
-    }, getChildren());
+    throw new ViewError('Illegal mode');
 };
 
 const Tools = (state: State, actions: Actions, height: number) => {
@@ -231,7 +209,20 @@ export const view: View<State, Actions> = (state, actions) => {
     const layout = getLayout(state.display);
 
     const node = div({ key: 'view' }, [
-        ScreenField(state, actions, layout),
+        div({
+            key: 'field-top',
+            style: style({
+                display: 'flex',
+                justifyContent: 'center',
+                flexDirection: 'row',
+                alignItems: 'center',
+                userSelect: 'none',
+            }),
+        }, [
+            managers.konva.render(layout.canvas.size, actions.refresh),
+
+            getMode(state, actions, layout),
+        ]),
 
         div({ key: 'menu-top' }, [
             getComment(state, actions, layout),

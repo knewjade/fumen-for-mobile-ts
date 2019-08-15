@@ -41,10 +41,22 @@ export const render: ComponentGenerator = (layout, state, actions) => {
 
 // field
 
-const blocksComponents: ComponentGenerator = () => {
+const blocksComponents: ComponentGenerator = (layout, state, actions) => {
     const blocks: any[] = [];
     for (let index = 0; index < 230; index += 1) {
-        blocks[index] = blockComponent(0, '#333');
+        blocks[index] = blockComponent(
+            0,
+            '#333',
+            () => {
+                actions.ontouchStartField({ index });
+            },
+            () => {
+                actions.ontouchMoveField({ index });
+            },
+            () => {
+                actions.ontouchEnd();
+            },
+        );
     }
 
     return {
@@ -81,10 +93,22 @@ const blocksComponents: ComponentGenerator = () => {
     };
 };
 
-const sentLinesComponents: ComponentGenerator = () => {
+const sentLinesComponents: ComponentGenerator = (layout, state, actions) => {
     const blocks: any[] = [];
     for (let index = 0; index < 10; index += 1) {
-        blocks[index] = blockComponent(0, '#333');
+        blocks[index] = blockComponent(
+            0,
+            '#333',
+            () => {
+                actions.ontouchStartSentLine({ index });
+            },
+            () => {
+                actions.ontouchMoveSentLine({ index });
+            },
+            () => {
+                actions.ontouchEnd();
+            },
+        );
     }
 
     return {
@@ -115,12 +139,22 @@ const sentLinesComponents: ComponentGenerator = () => {
     };
 };
 
-const blockComponent = (strokeWidth: number, strokeColor: string) => {
+const blockComponent = (
+    strokeWidth: number,
+    strokeColor: string,
+    onTouchStart: () => void,
+    onTouchMove: () => void,
+    onTouchEnd: () => void,
+) => {
     const rect = new konva.Rect({
         strokeWidth,
         strokeColor,
         opacity: 1,
     });
+
+    rect.on('touchstart mousedown', onTouchStart);
+    rect.on('touchmove mouseenter', onTouchMove);
+    rect.on('touchend mouseup', onTouchEnd);
 
     managers.konva.add(Layers.Front, rect);
 
@@ -132,6 +166,9 @@ const blockComponent = (strokeWidth: number, strokeColor: string) => {
             rect.show();
         },
         onDestroy: () => {
+            rect.off('touchstart mousedown');
+            rect.off('touchmove mouseenter');
+            rect.off('touchend mouseup');
             rect.remove();
         },
         hide: () => {
@@ -202,16 +239,37 @@ const eventComponent: ComponentGenerator = (layout, state, actions) => {
         listening: true,
     });
 
-    managers.konva.add(Layers.Overlay, rect);
+    managers.konva.add(Layers.Background, rect);
 
-    rect.show();
-    rect.on('tap click', actions.ontapCanvas);
+    const flags = {
+        mouseOnField: false,
+        addBodyEvent: false,
+    };
+
+    rect.on('touchleave mouseleave', () => {
+        flags.mouseOnField = false;
+
+        if (!flags.addBodyEvent) {
+            flags.addBodyEvent = true;
+            document.body.addEventListener('mouseup', () => {
+                flags.addBodyEvent = false;
+                if (!flags.mouseOnField) {
+                    actions.ontouchEnd();
+                }
+            }, { once: true });
+        }
+    });
+    rect.on('touchenter mouseenter', () => {
+        flags.mouseOnField = true;
+    });
 
     return {
         update: (layout) => {
             rect.setSize(layout.canvas.size);
         },
         onDestroy: () => {
+            rect.off('touchleave mouseleave');
+            rect.off('touchenter touchenter');
             rect.remove();
         },
     };
