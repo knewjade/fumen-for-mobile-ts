@@ -59,7 +59,7 @@ export const render: ComponentGenerator = (layout, state, actions) => {
 const blocksComponents: ComponentGenerator = () => {
     const blocks: any[] = [];
     for (let index = 0; index < 230; index += 1) {
-        blocks[index] = blockComponent(`block-${index % 10}-${22 - Math.floor(index / 10)}`, 0, '#333');
+        blocks[index] = blockComponent(`block-${index % 10}-${Math.floor(index / 10)}`, 0, '#333');
     }
 
     return {
@@ -159,8 +159,10 @@ const blockComponent = (datatest: string, strokeWidth: number, strokeColor: stri
             rect.remove();
         },
         toNode: () => {
+            console.log(fillColor);
             return param({
                 datatest,
+                key: datatest,
                 color: fillColor,
             });
         },
@@ -301,6 +303,7 @@ const boxComponent = (datatest: string) => {
 
             return param({
                 datatest,
+                key: datatest,
                 type: piece_,
             });
         },

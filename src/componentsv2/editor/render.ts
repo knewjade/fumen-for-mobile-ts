@@ -55,7 +55,7 @@ const blocksComponents: ComponentGenerator = (layout, state, actions) => {
     const blocks: any[] = [];
     for (let index = 0; index < 230; index += 1) {
         blocks[index] = blockComponent(
-            `block-${index % 10}-${22 - Math.floor(index / 10)}`,
+            `block-${index % 10}-${Math.floor(index / 10)}`,
             0,
             '#333',
             () => {
@@ -196,6 +196,7 @@ const blockComponent = (
         toNode: () => {
             return param({
                 datatest,
+                key: datatest,
                 color: fillColor,
             });
         },

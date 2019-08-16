@@ -10,7 +10,6 @@ import { pageSlider } from '../components/pageSlider';
 import { managers } from '../repository/managers';
 import { render } from '../componentsv2/reader/render';
 import { getLayout, ReaderLayout } from '../componentsv2/reader/layout';
-import { PageEnv } from '../env';
 
 const Tools = (state: State, actions: Actions, height: number) => {
     return ReaderTools({
