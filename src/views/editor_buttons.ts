@@ -1,8 +1,8 @@
 import { px, style } from '../lib/types';
 import { a, div, i, img, span } from '@hyperapp/html';
-import { EditorLayout } from './editor/editor';
 import { VNode } from 'hyperapp';
 import { parsePieceName, parseRotationName, Piece, Rotation } from '../lib/enums';
+import { EditorLayout } from '../componentsv2/editor/layout';
 
 export const colorButton = ({ layout, piece, highlight, colorize, onclick }: {
     layout: EditorLayout,
@@ -155,34 +155,9 @@ export const switchIconContents = (
     return [icon, ' ', span({ style: style({ fontSize: px(11) }) }, description)];
 };
 
-export const radioIconContents = (
-    { description, iconSize, enable }: {
-        description: string;
-        iconSize: number;
-        enable: boolean;
-    },
-) => {
-    const properties = style({
-        display: 'block',
-        border: 'solid 0px #000',
-        marginRight: px(2),
-        cursor: 'pointer',
-    });
-
-    const className = 'material-icons left';
-
-    const icon = i({
-        className,
-        style: properties,
-    }, enable ? 'radio_button_checked' : 'radio_button_unchecked');
-
-    return [icon, ' ', span({ style: style({ fontSize: px(11) }) }, description)];
-};
-
 export const keyButton = (
-    { width, height, toolButtonMargin, keyPage, currentIndex, actions }: {
+    { width, toolButtonMargin, keyPage, currentIndex, actions }: {
         width: number;
-        height: number;
         toolButtonMargin: number;
         keyPage: boolean;
         currentIndex: number;

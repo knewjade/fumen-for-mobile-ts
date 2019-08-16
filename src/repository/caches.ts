@@ -13,8 +13,8 @@ export class Caches {
             const pool = this.pools[this.prevHash];
             for (const key of Object.keys(pool)) {
                 const obj = pool[key];
-                if (typeof (obj.ondestroy) === 'function') {
-                    obj.ondestroy();
+                if (typeof (obj.onDestroy) === 'function') {
+                    obj.onDestroy();
                 }
             }
             delete this.pools[this.prevHash];

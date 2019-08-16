@@ -1,8 +1,9 @@
 import { NextState, sequence } from './commons';
 import { action, actions, main } from '../actions';
 import { CommentType, ModeTypes, Piece, Screens, TouchTypes } from '../lib/enums';
-import { resources, State } from '../states';
+import { State } from '../states';
 import { animationActions } from './animation';
+import { managers } from '../repository/managers';
 
 export interface ScreenActions {
     changeToReaderScreen: () => action;
@@ -23,7 +24,7 @@ export interface ScreenActions {
 
 export const modeActions: Readonly<ScreenActions> = {
     changeToReaderScreen: () => (state): NextState => {
-        resources.konva.stage.reload((done) => {
+        managers.konva.reload((done) => {
             main.changeScreen({ screen: Screens.Reader });
             done();
         });
@@ -33,7 +34,7 @@ export const modeActions: Readonly<ScreenActions> = {
         ]);
     },
     changeToDrawerScreen: () => (state): NextState => {
-        resources.konva.stage.reload((done) => {
+        managers.konva.reload((done) => {
             main.changeScreen({ screen: Screens.Editor });
             done();
         });
