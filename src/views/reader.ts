@@ -8,8 +8,8 @@ import { Palette } from '../lib/colors';
 import { ReaderTools } from '../components/tools/reader_tools';
 import { pageSlider } from '../components/pageSlider';
 import { managers } from '../repository/managers';
-import { render } from '../componentsv2/reader/render';
-import { getLayout, ReaderLayout } from '../componentsv2/reader/layout';
+import { render } from '../components/reader/render';
+import { getLayout, ReaderLayout } from '../components/reader/layout';
 
 const Tools = (state: State, actions: Actions, height: number) => {
     return ReaderTools({

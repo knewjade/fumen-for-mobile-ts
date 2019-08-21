@@ -2,7 +2,7 @@ import { px, style } from '../lib/types';
 import { a, div, i, img, span } from '@hyperapp/html';
 import { VNode } from 'hyperapp';
 import { parsePieceName, parseRotationName, Piece, Rotation } from '../lib/enums';
-import { EditorLayout } from '../componentsv2/editor/layout';
+import { EditorLayout } from '../components/editor/layout';
 
 export const colorButton = ({ layout, piece, highlight, colorize, onclick }: {
     layout: EditorLayout,

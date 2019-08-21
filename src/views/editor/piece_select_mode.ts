@@ -2,7 +2,7 @@ import { Piece } from '../../lib/enums';
 import { div } from '@hyperapp/html';
 import { colorButton, iconContents, toolButton, toolSpace } from '../editor_buttons';
 import { toolStyle } from './editor';
-import { EditorLayout } from '../../componentsv2/editor/layout';
+import { EditorLayout } from '../../components/editor/layout';
 
 export const pieceSelectMode = ({ layout, colorize, actions }: {
     layout: EditorLayout;

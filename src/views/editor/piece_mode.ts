@@ -13,7 +13,7 @@ import {
 import { toolStyle } from './editor';
 import { Move, Page } from '../../lib/fumen/types';
 import { PageFieldOperation, Pages } from '../../lib/pages';
-import { EditorLayout } from '../../componentsv2/editor/layout';
+import { EditorLayout } from '../../components/editor/layout';
 
 export const pieceMode = ({ layout, currentIndex, touchType, move, pages, existInferences, flags, actions }: {
     layout: EditorLayout;
