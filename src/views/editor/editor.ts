@@ -17,8 +17,8 @@ import { slideMode } from './slide_mode';
 import { fillMode } from './fill_mode';
 import { pieceSelectMode } from './piece_select_mode';
 import { managers } from '../../repository/managers';
-import { render } from '../../componentsv2/editor/render';
-import { EditorLayout, getLayout } from '../../componentsv2/editor/layout';
+import { render } from '../../components/editor/render';
+import { EditorLayout, getLayout } from '../../components/editor/layout';
 
 export const toolStyle = (layout: EditorLayout) => {
     const margin = (layout.canvas.size.height - layout.field.size.height) / 2;

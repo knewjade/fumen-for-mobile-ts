@@ -1,10 +1,10 @@
 import { VNode } from '@hyperapp/hyperapp';
 import { State } from '../../states';
-import { OpenFumenModal } from '../../componentsv2/modals/open';
+import { OpenFumenModal } from '../../components/modals/open';
 import { Actions, main } from '../../actions';
-import { MenuModal } from '../../componentsv2/modals/menu';
-import { AppendFumenModal } from '../../componentsv2/modals/append';
-import { ClipboardModal } from '../../componentsv2/modals/clipboard';
+import { MenuModal } from '../../components/modals/menu';
+import { AppendFumenModal } from '../../components/modals/append';
+import { ClipboardModal } from '../../components/modals/clipboard';
 import { managers } from '../managers';
 
 export enum Scenes {

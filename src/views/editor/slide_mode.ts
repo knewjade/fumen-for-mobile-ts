@@ -1,7 +1,7 @@
 import { div } from '@hyperapp/html';
 import { dualButton, iconContents, toolButton, toolSpace } from '../editor_buttons';
 import { toolStyle } from './editor';
-import { EditorLayout } from '../../componentsv2/editor/layout';
+import { EditorLayout } from '../../components/editor/layout';
 
 export const slideMode = ({ layout, actions }: {
     layout: EditorLayout;

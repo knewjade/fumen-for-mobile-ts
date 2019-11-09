@@ -2,7 +2,7 @@ import { TouchTypes } from '../../lib/enums';
 import { div } from '@hyperapp/html';
 import { iconContents, keyButton, toolButton, toolSpace } from '../editor_buttons';
 import { toolStyle } from './editor';
-import { EditorLayout } from '../../componentsv2/editor/layout';
+import { EditorLayout } from '../../components/editor/layout';
 
 export const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: {
     layout: EditorLayout;
