@@ -6,6 +6,8 @@ describe('Color', () => {
             fumen: 'v115@9gQ4g0wwAtQpglB8AewhQ4g0wwAtQpglB8AewhQ4g0?wwAtQpglB8AewhQ4g0wwAtQpglB8AewhJeJDnvhAJjB',
         });
 
+        cy.wait(2000);
+
         // Lockなし
         {
             // 1段目
@@ -18,7 +20,11 @@ describe('Color', () => {
             cy.get(block(9, 1)).should('have.attr', 'color', Color.I.Normal);
         }
 
+        cy.wait(2000);
+
         rightTap();
+
+        cy.wait(2000);
 
         // Lockあり
         {
@@ -38,6 +44,8 @@ describe('Color', () => {
             fumen: 'v115@9gQ4g0wwAtQpglB8AewhQ4g0wwAtQpglB8AewhQ4g0?wwAtQpglB8AewhQ4g0wwAtQpglB8AewhJeJjfvhAJjB',
         });
 
+        cy.wait(2000);
+
         // Lockなし
         {
             // 1段目
@@ -50,7 +58,11 @@ describe('Color', () => {
             cy.get(block(9, 1)).should('have.attr', 'color', ClassicColor.I.Normal);
         }
 
+        cy.wait(2000);
+
         rightTap();
+
+        cy.wait(2000);
 
         // Lockあり
         {
