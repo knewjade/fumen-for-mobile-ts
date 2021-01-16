@@ -2,7 +2,7 @@ import {expectFumen, visit} from '../support/common';
 import {operations} from "../support/operations";
 
 describe('Slide', () => {
-    it.skip('Up/Down', () => {
+    it('Up/Down', () => {
         visit({
             fumen: 'v115@bhE8AeI8AeD8AgH',
             mode: 'writable',
@@ -15,6 +15,6 @@ describe('Slide', () => {
 
         operations.mode.slide.down();
 
-        expectFumen('')
+        expectFumen('v115@bhE8AeI8AeD8AgH')
     });
 });
