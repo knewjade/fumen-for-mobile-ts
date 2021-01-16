@@ -168,7 +168,7 @@ const getPieces = (piece) => {
     }
 };
 
-export const visit = ({ fumen, sleepInMill = 600, lng = 'en', mode = 'readonly', reload = false }) => {
+export const visit = ({ fumen, sleepInMill = 500, lng = 'en', mode = 'readonly', reload = false }) => {
     let baseUrl = '#';
 
     if (mode !== 'readonly') {
@@ -213,6 +213,8 @@ export const rightTap = (first, second) => {
         if (0 < i) cy.wait(40);
         cy.get('body').click(300, 300);
     }
+
+    cy.wait(40);
 
     if (callback) callback();
 };
