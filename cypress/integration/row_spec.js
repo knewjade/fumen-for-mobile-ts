@@ -16,4 +16,26 @@ describe('Fill row', () => {
 
         expectFumen('v115@MgI8AeI8AeR8AeI8AeG8AeI8AeI8AeI8AeB8JeAgH')
     });
+
+    it.skip('Row -> Slide -> Row', () => {
+        visit({
+            fumen: 'v115@vhAAgH',
+            mode: 'writable',
+        });
+
+        operations.mode.fillRow.open();
+        operations.mode.block.dragToUp(1, {from: 0, to: 4});
+
+        operations.mode.tools.duplicatePage({ home: true });
+
+        operations.mode.slide.open({ home: true });
+        for (let i = 0; i < 5; i++) {
+            operations.mode.slide.up();
+        }
+
+        operations.mode.fillRow.open({ home: true });
+        operations.mode.block.dragToUp(7, {from: 0, to: 2});
+
+        expectFumen('v115@zgA8AeI8AeI8AeI8AeI8AeH8JeAgHBgA8AeI8AeI8A?eI8AeI8AeH8AAAeIAAeHAAeA8EeAACeA8EeAACeA8EeAALe?AgH')
+    });
 });

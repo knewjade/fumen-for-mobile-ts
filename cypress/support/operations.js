@@ -193,7 +193,10 @@ export const operations = {
             open: () => {
                 cy.get(datatest('btn-drawing-tool')).click();
             },
-            duplicatePage: () => {
+            duplicatePage: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                }
                 cy.get(datatest('btn-duplicate-page')).click();
             },
             removePage: () => {
@@ -225,7 +228,10 @@ export const operations = {
             },
         },
         slide: {
-            open: () => {
+            open: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                }
                 cy.get(datatest('btn-slide-mode')).click();
             },
             right: () => {
@@ -242,7 +248,10 @@ export const operations = {
             },
         },
         fillRow: {
-            open: () => {
+            open: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                }
                 cy.get(datatest('btn-fill-row-mode')).click();
             },
             J: () => {

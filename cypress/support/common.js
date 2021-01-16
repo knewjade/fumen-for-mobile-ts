@@ -214,7 +214,7 @@ export const rightTap = (first, second) => {
         cy.get('body').click(300, 300);
     }
 
-    cy.wait(40);
+    cy.wait(80);
 
     if (callback) callback();
 };
@@ -233,6 +233,8 @@ export const leftTap = (first, second = undefined) => {
         if (0 < i) cy.wait(40);
         cy.get('body').click(100, 300);
     }
+
+    cy.wait(80);
 
     if (callback) callback();
 };
