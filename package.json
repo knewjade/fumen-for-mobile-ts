@@ -42,7 +42,7 @@
     "hyperapp": "1.2.10",
     "i18next": "17.0.9",
     "i18next-browser-languagedetector": "3.0.2",
-    "lodash": "4.17.15",
+    "lodash": "4.17.19",
     "stringstream": "1.0.0",
     "tslib": "1.10.0"
   }
