@@ -17,7 +17,7 @@ describe('Fill row', () => {
         expectFumen('v115@MgI8AeI8AeR8AeI8AeG8AeI8AeI8AeI8AeB8JeAgH')
     });
 
-    it.skip('Row -> Slide -> Row', () => {
+    it('Row -> Slide -> Row', () => {
         visit({
             fumen: 'v115@vhAAgH',
             mode: 'writable',

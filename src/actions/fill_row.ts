@@ -118,7 +118,7 @@ const ontouchMove = (state: State, index: number, isField: boolean): NextState =
         const key = `${type}-${i}`;
 
         // フィールドのみ
-        const atIndex = state.cache.currentInitField.getAtIndex(index, true);
+        const atIndex = state.cache.currentInitField.getAtIndex(i, true);
         if (touchX !== x && atIndex !== piece) {
             // 操作の結果、最初のフィールドの状態から変化するとき
             page.commands.pre[key] = { x, piece, type, y: touchY };
