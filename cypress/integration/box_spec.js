@@ -262,7 +262,7 @@ describe('Box', () => {
             [Piece.T, Piece.S, Piece.O, Piece.L].forEach((piece, index) => {
                 cy.get(nextBox(index)).should('have.attr', 'type', piece);
             });
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
@@ -275,8 +275,8 @@ describe('Box', () => {
             [Piece.S, Piece.O, Piece.L].forEach((piece, index) => {
                 cy.get(nextBox(index)).should('have.attr', 'type', piece);
             });
-            cy.get(nextBox(3)).should('not.have.attr', 'type');
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(3)).should('not.exist');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
@@ -289,9 +289,9 @@ describe('Box', () => {
             [Piece.O, Piece.L].forEach((piece, index) => {
                 cy.get(nextBox(index)).should('have.attr', 'type', piece);
             });
-            cy.get(nextBox(2)).should('not.have.attr', 'type');
-            cy.get(nextBox(3)).should('not.have.attr', 'type');
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(2)).should('not.exist');
+            cy.get(nextBox(3)).should('not.exist');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
@@ -304,10 +304,10 @@ describe('Box', () => {
             [Piece.L].forEach((piece, index) => {
                 cy.get(nextBox(index)).should('have.attr', 'type', piece);
             });
-            cy.get(nextBox(1)).should('not.have.attr', 'type');
-            cy.get(nextBox(2)).should('not.have.attr', 'type');
-            cy.get(nextBox(3)).should('not.have.attr', 'type');
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(1)).should('not.exist');
+            cy.get(nextBox(2)).should('not.exist');
+            cy.get(nextBox(3)).should('not.exist');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
@@ -317,11 +317,11 @@ describe('Box', () => {
 
             // Hold & Nextの確認
             cy.get(holdBox()).should('have.attr', 'type', Piece.S);
-            cy.get(nextBox(0)).should('not.have.attr', 'type');
-            cy.get(nextBox(1)).should('not.have.attr', 'type');
-            cy.get(nextBox(2)).should('not.have.attr', 'type');
-            cy.get(nextBox(3)).should('not.have.attr', 'type');
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(0)).should('not.exist');
+            cy.get(nextBox(1)).should('not.exist');
+            cy.get(nextBox(2)).should('not.exist');
+            cy.get(nextBox(3)).should('not.exist');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
@@ -331,11 +331,11 @@ describe('Box', () => {
 
             // Hold & Nextの確認
             cy.get(holdBox()).should('have.attr', 'type', Piece.S);
-            cy.get(nextBox(0)).should('not.have.attr', 'type');
-            cy.get(nextBox(1)).should('not.have.attr', 'type');
-            cy.get(nextBox(2)).should('not.have.attr', 'type');
-            cy.get(nextBox(3)).should('not.have.attr', 'type');
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(0)).should('not.exist');
+            cy.get(nextBox(1)).should('not.exist');
+            cy.get(nextBox(2)).should('not.exist');
+            cy.get(nextBox(3)).should('not.exist');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
@@ -345,11 +345,11 @@ describe('Box', () => {
 
             // Hold & Nextの確認
             cy.get(holdBox()).should('have.attr', 'type', Piece.Empty);
-            cy.get(nextBox(0)).should('not.have.attr', 'type');
-            cy.get(nextBox(1)).should('not.have.attr', 'type');
-            cy.get(nextBox(2)).should('not.have.attr', 'type');
-            cy.get(nextBox(3)).should('not.have.attr', 'type');
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(0)).should('not.exist');
+            cy.get(nextBox(1)).should('not.exist');
+            cy.get(nextBox(2)).should('not.exist');
+            cy.get(nextBox(3)).should('not.exist');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
@@ -358,12 +358,12 @@ describe('Box', () => {
             cy.get(datatest('text-comment')).should('have.value', '');
 
             // Hold & Nextの確認
-            cy.get(holdBox()).should('not.have.attr', 'type');
+            cy.get(holdBox()).should('not.exist');
             [Piece.Z, Piece.Z, Piece.T].forEach((piece, index) => {
                 cy.get(nextBox(index)).should('have.attr', 'type', piece);
             });
-            cy.get(nextBox(3)).should('not.have.attr', 'type');
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(3)).should('not.exist');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
@@ -372,13 +372,13 @@ describe('Box', () => {
             cy.get(datatest('text-comment')).should('have.value', '');
 
             // Hold & Nextの確認
-            cy.get(holdBox()).should('not.have.attr', 'type');
+            cy.get(holdBox()).should('not.exist');
             [Piece.Z, Piece.T].forEach((piece, index) => {
                 cy.get(nextBox(index)).should('have.attr', 'type', piece);
             });
-            cy.get(nextBox(2)).should('not.have.attr', 'type');
-            cy.get(nextBox(3)).should('not.have.attr', 'type');
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(2)).should('not.exist');
+            cy.get(nextBox(3)).should('not.exist');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
@@ -467,7 +467,7 @@ describe('Box', () => {
             [Piece.T, Piece.S, Piece.O, Piece.L].forEach((piece, index) => {
                 cy.get(nextBox(index)).should('have.attr', 'type', piece);
             });
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
@@ -480,8 +480,8 @@ describe('Box', () => {
             [Piece.S, Piece.O, Piece.L].forEach((piece, index) => {
                 cy.get(nextBox(index)).should('have.attr', 'type', piece);
             });
-            cy.get(nextBox(3)).should('not.have.attr', 'type');
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(3)).should('not.exist');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
@@ -494,9 +494,9 @@ describe('Box', () => {
             [Piece.O, Piece.L].forEach((piece, index) => {
                 cy.get(nextBox(index)).should('have.attr', 'type', piece);
             });
-            cy.get(nextBox(2)).should('not.have.attr', 'type');
-            cy.get(nextBox(3)).should('not.have.attr', 'type');
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(2)).should('not.exist');
+            cy.get(nextBox(3)).should('not.exist');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
@@ -509,10 +509,10 @@ describe('Box', () => {
             [Piece.L].forEach((piece, index) => {
                 cy.get(nextBox(index)).should('have.attr', 'type', piece);
             });
-            cy.get(nextBox(1)).should('not.have.attr', 'type');
-            cy.get(nextBox(2)).should('not.have.attr', 'type');
-            cy.get(nextBox(3)).should('not.have.attr', 'type');
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(1)).should('not.exist');
+            cy.get(nextBox(2)).should('not.exist');
+            cy.get(nextBox(3)).should('not.exist');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
@@ -522,11 +522,11 @@ describe('Box', () => {
 
             // Hold & Nextの確認
             cy.get(holdBox()).should('have.attr', 'type', Piece.S);
-            cy.get(nextBox(0)).should('not.have.attr', 'type');
-            cy.get(nextBox(1)).should('not.have.attr', 'type');
-            cy.get(nextBox(2)).should('not.have.attr', 'type');
-            cy.get(nextBox(3)).should('not.have.attr', 'type');
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(0)).should('not.exist');
+            cy.get(nextBox(1)).should('not.exist');
+            cy.get(nextBox(2)).should('not.exist');
+            cy.get(nextBox(3)).should('not.exist');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
@@ -536,11 +536,11 @@ describe('Box', () => {
 
             // Hold & Nextの確認
             cy.get(holdBox()).should('have.attr', 'type', Piece.S);
-            cy.get(nextBox(0)).should('not.have.attr', 'type');
-            cy.get(nextBox(1)).should('not.have.attr', 'type');
-            cy.get(nextBox(2)).should('not.have.attr', 'type');
-            cy.get(nextBox(3)).should('not.have.attr', 'type');
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(0)).should('not.exist');
+            cy.get(nextBox(1)).should('not.exist');
+            cy.get(nextBox(2)).should('not.exist');
+            cy.get(nextBox(3)).should('not.exist');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
@@ -550,11 +550,11 @@ describe('Box', () => {
 
             // Hold & Nextの確認
             cy.get(holdBox()).should('have.attr', 'type', Piece.Empty);
-            cy.get(nextBox(0)).should('not.have.attr', 'type');
-            cy.get(nextBox(1)).should('not.have.attr', 'type');
-            cy.get(nextBox(2)).should('not.have.attr', 'type');
-            cy.get(nextBox(3)).should('not.have.attr', 'type');
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(0)).should('not.exist');
+            cy.get(nextBox(1)).should('not.exist');
+            cy.get(nextBox(2)).should('not.exist');
+            cy.get(nextBox(3)).should('not.exist');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
@@ -563,12 +563,12 @@ describe('Box', () => {
             cy.get(datatest('text-comment')).should('have.value', '');
 
             // Hold & Nextの確認
-            cy.get(holdBox()).should('not.have.attr', 'type');
+            cy.get(holdBox()).should('not.exist');
             [Piece.Z, Piece.Z, Piece.T].forEach((piece, index) => {
                 cy.get(nextBox(index)).should('have.attr', 'type', piece);
             });
-            cy.get(nextBox(3)).should('not.have.attr', 'type');
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(3)).should('not.exist');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
@@ -577,13 +577,13 @@ describe('Box', () => {
             cy.get(datatest('text-comment')).should('have.value', '');
 
             // Hold & Nextの確認
-            cy.get(holdBox()).should('not.have.attr', 'type');
+            cy.get(holdBox()).should('not.exist');
             [Piece.Z, Piece.T].forEach((piece, index) => {
                 cy.get(nextBox(index)).should('have.attr', 'type', piece);
             });
-            cy.get(nextBox(2)).should('not.have.attr', 'type');
-            cy.get(nextBox(3)).should('not.have.attr', 'type');
-            cy.get(nextBox(4)).should('not.have.attr', 'type');
+            cy.get(nextBox(2)).should('not.exist');
+            cy.get(nextBox(3)).should('not.exist');
+            cy.get(nextBox(4)).should('not.exist');
             cy.get(nextBox(5)).should('not.exist');
         });
 
