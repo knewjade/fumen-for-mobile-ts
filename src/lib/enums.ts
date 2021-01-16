@@ -92,7 +92,6 @@ export function parsePieceName(piece: Piece) {
     case Piece.Empty:
         return 'Empty';
     }
-    throw new FumenError('Unexpected piece');
 }
 
 export function parsePiece(piece: string) {
@@ -139,7 +138,6 @@ export function nextRotationToLeft(rotation: Rotation): Rotation {
     case Rotation.Right:
         return Rotation.Spawn;
     }
-    throw new FumenError('Unsupported rotation');
 }
 
 export function nextRotationToRight(rotation: Rotation): Rotation {
@@ -153,7 +151,6 @@ export function nextRotationToRight(rotation: Rotation): Rotation {
     case Rotation.Left:
         return Rotation.Spawn;
     }
-    throw new FumenError('Unsupported rotation');
 }
 
 export function parseRotationName(rotation: Rotation) {
@@ -167,7 +164,6 @@ export function parseRotationName(rotation: Rotation) {
     case Rotation.Reverse:
         return 'Reverse';
     }
-    throw new FumenError('Unexpected rotation');
 }
 
 export function isInPlayField(x: number, y: number) {

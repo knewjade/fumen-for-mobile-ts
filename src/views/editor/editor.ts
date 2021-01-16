@@ -10,7 +10,6 @@ import { KonvaCanvas } from '../../components/konva_canvas';
 import { DrawingEventCanvas } from '../../components/event/drawing_event_canvas';
 import { div } from '@hyperapp/html';
 import { px, style } from '../../lib/types';
-import { ViewError } from '../../lib/errors';
 import { comment } from '../../components/comment';
 import { pageSlider } from '../../components/pageSlider';
 import { toolMode } from './tool_mode';
@@ -220,8 +219,6 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                 });
             }
             }
-
-            throw new ViewError('Illegal mode');
         };
 
         return [   // canvas:Field とのマッピング用仮想DOM
@@ -357,13 +354,6 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
         });
     }
     }
-
-    return div({
-        style: style({
-            width: px(layout.comment.size.width),
-            height: px(layout.comment.size.height),
-        }),
-    });
 };
 
 export const view: View<State, Actions> = (state, actions) => {

@@ -157,7 +157,6 @@ export class Quiz {
         case Operation.Stock:
             return this.stock();
         }
-        throw new FumenError('Unexpected operation');
     }
 
     format(): Quiz {

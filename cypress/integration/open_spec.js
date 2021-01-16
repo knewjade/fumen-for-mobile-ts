@@ -29,7 +29,7 @@ describe('Open fumen', () => {
         operations.mode.reader.openPage();
 
         // 入力に成功するパターン
-        cy.get(datatest('mdl-open-fumen')).should('visible')
+        cy.get(datatest('mdl-open-fumen')).should('be.visible')
             .within(() => {
                 // テト譜を開く
                 cy.get(datatest('input-fumen')).clear().type(data);
@@ -50,7 +50,7 @@ describe('Open fumen', () => {
 
     const openError = (data) => {
         // 入力に失敗するパターン
-        cy.get(datatest('mdl-open-fumen')).should('visible')
+        cy.get(datatest('mdl-open-fumen')).should('be.visible')
             .within(() => {
                 // テト譜を開く
                 cy.get(datatest('input-fumen')).clear().type(data);
@@ -131,7 +131,7 @@ describe('Open fumen', () => {
         operations.mode.reader.openPage();
 
         // 入力に失敗するパターン
-        cy.get(datatest('mdl-open-fumen')).should('visible')
+        cy.get(datatest('mdl-open-fumen')).should('be.visible')
             .within(() => {
                 cy.get(datatest('btn-open')).should('have.class', 'disabled');
 
@@ -148,7 +148,7 @@ describe('Open fumen', () => {
             });
 
         // 入力に成功するパターン
-        cy.get(datatest('mdl-open-fumen')).should('visible')
+        cy.get(datatest('mdl-open-fumen')).should('be.visible')
             .within(() => {
                 // テト譜を開く
                 cy.get(datatest('input-fumen')).clear().type('v115@9gi0EeR4Rpg0DeR4wwRpglCeBtxwilDeBtwwJeAgHv?hERmBuqBMrBXsBAAA');
@@ -171,7 +171,7 @@ describe('Open fumen', () => {
         operations.mode.reader.openPage();
 
         // 入力に失敗するパターン
-        cy.get(datatest('mdl-open-fumen')).should('visible')
+        cy.get(datatest('mdl-open-fumen')).should('be.visible')
             .within(() => {
                 // テト譜を開く
                 cy.get(datatest('input-fumen')).clear().type('hello world');
@@ -184,7 +184,7 @@ describe('Open fumen', () => {
             });
 
         // キャンセル
-        cy.get(datatest('mdl-open-fumen')).should('visible')
+        cy.get(datatest('mdl-open-fumen')).should('be.visible')
             .within(() => {
                 cy.get(datatest('btn-cancel')).click();
             });
@@ -199,7 +199,7 @@ describe('Open fumen', () => {
         operations.mode.reader.openPage();
 
         // 全てが消えている
-        cy.get(datatest('mdl-open-fumen')).should('visible')
+        cy.get(datatest('mdl-open-fumen')).should('be.visible')
             .within(() => {
                 cy.get(datatest('btn-open')).should('have.class', 'disabled');
                 cy.get(datatest('input-fumen')).should('have.text', '');
@@ -230,7 +230,7 @@ describe('Open fumen', () => {
         operations.mode.reader.openPage();
 
         // 入力に成功するパターン
-        cy.get(datatest('mdl-open-fumen')).should('visible')
+        cy.get(datatest('mdl-open-fumen')).should('be.visible')
             .within(() => {
                 // テト譜を開く
                 cy.get(datatest('input-fumen')).clear().type('v110@7eAA4G');

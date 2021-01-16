@@ -10,7 +10,7 @@ describe('Append fumen', () => {
         operations.menu.append();
 
         // 入力に失敗するパターン
-        cy.get(datatest('mdl-append-fumen')).should('visible')
+        cy.get(datatest('mdl-append-fumen')).should('be.visible')
             .within(() => {
                 cy.get(datatest('btn-append-to-next')).should('have.class', 'disabled');
 
@@ -27,7 +27,7 @@ describe('Append fumen', () => {
             });
 
         // 入力に成功するパターン
-        cy.get(datatest('mdl-append-fumen')).should('visible')
+        cy.get(datatest('mdl-append-fumen')).should('be.visible')
             .within(() => {
                 // テト譜を開く
                 cy.get(datatest('input-fumen')).clear().type('v115@9gi0EeR4Rpg0DeR4wwRpglCeBtxwilDeBtwwJeAgHv?hERmBuqBMrBXsBAAA');
@@ -50,7 +50,7 @@ describe('Append fumen', () => {
         operations.menu.append();
 
         // 入力に失敗するパターン
-        cy.get(datatest('mdl-append-fumen')).should('visible')
+        cy.get(datatest('mdl-append-fumen')).should('be.visible')
             .within(() => {
                 cy.get(datatest('btn-append-to-end')).should('have.class', 'disabled');
 
@@ -66,7 +66,7 @@ describe('Append fumen', () => {
             });
 
         // 入力に成功するパターン
-        cy.get(datatest('mdl-append-fumen')).should('visible')
+        cy.get(datatest('mdl-append-fumen')).should('be.visible')
             .within(() => {
                 // テト譜を開く
                 cy.get(datatest('input-fumen')).clear().type('v115@9gi0EeR4Rpg0DeR4wwRpglCeBtxwilDeBtwwJeAgHv?hERmBuqBMrBXsBAAA');
@@ -89,7 +89,7 @@ describe('Append fumen', () => {
         operations.menu.append();
 
         // 入力に失敗するパターン
-        cy.get(datatest('mdl-append-fumen')).should('visible')
+        cy.get(datatest('mdl-append-fumen')).should('be.visible')
             .within(() => {
                 // テト譜を開く
                 cy.get(datatest('input-fumen')).clear().type('hello world');
@@ -102,7 +102,7 @@ describe('Append fumen', () => {
             });
 
         // キャンセル
-        cy.get(datatest('mdl-append-fumen')).should('visible')
+        cy.get(datatest('mdl-append-fumen')).should('be.visible')
             .within(() => {
                 cy.get(datatest('btn-cancel')).click();
             });
@@ -117,7 +117,7 @@ describe('Append fumen', () => {
         operations.menu.append();
 
         // 全てが消えている
-        cy.get(datatest('mdl-append-fumen')).should('visible')
+        cy.get(datatest('mdl-append-fumen')).should('be.visible')
             .within(() => {
                 cy.get(datatest('btn-append-to-next')).should('have.class', 'disabled');
                 cy.get(datatest('btn-append-to-end')).should('have.class', 'disabled');

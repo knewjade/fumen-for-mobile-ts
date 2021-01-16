@@ -49,7 +49,7 @@ export interface State {
         clipboard: boolean;
     };
     handlers: {
-        animation?: number;
+        animation?: NodeJS.Timeout;
     };
     events: {
         piece?: Piece;

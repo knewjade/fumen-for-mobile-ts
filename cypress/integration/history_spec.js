@@ -473,7 +473,7 @@ describe('History', () => {
                 callback: () => {
                     operations.menu.append();
 
-                    cy.get(datatest('mdl-append-fumen')).should('visible')
+                    cy.get(datatest('mdl-append-fumen')).should('be.visible')
                         .within(() => {
                             cy.get(datatest('input-fumen')).clear().type('v115@vhExOYZAFLDmClcJSAVjiSAVG88A4N88A5N1LCpAAA?AxpBTrBxxBxxB');
                             cy.get(datatest('btn-append-to-end')).click();
@@ -492,7 +492,7 @@ describe('History', () => {
 
                     operations.menu.append();
 
-                    cy.get(datatest('mdl-append-fumen')).should('visible')
+                    cy.get(datatest('mdl-append-fumen')).should('be.visible')
                         .within(() => {
                             cy.get(datatest('input-fumen')).clear().type('v115@bhI8KeAgWFAooMDEPBAAARhI8UeAAAHhI8eeAAA');
                             cy.get(datatest('btn-append-to-next')).click();
@@ -513,7 +513,7 @@ describe('History', () => {
 
                     operations.menu.append();
 
-                    cy.get(datatest('mdl-append-fumen')).should('visible')
+                    cy.get(datatest('mdl-append-fumen')).should('be.visible')
                         .within(() => {
                             cy.get(datatest('input-fumen')).clear().type('v115@zgwhIewhIewhIewhIewhSeAgH0gwhIewhIewhIewhI?ewhReAAA1gwhIewhIewhIewhIewhQeAAA');
                             cy.get(datatest('btn-append-to-next')).click();

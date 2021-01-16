@@ -180,6 +180,4 @@ function encodeRotation({ type, rotation }: { type: Piece, rotation: Rotation })
     case Rotation.Left:
         return 3;
     }
-
-    throw new FumenError('No reachable');
 }

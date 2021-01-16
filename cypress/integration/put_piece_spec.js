@@ -324,63 +324,63 @@ describe('Put pieces', () => {
 
         operations.mode.piece.open();
 
-        cy.get(datatest('img-rotation-empty')).should('visible');
+        cy.get(datatest('img-rotation-empty')).should('be.visible');
 
         // T
         minoPosition(Piece.T, Rotation.Right)(3, 3).forEach(position => {
             operations.mode.block.click(position[0], position[1]);
         });
 
-        cy.get(datatest('img-rotation-right')).should('visible');
+        cy.get(datatest('img-rotation-right')).should('be.visible');
 
         operations.mode.piece.rotateToLeft();
 
-        cy.get(datatest('img-rotation-spawn')).should('visible');
+        cy.get(datatest('img-rotation-spawn')).should('be.visible');
 
         operations.mode.piece.rotateToLeft();
 
-        cy.get(datatest('img-rotation-left')).should('visible');
+        cy.get(datatest('img-rotation-left')).should('be.visible');
 
         operations.mode.piece.rotateToLeft();
 
-        cy.get(datatest('img-rotation-reverse')).should('visible');
+        cy.get(datatest('img-rotation-reverse')).should('be.visible');
 
         operations.mode.piece.rotateToLeft();
 
-        cy.get(datatest('img-rotation-right')).should('visible');
+        cy.get(datatest('img-rotation-right')).should('be.visible');
 
         // 次のページ
         operations.mode.tools.nextPage();
 
-        cy.get(datatest('img-rotation-empty')).should('visible');
+        cy.get(datatest('img-rotation-empty')).should('be.visible');
 
         // O
         minoPosition(Piece.O, Rotation.Spawn)(6, 18).forEach(position => {
             operations.mode.block.click(position[0], position[1]);
         });
 
-        cy.get(datatest('img-rotation-spawn')).should('visible');
+        cy.get(datatest('img-rotation-spawn')).should('be.visible');
 
         operations.mode.piece.rotateToRight();
 
-        cy.get(datatest('img-rotation-right')).should('visible');
+        cy.get(datatest('img-rotation-right')).should('be.visible');
 
         operations.mode.piece.rotateToRight();
 
-        cy.get(datatest('img-rotation-reverse')).should('visible');
+        cy.get(datatest('img-rotation-reverse')).should('be.visible');
 
         operations.mode.piece.rotateToRight();
 
-        cy.get(datatest('img-rotation-left')).should('visible');
+        cy.get(datatest('img-rotation-left')).should('be.visible');
 
         operations.mode.piece.rotateToRight();
 
-        cy.get(datatest('img-rotation-spawn')).should('visible');
+        cy.get(datatest('img-rotation-spawn')).should('be.visible');
 
         // 前のページ
         operations.mode.tools.backPage();
 
-        cy.get(datatest('img-rotation-right')).should('visible');
+        cy.get(datatest('img-rotation-right')).should('be.visible');
     });
 
     it('Spawn guideline piece', () => {

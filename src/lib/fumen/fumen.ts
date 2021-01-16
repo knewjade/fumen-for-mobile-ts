@@ -74,7 +74,6 @@ export async function decode(fumen: string, callback: Callback = () => {
     case '110':
         return innerDecode(data, 21, callback);
     }
-    throw new FumenError('Not support decode');
 }
 
 export async function innerDecode(
