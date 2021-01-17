@@ -104,6 +104,11 @@ export class Field {
     isOnGround(piece: Piece, rotation: Rotation, x: number, y: number) {
         return !this.canPut(piece, rotation, x, y - 1);
     }
+
+    convertToGray() {
+        this.playField.convertToGray();
+        this.sentLine.convertToGray();
+    }
 }
 
 export class PlayField {
@@ -263,5 +268,9 @@ export class PlayField {
         }
 
         return true;
+    }
+
+    convertToGray() {
+        this.pieces = this.pieces.map(piece => piece !== Piece.Empty ? Piece.Gray : Piece.Empty);
     }
 }

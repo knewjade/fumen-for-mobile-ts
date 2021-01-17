@@ -10,11 +10,29 @@ export const utilsMode = ({ layout, touchType, actions }: {
         changeToShiftMode: () => void;
         changeToFillRowMode: () => void;
         changeToFillMode: () => void;
+        convertToGray: () => void;
     };
 }) => {
     const toolButtonMargin = 5;
 
     return div({ style: toolStyle(layout) }, [
+        toolButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'white',
+            textColor: '#333',
+            borderColor: '#333',
+            datatest: 'btn-convert-to-gray',
+            key: 'btn-convert-to-gray',
+            onclick: () => {
+                actions.convertToGray();
+            },
+        }, iconContents({
+            description: 'to gray',
+            iconSize: 22,
+            iconName: 'color_lens',
+        })),
         toolButton({
             borderWidth: 3,
             width: layout.buttons.size.width,

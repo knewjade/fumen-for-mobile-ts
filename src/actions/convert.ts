@@ -5,14 +5,15 @@ import { PageFieldOperation, Pages, parseToCommands } from '../lib/pages';
 import { FieldConstants } from '../lib/enums';
 import { getBlockPositions } from '../lib/piece';
 
-export interface ShiftActions {
+export interface ConvertActions {
     shiftToLeft: () => action;
     shiftToRight: () => action;
     shiftToUp: () => action;
     shiftToBottom: () => action;
+    convertToGray: () => action;
 }
 
-export const shiftActions: Readonly<ShiftActions> = {
+export const shiftActions: Readonly<ConvertActions> = {
     shiftToLeft: () => (state): NextState => {
         const currentIndex = state.fumen.currentIndex;
         const pages = state.fumen.pages;
@@ -145,6 +146,35 @@ export const shiftActions: Readonly<ShiftActions> = {
                 piece.coordinate.y -= 1;
             }
         }
+
+        return sequence(state, [
+            actions.registerHistoryTask({ task: toSinglePageTask(currentIndex, primitivePage, page) }),
+            () => ({
+                fumen: {
+                    ...state.fumen,
+                    pages,
+                },
+            }),
+            actions.reopenCurrentPage(),
+        ]);
+    },
+    convertToGray: () => (state): NextState => {
+        const currentIndex = state.fumen.currentIndex;
+        const pages = state.fumen.pages;
+        const pagesObj = new Pages(pages);
+
+        const page = pages[currentIndex];
+        const primitivePage = toPrimitivePage(page);
+
+        const prevField = pagesObj.getField(currentIndex, PageFieldOperation.None);
+        const goalField = pagesObj.getField(currentIndex, PageFieldOperation.Command);
+        goalField.convertToGray();
+
+        if (prevField.equals(goalField)) {
+            return undefined;
+        }
+
+        page.commands = parseToCommands(prevField, goalField);
 
         return sequence(state, [
             actions.registerHistoryTask({ task: toSinglePageTask(currentIndex, primitivePage, page) }),

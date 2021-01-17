@@ -735,19 +735,19 @@ export const parseToCommands = (current: Field, goal: Field): Page['commands'] =
     };
 
     // 地形の差をコマンドに変換
-    for (let y = -1; y < 24; y += 1) {
+    for (let y = -1; y < 23; y += 1) {
         for (let x = 0; x < 10; x += 1) {
             const currentPiece = current.get(x, y);
             const goalPiece = goal.get(x, y);
 
             const isField = 0 <= y;
-            const i = isField ? x + y * 10 : -x;
+            const i = isField ? x + y * 10 : x;
             const type = isField ? 'block' : 'sentBlock';
             const key = `${type}-${i}`;
 
             if (currentPiece !== goalPiece) {
                 // 操作の結果、最初のフィールドの状態から変化するとき
-                commands.pre[key] = { x, y, type, piece: goalPiece };
+                commands.pre[key] = { x, type, y: isField ? y : y + 1, piece: goalPiece };
             }
         }
     }
