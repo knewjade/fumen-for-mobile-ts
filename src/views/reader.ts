@@ -12,7 +12,7 @@ import { decidePieceColor, Palette } from '../lib/colors';
 import { Field } from '../components/field';
 import { ReaderTools } from '../components/tools/reader_tools';
 import { HighlightType } from '../state_types';
-import { pageSlider } from '../components/pageSlider';
+import { page_slider } from '../components/page_slider';
 
 interface ReaderLayout {
     canvas: {
@@ -215,7 +215,7 @@ const Tools = (state: State, actions: Actions, height: number) => {
 export const getComment = (state: State, actions: Actions, layout: ReaderLayout) => {
     switch (state.mode.comment) {
     case CommentType.PageSlider: {
-        return pageSlider({
+        return page_slider({
             actions,
             datatest: 'range-page-slider',
             size: {

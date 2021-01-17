@@ -52,6 +52,7 @@ export enum ModeTypes {
     Piece = 'Piece',
     DrawingTool = 'DrawingTool',
     Flags = 'Flags',
+    Utils = 'Utils',
     Slide = 'Slide',
     Fill = 'Fill',
     SelectPiece = 'SelectPiece',
