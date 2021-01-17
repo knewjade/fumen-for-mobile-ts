@@ -10,6 +10,7 @@ export interface ScreenActions {
     changeToDrawingMode: () => action;
     changeToDrawingToolMode: () => action;
     changeToFlagsMode: () => action;
+    changeToUtilsMode: () => action;
     changeToShiftMode: () => action;
     changeToFillRowMode: () => action;
     changeToPieceMode: () => action;
@@ -56,6 +57,12 @@ export const modeActions: Readonly<ScreenActions> = {
         return sequence(state, [
             changeTouchType({ type: TouchTypes.Drawing }),
             changeModeType({ type: ModeTypes.Flags }),
+        ]);
+    },
+    changeToUtilsMode: () => (state): NextState => {
+        return sequence(state, [
+            changeTouchType({ type: TouchTypes.Drawing }),
+            changeModeType({ type: ModeTypes.Utils }),
         ]);
     },
     changeToShiftMode: () => (state): NextState => {

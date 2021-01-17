@@ -11,11 +11,12 @@ import { DrawingEventCanvas } from '../../components/event/drawing_event_canvas'
 import { div } from '@hyperapp/html';
 import { px, style } from '../../lib/types';
 import { comment } from '../../components/comment';
-import { pageSlider } from '../../components/pageSlider';
+import { page_slider } from '../../components/page_slider';
 import { toolMode } from './tool_mode';
 import { blockMode } from './block_mode';
 import { pieceMode } from './piece_mode';
 import { flagsMode } from './flags_mode';
+import { utilsMode } from './utils_mode';
 import { slideMode } from './slide_mode';
 import { fillMode } from './fill_mode';
 import { pieceSelectMode } from './piece_select_mode';
@@ -191,21 +192,23 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                     currentIndex: state.fumen.currentIndex,
                 });
             }
+            case ModeTypes.Utils: {
+                return utilsMode({
+                    layout,
+                    actions,
+                    touchType: state.mode.touch,
+                });
+            }
             case ModeTypes.Slide: {
                 return slideMode({
                     layout,
                     actions,
-                    keyPage,
-                    flags: page.flags,
-                    currentIndex: state.fumen.currentIndex,
                 });
             }
             case ModeTypes.Fill: {
                 return fillMode({
                     layout,
                     actions,
-                    keyPage,
-                    currentIndex: state.fumen.currentIndex,
                     colorize: guideLineColor,
                     modePiece: state.mode.piece,
                 });
@@ -342,7 +345,7 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
         });
     }
     case CommentType.PageSlider: {
-        return pageSlider({
+        return page_slider({
             actions,
             datatest: 'range-page-slider',
             size: {
