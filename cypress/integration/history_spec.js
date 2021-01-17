@@ -661,7 +661,7 @@ describe('History', () => {
         play('v115@RhB8HeB8Re+NYFAooMDEPBAAAvhB3MJsLYFA3XaDEE?BAAAmhI8AINvhGAgHm7XYAFLDmClcJSAVDEHBEooRBKoAVB?aX9wC06ITHJpBJ9NJAgH', testCases);
     });
 
-    it('Fill', () => {
+    it.only('Fill', () => {
         const testCases = [
             {
                 callback: () => {
@@ -674,6 +674,7 @@ describe('History', () => {
             },
             {
                 callback: () => {
+                    operations.mode.fill.open();
                     operations.mode.fill.L();
                     operations.mode.block.click(5, -1);
                 },
