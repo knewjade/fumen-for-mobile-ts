@@ -68,7 +68,7 @@ export const modeActions: Readonly<ScreenActions> = {
     },
     changeToShiftMode: () => (state): NextState => {
         return sequence(state, [
-            changeTouchType({ type: TouchTypes.Drawing }),
+            changeTouchType({ type: TouchTypes.Drawing, clear: true }),
             changeModeType({ type: ModeTypes.Slide }),
         ]);
     },
@@ -138,14 +138,18 @@ export const modeActions: Readonly<ScreenActions> = {
     },
 };
 
-const changeTouchType = ({ type }: { type: TouchTypes }) => (state: State): NextState => {
+const changeTouchType = (
+    { type, clear = false }: { type: TouchTypes, clear?: boolean },
+) => (state: State): NextState => {
     if (state.mode.touch === type) {
+        if (clear) {
+            return actions.removeUnsettledItems()(state);
+        }
         return undefined;
     }
 
     return sequence(state, [
-        actions.fixInferencePiece(),
-        actions.resetInferencePiece(),
+        actions.removeUnsettledItems(),
         () => ({
             mode: {
                 ...state.mode,

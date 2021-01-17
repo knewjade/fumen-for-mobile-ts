@@ -20,6 +20,8 @@ export interface FieldEditorActions {
 
     resetInferencePiece(): action;
 
+    removeUnsettledItemsInField(): action;
+
     ontouchStartField(data: { index: number }): action;
 
     ontouchMoveField(data: { index: number }): action;
@@ -80,6 +82,12 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return putPieceActions.resetInferencePiece()(state);
         }
         return undefined;
+    },
+    removeUnsettledItemsInField: () => (state): NextState => {
+        return sequence(state, [
+            fieldEditorActions.fixInferencePiece(),
+            fieldEditorActions.resetInferencePiece(),
+        ]);
     },
     ontouchStartField: ({ index }) => (state): NextState => {
         switch (state.mode.touch) {
@@ -150,8 +158,7 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
     },
     selectPieceColor: ({ piece }) => (state): NextState => {
         return sequence(state, [
-            fieldEditorActions.fixInferencePiece(),
-            fieldEditorActions.resetInferencePiece(),
+            actions.removeUnsettledItems(),
             newState => ({
                 mode: {
                     ...newState.mode,
@@ -162,8 +169,7 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
     },
     selectInferencePieceColor: () => (state): NextState => {
         return sequence(state, [
-            fieldEditorActions.fixInferencePiece(),
-            fieldEditorActions.resetInferencePiece(),
+            actions.removeUnsettledItems(),
             newState => ({
                 mode: {
                     ...newState.mode,
