@@ -17,6 +17,7 @@ export const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: 
         changeToFlagsMode: () => void;
         changeToUtilsMode: () => void;
         changeToDrawPieceMode: () => void;
+        changeToFillMode: () => void;
         changeToRef: (data: { index: number }) => void;
         changeToKey: (data: { index: number }) => void;
     };
@@ -118,6 +119,22 @@ export const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: 
             description: 'flags',
             iconSize: 24,
             iconName: 'flag',
+        })),
+        toolButton({
+            borderWidth: 3,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'red',
+            textColor: '#fff',
+            borderColor: touchType === TouchTypes.Fill ? '#fff' : '#f44336',
+            borderType: touchType === TouchTypes.Fill ? 'double' : undefined,
+            datatest: 'btn-fill-mode',
+            key: 'btn-fill-mode',
+            onclick: () => actions.changeToFillMode(),
+        }, iconContents({
+            description: 'fill',
+            iconSize: 20,
+            iconName: 'brush',
         })),
         toolButton({
             borderWidth: 3,

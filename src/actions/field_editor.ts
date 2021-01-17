@@ -3,6 +3,7 @@ import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
 import { putPieceActions } from './put_piece';
 import { drawBlockActions } from './draw_block';
+import { fillActions } from './fill';
 import { toPrimitivePage, toSinglePageTask } from '../history_task';
 import { movePieceActions } from './move_piece';
 import { PageFieldOperation, Pages } from '../lib/pages';
@@ -90,6 +91,8 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return movePieceActions.ontouchStartField({ index })(state);
         case TouchTypes.FillRow:
             return fillRowActions.ontouchStartField({ index })(state);
+        case TouchTypes.Fill:
+            return fillActions.ontouchStartField({ index })(state);
         }
         return undefined;
     },
@@ -103,6 +106,8 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return movePieceActions.ontouchMoveField({ index })(state);
         case TouchTypes.FillRow:
             return fillRowActions.ontouchMoveField({ index })(state);
+        case TouchTypes.Fill:
+            return fillActions.ontouchMoveField({ index })(state);
         }
         return undefined;
     },
@@ -116,6 +121,8 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return movePieceActions.ontouchEnd()(state);
         case TouchTypes.FillRow:
             return fillRowActions.ontouchEnd()(state);
+        case TouchTypes.Fill:
+            return fillActions.ontouchEnd()(state);
         }
         return undefined;
     },
@@ -125,6 +132,8 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return drawBlockActions.ontouchStartSentLine({ index })(state);
         case TouchTypes.FillRow:
             return fillRowActions.ontouchStartSentLine({ index })(state);
+        case TouchTypes.Fill:
+            return fillActions.ontouchStartSentLine({ index })(state);
         }
         return undefined;
     },
@@ -134,6 +143,8 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return drawBlockActions.ontouchMoveSentLine({ index })(state);
         case TouchTypes.FillRow:
             return fillRowActions.ontouchMoveSentLine({ index })(state);
+        case TouchTypes.Fill:
+            return fillActions.ontouchMoveSentLine({ index })(state);
         }
         return undefined;
     },

@@ -15,10 +15,11 @@ import { page_slider } from '../../components/page_slider';
 import { toolMode } from './tool_mode';
 import { blockMode } from './block_mode';
 import { pieceMode } from './piece_mode';
+import { fillMode } from './fill_mode';
 import { flagsMode } from './flags_mode';
 import { utilsMode } from './utils_mode';
 import { slideMode } from './slide_mode';
-import { fillMode } from './fill_mode';
+import { fillRowMode } from './fill_row_mode';
 import { pieceSelectMode } from './piece_select_mode';
 
 export interface EditorLayout {
@@ -154,8 +155,6 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                 return blockMode({
                     layout,
                     actions,
-                    keyPage,
-                    currentIndex: state.fumen.currentIndex,
                     colorize: guideLineColor,
                     modePiece: state.mode.piece,
                 });
@@ -174,7 +173,6 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                 return pieceMode({
                     layout,
                     actions,
-                    keyPage,
                     move: page !== undefined ? page.piece : undefined,
                     existInferences: 0 < state.events.inferences.length,
                     pages: state.fumen.pages,
@@ -207,6 +205,14 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
             }
             case ModeTypes.Fill: {
                 return fillMode({
+                    layout,
+                    actions,
+                    colorize: guideLineColor,
+                    modePiece: state.mode.piece,
+                });
+            }
+            case ModeTypes.FillRow: {
+                return fillRowMode({
                     layout,
                     actions,
                     colorize: guideLineColor,
