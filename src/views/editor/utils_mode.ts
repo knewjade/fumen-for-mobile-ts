@@ -9,11 +9,28 @@ export const utilsMode = ({ layout, touchType, actions }: {
     actions: {
         changeToShiftMode: () => void;
         changeToFillRowMode: () => void;
+        changeToFillMode: () => void;
     };
 }) => {
     const toolButtonMargin = 5;
 
     return div({ style: toolStyle(layout) }, [
+        toolButton({
+            borderWidth: 3,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'red',
+            textColor: '#fff',
+            borderColor: touchType === TouchTypes.Fill ? '#fff' : '#f44336',
+            borderType: touchType === TouchTypes.Fill ? 'double' : undefined,
+            datatest: 'btn-fill-mode',
+            key: 'btn-fill-mode',
+            onclick: () => actions.changeToFillMode(),
+        }, iconContents({
+            description: 'fill',
+            iconSize: 20,
+            iconName: 'brush',
+        })),
         toolButton({
             borderWidth: 3,
             width: layout.buttons.size.width,

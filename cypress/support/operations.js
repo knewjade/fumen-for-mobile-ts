@@ -102,6 +102,7 @@ export const operations = {
             open: ({ home = true } = {}) => {
                 if (home) {
                     operations.mode.tools.home()
+                    cy.get(datatest('btn-utils-mode')).click();
                 }
                 cy.get(datatest('btn-fill-mode')).click();
             },
