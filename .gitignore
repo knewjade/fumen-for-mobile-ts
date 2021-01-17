@@ -7,6 +7,7 @@ src/**/*.js.map
 public/*.bundle.js
 public/sw.js
 public/precache-*.js
+public/**/workbox-*.js
 coverage/
 cypress/videos/
 cypress/screenshots/

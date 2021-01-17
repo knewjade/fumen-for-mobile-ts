@@ -47,6 +47,7 @@ export const i18n = {
             FirstPage: () => t('Menu.Buttons.FirstPage'),
             LastPage: () => t('Menu.Buttons.LastPage'),
             New: () => t('Menu.Buttons.New'),
+            Open: () => t('Menu.Buttons.Open'),
             ShowComment: () => t('Menu.Buttons.ShowComment'),
             ReadonlyComment: () => t('Menu.Buttons.ReadonlyComment'),
             WritableComment: () => t('Menu.Buttons.WritableComment'),

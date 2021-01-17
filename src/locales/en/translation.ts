@@ -37,11 +37,12 @@ export const resources = {
         Build: 'build {{version}}',
         Buttons: {
             Readonly: 'Readonly',
-            Writable: 'Writable',
+            Writable: 'Edit',
             Clipboard: 'Clipboard',
             FirstPage: 'FirstPage',
             LastPage: 'LastPage',
             New: 'New',
+            Open: 'Open',
             Help: 'Help',
             ShowComment: 'ShowText',
             ReadonlyComment: 'ReadText',

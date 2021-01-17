@@ -33,6 +33,7 @@ interface MenuProps {
         openClipboardModal: () => void;
         changeGhostVisible: (data: { visible: boolean }) => void;
         reopenCurrentPage: () => void;
+        openFumenModal: () => void;
     };
 }
 
@@ -127,6 +128,17 @@ export const MenuModal: Component<MenuProps> = (
                                            actions.closeMenuModal();
                                        }}>
                             {i18n.Menu.Buttons.New()}
+                        </SettingButton>
+
+                        <SettingButton key="btn-open-fumen" datatest="btn-open-fumen" href="#"
+                                       icons={[{ name: 'open_in_new', size: 32.3 }]}
+                                       onclick={() => {
+                                           actions.fixInferencePiece();
+                                           actions.clearInferencePiece();
+                                           actions.closeMenuModal();
+                                           actions.openFumenModal();
+                                       }}>
+                            {i18n.Menu.Buttons.Open()}
                         </SettingButton>
 
                         <SettingButton key="btn-append-fumen" datatest="btn-append-fumen" href="#"
