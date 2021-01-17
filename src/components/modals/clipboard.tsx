@@ -104,7 +104,7 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
                 document.body.removeChild(element);
             })
             .then(() => {
-                M.toast({ html: 'Copied to clipboard', classes: 'top-toast', displayLength: 600 });
+                M.toast({ html: 'Copied to clipboard', classes: 'top-toast', displayLength: 1000 });
             })
             .catch((error) => {
                 M.toast({ html: `Failed to copy: ${error}`, classes: 'top-toast', displayLength: 1500 });

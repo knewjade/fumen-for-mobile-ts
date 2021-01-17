@@ -18,6 +18,7 @@ import { UtilsActions, utilsActions } from './actions/utils';
 import { mementoActions, MementoActions } from './actions/memento';
 import { CommentActions, commentActions } from './actions/comment';
 import { shiftActions, ShiftActions } from './actions/shift';
+import { i18n } from './locales/keys';
 
 export type action = (state: Readonly<State>) => NextState;
 
@@ -75,6 +76,8 @@ window.onresize = () => {
         height: window.document.body.clientHeight,
     });
 };
+
+declare const M: any;
 
 window.addEventListener('load', () => {
     // Query文字列を取得
@@ -136,6 +139,7 @@ window.addEventListener('load', () => {
     {
         const fumen = localStorage.getItem('data@1');
         if (fumen) {
+            M.toast({ html: i18n.Top.RestoreFromStorage(), classes: 'top-toast', displayLength: 1500 });
             return main.loadFumen({ fumen });
         }
     }
