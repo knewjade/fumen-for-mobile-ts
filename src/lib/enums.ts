@@ -50,11 +50,12 @@ export enum Screens {
 export enum ModeTypes {
     Drawing = 'Drawing',
     Piece = 'Piece',
+    Fill = 'Fill',
     DrawingTool = 'DrawingTool',
     Flags = 'Flags',
     Utils = 'Utils',
     Slide = 'Slide',
-    Fill = 'Fill',
+    FillRow = 'FillRow',
     SelectPiece = 'SelectPiece',
 }
 
@@ -62,6 +63,7 @@ export enum TouchTypes {
     None = 'None',
     Drawing = 'Drawing',
     Piece = 'Piece',
+    Fill = 'Fill',
     MovePiece = 'MovePiece',
     FillRow = 'FillRow',
 }

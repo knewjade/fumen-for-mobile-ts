@@ -24,12 +24,86 @@ export const operations = {
             },
         },
         block: {
-            open: () => {
+            open: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                }
                 cy.get(datatest('btn-block-mode')).click();
             },
             Completion: () => {
                 cy.get(datatest('btn-piece-inference')).click();
                 cy.wait(100);
+            },
+            J: () => {
+                cy.get(datatest('btn-piece-j')).click();
+                cy.wait(100);
+            },
+            L: () => {
+                cy.get(datatest('btn-piece-l')).click();
+                cy.wait(100);
+            },
+            O: () => {
+                cy.get(datatest('btn-piece-o')).click();
+                cy.wait(100);
+            },
+            I: () => {
+                cy.get(datatest('btn-piece-i')).click();
+                cy.wait(100);
+            },
+            T: () => {
+                cy.get(datatest('btn-piece-t')).click();
+                cy.wait(100);
+            },
+            S: () => {
+                cy.get(datatest('btn-piece-s')).click();
+                cy.wait(100);
+            },
+            Z: () => {
+                cy.get(datatest('btn-piece-z')).click();
+                cy.wait(100);
+            },
+            Gray: () => {
+                cy.get(datatest('btn-piece-gray')).click();
+                cy.wait(100);
+            },
+            Empty: () => {
+                cy.get(datatest('btn-piece-empty')).click();
+                cy.wait(100);
+            },
+            click: (x, y) => {
+                cy.get('body').click(px(x), py(y));
+            },
+            dragToRight: ({ from, to }, y) => {
+                let body = cy.get('body');
+                body = body.trigger('mousedown', px(from), py(y));
+
+                const maxCount = 10;
+                const dx = (to - from) / maxCount;
+                for (let count = 0; count <= maxCount; count++) {
+                    body = body.trigger('mousemove', px(dx * count + from), py(y));
+                }
+
+                body.trigger('mouseup', px(to), py(y));
+            },
+            dragToUp: (x, { from, to }) => {
+                let body = cy.get('body');
+                body = body.trigger('mousedown', px(x), py(from));
+
+                const maxCount = 10;
+                const dy = (to - from) / maxCount;
+                for (let count = 0; count <= maxCount; count++) {
+                    body = body.trigger('mousemove', px(x), py(dy * count + from));
+                }
+
+                body.trigger('mouseup', px(x), py(to));
+            },
+        },
+        fill: {
+            open: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                }
+                cy.get(datatest('btn-fill-mode')).click();
             },
             J: () => {
                 cy.get(datatest('btn-piece-j')).click();

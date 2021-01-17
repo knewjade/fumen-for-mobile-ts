@@ -117,7 +117,7 @@ export const initState: Readonly<State> = {
         animation: undefined,
     },
     events: {
-        piece: undefined,
+        piece: undefined,  // 描画処理中のピースの種類
         drawing: false,
         inferences: [],
         prevPage: undefined,
@@ -127,7 +127,7 @@ export const initState: Readonly<State> = {
         screen: window.location.hash.includes('#/writable') ? Screens.Editor : Screens.Reader,
         type: ModeTypes.DrawingTool,
         touch: TouchTypes.Drawing,
-        piece: undefined,
+        piece: undefined,  // UI上で選択されているのピースの種類
         comment: CommentType.Writable,
         ghostVisible: true,
     },
