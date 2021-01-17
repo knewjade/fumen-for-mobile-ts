@@ -4,6 +4,9 @@ const t: (key: string, options?: object) => string = (key, options) => i18next.t
 
 // Top Level = Screen name
 export const i18n = {
+    Top: {
+        RestoreFromStorage: () => t('Top.RestoreFromStorage'),
+    },
     OpenFumen: {
         Title: () => t('OpenFumen.Title'),
         PlaceHolder: () => t('OpenFumen.PlaceHolder'),

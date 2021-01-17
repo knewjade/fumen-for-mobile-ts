@@ -1,4 +1,7 @@
 export const resources = {
+    Top: {
+        RestoreFromStorage: 'Restored to last state',
+    },
     OpenFumen: {
         Title: 'Open fumen',
         PlaceHolder: 'URL or v115@~ / Support v115 or v110',

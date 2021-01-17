@@ -1,4 +1,7 @@
 export const resources = {
+    Top: {
+        RestoreFromStorage: '最後の状態が復元されました',
+    },
     OpenFumen: {
         Title: 'テト譜を開く',
         Buttons: {
