@@ -280,6 +280,13 @@ export const operations = {
             addNewPage: () => {
                 cy.get(datatest('btn-insert-new-page')).click();
             },
+            convertToGray: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                    cy.get(datatest('btn-utils-mode')).click();
+                }
+                cy.get(datatest('btn-convert-to-gray')).click();
+            },
             undo: () => {
                 cy.get(datatest('btn-undo')).click();
             },

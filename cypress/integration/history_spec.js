@@ -685,4 +685,18 @@ describe('History', () => {
 
         play('v115@RfF8CeA8FeA8AeA8HeA8BeFtCeAtFeAtBeAtAezwAe?AtBeAtFeAtCeFtBeA8HeA8AeA8FeA8CeF8zeAgH', testCases);
     });
+
+    it('Convert to gray', () => {
+        const testCases = [
+            {
+                callback: () => {
+                    operations.mode.tools.convertToGray({ home: true });
+                },
+                fumen: 'v115@pgB8HeB8HeD8DeF8CeG8BeH8CeK8AeA8AgH',
+                count: 1,
+            },
+        ];
+
+        play('v115@pgB8HeB8HeilwhDeR4glRpwhCeR4wwg0RpwhBeBtxw?i0whCeBtwwA8whglQpAtwwg0Q4AeA8AgH', testCases);
+    });
 });

@@ -1,7 +1,7 @@
 import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
 import { AnimationState, Piece } from '../lib/enums';
-import { Page, Move, PreCommand  } from '../lib/fumen/types';
+import { Move, Page, PreCommand } from '../lib/fumen/types';
 import { Block } from '../state_types';
 import { PageFieldOperation, Pages, QuizCommentResult, TextCommentResult } from '../lib/pages';
 import {
@@ -29,6 +29,7 @@ export interface PageActions {
     insertNewPage: (data: { index: number }) => action;
     removePage: (data: { index: number }) => action;
     duplicatePage: (data: { index: number }) => action;
+    removeUnsettledItems: () => action;
     backLoopPage: () => action;
     nextLoopPage: () => action;
     backPage: () => action;
@@ -135,8 +136,7 @@ export const pageActions: Readonly<PageActions> = {
         }
 
         return sequence(state, [
-            actions.fixInferencePiece(),
-            actions.clearInferencePiece(),
+            actions.removeUnsettledItems(),
             actions.commitCommentText(),
             insertRefPage({ index }),
             actions.reopenCurrentPage(),
@@ -150,8 +150,7 @@ export const pageActions: Readonly<PageActions> = {
         }
 
         return sequence(state, [
-            actions.fixInferencePiece(),
-            actions.clearInferencePiece(),
+            actions.removeUnsettledItems(),
             actions.commitCommentText(),
             insertKeyPage({ index }),
             actions.reopenCurrentPage(),
@@ -165,8 +164,7 @@ export const pageActions: Readonly<PageActions> = {
         }
 
         return sequence(state, [
-            actions.fixInferencePiece(),
-            actions.clearInferencePiece(),
+            actions.removeUnsettledItems(),
             actions.commitCommentText(),
             insertNewPage({ index }),
             actions.reopenCurrentPage(),
@@ -180,8 +178,7 @@ export const pageActions: Readonly<PageActions> = {
         }
 
         return sequence(state, [
-            actions.fixInferencePiece(),
-            actions.clearInferencePiece(),
+            actions.removeUnsettledItems(),
             actions.commitCommentText(),
             duplicatePage({ index }),
             actions.reopenCurrentPage(),
@@ -189,12 +186,14 @@ export const pageActions: Readonly<PageActions> = {
     },
     removePage: ({ index }) => (state): NextState => {
         return sequence(state, [
-            actions.fixInferencePiece(),
-            actions.clearInferencePiece(),
+            actions.removeUnsettledItems(),
             actions.commitCommentText(),
             removePage({ index }),
             actions.reopenCurrentPage(),
         ]);
+    },
+    removeUnsettledItems: () => (state): NextState => {
+        return actions.removeUnsettledItemsInField()(state);
     },
     backLoopPage: () => (state): NextState => {
         const index = (state.fumen.currentIndex - 1 + state.fumen.maxPage) % state.fumen.maxPage;

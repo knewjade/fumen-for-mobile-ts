@@ -4,15 +4,17 @@ import { toPrimitivePage, toSinglePageTask } from '../history_task';
 import { PageFieldOperation, Pages, parseToCommands } from '../lib/pages';
 import { FieldConstants } from '../lib/enums';
 import { getBlockPositions } from '../lib/piece';
+import { State } from '../states';
 
-export interface ShiftActions {
+export interface ConvertActions {
     shiftToLeft: () => action;
     shiftToRight: () => action;
     shiftToUp: () => action;
     shiftToBottom: () => action;
+    convertToGray: () => action;
 }
 
-export const shiftActions: Readonly<ShiftActions> = {
+export const shiftActions: Readonly<ConvertActions> = {
     shiftToLeft: () => (state): NextState => {
         const currentIndex = state.fumen.currentIndex;
         const pages = state.fumen.pages;
@@ -21,13 +23,18 @@ export const shiftActions: Readonly<ShiftActions> = {
         const page = pages[currentIndex];
         const primitivePage = toPrimitivePage(page);
 
-        const prevField = pagesObj.getField(currentIndex, PageFieldOperation.None);
         const goalField = pagesObj.getField(currentIndex, PageFieldOperation.Command);
+        const goalFieldCopy = goalField.copy();
         goalField.shiftToLeft();
 
+        const piece = page.piece;
+        if (piece === undefined && goalFieldCopy.equals(goalField)) {
+            return undefined;
+        }
+
+        const prevField = pagesObj.getField(currentIndex, PageFieldOperation.None);
         page.commands = parseToCommands(prevField, goalField);
 
-        const piece = page.piece;
         if (piece !== undefined) {
             const positions = getBlockPositions(piece.type, piece.rotation, piece.coordinate.x, piece.coordinate.y);
             const minX = Math.min(...positions.map(position => position[0]));
@@ -57,13 +64,18 @@ export const shiftActions: Readonly<ShiftActions> = {
         const page = pages[currentIndex];
         const primitivePage = toPrimitivePage(page);
 
-        const prevField = pagesObj.getField(currentIndex, PageFieldOperation.None);
         const goalField = pagesObj.getField(currentIndex, PageFieldOperation.Command);
+        const goalFieldCopy = goalField.copy();
         goalField.shiftToRight();
 
+        const piece = page.piece;
+        if (piece === undefined && goalFieldCopy.equals(goalField)) {
+            return undefined;
+        }
+
+        const prevField = pagesObj.getField(currentIndex, PageFieldOperation.None);
         page.commands = parseToCommands(prevField, goalField);
 
-        const piece = page.piece;
         if (piece !== undefined) {
             const positions = getBlockPositions(piece.type, piece.rotation, piece.coordinate.x, piece.coordinate.y);
             const maxX = Math.max(...positions.map(position => position[0]));
@@ -93,13 +105,18 @@ export const shiftActions: Readonly<ShiftActions> = {
         const page = pages[currentIndex];
         const primitivePage = toPrimitivePage(page);
 
-        const prevField = pagesObj.getField(currentIndex, PageFieldOperation.None);
         const goalField = pagesObj.getField(currentIndex, PageFieldOperation.Command);
+        const goalFieldCopy = goalField.copy();
         goalField.shiftToUp();
 
+        const piece = page.piece;
+        if (piece === undefined && goalFieldCopy.equals(goalField)) {
+            return undefined;
+        }
+
+        const prevField = pagesObj.getField(currentIndex, PageFieldOperation.None);
         page.commands = parseToCommands(prevField, goalField);
 
-        const piece = page.piece;
         if (piece !== undefined) {
             const positions = getBlockPositions(piece.type, piece.rotation, piece.coordinate.x, piece.coordinate.y);
             const maxY = Math.max(...positions.map(position => position[1]));
@@ -129,13 +146,18 @@ export const shiftActions: Readonly<ShiftActions> = {
         const page = pages[currentIndex];
         const primitivePage = toPrimitivePage(page);
 
-        const prevField = pagesObj.getField(currentIndex, PageFieldOperation.None);
         const goalField = pagesObj.getField(currentIndex, PageFieldOperation.Command);
+        const goalFieldCopy = goalField.copy();
         goalField.shiftToBottom();
 
+        const piece = page.piece;
+        if (piece === undefined && goalFieldCopy.equals(goalField)) {
+            return undefined;
+        }
+
+        const prevField = pagesObj.getField(currentIndex, PageFieldOperation.None);
         page.commands = parseToCommands(prevField, goalField);
 
-        const piece = page.piece;
         if (piece !== undefined) {
             const positions = getBlockPositions(piece.type, piece.rotation, piece.coordinate.x, piece.coordinate.y);
             const minY = Math.min(...positions.map(position => position[1]));
@@ -157,4 +179,41 @@ export const shiftActions: Readonly<ShiftActions> = {
             actions.reopenCurrentPage(),
         ]);
     },
+    convertToGray: () => (state): NextState => {
+        return sequence(state, [
+            actions.removeUnsettledItems(),
+            convertToGray(),
+        ]);
+    },
+};
+
+const convertToGray = () => (state: State): NextState => {
+    const currentIndex = state.fumen.currentIndex;
+    const pages = state.fumen.pages;
+    const pagesObj = new Pages(pages);
+
+    const page = pages[currentIndex];
+    const primitivePage = toPrimitivePage(page);
+
+    const goalField = pagesObj.getField(currentIndex, PageFieldOperation.Command);
+    const goalFieldCopy = goalField.copy();
+    goalField.convertToGray();
+
+    if (goalFieldCopy.equals(goalField)) {
+        return undefined;
+    }
+
+    const prevField = pagesObj.getField(currentIndex, PageFieldOperation.None);
+    page.commands = parseToCommands(prevField, goalField);
+
+    return sequence(state, [
+        actions.registerHistoryTask({ task: toSinglePageTask(currentIndex, primitivePage, page) }),
+        () => ({
+            fumen: {
+                ...state.fumen,
+                pages,
+            },
+        }),
+        actions.reopenCurrentPage(),
+    ]);
 };

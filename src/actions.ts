@@ -17,7 +17,7 @@ import { setterActions, SetterActions } from './actions/setter';
 import { UtilsActions, utilsActions } from './actions/utils';
 import { mementoActions, MementoActions } from './actions/memento';
 import { CommentActions, commentActions } from './actions/comment';
-import { shiftActions, ShiftActions } from './actions/shift';
+import { shiftActions, ConvertActions } from './actions/convert';
 import { i18n } from './locales/keys';
 
 export type action = (state: Readonly<State>) => NextState;
@@ -31,7 +31,7 @@ export type Actions = AnimationActions
     & MementoActions
     & FieldEditorActions
     & CommentActions
-    & ShiftActions;
+    & ConvertActions;
 
 export const actions: Readonly<Actions> = {
     ...animationActions,
