@@ -11,6 +11,7 @@ export const utilsMode = ({ layout, touchType, actions }: {
         changeToFillRowMode: () => void;
         changeToFillMode: () => void;
         convertToGray: () => void;
+        clearField: () => void;
     };
 }) => {
     const toolButtonMargin = 5;
@@ -32,6 +33,23 @@ export const utilsMode = ({ layout, touchType, actions }: {
             description: 'to gray',
             iconSize: 22,
             iconName: 'color_lens',
+        })),
+        toolButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'white',
+            textColor: '#333',
+            borderColor: '#333',
+            datatest: 'btn-clear-field',
+            key: 'btn-clear-field',
+            onclick: () => {
+                actions.clearField();
+            },
+        }, iconContents({
+            description: 'clear',
+            iconSize: 22,
+            iconName: 'clear',
         })),
         toolButton({
             borderWidth: 3,

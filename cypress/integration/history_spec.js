@@ -661,7 +661,7 @@ describe('History', () => {
         play('v115@RhB8HeB8Re+NYFAooMDEPBAAAvhB3MJsLYFA3XaDEE?BAAAmhI8AINvhGAgHm7XYAFLDmClcJSAVDEHBEooRBKoAVB?aX9wC06ITHJpBJ9NJAgH', testCases);
     });
 
-    it('Fill', () => {
+    it.only('Fill & Clear', () => {
         const testCases = [
             {
                 callback: () => {
@@ -679,6 +679,14 @@ describe('History', () => {
                     operations.mode.block.click(5, -1);
                 },
                 fumen: 'v115@RfF8CeH8AeU8AtF8AtB8AtF8AtB8AtF8AtU8AeH8Ce?F8peplAgH',
+                count: 1,
+            },
+
+            {
+                callback: () => {
+                    operations.mode.tools.clearField();
+                },
+                fumen: 'v115@vhAAgH',
                 count: 1,
             },
         ];
