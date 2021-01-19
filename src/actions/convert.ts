@@ -5,6 +5,7 @@ import { PageFieldOperation, Pages, parseToCommands } from '../lib/pages';
 import { FieldConstants } from '../lib/enums';
 import { getBlockPositions } from '../lib/piece';
 import { State } from '../states';
+import { Field } from '../lib/fumen/field';
 
 export interface ConvertActions {
     shiftToLeft: () => action;
@@ -12,9 +13,10 @@ export interface ConvertActions {
     shiftToUp: () => action;
     shiftToBottom: () => action;
     convertToGray: () => action;
+    clearField: () => action;
 }
 
-export const shiftActions: Readonly<ConvertActions> = {
+export const convertActions: Readonly<ConvertActions> = {
     shiftToLeft: () => (state): NextState => {
         const currentIndex = state.fumen.currentIndex;
         const pages = state.fumen.pages;
@@ -182,12 +184,22 @@ export const shiftActions: Readonly<ConvertActions> = {
     convertToGray: () => (state): NextState => {
         return sequence(state, [
             actions.removeUnsettledItems(),
-            convertToGray(),
+            convertToGray((field) => {
+                const copy = field.copy();
+                copy.convertToGray();
+                return copy;
+            }),
+        ]);
+    },
+    clearField: () => (state): NextState => {
+        return sequence(state, [
+            actions.removeUnsettledItems(),
+            convertToGray(_ => new Field({})),
         ]);
     },
 };
 
-const convertToGray = () => (state: State): NextState => {
+const convertToGray = (callback: (field: Field) => Field) => (state: State): NextState => {
     const currentIndex = state.fumen.currentIndex;
     const pages = state.fumen.pages;
     const pagesObj = new Pages(pages);
@@ -195,11 +207,10 @@ const convertToGray = () => (state: State): NextState => {
     const page = pages[currentIndex];
     const primitivePage = toPrimitivePage(page);
 
-    const goalField = pagesObj.getField(currentIndex, PageFieldOperation.Command);
-    const goalFieldCopy = goalField.copy();
-    goalField.convertToGray();
+    const initField = pagesObj.getField(currentIndex, PageFieldOperation.Command);
+    const goalField = callback(initField);
 
-    if (goalFieldCopy.equals(goalField)) {
+    if (initField.equals(goalField)) {
         return undefined;
     }
 

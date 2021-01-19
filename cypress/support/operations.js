@@ -287,6 +287,13 @@ export const operations = {
                 }
                 cy.get(datatest('btn-convert-to-gray')).click();
             },
+            clearField: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                    cy.get(datatest('btn-utils-mode')).click();
+                }
+                cy.get(datatest('btn-clear-field')).click();
+            },
             undo: () => {
                 cy.get(datatest('btn-undo')).click();
             },
