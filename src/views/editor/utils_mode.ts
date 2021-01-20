@@ -12,11 +12,29 @@ export const utilsMode = ({ layout, touchType, actions }: {
         changeToFillMode: () => void;
         convertToGray: () => void;
         clearField: () => void;
+        convertToMirror: () => void;
     };
 }) => {
     const toolButtonMargin = 5;
 
     return div({ style: toolStyle(layout) }, [
+        toolButton({
+            borderWidth: 1,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'white',
+            textColor: '#333',
+            borderColor: '#333',
+            datatest: 'btn-mirror',
+            key: 'btn-mirror',
+            onclick: () => {
+                actions.convertToMirror();
+            },
+        }, iconContents({
+            description: 'mirror',
+            iconSize: 22,
+            iconName: 'compare_arrows',
+        })),
         toolButton({
             borderWidth: 1,
             width: layout.buttons.size.width,

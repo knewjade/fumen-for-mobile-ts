@@ -661,7 +661,7 @@ describe('History', () => {
         play('v115@RhB8HeB8Re+NYFAooMDEPBAAAvhB3MJsLYFA3XaDEE?BAAAmhI8AINvhGAgHm7XYAFLDmClcJSAVDEHBEooRBKoAVB?aX9wC06ITHJpBJ9NJAgH', testCases);
     });
 
-    it.only('Fill & Clear', () => {
+    it('Fill & Clear', () => {
         const testCases = [
             {
                 callback: () => {
@@ -706,5 +706,35 @@ describe('History', () => {
         ];
 
         play('v115@pgB8HeB8HeilwhDeR4glRpwhCeR4wwg0RpwhBeBtxw?i0whCeBtwwA8whglQpAtwwg0Q4AeA8AgH', testCases);
+    });
+
+    it('Mirror', () => {
+        const testCases = [
+            {
+                callback: () => {
+                    operations.mode.tools.mirror({ home: true });
+                },
+                fumen: 'v115@FhR4GeR4wwFeBtxwGeBtwwJe2OYWAFLDmClcJSAVDE?HBEooRBKoAVBvCBAAvhBzEJi/I9gi0Eexhg0xwDexhQpglx?wCeBtRpilDeBtQpJeAgWAA',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.mirror({ home: true });
+                },
+                fumen: 'v115@FhR4GeR4wwFeBtxwGeBtwwJe2OYWAFLDmClcJSAVDE?HBEooRBKoAVBvCBAA9gBtFexDwwBtDexDQLQawwR4BeBPQL?wSQaxhDehWwSJezHYVAFLDmClcJSAVDEHBEooRBPoAVBqAA?AAvhAGDJ9gBtA8DegHhlQpBtDexwglRpwhwDBeA8xwg0Qpx?hDei0JeAgWAA',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.mode.tools.backPage();
+                    operations.mode.tools.convertToGray({ home: true });
+                },
+                fumen: 'v115@FhB8GeC8FeD8GeC8Je2OYWAFLDmClcJSAVDEHBEooR?BKoAVBvCBAA9gBtFeBAwwBtDeCAQawwR4BeCAgHQaxhDeiH?JezHYVAFLDmClcJSAVDEHBEooRBPoAVBqAAAAvhAGDJ9gBt?A8DegHhlQpBtDexwglRpwhwDBeA8xwg0QpxhDei0JeAgWAA',
+                count: 1,
+            },
+        ];
+
+        play('v115@9gBtHewwBtGexwR4FewwR4QeSSYWAFLDmClcJSAVDE?HBEooRBMoAVBv/AAAvhBzHJGDJ9gBtA8DegHhlQpBtDexwg?lRpwhwDBeA8xwg0QpxhDei0JeAgWAA', testCases);
     });
 });
