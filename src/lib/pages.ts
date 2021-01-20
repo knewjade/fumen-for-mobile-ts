@@ -543,7 +543,6 @@ export class Pages {
                             const quizAfterOperation = nextQuiz.operate(operation);
 
                             result = { quizAfterOperation, quiz: cache.comment };
-                            console.log(result);
                             cache = { quiz: quizAfterOperation, comment: quizAfterOperation.format().toString() };
                         } catch (e) {
                             console.error(e);
