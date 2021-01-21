@@ -10,42 +10,42 @@ interface SaverProp {
 
 type SaverObj = { save: (key: string) => Promise<void> };
 
-const saver = (() => {
-    const saverState = {
-        isWorking: false,
-        last: {
-            key: generateKey(),
-            saverObj: undefined as (SaverObj | undefined),
+const saverState = {
+    isWorking: false,
+    last: {
+        key: generateKey(),
+        saverObj: undefined as (SaverObj | undefined),
+    },
+};
+
+const sequentialEncode = async (pages: Page[]): Promise<string> => {
+    saverState.isWorking = true;
+    const data = await encode(pages, true);
+    saverState.isWorking = false;
+    return `v115@${data}`;
+};
+
+const toSaver = ({ saveKey, pages }: SaverProp, saveCallback: (data: string) => void) => {
+    let isSaved = false;
+    return {
+        save: async (key: string) => {
+            if (isSaved || key !== saveKey) {
+                return;
+            }
+            isSaved = true;
+
+            const data = await sequentialEncode(pages);
+            setTimeout(() => saveCallback(data), 0);
+
+            const last = saverState.last;
+            if (last.saverObj !== undefined) {
+                await last.saverObj.save(last.key);
+            }
         },
     };
+};
 
-    const sequentialEncode = async (pages: Page[]): Promise<string> => {
-        saverState.isWorking = true;
-        const data = await encode(pages, true);
-        saverState.isWorking = false;
-        return `v115@${data}`;
-    };
-
-    const toSaver = ({ saveKey, pages }: SaverProp, saveCallback: (data: string) => void) => {
-        let isSaved = false;
-        return {
-            save: async (key: string) => {
-                if (isSaved || key !== saveKey) {
-                    return;
-                }
-                isSaved = true;
-
-                const data = await sequentialEncode(pages);
-                setTimeout(() => saveCallback(data), 0);
-
-                const last = saverState.last;
-                if (last.saverObj !== undefined) {
-                    await last.saverObj.save(last.key);
-                }
-            },
-        };
-    };
-
+const saver = (() => {
     return (pages: Page[]) => {
         const key = generateKey();
         const saverObj: SaverObj = toSaver({

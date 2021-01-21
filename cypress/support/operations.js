@@ -294,6 +294,13 @@ export const operations = {
                 }
                 cy.get(datatest('btn-clear-field')).click();
             },
+            mirror: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                    cy.get(datatest('btn-utils-mode')).click();
+                }
+                cy.get(datatest('btn-mirror')).click();
+            },
             undo: () => {
                 cy.get(datatest('btn-undo')).click();
             },

@@ -68,6 +68,17 @@ export class Pages {
         return currentPage.flags.quiz ? this.restructureQuiz(index) : this.getDescription(index);
     }
 
+    // 指定したページにコメントを設定する
+    setComment(index: number, comment: string): void {
+        const currentPage = this.pages[index];
+        if (currentPage.comment.text === undefined) {
+            this.freezeComment(index);
+        }
+        if (currentPage.comment.text !== undefined) {
+            currentPage.comment.text = comment;
+        }
+    }
+
     // 指定したページのフィールドを取得する
     getField(index: number, operation: PageFieldOperation = PageFieldOperation.None): Field {
         return this.restructureField(index, operation);
@@ -532,7 +543,6 @@ export class Pages {
                             const quizAfterOperation = nextQuiz.operate(operation);
 
                             result = { quizAfterOperation, quiz: cache.comment };
-                            console.log(result);
                             cache = { quiz: quizAfterOperation, comment: quizAfterOperation.format().toString() };
                         } catch (e) {
                             console.error(e);

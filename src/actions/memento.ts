@@ -15,6 +15,7 @@ export interface MementoActions {
 
 export const mementoActions: Readonly<MementoActions> = {
     saveToMemento: () => (state): NextState => {
+        // TODO registerHistoryTaskに統合
         memento.save(state.fumen.pages);
         return undefined;
     },

@@ -185,6 +185,7 @@ const appendPages = (
 
     const newPages = pagesObj.pages;
     return sequence(state, [
+        actions.saveToMemento(),
         actions.registerHistoryTask({ task: toPageTaskStack(tasks, indexAfterReverting) }),
         () => ({
             fumen: {
