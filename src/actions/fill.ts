@@ -52,7 +52,6 @@ export const fillActions: Readonly<FillActions> = {
         const page = state.fumen.pages[currentIndex];
         const updated = state.events.updated;
         return sequence(state, [
-            updated && state.events.prevPage !== undefined ? actions.saveToMemento() : undefined,
             updated && state.events.prevPage !== undefined
                 ? actions.registerHistoryTask({ task: toSinglePageTask(currentIndex, state.events.prevPage, page) })
                 : undefined,

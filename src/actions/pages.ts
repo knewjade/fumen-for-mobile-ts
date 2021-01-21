@@ -222,7 +222,6 @@ export const pageActions: Readonly<PageActions> = {
             return sequence(state, [
                 pageActions.insertPage({ index: nextPage }),
                 pageActions.openPage({ index: nextPage }),
-                actions.saveToMemento(),
             ]);
         }
 

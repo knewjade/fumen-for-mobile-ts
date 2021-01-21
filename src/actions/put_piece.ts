@@ -172,7 +172,6 @@ const commitInferencePiece = (pages: Page[], task: OperationTask, mergeKey?: str
             },
         }),
         fieldEditorActions.resetInferencePiece(),
-        actions.saveToMemento(),
         actions.registerHistoryTask({ task, mergeKey }),
     ]);
 };

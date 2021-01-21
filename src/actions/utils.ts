@@ -122,7 +122,6 @@ export const utilsActions: Readonly<UtilsActions> = {
     appendPages: ({ pages, pageIndex }) => (state): NextState => {
         return sequence(state, [
             appendPages({ pageIndex, appendedPages: pages, indexAfterReverting: state.fumen.currentIndex }),
-            actions.saveToMemento(),
         ]);
     },
     refresh: () => (): NextState => {
@@ -185,7 +184,6 @@ const appendPages = (
 
     const newPages = pagesObj.pages;
     return sequence(state, [
-        actions.saveToMemento(),
         actions.registerHistoryTask({ task: toPageTaskStack(tasks, indexAfterReverting) }),
         () => ({
             fumen: {

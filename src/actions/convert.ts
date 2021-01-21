@@ -248,7 +248,6 @@ const convertToGoalField = (callback: (field: Field) => Field) => (state: State)
     tasks.push(toSinglePageTask(currentIndex, primitivePage, page));
 
     return sequence(state, [
-        actions.saveToMemento(),
         actions.registerHistoryTask({ task: toPageTaskStack(tasks, currentIndex) }),
         () => ({
             fumen: {
@@ -479,7 +478,6 @@ const convertToMirror = () => (state: State): NextState => {
     }
 
     return sequence(state, [
-        actions.saveToMemento(),
         actions.registerHistoryTask({ task: toPageTaskStack(tasks, currentIndex) }),
         () => ({
             fumen: {

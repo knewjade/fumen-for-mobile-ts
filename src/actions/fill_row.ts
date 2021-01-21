@@ -48,7 +48,6 @@ export const fillRowActions: Readonly<FillRowActions> = {
         const prevPage = state.events.prevPage;
         return sequence(state, [
             endDrawingField,
-            actions.saveToMemento(),
             prevPage !== undefined
                 ? actions.registerHistoryTask({ task: toSinglePageTask(currentPageIndex, prevPage, page) })
                 : undefined,

@@ -157,7 +157,6 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
                 pages,
             },
         }),
-        actions.saveToMemento(),
         actions.registerHistoryTask({ task: toPageTaskStack(tasks, index) }),
     ]);
 };
