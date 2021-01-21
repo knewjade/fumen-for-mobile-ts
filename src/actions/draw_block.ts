@@ -33,12 +33,11 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
         }
 
         // InferencePieceが揃っているとき
-        let piece;
-        try {
-            piece = inferPiece(inferences).piece;
-        } catch (e) {
+        const inferredResult = inferPiece(inferences);
+        if (!inferredResult) {
             return undefined;
         }
+        const piece = inferredResult.piece;
 
         const currentPageIndex = state.fumen.currentIndex;
         const pages = state.fumen.pages;

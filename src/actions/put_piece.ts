@@ -183,10 +183,8 @@ const parseInferenceToPage = (state: State): { pages: Page[], task: OperationTas
     }
 
     // InferencePieceが揃っているとき
-    let piece;
-    try {
-        piece = inferPiece(inferences);
-    } catch (e) {
+    const inferredResult = inferPiece(inferences);
+    if (!inferredResult || !inferredResult.coordinate) {
         return undefined;
     }
 
@@ -196,9 +194,9 @@ const parseInferenceToPage = (state: State): { pages: Page[], task: OperationTas
     const prevPage = toPrimitivePage(page);
 
     page.piece = {
-        type: piece.piece,
-        rotation: piece.rotate,
-        coordinate: piece.coordinate,
+        type: inferredResult.piece,
+        rotation: inferredResult.rotate,
+        coordinate: inferredResult.coordinate,
     };
 
     return {

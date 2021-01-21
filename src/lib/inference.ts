@@ -1,5 +1,4 @@
 import { Piece, Rotation } from './enums';
-import { FumenError } from './errors';
 
 const results = [
     { positions: [0, 1, 10, 11], result: { piece: Piece.O, rotate: Rotation.Spawn, offset: { x: 0, y: 0 } } },
@@ -43,28 +42,54 @@ for (const result of results) {
     maps.set(key, result.result);
 }
 
+// 4つのブロックからミノを予測します
+// 完全なミノの形をしているときは、座標も含めて返却します
 export const inferPiece = (inferences: number[]) => {
     if (inferences.length !== 4) {
-        throw new FumenError('No enough blocks');
+        return undefined;
     }
 
-    const sorted = inferences.sort((a, b) => a - b);
-    const minIndex = sorted[0];
-    const diff = sorted.map(e => e - minIndex);
+    const setY = new Set<Number>();
+    inferences.forEach(value => setY.add(Math.floor(value / 10)));
+    const ys: { [y: string]: number } = {};
+    Array.from(setY.keys()).sort().forEach((y, index) => {
+        ys[`${y}`] = index;
+    });
+
+    const sortedIndices = inferences.sort((a, b) => a - b);
+
+    const transformed = sortedIndices
+        .map((value) => {
+            const x = value % 10;
+            const y = Math.floor(value / 10);
+            return ys[`${y}`] * 10 + x;
+        });
+
+    let split = false;
+    for (let index = 1; index < ys.length; index += 1) {
+        if (ys[index - 1] + 1 !== ys[index]) {
+            split = true;
+            break;
+        }
+    }
+
+    const minValue = transformed[0];
+    const diff = transformed.map(e => e - minValue);
 
     const result = maps.get(toKey(diff));
-    if (result !== undefined) {
-        const x = minIndex % 10;
-        const y = Math.floor(minIndex / 10);
-        return {
-            piece: result.piece,
-            rotate: result.rotate,
-            coordinate: {
-                x: x + result.offset.x,
-                y: y + result.offset.y,
-            },
-        };
+    if (!result) {
+        return undefined;
     }
 
-    throw new FumenError('Unknown piece');
+    const minIndex = sortedIndices[0];
+    const x = minIndex % 10;
+    const y = Math.floor(minIndex / 10);
+    return {
+        piece: result.piece,
+        rotate: result.rotate,
+        coordinate: split ? undefined : {
+            x: x + result.offset.x,
+            y: y + result.offset.y,
+        },
+    };
 };
