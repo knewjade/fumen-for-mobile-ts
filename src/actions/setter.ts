@@ -141,7 +141,6 @@ export const setterActions: Readonly<SetterActions> = {
 
         let piece = undefined;
         const inferredResult = inferPiece(inferences);
-        console.log(inferredResult);
         if (inferredResult) {
             if (inferredResult.coordinate) {
                 // 完全なミノ

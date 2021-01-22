@@ -618,6 +618,43 @@ describe('Put pieces', () => {
         cy.get(block(5, 5)).should('not.have.attr', 'color', Color.Completion.Highlight2);
     });
 
+    it('Split inference', () => {
+        visit({ mode: 'writable' });
+        operations.mode.piece.open();
+        operations.mode.piece.draw();
+
+        operations.mode.block.click(5, 5);
+        operations.mode.block.click(4, 5);
+        operations.mode.block.click(3, 5);
+
+        // L
+        operations.mode.block.click(3, 3);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.Completion.Highlight2);
+        operations.mode.block.click(3, 3);
+
+        operations.mode.block.click(3, 4);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.L.Highlight2);
+        operations.mode.block.click(3, 4);
+
+        // T
+        operations.mode.block.click(4, 3);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.Completion.Highlight2);
+        operations.mode.block.click(4, 3);
+
+        operations.mode.block.click(4, 4);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.T.Highlight2);
+        operations.mode.block.click(4, 4);
+
+        // J
+        operations.mode.block.click(5, 3);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.Completion.Highlight2);
+        operations.mode.block.click(5, 3);
+
+        operations.mode.block.click(5, 4);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.J.Highlight2);
+        operations.mode.block.click(5, 4);
+    });
+
     it('Swap current piece', () => {
         visit({ mode: 'writable' });
         operations.mode.piece.open();

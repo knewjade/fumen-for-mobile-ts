@@ -42,6 +42,8 @@ for (const result of results) {
     maps.set(key, result.result);
 }
 
+const byAscending: (a: number, b: number) => number = (a, b) => a - b;
+
 // 4つのブロックからミノを予測します
 // 完全なミノの形をしているときは、座標も含めて返却します
 export const inferPiece = (inferences: number[]) => {
@@ -51,23 +53,25 @@ export const inferPiece = (inferences: number[]) => {
 
     const setY = new Set<Number>();
     inferences.forEach(value => setY.add(Math.floor(value / 10)));
-    const ys: { [y: string]: number } = {};
-    Array.from(setY.keys()).sort().forEach((y, index) => {
-        ys[`${y}`] = index;
+    const ysByAscending = Array.from(setY.keys()).map(Number).sort(byAscending);
+
+    const ysObj: { [y: string]: number } = {};
+    ysByAscending.forEach((y, index) => {
+        ysObj[`${y}`] = index;
     });
 
-    const sortedIndices = inferences.sort((a, b) => a - b);
+    const sortedIndices = inferences.sort(byAscending);
 
     const transformed = sortedIndices
         .map((value) => {
             const x = value % 10;
             const y = Math.floor(value / 10);
-            return ys[`${y}`] * 10 + x;
+            return ysObj[`${y}`] * 10 + x;
         });
 
     let split = false;
-    for (let index = 1; index < ys.length; index += 1) {
-        if (ys[index - 1] + 1 !== ys[index]) {
+    for (let index = 1; index < ysByAscending.length; index += 1) {
+        if (1 < ysByAscending[index] - ysByAscending[index - 1]) {
             split = true;
             break;
         }
