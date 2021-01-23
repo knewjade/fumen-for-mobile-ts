@@ -1,7 +1,10 @@
 const { GenerateSW } = require('workbox-webpack-plugin');
 
 const path = require('path');
-const buildNumber = process.env.TRAVIS_BUILD_NUMBER || process.env.GITHUB_RUN_ID
+// GitHub Actionsへの移行に合わせて、ビルド番号は1000から開始する
+const buildNumber = process.env.TRAVIS_BUILD_NUMBER
+    ? process.env.TRAVIS_BUILD_NUMBER
+    : (process.env.GITHUB_RUN_ID ? process.env.GITHUB_RUN_ID + 1000 : undefined)
 const version = buildNumber || `dev-${new Date().toISOString()}`;
 const isDebug = (!buildNumber) + '';
 const cacheId = 'fumen-for-mobile';
