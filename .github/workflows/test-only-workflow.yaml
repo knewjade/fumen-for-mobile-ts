@@ -1,0 +1,13 @@
+name: test-only-workflow
+on: [push]
+jobs:
+  test-only-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: yarn install --frozen-lockfile
+      - run: yarn test-ci
+      - run: yarn webpack-prod
+      - run: yarn serve &
+      - run: yarn cy-run-ci
