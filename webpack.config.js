@@ -1,8 +1,9 @@
-const {GenerateSW} = require('workbox-webpack-plugin');
+const { GenerateSW } = require('workbox-webpack-plugin');
 
 const path = require('path');
-const version = process.env.TRAVIS_BUILD_NUMBER || `dev-${new Date().toISOString()}`;
-const isDebug = (!process.env.TRAVIS_BUILD_NUMBER) + '';
+const buildNumber = process.env.TRAVIS_BUILD_NUMBER || process.env.GITHUB_RUN_ID
+const version = buildNumber || `dev-${new Date().toISOString()}`;
+const isDebug = (!buildNumber) + '';
 const cacheId = 'fumen-for-mobile';
 
 module.exports = {
