@@ -49,11 +49,19 @@ export const ReaderTools: Component<Props> = (
         <nav datatest="tools" className={themeColor} style={navProperties}>
             <div className="nav-wrapper" style={divProperties}>
 
-                <ToolButton iconName="mode_edit" datatest="btn-writable" width={45} height={height - 10}
-                            key="btn-writable" fontSize={33.75} marginRight={10} colors={palette}
+                <ToolButton iconName={animationState !== 'pause' ? 'pause' : 'play_arrow'} datatest="btn-play-anime"
+                            key="btn-play-anime" width={40} height={height - 10} fontSize={40} colors={palette}
+                            marginRight={15}
                             actions={{
                                 onclick: () => {
-                                    actions.changeToDrawerScreen({ refresh: true });
+                                    switch (animationState) {
+                                    case AnimationState.Play:
+                                        actions.pauseAnimation();
+                                        break;
+                                    default:
+                                        actions.startAnimation();
+                                        break;
+                                    }
                                 },
                             }}/>
 
@@ -68,21 +76,14 @@ export const ReaderTools: Component<Props> = (
 
                 <ToolButton iconName="navigate_next" datatest="btn-next-page" width={35} height={height - 10}
                             key="btn-next-page" fontSize={33.75} marginRight={10} colors={palette}
-                            actions={{ onclick: () => actions.nextPage() }} enable={currentPage < maxPage}/>
+                            enable={currentPage < maxPage}
+                            actions={{ onclick: () => actions.nextPage() }}/>
 
-                <ToolButton iconName={animationState !== 'pause' ? 'pause' : 'play_arrow'} datatest="btn-play-anime"
-                            key="btn-play-anime" width={40} height={height - 10} fontSize={40} colors={palette}
-                            marginRight={10}
+                <ToolButton iconName="mode_edit" datatest="btn-writable" width={40} height={height - 10}
+                            key="btn-writable" fontSize={33.75} marginRight={10} colors={palette}
                             actions={{
                                 onclick: () => {
-                                    switch (animationState) {
-                                    case AnimationState.Play:
-                                        actions.pauseAnimation();
-                                        break;
-                                    default:
-                                        actions.startAnimation();
-                                        break;
-                                    }
+                                    actions.changeToDrawerScreen({ refresh: true });
                                 },
                             }}/>
 

@@ -132,7 +132,7 @@ export const utilsActions: Readonly<UtilsActions> = {
         const { x } = stage.getPointerPosition();
         const { width } = stage.getSize();
         const touchX = x / width;
-        const action = touchX < 0.5 ? actions.backLoopPage() : actions.nextLoopPage();
+        const action = touchX < 0.5 ? actions.backPage() : actions.nextPage();
         return action(state);
     },
 };
