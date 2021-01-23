@@ -218,7 +218,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);
@@ -240,7 +239,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);
@@ -289,7 +287,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);
@@ -338,7 +335,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);
@@ -377,7 +373,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);
@@ -421,7 +416,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);
@@ -460,7 +454,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);
@@ -504,7 +497,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);
@@ -549,7 +541,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);

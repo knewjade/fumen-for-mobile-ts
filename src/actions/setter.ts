@@ -18,6 +18,7 @@ export interface SetterActions {
         filledHighlight: boolean,
         inferences: number[],
         ghost: boolean,
+        allowSplit: boolean,
     }) => action;
     setFieldColor: (data: { guideLineColor: boolean }) => action;
     setSentLine: (data: { sentLine: Block[] }) => action;
@@ -66,7 +67,9 @@ export const setterActions: Readonly<SetterActions> = {
             },
         };
     },
-    setField: ({ field, move, filledHighlight, inferences, ghost }) => (): NextState => {
+    setField: (
+        { field, move, filledHighlight, inferences, ghost, allowSplit },
+    ) => (): NextState => {
         const drawnField: Block[] = field.concat();
 
         // ゴーストの計算
@@ -136,9 +139,20 @@ export const setterActions: Readonly<SetterActions> = {
             }
         }
 
-        try {
+        let piece = undefined;
+        const inferredResult = inferPiece(inferences);
+        if (inferredResult) {
+            if (inferredResult.coordinate) {
+                // 完全なミノ
+                piece = inferredResult.piece;
+            } else if (!inferredResult.coordinate && allowSplit) {
+                // 分離したミノとして解釈できる かつ 完全な予測でなくても良い
+                piece = inferredResult.piece;
+            }
+        }
+
+        if (piece) {
             // InferencePieceが揃っているとき
-            const piece = inferPiece(inferences).piece;
             for (const inference of inferences) {
                 drawnField[inference] = {
                     ...field[inference],
@@ -146,7 +160,7 @@ export const setterActions: Readonly<SetterActions> = {
                     highlight: HighlightType.Highlight2,
                 };
             }
-        } catch (e) {
+        } else {
             // InferencePieceが揃っていないとき
             for (const inference of inferences) {
                 drawnField[inference] = {

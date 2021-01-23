@@ -1,6 +1,6 @@
 import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
-import { AnimationState, Piece } from '../lib/enums';
+import { AnimationState, Piece, TouchTypes } from '../lib/enums';
 import { Move, Page, PreCommand } from '../lib/fumen/types';
 import { Block } from '../state_types';
 import { PageFieldOperation, Pages, QuizCommentResult, TextCommentResult } from '../lib/pages';
@@ -93,6 +93,7 @@ export const pageActions: Readonly<PageActions> = {
                 filledHighlight: page.flags.lock,
                 inferences: state.events.inferences,
                 ghost: state.mode.ghostVisible,
+                allowSplit: state.mode.touch === TouchTypes.Drawing,
             }),
             actions.setFieldColor({ guideLineColor }),
             actions.setSentLine({ sentLine: blocks.sentLine }),
@@ -222,7 +223,6 @@ export const pageActions: Readonly<PageActions> = {
             return sequence(state, [
                 pageActions.insertPage({ index: nextPage }),
                 pageActions.openPage({ index: nextPage }),
-                actions.saveToMemento(),
             ]);
         }
 
