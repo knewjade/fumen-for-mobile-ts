@@ -33,6 +33,7 @@ export interface PageActions {
     backLoopPage: () => action;
     nextLoopPage: () => action;
     backPage: () => action;
+    nextPage: () => action;
     nextPageOrNewPage: () => action;
     firstPage: () => action;
     lastPage: () => action;
@@ -215,6 +216,21 @@ export const pageActions: Readonly<PageActions> = {
             pageActions.openPage({ index: backPage }),
         ]);
     },
+    nextPage: () => (state): NextState => {
+        const fumen = state.fumen;
+        const nextPage = fumen.currentIndex + 1;
+
+        if (fumen.maxPage <= nextPage) {
+            return;
+        }
+
+        return sequence(state, [
+            actions.fixInferencePiece(),
+            actions.clearInferencePiece(),
+            actions.commitCommentText(),
+            pageActions.openPage({ index: nextPage }),
+        ]);
+    },
     nextPageOrNewPage: () => (state): NextState => {
         const fumen = state.fumen;
         const nextPage = fumen.currentIndex + 1;
@@ -227,10 +243,7 @@ export const pageActions: Readonly<PageActions> = {
         }
 
         return sequence(state, [
-            actions.fixInferencePiece(),
-            actions.clearInferencePiece(),
-            actions.commitCommentText(),
-            pageActions.openPage({ index: nextPage }),
+            actions.nextPage(),
         ]);
     },
     firstPage: () => (state): NextState => {

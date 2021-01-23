@@ -6,7 +6,7 @@ import { animationActions } from './animation';
 
 export interface ScreenActions {
     changeToReaderScreen: () => action;
-    changeToDrawerScreen: () => action;
+    changeToDrawerScreen: (data: { refresh?: boolean }) => action;
     changeToDrawingMode: () => action;
     changeToDrawingToolMode: () => action;
     changeToFlagsMode: () => action;
@@ -34,13 +34,14 @@ export const modeActions: Readonly<ScreenActions> = {
             actions.resetInferencePiece(),
         ]);
     },
-    changeToDrawerScreen: () => (state): NextState => {
+    changeToDrawerScreen: ({ refresh }) => (state): NextState => {
         resources.konva.stage.reload((done) => {
             main.changeScreen({ screen: Screens.Editor });
             done();
         });
         return sequence(state, [
             animationActions.pauseAnimation(),
+            refresh ? actions.changeToDrawingToolMode() : undefined,
         ]);
     },
     changeToDrawingMode: () => (state): NextState => {

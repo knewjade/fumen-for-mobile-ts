@@ -206,6 +206,8 @@ const Tools = (state: State, actions: Actions, height: number) => {
     return ReaderTools({
         actions,
         height,
+        currentPage: state.fumen.currentIndex + 1,
+        maxPage: state.fumen.maxPage,
         palette: Palette(Screens.Reader),
         animationState: state.play.status,
         pages: `${state.fumen.currentIndex + 1} / ${state.fumen.maxPage}`,

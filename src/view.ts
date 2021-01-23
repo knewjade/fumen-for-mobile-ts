@@ -35,7 +35,6 @@ export const view: View<State, Actions> = (state, actions) => {
         state.modal.menu ? MenuModal({
             actions,
             version: state.version,
-            pages: state.fumen.pages,
             screen: state.mode.screen,
             currentIndex: state.fumen.currentIndex,
             maxPageIndex: state.fumen.maxPage,

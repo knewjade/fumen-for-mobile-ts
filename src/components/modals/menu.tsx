@@ -2,7 +2,6 @@ import { Component, ComponentWithText, px, style } from '../../lib/types';
 import { h } from 'hyperapp';
 import { resources } from '../../states';
 import { i } from '@hyperapp/html';
-import { Page } from '../../lib/fumen/types';
 import { CommentType, Screens } from '../../lib/enums';
 import { i18n } from '../../locales/keys';
 
@@ -10,7 +9,6 @@ declare const M: any;
 
 interface MenuProps {
     version: string;
-    pages: Page[];
     screen: Screens;
     currentIndex: number;
     maxPageIndex: number;
@@ -19,8 +17,7 @@ interface MenuProps {
     actions: {
         closeMenuModal: () => void;
         changeToReaderScreen: () => void;
-        changeToDrawerScreen: () => void;
-        changeToDrawingToolMode: () => void;
+        changeToDrawerScreen: (data: { refresh?: boolean }) => void;
         changeCommentMode: (data: { type: CommentType }) => void;
         fixInferencePiece: () => void;
         clearInferencePiece: () => void;
@@ -38,7 +35,7 @@ interface MenuProps {
 }
 
 export const MenuModal: Component<MenuProps> = (
-    { version, pages, screen, currentIndex, maxPageIndex, comment, ghostVisible, actions },
+    { version, screen, currentIndex, maxPageIndex, comment, ghostVisible, actions },
 ) => {
     const oncreate = (element: HTMLDivElement) => {
         const instance = M.Modal.init(element, {
@@ -101,8 +98,7 @@ export const MenuModal: Component<MenuProps> = (
                             <SettingButton key="btn-writable" datatest="btn-writable" href="#"
                                            icons={[{ name: 'mode_edit', size: 31.25 }]}
                                            onclick={() => {
-                                               actions.changeToDrawerScreen();
-                                               actions.changeToDrawingToolMode();
+                                               actions.changeToDrawerScreen({ refresh: true });
                                                actions.closeMenuModal();
                                            }}>{i18n.Menu.Buttons.Writable()}</SettingButton>
                             : undefined}
@@ -123,8 +119,7 @@ export const MenuModal: Component<MenuProps> = (
                                            actions.fixInferencePiece();
                                            actions.clearInferencePiece();
                                            actions.loadNewFumen();
-                                           actions.changeToDrawerScreen();
-                                           actions.changeToDrawingToolMode();
+                                           actions.changeToDrawerScreen({ refresh: true });
                                            actions.closeMenuModal();
                                        }}>
                             {i18n.Menu.Buttons.New()}
