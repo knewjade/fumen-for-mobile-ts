@@ -26,7 +26,7 @@ describe('Open fumen', () => {
 
     const inputData = (data, maxPage) => {
         // モーダルを開く
-        operations.mode.reader.openPage();
+        operations.menu.openPage();
 
         // 入力に成功するパターン
         cy.get(datatest('mdl-open-fumen')).should('be.visible')
@@ -66,6 +66,14 @@ describe('Open fumen', () => {
     // 空の5ページ
     it('Open modal', () => {
         visit({});
+
+        // 入力前
+        operations.menu.openPage();
+        cy.get(datatest('mdl-open-fumen')).should('be.visible')
+            .within(() => {
+                cy.get(datatest('btn-open')).should('have.class', 'disabled');
+                cy.get(datatest('btn-cancel')).click();
+            });
 
         open('v115@vhEAgHAAAAAAAAAAAA');
         open('http://fumen.zui.jp/?v115@vhEAgHAAAAAAAAAAAA');
@@ -110,7 +118,7 @@ describe('Open fumen', () => {
         visit({});
 
         // モーダルを開く
-        operations.mode.reader.openPage();
+        operations.menu.openPage();
 
         openError('v105@7eEAAAAAAAAAAAAAAA');
         openError('m105@7eEAAAAAAAAAAAAAAA');
@@ -128,7 +136,7 @@ describe('Open fumen', () => {
         visit({ lng: 'ja' });
 
         // モーダルを開く
-        operations.mode.reader.openPage();
+        operations.menu.openPage();
 
         // 入力に失敗するパターン
         cy.get(datatest('mdl-open-fumen')).should('be.visible')
@@ -168,7 +176,7 @@ describe('Open fumen', () => {
         visit({ lng: 'ja' });
 
         // モーダルを開く
-        operations.mode.reader.openPage();
+        operations.menu.openPage();
 
         // 入力に失敗するパターン
         cy.get(datatest('mdl-open-fumen')).should('be.visible')
@@ -196,7 +204,7 @@ describe('Open fumen', () => {
         cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 1');
 
         // モーダルを開く
-        operations.mode.reader.openPage();
+        operations.menu.openPage();
 
         // 全てが消えている
         cy.get(datatest('mdl-open-fumen')).should('be.visible')
@@ -227,7 +235,7 @@ describe('Open fumen', () => {
         visit({});
 
         // モーダルを開く
-        operations.mode.reader.openPage();
+        operations.menu.openPage();
 
         // 入力に成功するパターン
         cy.get(datatest('mdl-open-fumen')).should('be.visible')
@@ -263,7 +271,9 @@ describe('Open fumen', () => {
             });
         }
 
-        leftTap(() => {
+        operations.menu.lastPage();
+
+        {
             // ページ番号の確認
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1826));
 
@@ -275,7 +285,7 @@ describe('Open fumen', () => {
             [Piece.Z, Piece.L, Piece.O, Piece.J, Piece.Z].forEach((piece, index) => {
                 cy.get(nextBox(index)).should('have.attr', 'type', piece);
             });
-        });
+        }
     });
 
     it('Highlight when lock is on/off', () => {

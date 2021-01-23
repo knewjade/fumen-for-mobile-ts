@@ -280,6 +280,9 @@ describe('Put pieces', () => {
 
         expectFumen('v115@vhCVPJxMJTLJ');
 
+        // 環境によってはクリップボードのエラーメッセージが消えない場合があるため
+        cy.wait(2000);
+
         // I
         minoPosition(Piece.I, Rotation.Spawn)(6, 18).forEach(position => {
             operations.mode.block.click(position[0], position[1]);

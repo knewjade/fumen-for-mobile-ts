@@ -64,6 +64,7 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
     })();
 
     const clipboard = (domain: string) => () => {
+        let element: HTMLElement | undefined = undefined;
         encodePromise
             .then((data) => {
                 // データをElementに保存する // 主にテスト用
@@ -74,8 +75,8 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
             .then(data => `${domain}${data}`)
             .then((url) => {
                 // コピー用のelementを作成
-                const element = document.createElement('pre');
-                if (element === undefined || element === null) {
+                element = document.createElement('pre');
+                if (!element) {
                     throw new FumenError('no element');
                 }
 
@@ -99,15 +100,18 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
                 if (!success) {
                     throw new FumenError('command error');
                 }
-
-                // コピー用のelementを削除
-                document.body.removeChild(element);
             })
             .then(() => {
                 M.toast({ html: 'Copied to clipboard', classes: 'top-toast', displayLength: 1000 });
             })
             .catch((error) => {
                 M.toast({ html: `Failed to copy: ${error}`, classes: 'top-toast', displayLength: 1500 });
+            })
+            .finally(() => {
+                if (element) {
+                    // コピー用のelementを削除
+                    document.body.removeChild(element);
+                }
             });
     };
 

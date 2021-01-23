@@ -181,10 +181,9 @@ describe('Quiz', () => {
             cy.get(datatest('text-comment')).should('have.value', '#Q=[S](I)JZT');
         });
 
-        // 最初に戻る
+        // 最初に戻らない
         rightTap(() => {
-            cy.get(datatest('text-comment')).should('have.value', '#Q=[](I)LOTJSZ');
-            cy.get(datatest('text-comment')).should('have.class', changeColor);
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[S](I)JZT');
         });
     });
 
@@ -298,10 +297,9 @@ describe('Quiz', () => {
             cy.get(datatest('text-comment')).should('have.value', '#Q=[S](I)JZT');
         });
 
-        // 最初に戻る
+        // 最初に戻らない
         rightTap(() => {
-            cy.get(datatest('text-comment')).should('have.value', '#Q=[](I)LOTJSZ');
-            cy.get(datatest('text-comment')).should('have.class', changeColor);
+            cy.get(datatest('text-comment')).should('have.value', '#Q=[S](I)JZT');
         });
     });
 
