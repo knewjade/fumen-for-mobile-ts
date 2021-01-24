@@ -304,10 +304,10 @@ function createKonvaObjects() {
 // PC or mobileの判定
 function getPlatform(): Platforms {
     const urlQuery = getURLQuery();
-    const pc = urlQuery.get('pc');
-    if (pc) {
+    const mobile = urlQuery.get('mobile');
+    if (mobile && !!Number(mobile)) {
         // URLに設定されている
-        return !!Number(pc) ? Platforms.PC : Platforms.Mobile;
+        return Platforms.Mobile;
     }
 
     if (navigator.userAgent.match(/iPhone|iPad|Android/)) {

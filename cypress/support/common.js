@@ -169,7 +169,7 @@ const getPieces = (piece) => {
 };
 
 export const visit = (
-    { fumen, sleepInMill = 800, lng = 'en', mode = 'readonly', pc = false, reload = false },
+    { fumen, sleepInMill = 800, lng = 'en', mode = 'readonly', mobile = true, reload = false },
 ) => {
     let baseUrl = '#';
 
@@ -187,9 +187,8 @@ export const visit = (
         params.lng = lng;
     }
 
-    if (!pc) {
-        // falseのときだけ、明示的にパラメータを設定する (trueのときはページ側で自動的に設定される想定)
-        params.pc = 0;
+    if (mobile) {
+        params.mobile = 1;
     }
 
     if (params) {
