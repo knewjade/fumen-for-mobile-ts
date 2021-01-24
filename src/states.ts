@@ -1,4 +1,4 @@
-import { AnimationState, CommentType, ModeTypes, Piece, Screens, TouchTypes } from './lib/enums';
+import { AnimationState, CommentType, ModeTypes, Piece, Platforms, Screens, TouchTypes } from './lib/enums';
 import { HyperStage } from './lib/hyper';
 import { Box } from './components/box';
 import { PageEnv } from './env';
@@ -71,6 +71,7 @@ export interface State {
         redoCount: number;
     };
     version: string;
+    platform: Platforms;
 }
 
 export const initState: Readonly<State> = {
@@ -136,6 +137,7 @@ export const initState: Readonly<State> = {
         redoCount: 0,
     },
     version: VERSION,
+    platform: getPlatform(),
 };
 
 export const resources = {
@@ -296,4 +298,12 @@ function createKonvaObjects() {
     }
 
     return obj;
+}
+
+// PC or mobileの判定
+function getPlatform(): Platforms {
+    if (navigator.userAgent.match(/iPhone|iPad|Android/)) {
+        return Platforms.Mobile;
+    }
+    return Platforms.PC;
 }
