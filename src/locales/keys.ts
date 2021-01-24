@@ -63,4 +63,8 @@ export const i18n = {
             NoAvailableCommentButton: () => t('Menu.Messages.NoAvailableCommentButton'),
         },
     },
+    Navigator: {
+        OpenInPC: () => t('Navigator.OpenInPC'),
+        ExternalFumenURL: (data: string) => t('Navigator.ExternalFumenURL', { data }),
+    },
 };
