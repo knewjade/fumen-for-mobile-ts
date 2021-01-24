@@ -5,7 +5,7 @@ describe('Fill row', () => {
     it('Regular case', () => {
         visit({
             fumen: 'v115@3gwwHeywwhGeR4whBtAeRpAeR4glwhg0BtRpAeilwh?i0JeAgH',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.mode.fillRow.open();
@@ -20,7 +20,7 @@ describe('Fill row', () => {
     it('Row -> Slide -> Row', () => {
         visit({
             fumen: 'v115@vhAAgH',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.mode.fillRow.open();

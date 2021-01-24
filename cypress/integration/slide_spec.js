@@ -5,7 +5,7 @@ describe('Slide', () => {
     it('Up/Down', () => {
         visit({
             fumen: 'v115@bhE8AeI8AeD8AgH',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.mode.slide.open();

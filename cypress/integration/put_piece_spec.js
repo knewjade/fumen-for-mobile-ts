@@ -4,7 +4,7 @@ import { operations } from '../support/operations';
 // テト譜を開く
 describe('Put pieces', () => {
     it('Move piece', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -41,7 +41,7 @@ describe('Put pieces', () => {
     });
 
     it('Put pieces', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -118,7 +118,7 @@ describe('Put pieces', () => {
     it('Move pieces', () => {
         visit({
             fumen: 'v115@zgB8EeD8HeB8AeE8AeC8BeC8BeC8AeE8AeB8JeAgHz?gBAEeDAHeBAAeEAAeBAAeA8AeAAHeAAEeAAKeAgH0gB8DeB?8AeB8FeD8AeD8AeB8CeA8BeA8DeA8AeAABeAAAeA8KeAgH0?gBAD8BeA8BAAeE8BeBAEeA8BeBAEeA8BeBADeB8LeAgH',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.mode.piece.open();
@@ -223,7 +223,7 @@ describe('Put pieces', () => {
     });
 
     it('Move pieces 2', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -323,7 +323,7 @@ describe('Put pieces', () => {
     });
 
     it('Show current rotation', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -387,7 +387,7 @@ describe('Put pieces', () => {
     });
 
     it('Spawn guideline piece', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -416,7 +416,7 @@ describe('Put pieces', () => {
     });
 
     it('Spawn classic piece', () => {
-        visit({ fumen: 'v115@vhAAAA', mode: 'writable' });
+        visit({ fumen: 'v115@vhAAAA', mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -445,7 +445,7 @@ describe('Put pieces', () => {
     });
 
     it('Spawn: usecase 1', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
         operations.mode.piece.open();
 
         {
@@ -497,7 +497,7 @@ describe('Put pieces', () => {
     });
 
     it('Spawn: usecase 2', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
         operations.mode.piece.open();
         operations.mode.piece.draw();  // 自動でmoveに切り替わることを期待
 
@@ -545,7 +545,7 @@ describe('Put pieces', () => {
     });
 
     it('Reset', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
         operations.mode.piece.open();
         operations.mode.piece.draw();
 
@@ -597,7 +597,7 @@ describe('Put pieces', () => {
     });
 
     it('Inference', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
         operations.mode.piece.open();
         operations.mode.piece.draw();
 
@@ -622,7 +622,7 @@ describe('Put pieces', () => {
     });
 
     it('Split inference', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
         operations.mode.piece.open();
         operations.mode.piece.draw();
 
@@ -659,7 +659,7 @@ describe('Put pieces', () => {
     });
 
     it('Swap current piece', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
         operations.mode.piece.open();
 
         {

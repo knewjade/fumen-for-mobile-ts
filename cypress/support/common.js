@@ -169,7 +169,7 @@ const getPieces = (piece) => {
 };
 
 export const visit = (
-    { fumen, sleepInMill = 800, lng = 'en', mode = 'readonly', mobile = true, reload = false },
+    { fumen, sleepInMill = 700, lng = 'en', mode = 'readonly', mobile = true, reload = false },
 ) => {
     let baseUrl = '#';
 

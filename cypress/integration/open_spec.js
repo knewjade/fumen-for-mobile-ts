@@ -332,7 +332,7 @@ describe('Open fumen', () => {
     });
 
     it('Page Slider: Writable', () => {
-        visit({ fumen: 'v115@vhJTJJ+NJ3MJVQJ0GJXDJFCJuFJT/IJFJ', mode: 'writable' });
+        visit({ fumen: 'v115@vhJTJJ+NJ3MJVQJ0GJXDJFCJuFJT/IJFJ', mode: 'edit' });
 
         operations.menu.pageSlider();
 
@@ -457,7 +457,7 @@ describe('Open fumen', () => {
     it('Ghost: writable', () => {
         visit({
             fumen: 'v115@RhD8FeE8OeRsHWeTaUhSsHOegWGeiWVhTnHNexSHex?SVhUnHMeBPIeBPVhVsHNeQLHeSLVhWsHMegHIeiHVhXnH',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.menu.ghostToggle();
@@ -556,7 +556,7 @@ describe('Open fumen', () => {
     it('Ghost: draw', () => {
         visit({
             fumen: 'v115@RhD8FeE8OeRsHWeTaUhSsHOegWGeiWVhTnHNexSHex?SVhUnHMeBPIeBPVhVsHNeQLHeSLVhWsHMegHIeiHVhXnH',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.mode.block.open();
