@@ -19,6 +19,7 @@ import { mementoActions, MementoActions } from './actions/memento';
 import { CommentActions, commentActions } from './actions/comment';
 import { convertActions, ConvertActions } from './actions/convert';
 import { i18n } from './locales/keys';
+import { getURLQuery } from './params';
 
 export type action = (state: Readonly<State>) => NextState;
 
@@ -80,21 +81,7 @@ window.onresize = () => {
 declare const M: any;
 
 window.addEventListener('load', () => {
-    // Query文字列を取得
-    let search = '';
-    if (location.search !== '') {
-        search = location.search.substr(1);
-    } else {
-        const hash = location.hash;
-        const index = hash.indexOf('?');
-        if (index !== -1) {
-            search = hash.substr(index + 1);
-        }
-    }
-
-    // クエリーの抽出
-    const url = decodeURIComponent(search);
-    const paramQueryStrings = url.split('&');
+    const urlQuery = getURLQuery();
 
     // i18nの設定
     const languageDetector = new LanguageDetector(null, {
@@ -104,8 +91,7 @@ window.addEventListener('load', () => {
     languageDetector.addDetector({
         name: 'myQueryDetector',
         lookup() {
-            const lng = paramQueryStrings.find(value => value.startsWith('lng='));
-            return lng !== undefined ? lng.substr(4) : undefined;
+            return urlQuery.get('lng');
         },
         cacheUserLanguage() {
             // do nothing
@@ -129,9 +115,9 @@ window.addEventListener('load', () => {
 
     // URLからロードする
     {
-        const data = paramQueryStrings.find(value => value.startsWith('d='));
-        if (data !== undefined) {
-            return main.loadFumen({ fumen: data.substr(2) });
+        const fumen = urlQuery.get('d');
+        if (fumen !== undefined) {
+            return main.loadFumen({ fumen });
         }
     }
 
