@@ -110,17 +110,17 @@ export const sentBlock = (x) => datatest(`sent-block-${x}-0`);
 export const mino = (piece, rotation) => {
     let blocks = getPieces(piece);
     switch (rotation) {
-        case Rotation.Spawn:
-            break;
-        case Rotation.Reverse:
-            blocks = blocks.map(current => [-current[0], -current[1]]);
-            break;
-        case Rotation.Left:
-            blocks = blocks.map(current => [-current[1], current[0]]);
-            break;
-        case Rotation.Right:
-            blocks = blocks.map(current => [current[1], -current[0]]);
-            break;
+    case Rotation.Spawn:
+        break;
+    case Rotation.Reverse:
+        blocks = blocks.map(current => [-current[0], -current[1]]);
+        break;
+    case Rotation.Left:
+        blocks = blocks.map(current => [-current[1], current[0]]);
+        break;
+    case Rotation.Right:
+        blocks = blocks.map(current => [current[1], -current[0]]);
+        break;
     }
 
     return (x, y) => {
@@ -131,17 +131,17 @@ export const mino = (piece, rotation) => {
 export const minoPosition = (piece, rotation) => {
     let blocks = getPieces(piece);
     switch (rotation) {
-        case Rotation.Spawn:
-            break;
-        case Rotation.Reverse:
-            blocks = blocks.map(current => [-current[0], -current[1]]);
-            break;
-        case Rotation.Left:
-            blocks = blocks.map(current => [-current[1], current[0]]);
-            break;
-        case Rotation.Right:
-            blocks = blocks.map(current => [current[1], -current[0]]);
-            break;
+    case Rotation.Spawn:
+        break;
+    case Rotation.Reverse:
+        blocks = blocks.map(current => [-current[0], -current[1]]);
+        break;
+    case Rotation.Left:
+        blocks = blocks.map(current => [-current[1], current[0]]);
+        break;
+    case Rotation.Right:
+        blocks = blocks.map(current => [current[1], -current[0]]);
+        break;
     }
 
     return (x, y) => {
@@ -151,24 +151,26 @@ export const minoPosition = (piece, rotation) => {
 
 const getPieces = (piece) => {
     switch (piece) {
-        case Piece.I:
-            return [[0, 0], [-1, 0], [1, 0], [2, 0]];
-        case Piece.T:
-            return [[0, 0], [-1, 0], [1, 0], [0, 1]];
-        case Piece.O:
-            return [[0, 0], [1, 0], [0, 1], [1, 1]];
-        case Piece.L:
-            return [[0, 0], [-1, 0], [1, 0], [1, 1]];
-        case Piece.J:
-            return [[0, 0], [-1, 0], [1, 0], [-1, 1]];
-        case Piece.S:
-            return [[0, 0], [-1, 0], [0, 1], [1, 1]];
-        case Piece.Z:
-            return [[0, 0], [1, 0], [0, 1], [-1, 1]];
+    case Piece.I:
+        return [[0, 0], [-1, 0], [1, 0], [2, 0]];
+    case Piece.T:
+        return [[0, 0], [-1, 0], [1, 0], [0, 1]];
+    case Piece.O:
+        return [[0, 0], [1, 0], [0, 1], [1, 1]];
+    case Piece.L:
+        return [[0, 0], [-1, 0], [1, 0], [1, 1]];
+    case Piece.J:
+        return [[0, 0], [-1, 0], [1, 0], [-1, 1]];
+    case Piece.S:
+        return [[0, 0], [-1, 0], [0, 1], [1, 1]];
+    case Piece.Z:
+        return [[0, 0], [1, 0], [0, 1], [-1, 1]];
     }
 };
 
-export const visit = ({ fumen, sleepInMill = 800, lng = 'en', mode = 'readonly', reload = false }) => {
+export const visit = (
+    { fumen, sleepInMill = 800, lng = 'en', mode = 'readonly', mobile = true, reload = false },
+) => {
     let baseUrl = '#';
 
     if (mode !== 'readonly') {
@@ -183,6 +185,10 @@ export const visit = ({ fumen, sleepInMill = 800, lng = 'en', mode = 'readonly',
 
     if (lng) {
         params.lng = lng;
+    }
+
+    if (mobile) {
+        params.mobile = 1;
     }
 
     if (params) {

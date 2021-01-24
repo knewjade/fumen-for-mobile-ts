@@ -1,9 +1,9 @@
-import { CommentType, ModeTypes, Screens } from '../../lib/enums';
+import { CommentType, ModeTypes, Platforms, Screens } from '../../lib/enums';
 import { Coordinate, Size } from '../commons';
 import { View } from 'hyperapp';
 import { resources, State } from '../../states';
 import { EditorTools } from '../../components/tools/editor_tools';
-import { Palette } from '../../lib/colors';
+import { ColorPalette, Palette } from '../../lib/colors';
 import { Actions } from '../../actions';
 import { Field } from '../../components/field';
 import { KonvaCanvas } from '../../components/konva_canvas';
@@ -21,6 +21,7 @@ import { utilsMode } from './utils_mode';
 import { slideMode } from './slide_mode';
 import { fillRowMode } from './fill_row_mode';
 import { pieceSelectMode } from './piece_select_mode';
+import { navigatorElement } from '../navigator';
 
 export interface EditorLayout {
     canvas: {
@@ -46,14 +47,16 @@ export interface EditorLayout {
     };
 }
 
-const getLayout = (display: { width: number, height: number }): EditorLayout => {
+const getLayout = (
+    { topLeftY, width, height }: { topLeftY: number, width: number, height: number },
+): EditorLayout => {
     const commentHeight = 35;
     const toolsHeight = 50;
     const borderWidthBottomField = 2.4;
 
     const canvasSize = {
-        width: display.width,
-        height: display.height - (toolsHeight + commentHeight),
+        width,
+        height: height - (toolsHeight + commentHeight + topLeftY),
     };
 
     const blockSize = Math.min(
@@ -78,7 +81,7 @@ const getLayout = (display: { width: number, height: number }): EditorLayout => 
         canvas: {
             topLeft: {
                 x: 0,
-                y: 0,
+                y: topLeftY,
             },
             size: {
                 width: fieldSize.width,
@@ -103,20 +106,20 @@ const getLayout = (display: { width: number, height: number }): EditorLayout => 
         comment: {
             topLeft: {
                 x: 0,
-                y: display.height - commentHeight - toolsHeight,
+                y: height - commentHeight - toolsHeight,
             },
             size: {
-                width: display.width,
+                width,
                 height: commentHeight,
             },
         },
         tools: {
             topLeft: {
                 x: 0,
-                y: display.height - toolsHeight,
+                y: height - toolsHeight,
             },
             size: {
-                width: display.width,
+                width,
                 height: toolsHeight,
             },
         },
@@ -277,11 +280,11 @@ const Events = (state: State, actions: Actions) => {
     });
 };
 
-const Tools = (state: State, actions: Actions, height: number) => {
+const Tools = (state: State, actions: Actions, height: number, palette: ColorPalette) => {
     return EditorTools({
         actions,
         height,
-        palette: Palette(Screens.Editor),
+        palette,
         animationState: state.play.status,
         currentPage: state.fumen.currentIndex + 1,
         maxPage: state.fumen.maxPage,
@@ -366,9 +369,14 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
 };
 
 export const view: View<State, Actions> = (state, actions) => {
-    // 初期化
-    const layout = getLayout(state.display);
+    const navigatorHeight = state.platform === Platforms.PC ? 30 : 0;
 
+    // 初期化
+    const layout = getLayout({
+        ...state.display,
+        topLeftY: navigatorHeight,
+    });
+    const palette = Palette(Screens.Editor);
     const batchDraw = () => resources.konva.stage.batchDraw();
 
     return div({
@@ -378,6 +386,12 @@ export const view: View<State, Actions> = (state, actions) => {
     }, [ // Hyperappでは最上位のノードが最後に実行される
         resources.konva.stage.isReady ? Events(state, actions) : undefined as any,
 
+        navigatorElement({
+            palette,
+            actions,
+            height: navigatorHeight,
+        }),
+
         ScreenField(state, actions, layout),
 
         div({
@@ -385,7 +399,7 @@ export const view: View<State, Actions> = (state, actions) => {
         }, [
             getComment(state, actions, layout),
 
-            Tools(state, actions, layout.tools.size.height),
+            Tools(state, actions, layout.tools.size.height, palette),
         ]),
     ]);
 };

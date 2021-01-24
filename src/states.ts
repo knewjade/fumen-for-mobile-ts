@@ -1,4 +1,4 @@
-import { AnimationState, CommentType, ModeTypes, Piece, Screens, TouchTypes } from './lib/enums';
+import { AnimationState, CommentType, ModeTypes, Piece, Platforms, Screens, TouchTypes } from './lib/enums';
 import { HyperStage } from './lib/hyper';
 import { Box } from './components/box';
 import { PageEnv } from './env';
@@ -8,6 +8,7 @@ import { generateKey } from './lib/random';
 import konva from 'konva';
 import { Page } from './lib/fumen/types';
 import { Field } from './lib/fumen/field';
+import { getURLQuery } from './params';
 
 const VERSION = PageEnv.Version;
 
@@ -71,6 +72,7 @@ export interface State {
         redoCount: number;
     };
     version: string;
+    platform: Platforms;
 }
 
 export const initState: Readonly<State> = {
@@ -136,6 +138,7 @@ export const initState: Readonly<State> = {
         redoCount: 0,
     },
     version: VERSION,
+    platform: getPlatform(),
 };
 
 export const resources = {
@@ -296,4 +299,19 @@ function createKonvaObjects() {
     }
 
     return obj;
+}
+
+// PC or mobileの判定
+function getPlatform(): Platforms {
+    const urlQuery = getURLQuery();
+    const mobile = urlQuery.get('mobile');
+    if (mobile && !!Number(mobile)) {
+        // URLに設定されている
+        return Platforms.Mobile;
+    }
+
+    if (navigator.userAgent.match(/iPhone|iPad|Android/)) {
+        return Platforms.Mobile;
+    }
+    return Platforms.PC;
 }
