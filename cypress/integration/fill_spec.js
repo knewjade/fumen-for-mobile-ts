@@ -4,7 +4,7 @@ import { operations } from '../support/operations';
 // テト譜を開く
 describe('Fill', () => {
     it('Fill field', () => {
-        visit({ fumen: 'v115@9gB8DeD8BeA8CeA8FeA8BeA8EeA8CeA8MeAgH', mode: 'writable' });
+        visit({ fumen: 'v115@9gB8DeD8BeA8CeA8FeA8BeA8EeA8CeA8MeAgH', mode: 'edit' });
 
         operations.mode.fill.open();
         operations.mode.fill.Gray();
@@ -39,7 +39,7 @@ describe('Fill', () => {
     });
 
     it('Draw sent line', () => {
-        visit({ fumen: 'v115@vhAAgH', mode: 'writable' });
+        visit({ fumen: 'v115@vhAAgH', mode: 'edit' });
 
         operations.mode.fill.open();
         operations.mode.fill.Gray();

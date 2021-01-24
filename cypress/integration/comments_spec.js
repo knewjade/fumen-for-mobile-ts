@@ -3,7 +3,7 @@ import { operations } from '../support/operations';
 
 describe('Comments', () => {
     it('Should not apply comment to other pages', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.tools.nextPage();
         operations.mode.tools.nextPage();
@@ -23,7 +23,7 @@ describe('Comments', () => {
     });
 
     it('Comment readonly/writable', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -39,7 +39,7 @@ describe('Comments', () => {
     });
 
     it('Write comments', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -113,7 +113,7 @@ describe('Comments', () => {
     });
 
     it('Quiz', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -160,7 +160,7 @@ describe('Comments', () => {
 
     it('Multi quiz', () => {
         visit({
-            mode: 'writable',
+            mode: 'edit',
             fumen: 'v115@vhGyOY3AFLDmClcJSAVjiSAVG88AYS88AZPUABCowA?BR4K6Bl/UtClfJSASE7SAyltSATzarDMjzCATEJm/I3LJtK?JUBJAgH'
         });
 

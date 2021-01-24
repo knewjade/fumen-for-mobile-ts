@@ -15,7 +15,7 @@ import { operations } from '../support/operations';
 // テト譜を開く
 describe('Drawing', () => {
     it('Draw blocks', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.block.open();
         operations.mode.block.Gray();
@@ -56,7 +56,7 @@ describe('Drawing', () => {
     });
 
     it('Draw blocks 2', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.block.open();
         operations.mode.block.I();
@@ -81,7 +81,7 @@ describe('Drawing', () => {
     });
 
     it('Completion blocks', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.block.open();
 
@@ -150,7 +150,7 @@ describe('Drawing', () => {
     it('Completion blocks 2', () => {
         visit({
             fumen: 'v115@AhG8CeG8CeH8BeG8JeAgH',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.mode.block.open();
@@ -279,7 +279,7 @@ describe('Drawing', () => {
     it('Completion blocks 3', () => {
         visit({
             fumen: 'v115@vhAAgH',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.mode.block.open();
@@ -332,7 +332,7 @@ describe('Drawing', () => {
     });
 
     it('Split inference', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.block.open();
 
@@ -372,7 +372,7 @@ describe('Drawing', () => {
         // 接着なしオンのテト譜
         visit({
             fumen: 'v115@HhE8CeG8CeH8BeB8JeAgl',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.mode.block.open();
@@ -394,7 +394,7 @@ describe('Drawing', () => {
 
     it('Sent block', () => {
         // sentBlockを置くかどうかの判定に、フィールドのブロックを参照してしまう問題に対するテスト
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.menu.newPage();
 
@@ -414,7 +414,7 @@ describe('Drawing', () => {
     });
 
     it('Reset completion when create new page', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.block.open();
 

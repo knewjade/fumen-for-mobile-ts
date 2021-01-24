@@ -124,7 +124,7 @@ export const initState: Readonly<State> = {
         updated: false,
     },
     mode: {
-        screen: window.location.hash.includes('#/writable') ? Screens.Editor : Screens.Reader,
+        screen: window.location.hash.includes('#/edit') ? Screens.Editor : Screens.Reader,
         type: ModeTypes.DrawingTool,
         touch: TouchTypes.Drawing,
         piece: undefined,  // UI上で選択されているのピースの種類

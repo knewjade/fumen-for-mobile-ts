@@ -1,23 +1,11 @@
-import {
-    block,
-    Color,
-    datatest,
-    expectFumen,
-    minoPosition,
-    Piece,
-    px,
-    py,
-    rightTap,
-    Rotation,
-    visit
-} from '../support/common';
+import { block, Color, datatest, expectFumen, minoPosition, Piece, rightTap, Rotation, visit } from '../support/common';
 import { operations } from '../support/operations';
 
 describe('Drawing Tools', () => {
     it('Duplicate page', () => {
         visit({
             fumen: 'v115@vhF2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDsOBA?A3rBzkBsqBifBAAA',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.mode.tools.open();
@@ -69,7 +57,7 @@ describe('Drawing Tools', () => {
     it('Update by lock flag', () => {
         visit({
             fumen: 'v115@bhJ8JeAgH',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         cy.get(block(0, 0)).should('have.attr', 'color', Color.Gray.Highlight1);
@@ -87,7 +75,7 @@ describe('Drawing Tools', () => {
     it('Remove', () => {
         visit({
             fumen: 'v115@vhG9NYaAFLDmClcJSAVDEHBEooRBUoAVBa9aPCM+AA?A0sBXjB2uBzkBifBplBmhI8NjSFAooMDEPBAAAvhEHiuFA3?XaDEEBAAAHiBAwDHmBAAA',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.mode.tools.open();
@@ -151,7 +139,7 @@ describe('Drawing Tools', () => {
     it('Undo/Redo', () => {
         visit({
             fumen: 'v115@HhglIeglIehlAezhMeAgH',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.mode.tools.open();
@@ -288,7 +276,7 @@ describe('Drawing Tools', () => {
     it('Auto save', () => {
         visit({
             fumen: 'v115@HhglIeglIehlAezhMeAgH',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.mode.tools.open();
@@ -305,7 +293,7 @@ describe('Drawing Tools', () => {
 
         cy.wait(1000);
 
-        visit({ mode: 'writable', reload: true });
+        visit({ mode: 'edit', reload: true });
 
         expectFumen('v115@HhglIeglIehlAezhMeAgHYhi0GeSpJeAgH');
 
@@ -357,7 +345,7 @@ describe('Drawing Tools', () => {
     it('Flags', () => {
         visit({
             fumen: 'v115@lhwhglQpAtwwg0Q4CeAgH',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.mode.block.open();
@@ -505,7 +493,7 @@ describe('Drawing Tools', () => {
     it('Clear button visibility', () => {
         visit({
             fumen: 'v115@vhF2OYaAFLDmClcJSAVDEHBEooRBKoAVBTXNFDsOBA?A3rBzkBsqBifBAAA',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         {
