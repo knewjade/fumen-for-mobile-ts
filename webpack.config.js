@@ -5,7 +5,7 @@ const path = require('path');
 const buildNumber = process.env.TRAVIS_BUILD_NUMBER
     ? process.env.TRAVIS_BUILD_NUMBER
     : (process.env.GITHUB_RUN_NUMBER ? parseInt(process.env.GITHUB_RUN_NUMBER) + 1000 : undefined)
-const version = `${buildNumber}` || `dev-${new Date().toISOString()}`;
+const version = buildNumber ? `${buildNumber}` : `dev-${new Date().toISOString()}`;
 const isDebug = (!buildNumber) + '';
 const cacheId = 'fumen-for-mobile';
 
