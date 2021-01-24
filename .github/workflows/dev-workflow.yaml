@@ -16,7 +16,7 @@ jobs:
       - run: yarn cy-run-ci
 
   deploy:
-    needs: test
+#    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
