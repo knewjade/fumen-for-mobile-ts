@@ -79,8 +79,8 @@ export const ReaderTools: Component<Props> = (
                             enable={currentPage < maxPage}
                             actions={{ onclick: () => actions.nextPage() }}/>
 
-                <ToolButton iconName="mode_edit" datatest="btn-writable" width={40} height={height - 10}
-                            key="btn-writable" fontSize={33.75} marginRight={10} colors={palette}
+                <ToolButton iconName="mode_edit" datatest="btn-writable-in-reader" width={40} height={height - 10}
+                            key="btn-writable-in-reader" fontSize={33.75} marginRight={10} colors={palette}
                             actions={{
                                 onclick: () => {
                                     actions.changeToDrawerScreen({ refresh: true });

@@ -18,11 +18,6 @@ export const operations = {
         },
     },
     mode: {
-        reader: {
-            openPage: () => {
-                cy.get(datatest('btn-open-fumen')).click();
-            },
-        },
         block: {
             open: ({ home = true } = {}) => {
                 if (home) {
@@ -393,6 +388,10 @@ export const operations = {
     menu: {
         open: () => {
             cy.get(datatest('btn-open-menu')).click();
+        },
+        openPage: () => {
+            operations.menu.open();
+            cy.get(datatest('btn-open-fumen')).click();
         },
         newPage: () => {
             operations.menu.open();
