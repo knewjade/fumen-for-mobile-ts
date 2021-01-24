@@ -8,6 +8,7 @@ import { generateKey } from './lib/random';
 import konva from 'konva';
 import { Page } from './lib/fumen/types';
 import { Field } from './lib/fumen/field';
+import { getURLQuery } from './params';
 
 const VERSION = PageEnv.Version;
 
@@ -302,6 +303,13 @@ function createKonvaObjects() {
 
 // PC or mobileの判定
 function getPlatform(): Platforms {
+    const urlQuery = getURLQuery();
+    const pc = urlQuery.get('pc');
+    if (pc) {
+        // URLに設定されている
+        return !!Number(pc) ? Platforms.PC : Platforms.Mobile;
+    }
+
     if (navigator.userAgent.match(/iPhone|iPad|Android/)) {
         return Platforms.Mobile;
     }
