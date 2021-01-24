@@ -19,15 +19,11 @@ export const resources = {
         },
     },
     Clipboard: {
-        Title: 'クリップボードにコピー',
+        Title: 'クリップボードにコピー',
     },
     Menu: {
         Messages: {
             NoAvailableCommentButton: 'Writableモードのときだけ変更できます',
         },
-    },
-    Navigator: {
-        OpenInPC: 'PC版で開く',
-        ExternalFumenURL: 'http://fumen.zui.jp/?{{data}}',
     },
 };

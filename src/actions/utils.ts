@@ -1,6 +1,6 @@
 import { NextState, sequence } from './commons';
 import { action, actions, main } from '../actions';
-import { decode, encode } from '../lib/fumen/fumen';
+import { decode } from '../lib/fumen/fumen';
 import { i18n } from '../locales/keys';
 import { FumenError } from '../lib/errors';
 import {
@@ -17,8 +17,6 @@ import { State } from '../states';
 import { Pages } from '../lib/pages';
 import { Page } from '../lib/fumen/types';
 
-declare const M: any;
-
 export interface UtilsActions {
     resize: (data: { width: number, height: number }) => action;
     loadFumen: (data: { fumen: string, purgeOnFailed?: boolean }) => action;
@@ -27,7 +25,6 @@ export interface UtilsActions {
     loadPages: (data: { pages: Page[], loadedFumen: string }) => action;
     appendPages: (data: { pages: Page[], pageIndex: number }) => action;
     refresh: () => action;
-    openInPC: () => action;
     ontapCanvas: (e: any) => action;
 }
 
@@ -129,29 +126,6 @@ export const utilsActions: Readonly<UtilsActions> = {
     },
     refresh: () => (): NextState => {
         return {};
-    },
-    openInPC: () => (state): NextState => {
-        return sequence(state, [
-            actions.removeUnsettledItemsInField(),
-            (state) => {
-                // テト譜の変換
-                const encodePromise = (async () => {
-                    const encoded = await encode(state.fumen.pages);
-                    return `v115@${encoded}`;
-                });
-
-                encodePromise()
-                    .then((data) => {
-                        const url = i18n.Navigator.ExternalFumenURL(data);
-                        window.open(url, '_blank');
-                    })
-                    .catch((error) => {
-                        M.toast({ html: `Failed to open in PC: ${error}`, classes: 'top-toast', displayLength: 1500 });
-                    });
-
-                return undefined;
-            },
-        ]);
     },
     ontapCanvas: (e: any) => (state): NextState => {
         const stage = e.currentTarget.getStage();

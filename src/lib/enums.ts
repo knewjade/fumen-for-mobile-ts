@@ -74,11 +74,6 @@ export enum CommentType {
     PageSlider = 'PageSlider',
 }
 
-export enum Platforms {
-    PC = 'PC',
-    Mobile = 'Mobile',  // Smart Phone or Table
-}
-
 export function parsePieceName(piece: Piece) {
     switch (piece) {
     case Piece.I:
