@@ -28,6 +28,6 @@ export const resources = {
     },
     Navigator: {
         OpenInPC: 'PC版で開く',
-        ExternalFumenURL: 'http://fumen.zui.jp/?{{data}}',
+        ExternalFumenURL: 'https://fumen.zui.jp/?{{data}}',
     },
 };
