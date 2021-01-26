@@ -173,24 +173,24 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
 
                             <div>
                                 <ClipboardButton key="btn-zui-jp"
-                                                 onclick={clipboard('http://fumen.zui.jp/?')}>
+                                                 onclick={clipboard('https://fumen.zui.jp/?')}>
                                     FUMEN.ZUI.JP
                                 </ClipboardButton>
 
                                 <ClipboardIconButton key="btn-zui-jp-tinyurl"
-                                                     onclick={tinyurl('http://fumen.zui.jp/?')}>
+                                                     onclick={tinyurl('https://fumen.zui.jp/?')}>
                                     archive
                                 </ClipboardIconButton>
                             </div>
 
                             <div>
                                 <ClipboardButton key="btn-harddrop"
-                                                 onclick={clipboard('http://harddrop.com/fumen/?')}>
+                                                 onclick={clipboard('https://harddrop.com/fumen/?')}>
                                     HARDDROP
                                 </ClipboardButton>
 
                                 <ClipboardIconButton key="btn-harddrop-tinyurl"
-                                                     onclick={tinyurl('http://harddrop.com/fumen/?')}>
+                                                     onclick={tinyurl('https://harddrop.com/fumen/?')}>
                                     archive
                                 </ClipboardIconButton>
                             </div>
