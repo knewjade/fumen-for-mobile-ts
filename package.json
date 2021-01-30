@@ -19,6 +19,7 @@
     "@types/i18next": "13.0.0",
     "@types/i18next-browser-languagedetector": "3.0.0",
     "@types/jest": "26.0.20",
+    "@types/lodash": "4.14.168",
     "connect": "3.7.0",
     "cypress": "6.2.1",
     "express": "4.17.1",
