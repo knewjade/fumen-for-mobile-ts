@@ -103,7 +103,7 @@ export const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: 
         }, iconContents({
             description: 'utils',
             iconSize: 24,
-            iconName: 'build',
+            iconName: 'widgets',
         })),
         toolButton({
             borderWidth: 1,

@@ -26,6 +26,19 @@ export const resources = {
             Unexpected: 'Unexpected error: {{message}}',
         },
     },
+    UserSettings: {
+        Title: 'User Settings',
+        Notice: 'Clearing the browser cache will initialize the settings.',
+        Ghost: {
+            Title: 'Show the ghost',
+            Off: () => 'Hidden',
+            On: () => 'Visible',
+        },
+        Buttons: {
+            Save: 'Save',
+            Cancel: 'Cancel',
+        },
+    },
     Clipboard: {
         Title: 'Copy to clipboard',
         Buttons: {
@@ -53,6 +66,7 @@ export const resources = {
             Append: 'Append',
             GhostOn: 'GhostOn',
             GhostOff: 'GhostOff',
+            UserSettings: 'Settings',
         },
         Messages: {
             NoAvailableCommentButton: 'Available only when writable mode',

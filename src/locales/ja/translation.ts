@@ -18,6 +18,19 @@ export const resources = {
             FailedToLoad: 'テト譜を読み込めませんでした',
         },
     },
+    UserSettings: {
+        Title: 'ユーザー設定',
+        Notice: 'ブラウザのキャッシュを削除すると、これらの設定は初期化されます。',
+        Ghost: {
+            Title: 'ゴーストの表示',
+            Off: () => 'しない',
+            On: () => 'する',
+        },
+        Buttons: {
+            Save: '保存',
+            Cancel: 'キャンセル',
+        },
+    },
     Clipboard: {
         Title: 'クリップボードにコピー',
     },
