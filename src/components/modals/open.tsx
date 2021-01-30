@@ -17,6 +17,11 @@ interface OpenFumenModalProps {
 }
 
 export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, errorMessage, actions }) => {
+    const cancel = () => {
+        actions.closeFumenModal();
+        actions.clearFumenData();
+    };
+
     const oncreate = (element: HTMLDivElement) => {
         const instance = M.Modal.init(element, {
             onOpenEnd: () => {
@@ -26,7 +31,7 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
                 }
             },
             onCloseStart: () => {
-                actions.closeFumenModal();
+                cancel();
             },
         });
 
@@ -85,11 +90,6 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
         return element.value !== '' ? element.value : '';
     };
 
-    const cancel = () => {
-        actions.closeFumenModal();
-        actions.clearFumenData();
-    };
-
     const open = () => {
         const value = getInputText();
         actions.inputFumenData({ value });
@@ -105,7 +105,7 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
     };
 
     const openClassVisibility = textAreaValue !== '' && errorMessage === undefined ? '' : ' disabled';
-    const openClassName = `waves-effect waves-teal btn-flat${openClassVisibility}`;
+    const openClassName = `waves-effect waves-light btn red${openClassVisibility}`;
 
     return (
         <div key="open-fumen-modal-top">

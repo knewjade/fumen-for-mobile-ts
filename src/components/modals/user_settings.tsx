@@ -97,7 +97,7 @@ export const UserSettingsModal: Component<UserSettingsModalProps> = (
                     </a>
 
                     <a href="#" key="btn-save" datatest="btn-save" id="btn-save"
-                       className="waves-effect waves-teal btn" onclick={save}>
+                       className="waves-effect waves-light btn red" onclick={save}>
                         {i18n.UserSettings.Buttons.Save()}
                     </a>
                 </div>

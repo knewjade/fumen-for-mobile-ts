@@ -31,7 +31,6 @@ export const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: 
             currentIndex,
             actions,
             width: layout.buttons.size.width,
-            height: layout.buttons.size.height,
         }),
         toolSpace({
             flexGrow: 100,
