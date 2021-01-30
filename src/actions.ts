@@ -18,6 +18,7 @@ import { UtilsActions, utilsActions } from './actions/utils';
 import { mementoActions, MementoActions } from './actions/memento';
 import { CommentActions, commentActions } from './actions/comment';
 import { convertActions, ConvertActions } from './actions/convert';
+import { userSettingsActions, UserSettingsActions } from './actions/user_settings';
 import { i18n } from './locales/keys';
 import { getURLQuery } from './params';
 
@@ -32,7 +33,8 @@ export type Actions = AnimationActions
     & MementoActions
     & FieldEditorActions
     & CommentActions
-    & ConvertActions;
+    & ConvertActions
+    & UserSettingsActions;
 
 export const actions: Readonly<Actions> = {
     ...animationActions,
@@ -45,6 +47,7 @@ export const actions: Readonly<Actions> = {
     ...fieldEditorActions,
     ...commentActions,
     ...convertActions,
+    ...userSettingsActions,
 };
 
 // Mounting

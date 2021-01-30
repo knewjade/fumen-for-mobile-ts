@@ -48,6 +48,9 @@ export interface State {
         menu: boolean;
         append: boolean;
         clipboard: boolean;
+        userSettings?: {
+            ghostVisible: boolean;
+        };
     };
     handlers: {
         animation?: NodeJS.Timeout;
@@ -114,6 +117,7 @@ export const initState: Readonly<State> = {
         menu: false,
         append: false,
         clipboard: false,
+        userSettings: undefined,
     },
     handlers: {
         animation: undefined,
@@ -147,6 +151,7 @@ export const resources = {
         fumen: undefined as any,
         append: undefined as any,
         clipboard: undefined as any,
+        userSettings: undefined as any,
     },
     konva: createKonvaObjects(),
     comment: undefined as ({ text: string, pageIndex: number } | undefined),
