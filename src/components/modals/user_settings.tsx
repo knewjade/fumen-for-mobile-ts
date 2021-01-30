@@ -7,16 +7,18 @@ declare const M: any;
 
 interface UserSettingsModalProps {
     ghostVisible: boolean;
+    loop: boolean;
     actions: {
         closeUserSettingsModal: () => void;
         commitUserSettings: () => void;
         copyUserSettingsToTemporary: () => void;
         keepGhostVisible: (data: { visible: boolean }) => void;
+        keepLoop: (data: { enable: boolean }) => void;
     };
 }
 
 export const UserSettingsModal: Component<UserSettingsModalProps> = (
-    { ghostVisible, actions },
+    { ghostVisible, loop, actions },
 ) => {
     const oncreate = (element: HTMLDivElement) => {
         const instance = M.Modal.init(element, {
@@ -48,18 +50,32 @@ export const UserSettingsModal: Component<UserSettingsModalProps> = (
         actions.closeUserSettingsModal();
     };
 
-    const onupdate = (e: HTMLInputElement) => {
+    const onupdateGhost = (e: HTMLInputElement) => {
         if (e.checked !== ghostVisible) {
             e.checked = ghostVisible;
         }
     };
 
-    const onchange = (e: Event) => {
+    const onchangeGhost = (e: Event) => {
         if (!e || !e.target) {
             return;
         }
         const target = e.target as HTMLInputElement;
         actions.keepGhostVisible({ visible: target.checked });
+    };
+
+    const onupdateLoop = (e: HTMLInputElement) => {
+        if (e.checked !== loop) {
+            e.checked = loop;
+        }
+    };
+
+    const onchangeLoop = (e: Event) => {
+        if (!e || !e.target) {
+            return;
+        }
+        const target = e.target as HTMLInputElement;
+        actions.keepLoop({ enable: target.checked });
     };
 
     return (
@@ -81,13 +97,24 @@ export const UserSettingsModal: Component<UserSettingsModalProps> = (
                             <label>
                                 {i18n.UserSettings.Ghost.Off()}
                                 <input type="checkbox" dataTest="switch-ghost-visible"
-                                       onupdate={onupdate} onchange={onchange}/>
+                                       onupdate={onupdateGhost} onchange={onchangeGhost}/>
                                 <span class="lever"/>
                                 {i18n.UserSettings.Ghost.On()}
                             </label>
                         </div>
-                    </div>
 
+                        <div class="switch">
+                            <h6>{i18n.UserSettings.Loop.Title()}</h6>
+
+                            <label>
+                                {i18n.UserSettings.Loop.Off()}
+                                <input type="checkbox" dataTest="switch-loop"
+                                       onupdate={onupdateLoop} onchange={onchangeLoop}/>
+                                <span class="lever"/>
+                                {i18n.UserSettings.Loop.On()}
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
                 <div key="modal-footer" className="modal-footer">

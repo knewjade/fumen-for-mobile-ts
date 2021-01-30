@@ -143,6 +143,7 @@ export const memento = (() => {
 
 interface UserSettings {
     ghostVisible: boolean;
+    loop: boolean;
 }
 
 const safer = {
@@ -179,6 +180,7 @@ export const localStorageWrapper = {
 
         return {
             ghostVisible: safer.boolean(obj.ghostVisible),
+            loop: safer.boolean(obj.loop),
         };
     },
 };

@@ -39,6 +39,11 @@ export const i18n = {
             Off: () => t('UserSettings.Ghost.Off'),
             On: () => t('UserSettings.Ghost.On'),
         },
+        Loop: {
+            Title: () => t('UserSettings.Loop.Title'),
+            Off: () => t('UserSettings.Loop.Off'),
+            On: () => t('UserSettings.Loop.On'),
+        },
         Buttons: {
             Save: () => t('UserSettings.Buttons.Save'),
             Cancel: () => t('UserSettings.Buttons.Cancel'),

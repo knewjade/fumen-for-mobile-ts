@@ -26,6 +26,11 @@ export const resources = {
             Off: () => 'しない',
             On: () => 'する',
         },
+        Loop: {
+            Title: 'ページ移動のループ [Reader]',
+            Off: () => '無効',
+            On: () => '有効',
+        },
         Buttons: {
             Save: '保存',
             Cancel: 'キャンセル',

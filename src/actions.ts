@@ -144,10 +144,21 @@ const loadFumen = () => {
 };
 
 const loadUserSettings = () => {
+    let updated = false;
     const settings = localStorageWrapper.loadUserSettings();
 
     if (settings.ghostVisible !== undefined) {
         main.changeGhostVisible({ visible: settings.ghostVisible });
+        updated = true;
+    }
+
+    if (settings.loop !== undefined) {
+        main.changeLoop({ enable: settings.loop });
+        updated = true;
+    }
+
+    if (updated) {
+        main.reopenCurrentPage();
     }
 };
 

@@ -207,7 +207,14 @@ export const pageActions: Readonly<PageActions> = {
     },
     backPage: () => (state): NextState => {
         const backPage = state.fumen.currentIndex - 1;
-        if (backPage < 0) return;
+        if (backPage < 0) {
+            if (state.mode.loop) {
+                return sequence(state, [
+                    actions.lastPage(),
+                ]);
+            }
+            return;
+        }
 
         return sequence(state, [
             actions.fixInferencePiece(),
@@ -221,6 +228,11 @@ export const pageActions: Readonly<PageActions> = {
         const nextPage = fumen.currentIndex + 1;
 
         if (fumen.maxPage <= nextPage) {
+            if (state.mode.loop) {
+                return sequence(state, [
+                    actions.firstPage(),
+                ]);
+            }
             return;
         }
 

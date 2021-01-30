@@ -58,6 +58,7 @@ export const view: View<State, Actions> = (state, actions) => {
         state.modal.userSettings ? UserSettingsModal({
             actions,
             ghostVisible: state.temporary.userSettings.ghostVisible,
+            loop: state.temporary.userSettings.loop,
         }) : undefined as any,
     ]);
 };
