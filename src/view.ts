@@ -9,6 +9,7 @@ import { OpenFumenModal } from './components/modals/open';
 import { MenuModal } from './components/modals/menu';
 import { AppendFumenModal } from './components/modals/append';
 import { ClipboardModal } from './components/modals/clipboard';
+import { UserSettingsModal } from './components/modals/user_settings';
 
 export const view: View<State, Actions> = (state, actions) => {
     const selectView = () => {
@@ -39,7 +40,6 @@ export const view: View<State, Actions> = (state, actions) => {
             currentIndex: state.fumen.currentIndex,
             maxPageIndex: state.fumen.maxPage,
             comment: state.mode.comment,
-            ghostVisible: state.mode.ghostVisible,
         }) : undefined as any,
 
         state.modal.append ? AppendFumenModal({
@@ -53,6 +53,11 @@ export const view: View<State, Actions> = (state, actions) => {
         state.modal.clipboard ? ClipboardModal({
             actions,
             pages: state.fumen.pages,
+        }) : undefined as any,
+
+        state.modal.userSettings ? UserSettingsModal({
+            actions,
+            ghostVisible: state.temporary.userSettings.ghostVisible,
         }) : undefined as any,
     ]);
 };

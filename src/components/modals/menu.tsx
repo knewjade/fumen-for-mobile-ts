@@ -13,14 +13,12 @@ interface MenuProps {
     currentIndex: number;
     maxPageIndex: number;
     comment: CommentType;
-    ghostVisible: boolean;
     actions: {
         closeMenuModal: () => void;
         changeToReaderScreen: () => void;
         changeToDrawerScreen: (data: { refresh?: boolean }) => void;
         changeCommentMode: (data: { type: CommentType }) => void;
-        fixInferencePiece: () => void;
-        clearInferencePiece: () => void;
+        removeUnsettledItems: () => void;
         loadNewFumen: () => void;
         firstPage: () => void;
         lastPage: () => void;
@@ -31,11 +29,12 @@ interface MenuProps {
         changeGhostVisible: (data: { visible: boolean }) => void;
         reopenCurrentPage: () => void;
         openFumenModal: () => void;
+        openUserSettingsModal: () => void;
     };
 }
 
 export const MenuModal: Component<MenuProps> = (
-    { version, screen, currentIndex, maxPageIndex, comment, ghostVisible, actions },
+    { version, screen, currentIndex, maxPageIndex, comment, actions },
 ) => {
     const oncreate = (element: HTMLDivElement) => {
         const instance = M.Modal.init(element, {
@@ -106,7 +105,7 @@ export const MenuModal: Component<MenuProps> = (
                         <SettingButton key="btn-copy-fumen" datatest="btn-copy-fumen" href="#"
                                        icons={[{ name: 'content_copy', size: 29.3 }]}
                                        onclick={() => {
-                                           actions.fixInferencePiece();
+                                           actions.removeUnsettledItems();
                                            actions.closeMenuModal();
                                            actions.openClipboardModal();
                                        }}>
@@ -116,8 +115,7 @@ export const MenuModal: Component<MenuProps> = (
                         <SettingButton key="btn-new-fumen" datatest="btn-new-fumen" href="#"
                                        icons={[{ name: 'insert_drive_file', size: 32.3 }]}
                                        onclick={() => {
-                                           actions.fixInferencePiece();
-                                           actions.clearInferencePiece();
+                                           actions.removeUnsettledItems();
                                            actions.loadNewFumen();
                                            actions.changeToDrawerScreen({ refresh: true });
                                            actions.closeMenuModal();
@@ -128,8 +126,7 @@ export const MenuModal: Component<MenuProps> = (
                         <SettingButton key="btn-open-fumen" datatest="btn-open-fumen" href="#"
                                        icons={[{ name: 'open_in_new', size: 32.3 }]}
                                        onclick={() => {
-                                           actions.fixInferencePiece();
-                                           actions.clearInferencePiece();
+                                           actions.removeUnsettledItems();
                                            actions.closeMenuModal();
                                            actions.openFumenModal();
                                        }}>
@@ -238,15 +235,13 @@ export const MenuModal: Component<MenuProps> = (
                             </SettingButton>
                             : undefined}
 
-                        <SettingButton key="btn-ghost-toggle" href="#"
-                                       datatest="btn-ghost-toggle"
-                                       icons={[{ name: ghostVisible ? 'visibility_off' : 'pageview', size: 32 }]}
+                        <SettingButton key="btn-user-settings" datatest="btn-user-settings" href="#"
+                                       icons={[{ name: 'build', size: 30 }]}
                                        onclick={() => {
-                                           actions.changeGhostVisible({ visible: !ghostVisible });
-                                           actions.reopenCurrentPage();
                                            actions.closeMenuModal();
+                                           actions.openUserSettingsModal();
                                        }}>
-                            {ghostVisible ? i18n.Menu.Buttons.GhostOff() : i18n.Menu.Buttons.GhostOn()}
+                            {i18n.Menu.Buttons.UserSettings()}
                         </SettingButton>
 
                         <SettingButton key="btn-help" datatest="btn-help" href="./help.html"

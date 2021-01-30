@@ -10,7 +10,7 @@ import {
     Piece,
     rightTap,
     Rotation,
-    visit
+    visit,
 } from '../support/common';
 import { operations } from '../support/operations';
 
@@ -361,7 +361,7 @@ describe('Open fumen', () => {
     it('Ghost: readonly', () => {
         visit({ fumen: 'v115@RhD8FeE8OeRsHWeTaUhSsHOegWGeiWVhTnHNexSHex?SVhUnHMeBPIeBPVhVsHNeQLHeSLVhWsHMegHIeiHVhXnH' });
 
-        operations.menu.ghostToggle();
+        operations.menu.ghostOff();
 
         {
             operations.menu.firstPage();
@@ -407,7 +407,7 @@ describe('Open fumen', () => {
             });
         }
 
-        operations.menu.ghostToggle();
+        operations.menu.ghostOn();
 
         {
             operations.menu.firstPage();
@@ -460,7 +460,7 @@ describe('Open fumen', () => {
             mode: 'edit',
         });
 
-        operations.menu.ghostToggle();
+        operations.menu.ghostOff();
 
         {
             operations.menu.firstPage();
@@ -506,7 +506,7 @@ describe('Open fumen', () => {
             });
         }
 
-        operations.menu.ghostToggle();
+        operations.menu.ghostOn();
 
         {
             operations.menu.firstPage();
@@ -558,6 +558,8 @@ describe('Open fumen', () => {
             fumen: 'v115@RhD8FeE8OeRsHWeTaUhSsHOegWGeiWVhTnHNexSHex?SVhUnHMeBPIeBPVhVsHNeQLHeSLVhWsHMegHIeiHVhXnH',
             mode: 'edit',
         });
+
+        operations.menu.ghostOn();
 
         operations.mode.block.open();
         operations.mode.block.Gray();

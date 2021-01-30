@@ -10,7 +10,7 @@ import {
     rightTap,
     Rotation,
     sentBlock,
-    visit
+    visit,
 } from '../support/common';
 
 // テト譜を開く

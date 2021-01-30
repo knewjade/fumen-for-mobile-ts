@@ -2,6 +2,7 @@ import { HistoryTask, isOperationTask, toDecoratorOperationTask } from './histor
 import { generateKey } from './lib/random';
 import { Page } from './lib/fumen/types';
 import { encode } from './lib/fumen/fumen';
+import lodash from 'lodash';
 
 interface SaverProp {
     saveKey: string;
@@ -52,7 +53,7 @@ const saver = (() => {
             pages,
             saveKey: key,
         }, (data: string) => {
-            localStorage.setItem('data@1', data);
+            localStorageWrapper.saveFumen(data);
         });
         saverState.last = { key, saverObj };
 
@@ -139,3 +140,45 @@ export const memento = (() => {
         },
     };
 })();
+
+interface UserSettings {
+    ghostVisible: boolean;
+}
+
+const safer = {
+    fumenV115: (value: any): string | undefined => {
+        const safeString = safer.string(value);
+        const re = /^v115@[a-zA-Z0-9+/?]+$/;
+        return safeString && re.test(safeString) ? safeString : undefined;
+    },
+    string: (value: any): string | undefined => {
+        return lodash.isString(value) ? value : undefined;
+    },
+    boolean: (value: any): boolean | undefined => {
+        return lodash.isBoolean(value) ? value : undefined;
+    },
+};
+
+export const localStorageWrapper = {
+    saveFumen: (data: string) => {
+        localStorage.setItem('data@1', data);
+    },
+    loadFumen: (): string | undefined => {
+        const data = localStorage.getItem('data@1');
+        return safer.fumenV115(data);
+    },
+    saveUserSettings: (data: UserSettings) => {
+        localStorage.setItem('user-settings@1', JSON.stringify(data));
+    },
+    loadUserSettings: (): Partial<UserSettings> => {
+        const data = localStorage.getItem('user-settings@1');
+        if (!data) {
+            return {};
+        }
+        const obj = JSON.parse(data);
+
+        return {
+            ghostVisible: safer.boolean(obj.ghostVisible),
+        };
+    },
+};

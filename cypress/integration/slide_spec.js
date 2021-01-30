@@ -1,5 +1,5 @@
-import {expectFumen, visit} from '../support/common';
-import {operations} from "../support/operations";
+import { expectFumen, visit } from '../support/common';
+import { operations } from "../support/operations";
 
 describe('Slide', () => {
     it('Up/Down', () => {

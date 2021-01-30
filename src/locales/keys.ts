@@ -31,6 +31,19 @@ export const i18n = {
             Unexpected: (message: string) => t('AppendFumen.Errors.Unexpected', { message }),
         },
     },
+    UserSettings: {
+        Title: () => t('UserSettings.Title'),
+        Notice: () => t('UserSettings.Notice'),
+        Ghost: {
+            Title: () => t('UserSettings.Ghost.Title'),
+            Off: () => t('UserSettings.Ghost.Off'),
+            On: () => t('UserSettings.Ghost.On'),
+        },
+        Buttons: {
+            Save: () => t('UserSettings.Buttons.Save'),
+            Cancel: () => t('UserSettings.Buttons.Cancel'),
+        },
+    },
     Clipboard: {
         Title: () => t('Clipboard.Title'),
         Buttons: {
@@ -58,6 +71,7 @@ export const i18n = {
             Append: () => t('Menu.Buttons.Append'),
             GhostOn: () => t('Menu.Buttons.GhostOn'),
             GhostOff: () => t('Menu.Buttons.GhostOff'),
+            UserSettings: () => t('Menu.Buttons.UserSettings'),
         },
         Messages: {
             NoAvailableCommentButton: () => t('Menu.Messages.NoAvailableCommentButton'),
