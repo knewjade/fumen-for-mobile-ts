@@ -30,3 +30,8 @@ jobs:
           publish_branch: master
           enable_jekyll: false
           publish_dir: ./public
+      - uses: actions/upload-artifact@v2
+        if: ${{ failure() }}
+        with:
+          name: test-report
+          path: cypress/screenshots/

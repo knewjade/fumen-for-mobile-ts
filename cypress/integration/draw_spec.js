@@ -8,7 +8,7 @@ import {
     Piece,
     Rotation,
     sentBlock,
-    visit
+    visit,
 } from '../support/common';
 import { operations } from '../support/operations';
 

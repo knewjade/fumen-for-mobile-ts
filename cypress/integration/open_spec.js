@@ -10,7 +10,7 @@ import {
     Piece,
     rightTap,
     Rotation,
-    visit
+    visit,
 } from '../support/common';
 import { operations } from '../support/operations';
 
@@ -359,6 +359,8 @@ describe('Open fumen', () => {
     });
 
     it('Ghost: readonly', () => {
+        cy.clearLocalStorage();
+
         visit({ fumen: 'v115@RhD8FeE8OeRsHWeTaUhSsHOegWGeiWVhTnHNexSHex?SVhUnHMeBPIeBPVhVsHNeQLHeSLVhWsHMegHIeiHVhXnH' });
 
         operations.menu.ghostToggle();
@@ -455,6 +457,8 @@ describe('Open fumen', () => {
     });
 
     it('Ghost: writable', () => {
+        cy.clearLocalStorage();
+
         visit({
             fumen: 'v115@RhD8FeE8OeRsHWeTaUhSsHOegWGeiWVhTnHNexSHex?SVhUnHMeBPIeBPVhVsHNeQLHeSLVhWsHMegHIeiHVhXnH',
             mode: 'edit',
@@ -554,6 +558,8 @@ describe('Open fumen', () => {
     });
 
     it('Ghost: draw', () => {
+        cy.clearLocalStorage();
+
         visit({
             fumen: 'v115@RhD8FeE8OeRsHWeTaUhSsHOegWGeiWVhTnHNexSHex?SVhUnHMeBPIeBPVhVsHNeQLHeSLVhWsHMegHIeiHVhXnH',
             mode: 'edit',

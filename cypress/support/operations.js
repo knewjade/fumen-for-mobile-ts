@@ -460,9 +460,14 @@ export const operations = {
             operations.menu.open();
             cy.get(datatest('btn-page-slider')).click();
         },
-        ghostToggle: () => {
+        openUserSettings: () => {
             operations.menu.open();
-            cy.get(datatest('btn-ghost-toggle')).click();
+            cy.get(datatest('btn-user-settings')).click();
+        },
+        ghostToggle: () => {
+            operations.menu.openUserSettings();
+            cy.get(datatest('switch-ghost-visible')).click({ force: true });
+            cy.get(datatest('btn-save')).click();
         },
     },
 };

@@ -68,7 +68,7 @@ export const UserSettingsModal: Component<UserSettingsModalProps> = (
                  className="modal" oncreate={oncreate} ondestroy={ondestroy}>
 
                 <div key="modal-content" className="modal-content">
-                    <h4 key="user-settings-label" dataTest="user-settings-label">{i18n.UserSettings.Title()}</h4>
+                    <h4>{i18n.UserSettings.Title()}</h4>
 
                     <div style={style({ color: '#666' })}>
                         {i18n.UserSettings.Notice()}
@@ -80,7 +80,8 @@ export const UserSettingsModal: Component<UserSettingsModalProps> = (
 
                             <label>
                                 {i18n.UserSettings.Ghost.Off()}
-                                <input type="checkbox" onupdate={onupdate} onchange={onchange}/>
+                                <input type="checkbox" dataTest="switch-ghost-visible"
+                                       onupdate={onupdate} onchange={onchange}/>
                                 <span class="lever"/>
                                 {i18n.UserSettings.Ghost.On()}
                             </label>
@@ -95,7 +96,7 @@ export const UserSettingsModal: Component<UserSettingsModalProps> = (
                         {i18n.UserSettings.Buttons.Cancel()}
                     </a>
 
-                    <a href="#" key="btn-open" datatest="btn-save" id="btn-save"
+                    <a href="#" key="btn-save" datatest="btn-save" id="btn-save"
                        className="waves-effect waves-teal btn" onclick={save}>
                         {i18n.UserSettings.Buttons.Save()}
                     </a>
