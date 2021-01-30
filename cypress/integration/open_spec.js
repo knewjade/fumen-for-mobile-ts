@@ -359,11 +359,9 @@ describe('Open fumen', () => {
     });
 
     it('Ghost: readonly', () => {
-        cy.clearLocalStorage();
-
         visit({ fumen: 'v115@RhD8FeE8OeRsHWeTaUhSsHOegWGeiWVhTnHNexSHex?SVhUnHMeBPIeBPVhVsHNeQLHeSLVhWsHMegHIeiHVhXnH' });
 
-        operations.menu.ghostToggle();
+        operations.menu.ghostOff();
 
         {
             operations.menu.firstPage();
@@ -409,7 +407,7 @@ describe('Open fumen', () => {
             });
         }
 
-        operations.menu.ghostToggle();
+        operations.menu.ghostOn();
 
         {
             operations.menu.firstPage();
@@ -457,14 +455,12 @@ describe('Open fumen', () => {
     });
 
     it('Ghost: writable', () => {
-        cy.clearLocalStorage();
-
         visit({
             fumen: 'v115@RhD8FeE8OeRsHWeTaUhSsHOegWGeiWVhTnHNexSHex?SVhUnHMeBPIeBPVhVsHNeQLHeSLVhWsHMegHIeiHVhXnH',
             mode: 'edit',
         });
 
-        operations.menu.ghostToggle();
+        operations.menu.ghostOff();
 
         {
             operations.menu.firstPage();
@@ -510,7 +506,7 @@ describe('Open fumen', () => {
             });
         }
 
-        operations.menu.ghostToggle();
+        operations.menu.ghostOn();
 
         {
             operations.menu.firstPage();
@@ -558,12 +554,12 @@ describe('Open fumen', () => {
     });
 
     it('Ghost: draw', () => {
-        cy.clearLocalStorage();
-
         visit({
             fumen: 'v115@RhD8FeE8OeRsHWeTaUhSsHOegWGeiWVhTnHNexSHex?SVhUnHMeBPIeBPVhVsHNeQLHeSLVhWsHMegHIeiHVhXnH',
             mode: 'edit',
         });
+
+        operations.menu.ghostOn();
 
         operations.mode.block.open();
         operations.mode.block.Gray();
