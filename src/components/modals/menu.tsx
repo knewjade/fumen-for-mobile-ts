@@ -180,6 +180,15 @@ export const MenuModal: Component<MenuProps> = (
                             {i18n.Menu.Buttons.ClearToEnd()}
                         </SettingButton>
 
+                        <SettingButton key="btn-user-settings" datatest="btn-user-settings" href="#"
+                                       icons={[{ name: 'build', size: 30 }]}
+                                       onclick={() => {
+                                           actions.closeMenuModal();
+                                           actions.openUserSettingsModal();
+                                       }}>
+                            {i18n.Menu.Buttons.UserSettings()}
+                        </SettingButton>
+
                         {comment !== CommentType.PageSlider ?
                             <SettingButton key="btn-page-slider" href="#"
                                            datatest="btn-page-slider"
@@ -234,15 +243,6 @@ export const MenuModal: Component<MenuProps> = (
                                 {i18n.Menu.Buttons.ReadonlyComment()}
                             </SettingButton>
                             : undefined}
-
-                        <SettingButton key="btn-user-settings" datatest="btn-user-settings" href="#"
-                                       icons={[{ name: 'build', size: 30 }]}
-                                       onclick={() => {
-                                           actions.closeMenuModal();
-                                           actions.openUserSettingsModal();
-                                       }}>
-                            {i18n.Menu.Buttons.UserSettings()}
-                        </SettingButton>
 
                         <SettingButton key="btn-help" datatest="btn-help" href="./help.html"
                                        icons={[{ name: 'help_outline', size: 31.25 }]}>
