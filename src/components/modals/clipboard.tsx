@@ -241,7 +241,7 @@ export const ClipboardButton: ComponentWithText<ClipboardButtonProps> = (
                paddingLeft: px(padding),
                paddingRight: px(padding),
            })}
-           className={`waves-effect waves-teal btn ${colorName}`} onclick={onClickFunc}>
+           className={`waves-effect waves-light btn ${colorName}`} onclick={onClickFunc}>
             {text}
         </a>
     );
@@ -267,7 +267,7 @@ export const ClipboardIconButton: ComponentWithText<ClipboardButtonProps> = (
     return (
         <a href="#" key={key} datatest={key} id={key} fontSize={px(textSize)}
            style={style({ margin: px(5), paddingLeft: px(padding), paddingRight: px(padding) })}
-           className="waves-effect waves-teal btn white black-text" onclick={onClickFunc}>
+           className="waves-effect waves-light btn white black-text" onclick={onClickFunc}>
             <i className="material-icons" style={properties}>{iconName}</i>
         </a>
     );

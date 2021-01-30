@@ -22,6 +22,11 @@ interface AppendFumenModalProps {
 export const AppendFumenModal: Component<AppendFumenModalProps> = (
     { textAreaValue, errorMessage, currentIndex, maxPage, actions },
 ) => {
+    const cancel = () => {
+        actions.closeAppendModal();
+        actions.clearFumenData();
+    };
+
     const oncreate = (element: HTMLDivElement) => {
         const instance = M.Modal.init(element, {
             onOpenEnd: () => {
@@ -31,7 +36,7 @@ export const AppendFumenModal: Component<AppendFumenModalProps> = (
                 }
             },
             onCloseStart: () => {
-                actions.closeAppendModal();
+                cancel();
             },
         });
 
@@ -90,11 +95,6 @@ export const AppendFumenModal: Component<AppendFumenModalProps> = (
         return element.value !== '' ? element.value : '';
     };
 
-    const cancel = () => {
-        actions.closeAppendModal();
-        actions.clearFumenData();
-    };
-
     const appendToEnd = () => {
         const value = getInputText();
         actions.inputFumenData({ value });
@@ -146,12 +146,12 @@ export const AppendFumenModal: Component<AppendFumenModalProps> = (
                         <ButtonIconContent iconSize={20} iconName="delete"/>
                     </Button>
 
-                    <Button key="btn-append-to-next" datatest="btn-append-to-next" width={80} colorTheme="teal"
+                    <Button key="btn-append-to-next" datatest="btn-append-to-next" width={80} colorTheme="red"
                             enable={textAreaValue !== '' && errorMessage === undefined} onclick={() => appendToNext()}>
                         <ButtonIconContent iconSize={20} iconName="library_add">next</ButtonIconContent>
                     </Button>
 
-                    <Button key="btn-append-to-end" datatest="btn-append-to-end" width={80} colorTheme="teal"
+                    <Button key="btn-append-to-end" datatest="btn-append-to-end" width={80} colorTheme="red"
                             enable={textAreaValue !== '' && errorMessage === undefined} onclick={() => appendToEnd()}>
                         <ButtonIconContent iconSize={20} iconName="library_add">end</ButtonIconContent>
                     </Button>
@@ -175,8 +175,8 @@ export const Button: ComponentWithText<ButtonProps> = (
     { href = '#', key, onclick, datatest, width, colorTheme, enable }, contents,
 ) => {
     const className = colorTheme !== undefined
-        ? `waves-effect waves-${colorTheme} btn white-text ${enable ? '' : 'disabled'}`
-        : `waves-effect waves-light btn-flat black-text ${enable ? '' : 'disabled'}`;
+        ? `waves-effect waves-light ${colorTheme} btn white-text ${enable ? '' : 'disabled'}`
+        : `waves-effect waves-teal btn-flat black-text ${enable ? '' : 'disabled'}`;
 
     return <a href="#" key={key} datatest={datatest} className={className} onclick={onclick}
               style={style({

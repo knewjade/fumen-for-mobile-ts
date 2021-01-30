@@ -155,34 +155,9 @@ export const switchIconContents = (
     return [icon, ' ', span({ style: style({ fontSize: px(11) }) }, description)];
 };
 
-export const radioIconContents = (
-    { description, iconSize, enable }: {
-        description: string;
-        iconSize: number;
-        enable: boolean;
-    },
-) => {
-    const properties = style({
-        display: 'block',
-        border: 'solid 0px #000',
-        marginRight: px(2),
-        cursor: 'pointer',
-    });
-
-    const className = 'material-icons left';
-
-    const icon = i({
-        className,
-        style: properties,
-    }, enable ? 'radio_button_checked' : 'radio_button_unchecked');
-
-    return [icon, ' ', span({ style: style({ fontSize: px(11) }) }, description)];
-};
-
 export const keyButton = (
-    { width, height, toolButtonMargin, keyPage, currentIndex, actions }: {
+    { width, toolButtonMargin, keyPage, currentIndex, actions }: {
         width: number;
-        height: number;
         toolButtonMargin: number;
         keyPage: boolean;
         currentIndex: number;
@@ -238,7 +213,7 @@ export const toolButton = (
         key,
         href: '#',
         class: `${onclick !== undefined ? 'waves-effect ' : ''}`
-            + `z-depth-0 btn-flat ${backgroundColorClass} ${enable ? '' : 'disabled'}`,
+            + `z-depth-0 btn ${backgroundColorClass} ${enable ? '' : 'disabled'}`,
         style: style({
             flexGrow,
             color: enable ? textColor : '#9e9e9e',
@@ -295,7 +270,7 @@ export const dualButton = (
             datatest,
             key,
             href: '#',
-            class: `waves-effect z-depth-0 btn-flat ${backgroundColorClass} ${enable ? '' : 'disabled'}`,
+            class: `waves-effect waves-light z-depth-0 btn ${backgroundColorClass} ${enable ? '' : 'disabled'}`,
             style: style({
                 margin,
                 color: enable ? textColor : '#9e9e9e',
@@ -363,7 +338,7 @@ export const switchButton = (
     return a({
         key,
         href: '#',
-        class: `waves-effect z-depth-0 btn-flat ${enable ? backgroundColorClass : 'white'}`,
+        class: `waves-effect waves-light z-depth-0 btn ${enable ? backgroundColorClass : 'white'}`,
         datatest: `${datatest}-${enable ? 'on' : 'off'}`,
         style: style({
             flexGrow,
@@ -421,7 +396,7 @@ export const dualSwitchButton = (
             datatest,
             key,
             href: '#',
-            class: `waves-effect z-depth-0 btn-flat ${enable ? backgroundColorClass : 'white'}`,
+            class: `waves-effect waves-light z-depth-0 btn ${enable ? backgroundColorClass : 'white'}`,
             style: style({
                 margin,
                 color: enable ? '#fff' : textColor,
