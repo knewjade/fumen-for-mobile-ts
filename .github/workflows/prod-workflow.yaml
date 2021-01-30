@@ -33,5 +33,4 @@ jobs:
       - uses: actions/upload-artifact@v2
         if: ${{ failure() }}
         with:
-          name: test-report
           path: cypress/screenshots/
