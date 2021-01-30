@@ -21,6 +21,7 @@ import { convertActions, ConvertActions } from './actions/convert';
 import { userSettingsActions, UserSettingsActions } from './actions/user_settings';
 import { i18n } from './locales/keys';
 import { getURLQuery } from './params';
+import { localStorageWrapper } from './memento';
 
 export type action = (state: Readonly<State>) => NextState;
 
@@ -84,6 +85,11 @@ window.onresize = () => {
 declare const M: any;
 
 window.addEventListener('load', () => {
+    loadFumen();
+    loadUserSettings();
+});
+
+const loadFumen = () => {
     const urlQuery = getURLQuery();
 
     // i18nの設定
@@ -126,7 +132,7 @@ window.addEventListener('load', () => {
 
     // LocalStrageからロードする
     {
-        const fumen = localStorage.getItem('data@1');
+        const fumen = localStorageWrapper.loadFumen();
         if (fumen) {
             M.toast({ html: i18n.Top.RestoreFromStorage(), classes: 'top-toast', displayLength: 1500 });
             return main.loadFumen({ fumen });
@@ -135,7 +141,15 @@ window.addEventListener('load', () => {
 
     // 空のフィールドを読み込む
     return main.loadNewFumen();
-});
+};
+
+const loadUserSettings = () => {
+    const settings = localStorageWrapper.loadUserSettings();
+
+    if (settings.ghostVisible !== undefined) {
+        main.changeGhostVisible({ visible: settings.ghostVisible });
+    }
+};
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {

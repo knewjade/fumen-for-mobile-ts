@@ -63,9 +63,7 @@ export const modalActions: Readonly<ModalActions> = {
         return {
             modal: {
                 ...state.modal,
-                userSettings: {
-                    ghostVisible: state.mode.ghostVisible,
-                },
+                userSettings: true,
             },
         };
     },
@@ -105,7 +103,7 @@ export const modalActions: Readonly<ModalActions> = {
         return {
             modal: {
                 ...state.modal,
-                userSettings: undefined,
+                userSettings: false,
             },
         };
     },
@@ -116,7 +114,7 @@ export const modalActions: Readonly<ModalActions> = {
                 fumen: false,
                 menu: false,
                 clipboard: false,
-                userSettings: undefined,
+                userSettings: false,
             },
         };
     },

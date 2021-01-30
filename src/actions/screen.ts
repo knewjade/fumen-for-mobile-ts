@@ -130,12 +130,20 @@ export const modeActions: Readonly<ScreenActions> = {
         };
     },
     changeGhostVisible: ({ visible }) => (state): NextState => {
-        return {
-            mode: {
-                ...state.mode,
-                ghostVisible: visible,
+        if (state.mode.ghostVisible === visible) {
+            return undefined;
+        }
+        return sequence(state, [
+            (state) => {
+                return {
+                    mode: {
+                        ...state.mode,
+                        ghostVisible: visible,
+                    },
+                };
             },
-        };
+            actions.reopenCurrentPage(),
+        ]);
     },
 };
 

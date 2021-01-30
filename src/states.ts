@@ -48,7 +48,10 @@ export interface State {
         menu: boolean;
         append: boolean;
         clipboard: boolean;
-        userSettings?: {
+        userSettings: boolean;
+    };
+    temporary: {
+        userSettings: {
             ghostVisible: boolean;
         };
     };
@@ -103,7 +106,22 @@ export const initState: Readonly<State> = {
     fumen: {
         currentIndex: 0,
         maxPage: 1,
-        pages: [],
+        pages: [{
+            index: 0,
+            comment: {
+                text: '',
+            },
+            field: {
+                obj: new Field({}),
+            },
+            flags: {
+                colorize: true,
+                lock: true,
+                mirror: false,
+                quiz: false,
+                rise: false,
+            },
+        }],
         value: undefined,
         errorMessage: undefined,
         guideLineColor: true,
@@ -117,7 +135,12 @@ export const initState: Readonly<State> = {
         menu: false,
         append: false,
         clipboard: false,
-        userSettings: undefined,
+        userSettings: false,
+    },
+    temporary: {
+        userSettings: {
+            ghostVisible: true,
+        },
     },
     handlers: {
         animation: undefined,
