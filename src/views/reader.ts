@@ -214,6 +214,7 @@ const Tools = (state: State, actions: Actions, height: number, palette: ColorPal
         maxPage: state.fumen.maxPage,
         animationState: state.play.status,
         pages: `${state.fumen.currentIndex + 1} / ${state.fumen.maxPage}`,
+        loop: state.mode.loop,
     });
 };
 

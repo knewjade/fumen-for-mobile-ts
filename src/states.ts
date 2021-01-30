@@ -53,6 +53,7 @@ export interface State {
     temporary: {
         userSettings: {
             ghostVisible: boolean;
+            loop: boolean;
         };
     };
     handlers: {
@@ -72,6 +73,7 @@ export interface State {
         piece: Piece | undefined;
         comment: CommentType;
         ghostVisible: boolean;
+        loop: boolean;
     };
     history: {
         undoCount: number;
@@ -140,6 +142,7 @@ export const initState: Readonly<State> = {
     temporary: {
         userSettings: {
             ghostVisible: true,
+            loop: false,
         },
     },
     handlers: {
@@ -159,6 +162,7 @@ export const initState: Readonly<State> = {
         piece: undefined,  // UI上で選択されているのピースの種類
         comment: CommentType.Writable,
         ghostVisible: true,
+        loop: false,
     },
     history: {
         undoCount: 0,

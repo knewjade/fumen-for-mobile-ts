@@ -7,6 +7,7 @@ export interface UserSettingsActions {
     copyUserSettingsToTemporary: () => action;
     commitUserSettings: () => action;
     keepGhostVisible: (data: { visible: boolean }) => action;
+    keepLoop: (data: { enable: boolean }) => action;
 }
 
 export const userSettingsActions: Readonly<UserSettingsActions> = {
@@ -16,6 +17,7 @@ export const userSettingsActions: Readonly<UserSettingsActions> = {
                 ...state.temporary,
                 userSettings: {
                     ghostVisible: state.mode.ghostVisible,
+                    loop: state.mode.loop,
                 },
             },
         };
@@ -25,7 +27,11 @@ export const userSettingsActions: Readonly<UserSettingsActions> = {
             state.mode.ghostVisible !== state.temporary.userSettings.ghostVisible
                 ? actions.changeGhostVisible({ visible: state.temporary.userSettings.ghostVisible })
                 : undefined,
+            state.mode.loop !== state.temporary.userSettings.loop
+                ? actions.changeLoop({ enable: state.temporary.userSettings.loop })
+                : undefined,
             saveToLocalStorage,
+            actions.reopenCurrentPage(),
         ]);
     },
     keepGhostVisible: ({ visible }) => (state): NextState => {
@@ -43,11 +49,27 @@ export const userSettingsActions: Readonly<UserSettingsActions> = {
             },
         };
     },
+    keepLoop: ({ enable }) => (state): NextState => {
+        if (!state.modal.userSettings) {
+            return undefined;
+        }
+
+        return {
+            temporary: {
+                ...state.temporary,
+                userSettings: {
+                    ...state.temporary.userSettings,
+                    loop: enable,
+                },
+            },
+        };
+    },
 };
 
 const saveToLocalStorage = (state: Readonly<State>): NextState => {
     localStorageWrapper.saveUserSettings({
         ghostVisible: state.mode.ghostVisible,
+        loop: state.mode.loop,
     });
     return undefined;
 };

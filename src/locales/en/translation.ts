@@ -31,8 +31,13 @@ export const resources = {
         Notice: 'Clearing the browser cache will initialize the settings.',
         Ghost: {
             Title: 'Show the ghost',
-            Off: () => 'Hidden',
-            On: () => 'Visible',
+            Off: () => 'Off',
+            On: () => 'On',
+        },
+        Loop: {
+            Title: 'Loop on page navigation [Reader]',
+            Off: () => 'Off',
+            On: () => 'On',
         },
         Buttons: {
             Save: 'Save',

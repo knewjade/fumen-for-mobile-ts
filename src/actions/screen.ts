@@ -21,6 +21,7 @@ export interface ScreenActions {
     changeScreen: (data: { screen: Screens }) => action;
     changeCommentMode: (data: { type: CommentType }) => action;
     changeGhostVisible: (data: { visible: boolean }) => action;
+    changeLoop: (data: { enable: boolean }) => action;
 }
 
 export const modeActions: Readonly<ScreenActions> = {
@@ -142,7 +143,21 @@ export const modeActions: Readonly<ScreenActions> = {
                     },
                 };
             },
-            actions.reopenCurrentPage(),
+        ]);
+    },
+    changeLoop: ({ enable }) => (state): NextState => {
+        if (state.mode.loop === enable) {
+            return undefined;
+        }
+        return sequence(state, [
+            (state) => {
+                return {
+                    mode: {
+                        ...state.mode,
+                        loop: enable,
+                    },
+                };
+            },
         ]);
     },
 };
