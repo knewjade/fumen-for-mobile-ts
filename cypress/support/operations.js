@@ -474,5 +474,10 @@ export const operations = {
             cy.get(datatest('switch-ghost-visible')).uncheck({ force: true });
             cy.get(datatest('btn-save')).click();
         },
+        loopOn: () => {
+            operations.menu.openUserSettings();
+            cy.get(datatest('switch-loop')).check({ force: true });
+            cy.get(datatest('btn-save')).click();
+        },
     },
 };

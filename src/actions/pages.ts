@@ -32,8 +32,8 @@ export interface PageActions {
     removeUnsettledItems: () => action;
     backLoopPage: () => action;
     nextLoopPage: () => action;
-    backPage: () => action;
-    nextPage: () => action;
+    backPage: (data: { loop: boolean }) => action;
+    nextPage: (data: { loop: boolean }) => action;
     nextPageOrNewPage: () => action;
     firstPage: () => action;
     lastPage: () => action;
@@ -205,10 +205,10 @@ export const pageActions: Readonly<PageActions> = {
         const index = (state.fumen.currentIndex + 1) % state.fumen.maxPage;
         return pageActions.openPage({ index })(state);
     },
-    backPage: () => (state): NextState => {
+    backPage: ({ loop }) => (state): NextState => {
         const backPage = state.fumen.currentIndex - 1;
         if (backPage < 0) {
-            if (state.mode.loop) {
+            if (loop) {
                 return sequence(state, [
                     actions.lastPage(),
                 ]);
@@ -223,12 +223,12 @@ export const pageActions: Readonly<PageActions> = {
             pageActions.openPage({ index: backPage }),
         ]);
     },
-    nextPage: () => (state): NextState => {
+    nextPage: ({ loop }) => (state): NextState => {
         const fumen = state.fumen;
         const nextPage = fumen.currentIndex + 1;
 
         if (fumen.maxPage <= nextPage) {
-            if (state.mode.loop) {
+            if (loop) {
                 return sequence(state, [
                     actions.firstPage(),
                 ]);
@@ -255,7 +255,7 @@ export const pageActions: Readonly<PageActions> = {
         }
 
         return sequence(state, [
-            actions.nextPage(),
+            actions.nextPage({ loop: false }),
         ]);
     },
     firstPage: () => (state): NextState => {
