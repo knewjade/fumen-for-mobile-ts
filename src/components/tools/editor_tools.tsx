@@ -2,12 +2,11 @@ import { Component, px, style } from '../../lib/types';
 import { h } from 'hyperapp';
 import { ToolButton } from './tool_button';
 import { ToolText } from './tool_text';
-import { AnimationState, ModeTypes } from '../../lib/enums';
+import { ModeTypes } from '../../lib/enums';
 import { ColorPalette } from '../../lib/colors';
 
 interface Props {
     height: number;
-    animationState: AnimationState;
     currentPage: number;
     maxPage: number;
     palette: ColorPalette;
@@ -20,7 +19,7 @@ interface Props {
         openMenuModal: () => void;
         startAnimation: () => void;
         pauseAnimation: () => void;
-        backPage: () => void;
+        backPage: (data: { loop: boolean }) => void;
         nextPageOrNewPage: () => void;
         changeToDrawingToolMode: () => void;
         undo: () => void;
@@ -29,7 +28,7 @@ interface Props {
 }
 
 export const EditorTools: Component<Props> = (
-    { currentPage, maxPage, height, animationState, palette, modeType, undoCount, redoCount, inferenceCount, actions },
+    { currentPage, maxPage, height, palette, modeType, undoCount, redoCount, inferenceCount, actions },
 ) => {
     const navProperties = style({
         width: '100%',
@@ -73,7 +72,7 @@ export const EditorTools: Component<Props> = (
 
                 <ToolButton iconName="navigate_before" datatest="btn-back-page" width={35} height={height - 10}
                             key="btn-back-page" fontSize={33.75} marginRight={5} colors={colors}
-                            actions={{ onclick: () => actions.backPage() }} enable={1 < currentPage}/>
+                            actions={{ onclick: () => actions.backPage({ loop: false }) }} enable={1 < currentPage}/>
 
                 <ToolText datatest="text-pages" height={height - 10}
                           minWidth={75} fontSize={18} marginRight={5}>

@@ -285,7 +285,6 @@ const Tools = (state: State, actions: Actions, height: number, palette: ColorPal
         actions,
         height,
         palette,
-        animationState: state.play.status,
         currentPage: state.fumen.currentIndex + 1,
         maxPage: state.fumen.maxPage,
         modeType: state.mode.type,

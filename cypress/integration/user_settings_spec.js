@@ -37,7 +37,7 @@ describe('User settings', () => {
         cy.get(datatest('switch-ghost-visible')).should('be.checked');
     });
 
-    it('Loop', () => {
+    it('Loop: reader', () => {
         cy.clearLocalStorage();
 
         visit({ fumen: 'v115@vhF0MJ9NJXDJ2OJzEJi/I' });
@@ -85,6 +85,24 @@ describe('User settings', () => {
         // verify
         operations.menu.openUserSettings();
         cy.get(datatest('switch-loop')).should('not.be.checked');
+    });
+
+    it('Loop: editor', () => {
+        cy.clearLocalStorage();
+
+        visit({ fumen: 'v115@vhF0MJ9NJXDJ2OJzEJi/I', mode: 'edit' });
+
+        // 移動しないことの確認
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 6');
+        cy.get(datatest('btn-back-page')).click();
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 6');
+
+        operations.menu.loopOn();
+
+        // 移動しないことの確認
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 6');
+        cy.get(datatest('btn-back-page')).click();
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 6');
     });
 });
 

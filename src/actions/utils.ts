@@ -158,7 +158,9 @@ export const utilsActions: Readonly<UtilsActions> = {
         const { x } = stage.getPointerPosition();
         const { width } = stage.getSize();
         const touchX = x / width;
-        const action = touchX < 0.5 ? actions.backPage() : actions.nextPage();
+        const action = touchX < 0.5
+            ? actions.backPage({ loop: state.mode.loop })
+            : actions.nextPage({ loop: state.mode.loop });
         return action(state);
     },
 };
