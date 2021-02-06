@@ -1,7 +1,7 @@
 import {
     block,
     Color,
-    datatest,
+    datatest, expectFumen,
     holdBox,
     leftTap,
     mino,
@@ -622,5 +622,40 @@ describe('Open fumen', () => {
             cy.get(block).should('not.have.attr', 'color', Color.Z.Lighter);
         });
     });
-});
 
+    it('Invalid data', () => {
+        visit({
+            fumen: 'invalid',
+        });
+
+        operations.screen.writable();
+
+        // 不正なデータを受け取っても操作できること
+        operations.mode.block.open();
+        operations.mode.block.J();
+
+        {
+            operations.mode.block.click(3, 18);
+            operations.mode.block.click(5, 16);
+            operations.mode.block.click(3, 14);
+        }
+
+        expectFumen('v115@qeg0Ueg0Qeg0bgAgH');
+    });
+
+    it('Invalid quiz', () => {
+        visit({
+            fumen: 'v115@vhBAgWVAFLDmClcJSAVDEHBEooRBToAVBhAAAAAAPV?AFLDmClcJSAVDEHBEooRBToAVBiAAAA',
+            mode: 'edit',
+        });
+
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '1 / 2');
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[](S)A');
+
+        // Quizが間違っていても、操作はできること
+        operations.mode.tools.nextPage();
+
+        cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', '2 / 2');
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[](S)B');
+    });
+});

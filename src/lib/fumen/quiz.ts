@@ -110,7 +110,7 @@ export class Quiz {
             return quiz;
         }
 
-        if (!replaced.match(/^#Q=\[[TIOSZJL]?]\([TIOSZJL]?\)[TIOSZJL]*;?.*$/i)) {
+        if (!replaced.match(/^#Q=\[[TIOSZJL]?]\([TIOSZJL]?\)[TIOSZJL]*(;.*)?$/i)) {
             throw new FumenError(`Current piece doesn't exist, however next pieces exist: ${quiz}`);
         }
 

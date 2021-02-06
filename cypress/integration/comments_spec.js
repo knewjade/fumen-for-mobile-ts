@@ -201,4 +201,45 @@ describe('Comments', () => {
 
         expectFumen('v115@vhHyOY3AFLDmClcJSAVjiSAVG88AYS88AZPUABCowA?BR4K6Bl/UtClfJSASE7SAyltSATzarDMjzCATEJm/I3LJtK?JUBJAgHAgH');
     });
+
+    it('Invalid quiz', () => {
+        visit({ mode: 'edit' });
+
+        operations.mode.piece.open();
+
+        // 1ページ目
+        cy.get(datatest('text-comment')).type('#Q=[](T)OZASLJ');
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[](T)OZASLJ');
+
+        minoPosition(Piece.T, Rotation.Spawn)(1, 0).forEach(([x, y]) => {
+            operations.mode.block.click(x, y);
+        });
+
+        operations.mode.tools.nextPage();
+
+        // 2ページ目
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[](T)OZASLJ');
+
+        minoPosition(Piece.Z, Rotation.Spawn)(3, 0).forEach(([x, y]) => {
+            operations.mode.block.click(x, y);
+        });
+
+        operations.mode.tools.nextPage();
+
+        // 3ページ目
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[](T)OZASLJ');
+
+        minoPosition(Piece.O, Rotation.Spawn)(8, 0).forEach(([x, y]) => {
+            operations.mode.block.click(x, y);
+        });
+
+        cy.get(datatest('text-comment')).clear().type('#Q=[O](S)LJ');
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[O](S)LJ');
+
+        operations.mode.tools.nextPage();
+
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[S](L)J');
+
+        expectFumen('v115@vhD1OYaAFLDmClcJSAVDEHBEooRBUoAVBvnTtCs/AA?A0KJTNYXAFLDmClcJSAVjiSAVG88A4c88AZifBAAgH');
+    });
 });

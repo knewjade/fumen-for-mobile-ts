@@ -473,10 +473,22 @@ export class Pages {
     private restructureQuiz(pageIndex: number): TextCommentResult | QuizCommentResult {
         const currentPage = this.pages[pageIndex];
 
+        const createQuizObj = (comment: string): Quiz | undefined => {
+            if (!Quiz.isQuizComment(comment)) {
+                return undefined;
+            }
+
+            try {
+                return new Quiz(comment);
+            } catch (e) {
+                return undefined;
+            }
+        };
+
         const getQuiz = (): TextCommentResult | QuizCommentResult => {
             let state: undefined | {
                 comment: string;
-                quiz: Quiz;
+                quiz: Quiz | undefined;
                 startIndex: number;
             } = undefined;
 
@@ -485,7 +497,7 @@ export class Pages {
                 const comment = currentPage.comment.text;
                 state = {
                     comment,
-                    quiz: new Quiz(comment),
+                    quiz: createQuizObj(comment),
                     startIndex: pageIndex,
                 };
             } else {
@@ -495,24 +507,22 @@ export class Pages {
                     throw new ViewError('Cannot open reference for comment');
                 }
 
-                // キャッシュが見つからなかったとき
-                if (state === undefined) {
-                    const refPage = this.pages[ref];
-                    if (refPage.comment.text === undefined) {
-                        throw new ViewError('Not found quiz');
-                    }
-
-                    const comment = refPage.comment.text;
-                    state = {
-                        comment,
-                        quiz: new Quiz(comment),
-                        startIndex: ref,
-                    };
+                const refPage = this.pages[ref];
+                if (refPage.comment.text === undefined) {
+                    throw new ViewError('Not found quiz');
                 }
+
+                const comment = refPage.comment.text;
+                state = {
+                    comment,
+                    quiz: createQuizObj(comment),
+                    startIndex: ref,
+                };
             }
 
-            if (state === undefined) {
-                throw new ViewError('Unexpected state');
+            // Quizのフォーマットが正しくないときは、通常コメントに切り返る
+            if (!state.quiz) {
+                return this.getDescription(pageIndex);
             }
 
             // 参照ページから現在のページまで操作を再現する
@@ -625,23 +635,17 @@ export class Pages {
                 }
 
                 // キャッシュが見つからなかったとき
-                if (state === undefined) {
-                    const refPage = this.pages[ref];
+                const refPage = this.pages[ref];
 
-                    if (refPage.field.obj === undefined) {
-                        throw new ViewError('Not found quiz');
-                    }
-
-                    state = {
-                        field: refPage.field.obj.copy(),
-                        startIndex: ref,
-                        cache: false,
-                    };
+                if (refPage.field.obj === undefined) {
+                    throw new ViewError('Not found quiz');
                 }
-            }
 
-            if (state === undefined) {
-                throw new ViewError('Unexpected state');
+                state = {
+                    field: refPage.field.obj.copy(),
+                    startIndex: ref,
+                    cache: false,
+                };
             }
 
             // 参照ページから現在のページまで操作を再現する
