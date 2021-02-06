@@ -10,7 +10,7 @@ import {
 } from '../history_task';
 import { isQuizCommentResult, PageFieldOperation, Pages, parseToCommands } from '../lib/pages';
 import { FieldConstants, Piece, Rotation } from '../lib/enums';
-import { getBlockPositions } from '../lib/piece';
+import { getBlockPositions, getPieces } from '../lib/piece';
 import { State } from '../states';
 import { Field } from '../lib/fumen/field';
 import { Move } from '../lib/fumen/types';
@@ -273,103 +273,38 @@ const mirrorPiece = (piece: Piece): Piece => {
     return piece;
 };
 
+const mirrorRotation = (rotation: Rotation): Rotation => {
+    switch (rotation) {
+    case Rotation.Left:
+        return Rotation.Right;
+    case Rotation.Right:
+        return Rotation.Left;
+    }
+    return rotation;
+};
+
 const to = (type: Piece, rotation: Rotation, x: number, y: number): Move => {
     return { type, rotation, coordinate: { x, y } };
 };
 
 const mirrorMove = (move: Move): Move => {
     const { type, rotation, coordinate: { x, y } } = move;
-    const mx09 = 9 - x;
-    const mx18 = 8 - (x - 1) + 1;
-    const mx08 = 8 - x;
+    const positions = getPieces(type);
+    const maxX = Math.max(...positions.map(e => e[0]));
+    const minY = Math.min(...positions.map(e => e[1]));
 
-    switch (type) {
-    case Piece.I: {
-        switch (rotation) {
-        case Rotation.Spawn:
-            return to(type, Rotation.Reverse, mx09, y);
-        case Rotation.Reverse:
-            return to(type, Rotation.Spawn, mx09, y);
-        case Rotation.Left:
-            return to(type, Rotation.Right, mx09, y + 1);
-        case Rotation.Right:
-            return to(type, Rotation.Left, mx09, y - 1);
-        }
-    }
-    case Piece.T: {
-        switch (rotation) {
-        case Rotation.Spawn:
-            return to(type, Rotation.Spawn, mx09, y);
-        case Rotation.Reverse:
-            return to(type, Rotation.Reverse, mx09, y);
-        case Rotation.Left:
-            return to(type, Rotation.Right, mx09, y);
-        case Rotation.Right:
-            return to(type, Rotation.Left, mx09, y);
-        }
-    }
-    case Piece.O: {
-        switch (rotation) {
-        case Rotation.Spawn:
-            return to(type, Rotation.Spawn, mx08, y);
-        case Rotation.Reverse:
-            return to(type, Rotation.Reverse, mx18, y);
-        case Rotation.Left:
-            return to(type, Rotation.Left, mx18, y);
-        case Rotation.Right:
-            return to(type, Rotation.Right, mx08, y);
-        }
-    }
-    case Piece.S: {
-        switch (rotation) {
-        case Rotation.Spawn:
-            return to(Piece.Z, Rotation.Spawn, mx09, y);
-        case Rotation.Reverse:
-            return to(Piece.Z, Rotation.Reverse, mx09, y);
-        case Rotation.Left:
-            return to(Piece.Z, Rotation.Right, mx09, y);
-        case Rotation.Right:
-            return to(Piece.Z, Rotation.Left, mx09, y);
-        }
-    }
-    case Piece.Z: {
-        switch (rotation) {
-        case Rotation.Spawn:
-            return to(Piece.S, Rotation.Spawn, mx09, y);
-        case Rotation.Reverse:
-            return to(Piece.S, Rotation.Reverse, mx09, y);
-        case Rotation.Left:
-            return to(Piece.S, Rotation.Right, mx09, y);
-        case Rotation.Right:
-            return to(Piece.S, Rotation.Left, mx09, y);
-        }
-    }
-    case Piece.L: {
-        switch (rotation) {
-        case Rotation.Spawn:
-            return to(Piece.J, Rotation.Spawn, mx09, y);
-        case Rotation.Reverse:
-            return to(Piece.J, Rotation.Reverse, mx09, y);
-        case Rotation.Left:
-            return to(Piece.J, Rotation.Right, mx09, y);
-        case Rotation.Right:
-            return to(Piece.J, Rotation.Left, mx09, y);
-        }
-    }
-    case Piece.J: {
-        switch (rotation) {
-        case Rotation.Spawn:
-            return to(Piece.L, Rotation.Spawn, mx09, y);
-        case Rotation.Reverse:
-            return to(Piece.L, Rotation.Reverse, mx09, y);
-        case Rotation.Left:
-            return to(Piece.L, Rotation.Right, mx09, y);
-        case Rotation.Right:
-            return to(Piece.L, Rotation.Left, mx09, y);
-        }
-    }
-    }
-    return move;
+    const rx = x + maxX;
+    const by = y + minY;
+
+    const mType = mirrorPiece(type);
+    const mRotation = mirrorRotation(rotation);
+    const mPositions = getPieces(mType);
+    const mMinX = Math.min(...mPositions.map(e => e[0]));
+    const mMinY = Math.min(...mPositions.map(e => e[1]));
+
+    const lx = 9 - rx;
+
+    return to(mType, mRotation, lx - mMinX, by - mMinY);
 };
 
 const mirrorQuiz = (start: String): string => {
