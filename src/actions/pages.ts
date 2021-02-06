@@ -3,7 +3,7 @@ import { NextState, sequence } from './commons';
 import { AnimationState, Piece, TouchTypes } from '../lib/enums';
 import { Move, Page, PreCommand } from '../lib/fumen/types';
 import { Block } from '../state_types';
-import { PageFieldOperation, Pages, QuizCommentResult, TextCommentResult } from '../lib/pages';
+import { isQuizCommentResult, PageFieldOperation, Pages } from '../lib/pages';
 import {
     OperationTask,
     toFreezeCommentTask,
@@ -55,14 +55,10 @@ export const pageActions: Readonly<PageActions> = {
 
         const comment = pages.getComment(index);
 
-        const isQuiz = (comment: TextCommentResult | QuizCommentResult): comment is QuizCommentResult => {
-            return (<QuizCommentResult>comment).quiz !== undefined;
-        };
-
         let text;
         let next;
         let hold;
-        if (isQuiz(comment)) {
+        if (isQuizCommentResult(comment)) {
             text = comment.quiz;
             if (comment.quiz !== '') {
                 next = comment.quizAfterOperation.getNextPieces(5).filter(piece => piece !== Piece.Empty);
