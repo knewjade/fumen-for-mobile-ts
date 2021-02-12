@@ -10,7 +10,7 @@ import {
 } from '../history_task';
 import { isQuizCommentResult, PageFieldOperation, Pages, parseToCommands } from '../lib/pages';
 import { FieldConstants, Piece, Rotation } from '../lib/enums';
-import { getBlockPositions, getPieces } from '../lib/piece';
+import { getBlockPositions, getBlocks, getPieces } from '../lib/piece';
 import { State } from '../states';
 import { Field } from '../lib/fumen/field';
 import { Move } from '../lib/fumen/types';
@@ -289,7 +289,7 @@ const to = (type: Piece, rotation: Rotation, x: number, y: number): Move => {
 
 const mirrorMove = (move: Move): Move => {
     const { type, rotation, coordinate: { x, y } } = move;
-    const positions = getPieces(type);
+    const positions = getBlocks(type, rotation);
     const maxX = Math.max(...positions.map(e => e[0]));
     const minY = Math.min(...positions.map(e => e[1]));
 
@@ -298,7 +298,7 @@ const mirrorMove = (move: Move): Move => {
 
     const mType = mirrorPiece(type);
     const mRotation = mirrorRotation(rotation);
-    const mPositions = getPieces(mType);
+    const mPositions = getBlocks(mType, mRotation);
     const mMinX = Math.min(...mPositions.map(e => e[0]));
     const mMinY = Math.min(...mPositions.map(e => e[1]));
 
