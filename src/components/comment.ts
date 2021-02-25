@@ -40,6 +40,13 @@ export const comment: Component<Props> = (
         element.value = text;
     };
 
+    const onupdate = (element: HTMLInputElement) => {
+        const curElement = document.activeElement;
+        if (curElement !== null && curElement.id === element.id) {
+            element.blur();
+        }
+    };
+
     const onUpdate = (event: KeyboardEvent) => {
         if (event.target !== null) {
             const target = event.target as HTMLInputElement;
@@ -75,6 +82,7 @@ export const comment: Component<Props> = (
             placeholder,
             commentKey,
             oncreate,
+            onupdate,
             type: 'text',
             className: backgroundColorClass,
             style: commentStyle,
