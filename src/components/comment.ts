@@ -88,14 +88,12 @@ export const comment: Component<Props> = (
                 }
             } : undefined,
             onkeyup: !readonly ? (event: KeyboardEvent & { isComposing: boolean }) => {
-                if (!event.isComposing) {
-                    // テキストの更新
-                    onUpdate(event);
+                // テキストの更新
+                onUpdate(event);
 
-                    if (!lastComposingOnEnterDown && event.key === 'Enter') {
-                        // エンターが押された (IMEには反応しない)
-                        onEnter(event);
-                    }
+                if (!event.isComposing && !lastComposingOnEnterDown && event.key === 'Enter') {
+                    // エンターが押された (IMEには反応しない)
+                    onEnter(event);
                 }
             } : undefined,
             onblur: !readonly ? () => {
