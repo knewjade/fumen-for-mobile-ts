@@ -40,13 +40,6 @@ export const comment: Component<Props> = (
         element.value = text;
     };
 
-    const onupdate = (element: HTMLInputElement) => {
-        const curElement = document.activeElement;
-        if (curElement !== null && curElement.id === element.id) {
-            element.blur();
-        }
-    };
-
     const onUpdate = (event: KeyboardEvent) => {
         if (event.target !== null) {
             const target = event.target as HTMLInputElement;
@@ -68,7 +61,6 @@ export const comment: Component<Props> = (
     let lastComposingOnEnterDown = true;
 
     return div({
-        key,
         style: style({
             width: '100%',
             height: px(height),
@@ -76,17 +68,16 @@ export const comment: Component<Props> = (
         }),
     }, [
         input({
-            key,
             dataTest,
             id,
             placeholder,
             commentKey,
-            oncreate,
-            onupdate,
+            key: `${key}-${commentKey}`,
+            oncreate: !readonly ? oncreate : undefined,
             type: 'text',
             className: backgroundColorClass,
             style: commentStyle,
-            // value: text,  // 更新するたびにそれまで入力していた文字も消えてしまうため、onupdateで変更を最小限にする
+            value: readonly ? text : undefined,  // 更新するたびにそれまで入力していた文字も消えてしまうため、onupdateで変更を最小限にする
             readonly: readonly ? 'readonly' : undefined,
             onkeydown: !readonly ? (event: KeyboardEvent & { isComposing: boolean }) => {
                 // 最後にEnterを押されたときのisComposingを記録する

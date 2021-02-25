@@ -237,7 +237,7 @@ export const getComment = (state: State, actions: Actions, layout: ReaderLayout)
         return comment({
             currentIndex,
             actions,
-            key: `text-comment-${currentIndex}`,
+            key: 'text-comment',
             dataTest: 'text-comment',
             id: 'text-comment',
             textColor: state.comment.isChanged ? '#fff' : '#333',
