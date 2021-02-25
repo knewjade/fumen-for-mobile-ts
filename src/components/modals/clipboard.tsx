@@ -149,7 +149,7 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
                     <h4 key="clipboard-label" dataTest="clipboard-label">{i18n.Clipboard.Title()}</h4>
 
                     <div style={buttonsStyle()}>
-                        <form name="clipboard-form" style={formStyle()} action="http://tinyurl.com/create.php"
+                        <form name="clipboard-form" style={formStyle()} action="https://tinyurl.com/create.php"
                               method="get" target="_blank"
                         >
                             <input type="hidden" name="url" id="url"
