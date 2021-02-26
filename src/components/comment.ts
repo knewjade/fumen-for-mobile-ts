@@ -87,13 +87,13 @@ export const comment: Component<Props> = (
                 }
             } : undefined,
             onkeyup: !readonly ? (event: KeyboardEvent & { isComposing: boolean }) => {
-                // テキストの更新
-                onUpdate(event);
-
+                // 最後にエンターが押されたか (IMEには反応しない)
                 if (!event.isComposing && !lastComposingOnEnterDown && event.key === 'Enter') {
-                    // エンターが押された (IMEには反応しない)
                     onEnter(event);
                 }
+            } : undefined,
+            oninput: !readonly ? (event: KeyboardEvent & { isComposing: boolean }) => {
+                onUpdate(event);
             } : undefined,
             onblur: !readonly ? () => {
                 onBlur();

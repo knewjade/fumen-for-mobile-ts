@@ -306,7 +306,7 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
         return comment({
             currentIndex,
             actions,
-            key: 'text-comment',
+            key: 'text-comment-editor',
             dataTest: 'text-comment',
             id: 'text-comment',
             textColor: isCommentKey ? '#333' : '#757575',
@@ -327,7 +327,7 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
         return comment({
             currentIndex,
             actions,
-            key: 'text-comment',
+            key: 'text-comment-editor-readonly',
             dataTest: 'text-comment',
             id: 'text-comment',
             textColor: isCommentKey ? '#333' : '#757575',
