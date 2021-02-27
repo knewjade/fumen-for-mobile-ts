@@ -306,7 +306,7 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
         return comment({
             currentIndex,
             actions,
-            key: 'text-comment-editor',
+            key: `text-comment-editor-${state.comment.changeKey}`,
             dataTest: 'text-comment',
             id: 'text-comment',
             textColor: isCommentKey ? '#333' : '#757575',
@@ -315,7 +315,6 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
             text: resources.comment !== undefined ? resources.comment.text : state.comment.text,
             placeholder: 'comment',
             readonly: false,
-            commentKey: state.comment.changeKey,
         });
     }
     case CommentType.Readonly: {
@@ -327,7 +326,7 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
         return comment({
             currentIndex,
             actions,
-            key: 'text-comment-editor-readonly',
+            key: `text-comment-editor-readonly-${state.comment.changeKey}`,
             dataTest: 'text-comment',
             id: 'text-comment',
             textColor: isCommentKey ? '#333' : '#757575',
@@ -335,7 +334,6 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
             height: layout.comment.size.height,
             text: resources.comment !== undefined ? resources.comment.text : state.comment.text,
             readonly: true,
-            commentKey: state.comment.changeKey,
         });
     }
     case CommentType.PageSlider: {

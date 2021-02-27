@@ -11,7 +11,6 @@ interface Props {
     text: string;
     readonly: boolean;
     placeholder?: string;
-    commentKey: string;
     currentIndex: number;
     actions: {
         updateCommentText: (data: { text?: string, pageIndex: number }) => void;
@@ -22,7 +21,7 @@ interface Props {
 export const comment: Component<Props> = (
     {
         height, textColor, backgroundColorClass, dataTest, key, id, text,
-        readonly, placeholder, commentKey, currentIndex, actions,
+        readonly, placeholder, currentIndex, actions,
     },
 ) => {
     const commentStyle = style({
@@ -45,12 +44,11 @@ export const comment: Component<Props> = (
             }),
         }, [
             input({
-                dataTest,
                 id,
+                key,
+                dataTest,
                 placeholder,
-                commentKey,
                 value: text,
-                key: `${key}-${commentKey}`,
                 type: 'text',
                 className: backgroundColorClass,
                 style: commentStyle,
@@ -107,16 +105,15 @@ export const comment: Component<Props> = (
     }, [
         input({
             // `value` を設定すると、（undefinedでも）更新のたびにそれまで入力していた文字も消えてしまうため、使用しない
-            dataTest,
             id,
+            key,
+            dataTest,
             placeholder,
-            commentKey,
             oncreate,
             oninput,
             onblur,
             onkeydown,
             onkeyup,
-            key: `${key}-${commentKey}`,
             type: 'text',
             className: backgroundColorClass,
             style: commentStyle,

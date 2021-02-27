@@ -237,7 +237,7 @@ export const getComment = (state: State, actions: Actions, layout: ReaderLayout)
         return comment({
             currentIndex,
             actions,
-            key: 'text-comment-reader',
+            key: `text-comment-reader-${state.comment.changeKey}`,
             dataTest: 'text-comment',
             id: 'text-comment',
             textColor: state.comment.isChanged ? '#fff' : '#333',
@@ -245,7 +245,6 @@ export const getComment = (state: State, actions: Actions, layout: ReaderLayout)
             height: layout.comment.size.height,
             text: state.comment.text,
             readonly: true,
-            commentKey: state.comment.changeKey,
         });
     }
     }
