@@ -21,8 +21,8 @@ interface Props {
 
 export const comment: Component<Props> = (
     {
-        height, textColor, backgroundColorClass, dataTest, key, id, text, readonly, placeholder, commentKey,
-        currentIndex, actions,
+        height, textColor, backgroundColorClass, dataTest, key, id, text,
+        readonly, placeholder, commentKey, currentIndex, actions,
     },
 ) => {
     const commentStyle = style({
@@ -36,29 +36,67 @@ export const comment: Component<Props> = (
         color: textColor,
     });
 
+    if (readonly) {
+        return div({
+            style: style({
+                width: '100%',
+                height: px(height),
+                whiteSpace: 'nowrap',
+            }),
+        }, [
+            input({
+                dataTest,
+                id,
+                placeholder,
+                commentKey,
+                value: text,
+                key: `${key}-${commentKey}`,
+                type: 'text',
+                className: backgroundColorClass,
+                style: commentStyle,
+                readonly: 'readonly',
+            }),
+        ]);
+    }
+
     const oncreate = (element: HTMLInputElement) => {
         element.value = text;
     };
 
-    const onUpdate = (event: KeyboardEvent) => {
+    const oninput = (event: KeyboardEvent) => {
         if (event.target !== null) {
             const target = event.target as HTMLInputElement;
             actions.updateCommentText({ text: target.value, pageIndex: currentIndex });
         }
     };
 
-    const onEnter = (event: KeyboardEvent) => {
+    const onenter = (event: KeyboardEvent) => {
         if (event.target !== null) {
             const target = event.target as HTMLInputElement;
             target.blur();
         }
     };
 
-    const onBlur = () => {
+    const onblur = () => {
         actions.commitCommentText();
     };
 
     let lastComposingOnEnterDown = true;
+
+    const onkeydown = (event: KeyboardEvent) => {
+        // 最後にEnterを押されたときのisComposingを記録する
+        // IMEで変換しているときはtrueになる
+        if (event.key === 'Enter') {
+            lastComposingOnEnterDown = event.isComposing;
+        }
+    };
+
+    const onkeyup = (event: KeyboardEvent) => {
+        // 最後にエンターが押されたか (IMEには反応しない)
+        if (!event.isComposing && !lastComposingOnEnterDown && event.key === 'Enter') {
+            onenter(event);
+        }
+    };
 
     return div({
         style: style({
@@ -73,31 +111,15 @@ export const comment: Component<Props> = (
             id,
             placeholder,
             commentKey,
+            oncreate,
+            oninput,
+            onblur,
+            onkeydown,
+            onkeyup,
             key: `${key}-${commentKey}`,
-            oncreate: !readonly ? oncreate : undefined,
             type: 'text',
             className: backgroundColorClass,
             style: commentStyle,
-            readonly: readonly ? 'readonly' : undefined,
-            onkeydown: !readonly ? (event: KeyboardEvent) => {
-                // 最後にEnterを押されたときのisComposingを記録する
-                // IMEで変換しているときはtrueになる
-                if (event.key === 'Enter') {
-                    lastComposingOnEnterDown = event.isComposing;
-                }
-            } : undefined,
-            onkeyup: !readonly ? (event: KeyboardEvent) => {
-                // 最後にエンターが押されたか (IMEには反応しない)
-                if (!event.isComposing && !lastComposingOnEnterDown && event.key === 'Enter') {
-                    onEnter(event);
-                }
-            } : undefined,
-            oninput: !readonly ? (event: KeyboardEvent) => {
-                onUpdate(event);
-            } : undefined,
-            onblur: !readonly ? () => {
-                onBlur();
-            } : undefined,
         }),
     ]);
 };
