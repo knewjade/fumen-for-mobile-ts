@@ -79,20 +79,20 @@ export const comment: Component<Props> = (
             style: commentStyle,
             value: readonly ? text : undefined,  // 更新するたびにそれまで入力していた文字も消えてしまうため、onupdateで変更を最小限にする
             readonly: readonly ? 'readonly' : undefined,
-            onkeydown: !readonly ? (event: KeyboardEvent & { isComposing: boolean }) => {
+            onkeydown: !readonly ? (event: KeyboardEvent) => {
                 // 最後にEnterを押されたときのisComposingを記録する
                 // IMEで変換しているときはtrueになる
                 if (event.key === 'Enter') {
                     lastComposingOnEnterDown = event.isComposing;
                 }
             } : undefined,
-            onkeyup: !readonly ? (event: KeyboardEvent & { isComposing: boolean }) => {
+            onkeyup: !readonly ? (event: KeyboardEvent) => {
                 // 最後にエンターが押されたか (IMEには反応しない)
                 if (!event.isComposing && !lastComposingOnEnterDown && event.key === 'Enter') {
                     onEnter(event);
                 }
             } : undefined,
-            oninput: !readonly ? (event: KeyboardEvent & { isComposing: boolean }) => {
+            oninput: !readonly ? (event: KeyboardEvent) => {
                 onUpdate(event);
             } : undefined,
             onblur: !readonly ? () => {
