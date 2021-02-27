@@ -68,6 +68,7 @@ export const comment: Component<Props> = (
         }),
     }, [
         input({
+            // `value` を設定すると、（undefinedでも）更新のたびにそれまで入力していた文字も消えてしまうため、使用しない
             dataTest,
             id,
             placeholder,
@@ -77,7 +78,6 @@ export const comment: Component<Props> = (
             type: 'text',
             className: backgroundColorClass,
             style: commentStyle,
-            value: readonly ? text : undefined,  // 更新するたびにそれまで入力していた文字も消えてしまうため、onupdateで変更を最小限にする
             readonly: readonly ? 'readonly' : undefined,
             onkeydown: !readonly ? (event: KeyboardEvent) => {
                 // 最後にEnterを押されたときのisComposingを記録する

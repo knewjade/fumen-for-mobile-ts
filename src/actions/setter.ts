@@ -59,10 +59,16 @@ export const setterActions: Readonly<SetterActions> = {
         return setterActions.inputFumenData({ value: undefined })(state);
     },
     setComment: ({ comment }) => (state): NextState => {
+        const isChanged = comment !== undefined && comment !== state.comment.text;
+        const text = comment !== undefined ? comment : state.comment.text;
+        if (isChanged === state.comment.isChanged && text === state.comment.text) {
+            return undefined;
+        }
+
         return {
             comment: {
-                isChanged: comment !== undefined && comment !== state.comment.text,
-                text: comment !== undefined ? comment : state.comment.text,
+                isChanged,
+                text,
                 changeKey: generateKey(),
             },
         };

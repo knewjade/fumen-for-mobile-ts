@@ -7,7 +7,6 @@ const buildNumber = process.env.GITHUB_RUN_NUMBER
     : undefined
 const version = buildNumber ? `${buildNumber}` : `dev-${new Date().toISOString()}`;
 const isDebug = process.env.DEBUG_ON || 'true'
-console.log(`isDebug=${isDebug}`)
 const cacheId = 'fumen-for-mobile';
 
 module.exports = {
