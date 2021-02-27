@@ -23,8 +23,7 @@ export const i18n = {
         Title: () => t('AppendFumen.Title'),
         PlaceHolder: () => t('AppendFumen.PlaceHolder'),
         Buttons: {
-            AppendToEnd: () => t('AppendFumen.Buttons.AppendToEnd'),
-            AppendToNext: () => t('AppendFumen.Buttons.AppendToNext'),
+            Cancel: () => t('AppendFumen.Buttons.Cancel'),
         },
         Errors: {
             FailedToLoad: () => t('AppendFumen.Errors.FailedToLoad'),

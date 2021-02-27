@@ -46,8 +46,6 @@ export const view: View<State, Actions> = (state, actions) => {
             actions,
             errorMessage: state.fumen.errorMessage,
             textAreaValue: state.fumen.value !== undefined ? state.fumen.value : '',
-            currentIndex: state.fumen.currentIndex,
-            maxPage: state.fumen.maxPage,
         }) : undefined as any,
 
         state.modal.clipboard ? ClipboardModal({

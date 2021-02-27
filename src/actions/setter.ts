@@ -8,8 +8,9 @@ import { generateKey } from '../lib/random';
 import { getBlockPositions } from '../lib/piece';
 
 export interface SetterActions {
-    setPages: (args: { pages: Page[], open?: boolean }) => action;
-    inputFumenData: (args: { value?: string }) => action;
+    setPages: (data: { pages: Page[], open?: boolean }) => action;
+    updateFumenData: (data: { value: string }) => action;
+    inputFumenData: (data: { value?: string }) => action;
     clearFumenData: () => action;
     setComment: (data: { comment: string }) => action;
     setField: (data: {
@@ -46,6 +47,16 @@ export const setterActions: Readonly<SetterActions> = {
             },
         };
     },
+    updateFumenData: ({ value }) => (state): NextState => {
+        return {
+            fumen: {
+                ...state.fumen,
+                value,
+                errorMessage: undefined,
+            },
+        };
+    },
+    // TODO: Remove
     inputFumenData: ({ value }) => (state): NextState => {
         return {
             fumen: {
