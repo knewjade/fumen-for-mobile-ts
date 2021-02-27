@@ -25,6 +25,8 @@ jobs:
       - uses: actions/setup-node@v1
       - run: yarn install --frozen-lockfile
       - run: yarn webpack-prod
+        env:
+          DEBUG_ON: false
       - uses: peaceiris/actions-gh-pages@bbdfb200618d235585ad98e965f4aafc39b4c501
         with:
           personal_token: ${{ secrets.PERSONAL_TOKEN }}
