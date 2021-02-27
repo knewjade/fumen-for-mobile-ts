@@ -233,8 +233,11 @@ export const getComment = (state: State, actions: Actions, layout: ReaderLayout)
         });
     }
     default: {
+        const currentIndex = state.fumen.currentIndex;
         return comment({
-            key: 'text-comment',
+            currentIndex,
+            actions,
+            key: 'text-comment-reader',
             dataTest: 'text-comment',
             id: 'text-comment',
             textColor: state.comment.isChanged ? '#fff' : '#333',

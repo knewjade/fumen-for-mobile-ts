@@ -303,14 +303,10 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
         const isCommentKey = resources.comment !== undefined
             || (currentPage !== undefined && currentPage.comment.text !== undefined);
 
-        const element = document.querySelector('#text-comment') as HTMLInputElement;
-        const updateText = () => {
-            if (element) {
-                actions.updateCommentText({ text: element.value, pageIndex: state.fumen.currentIndex });
-            }
-        };
         return comment({
-            key: 'text-comment',
+            currentIndex,
+            actions,
+            key: 'text-comment-editor',
             dataTest: 'text-comment',
             id: 'text-comment',
             textColor: isCommentKey ? '#333' : '#757575',
@@ -320,18 +316,6 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
             placeholder: 'comment',
             readonly: false,
             commentKey: state.comment.changeKey,
-            actions: {
-                onupdate: updateText,
-                onenter: () => {
-                    if (element) {
-                        element.blur();
-                    }
-                },
-                onblur: () => {
-                    updateText();
-                    actions.commitCommentText();
-                },
-            },
         });
     }
     case CommentType.Readonly: {
@@ -341,7 +325,9 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
             || (currentPage !== undefined && currentPage.comment.text !== undefined);
 
         return comment({
-            key: 'text-comment',
+            currentIndex,
+            actions,
+            key: 'text-comment-editor-readonly',
             dataTest: 'text-comment',
             id: 'text-comment',
             textColor: isCommentKey ? '#333' : '#757575',
@@ -354,13 +340,13 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
     }
     case CommentType.PageSlider: {
         return page_slider({
+            currentIndex,
             actions,
             datatest: 'range-page-slider',
             size: {
                 width: layout.comment.size.width * 0.8,
                 height: layout.comment.size.height,
             },
-            currentIndex: state.fumen.currentIndex,
             maxPage: state.fumen.maxPage,
         });
     }
