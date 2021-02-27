@@ -10,7 +10,6 @@ import { getBlockPositions } from '../lib/piece';
 export interface SetterActions {
     setPages: (data: { pages: Page[], open?: boolean }) => action;
     updateFumenData: (data: { value: string }) => action;
-    inputFumenData: (data: { value?: string }) => action;
     clearFumenData: () => action;
     setComment: (data: { comment: string }) => action;
     setField: (data: {
@@ -56,18 +55,14 @@ export const setterActions: Readonly<SetterActions> = {
             },
         };
     },
-    // TODO: Remove
-    inputFumenData: ({ value }) => (state): NextState => {
+    clearFumenData: () => (state): NextState => {
         return {
             fumen: {
                 ...state.fumen,
-                value,
+                value: undefined,
                 errorMessage: undefined,
             },
         };
-    },
-    clearFumenData: () => (state): NextState => {
-        return setterActions.inputFumenData({ value: undefined })(state);
     },
     setComment: ({ comment }) => (state): NextState => {
         const isChanged = comment !== undefined && comment !== state.comment.text;
