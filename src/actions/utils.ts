@@ -21,6 +21,7 @@ declare const M: any;
 
 export interface UtilsActions {
     resize: (data: { width: number, height: number }) => action;
+    commitOpenFumenData: () => action;
     loadFumen: (data: { fumen: string, purgeOnFailed?: boolean }) => action;
     loadNewFumen: () => action;
     commitAppendFumenData: (data: { position: 'next' | 'end' }) => action;
@@ -37,45 +38,15 @@ export const utilsActions: Readonly<UtilsActions> = {
             display: { ...state.display, width, height },
         };
     },
-    loadFumen: ({ fumen, purgeOnFailed = false }) => (): NextState => {
-        main.pauseAnimation();
-
-        if (fumen === undefined) {
-            main.showOpenErrorMessage({ message: 'データを入力してください' });
+    commitOpenFumenData: () => (state): NextState => {
+        const fumen = state.fumen.value;
+        if (!fumen) {
             return undefined;
         }
-
-        (async () => {
-            let pages: Page[];
-            try {
-                pages = await decode(fumen);
-            } catch (e) {
-                console.error(e);
-                if (purgeOnFailed) {
-                    main.loadNewFumen();
-                } else if (e instanceof FumenError) {
-                    main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.FailedToLoad() });
-                } else {
-                    main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.Unexpected(e.message) });
-                }
-                return;
-            }
-
-            try {
-                main.loadPages({ pages, loadedFumen: fumen });
-                main.closeAllModals();
-                main.clearFumenData();
-            } catch (e) {
-                console.error(e);
-                if (purgeOnFailed) {
-                    main.loadNewFumen();
-                } else {
-                    main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.Unexpected(e.message) });
-                }
-            }
-        })();
-
-        return undefined;
+        return loadFumen(fumen, false);
+    },
+    loadFumen: ({ fumen, purgeOnFailed = false }) => (): NextState => {
+        return loadFumen(fumen, purgeOnFailed);
     },
     loadNewFumen: () => (state): NextState => {
         return utilsActions.loadFumen({ fumen: 'v115@vhAAgH' })(state);
@@ -204,6 +175,47 @@ const appendPages = (
         }),
         actions.reopenCurrentPage(),
     ]);
+};
+
+const loadFumen = (fumen: string, purgeOnFailed: boolean): NextState => {
+    main.pauseAnimation();
+
+    if (fumen === undefined) {
+        main.showOpenErrorMessage({ message: 'データを入力してください' });
+        return undefined;
+    }
+
+    (async () => {
+        let pages: Page[];
+        try {
+            pages = await decode(fumen);
+        } catch (e) {
+            console.error(e);
+            if (purgeOnFailed) {
+                main.loadNewFumen();
+            } else if (e instanceof FumenError) {
+                main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.FailedToLoad() });
+            } else {
+                main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.Unexpected(e.message) });
+            }
+            return;
+        }
+
+        try {
+            main.loadPages({ pages, loadedFumen: fumen });
+            main.closeAllModals();
+            main.clearFumenData();
+        } catch (e) {
+            console.error(e);
+            if (purgeOnFailed) {
+                main.loadNewFumen();
+            } else {
+                main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.Unexpected(e.message) });
+            }
+        }
+    })();
+
+    return undefined;
 };
 
 const appendFumen = (fumen: string, pageIndex: number): NextState => {
