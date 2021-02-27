@@ -23,7 +23,7 @@ export interface UtilsActions {
     resize: (data: { width: number, height: number }) => action;
     loadFumen: (data: { fumen: string, purgeOnFailed?: boolean }) => action;
     loadNewFumen: () => action;
-    appendFumen: (data: { fumen: string, pageIndex: number }) => action;
+    commitAppendFumenData: (data: { position: 'next' | 'end' }) => action;
     loadPages: (data: { pages: Page[], loadedFumen: string }) => action;
     appendPages: (data: { pages: Page[], pageIndex: number }) => action;
     refresh: () => action;
@@ -88,39 +88,20 @@ export const utilsActions: Readonly<UtilsActions> = {
             actions.registerHistoryTask({ task: toFumenTask(prevPages, loadedFumen, currentIndex) }),
         ]);
     },
-    appendFumen: ({ fumen, pageIndex }) => (): NextState => {
-        main.pauseAnimation();
-
-        if (fumen === undefined) {
-            main.showOpenErrorMessage({ message: 'データを入力してください' });
+    commitAppendFumenData: ({ position }) => (state): NextState => {
+        const fumen = state.fumen.value;
+        if (!fumen) {
             return undefined;
         }
 
-        (async () => {
-            let pages: Page[];
-            try {
-                pages = await decode(fumen);
-            } catch (e) {
-                console.error(e);
-                if (e instanceof FumenError) {
-                    main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.FailedToLoad() });
-                } else {
-                    main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.Unexpected(e.message) });
-                }
-                return;
-            }
-
-            try {
-                main.appendPages({ pages, pageIndex });
-                main.closeAllModals();
-                main.clearFumenData();
-            } catch (e) {
-                console.error(e);
-                main.showOpenErrorMessage({ message: i18n.OpenFumen.Errors.Unexpected(e.message) });
-            }
-        })();
-
-        return undefined;
+        switch (position) {
+        case 'end':
+            return appendFumen(fumen, state.fumen.maxPage);
+        case 'next':
+            return appendFumen(fumen, state.fumen.currentIndex + 1);
+        default:
+            return undefined;
+        }
     },
     appendPages: ({ pages, pageIndex }) => (state): NextState => {
         return sequence(state, [
@@ -223,4 +204,39 @@ const appendPages = (
         }),
         actions.reopenCurrentPage(),
     ]);
+};
+
+const appendFumen = (fumen: string, pageIndex: number): NextState => {
+    main.pauseAnimation();
+
+    if (fumen === undefined) {
+        main.showOpenErrorMessage({ message: 'データを入力してください' });
+        return undefined;
+    }
+
+    (async () => {
+        let pages: Page[];
+        try {
+            pages = await decode(fumen);
+        } catch (e) {
+            console.error(e);
+            if (e instanceof FumenError) {
+                main.showOpenErrorMessage({ message: i18n.AppendFumen.Errors.FailedToLoad() });
+            } else {
+                main.showOpenErrorMessage({ message: i18n.AppendFumen.Errors.Unexpected(e.message) });
+            }
+            return;
+        }
+
+        try {
+            main.appendPages({ pages, pageIndex });
+            main.closeAllModals();
+            main.clearFumenData();
+        } catch (e) {
+            console.error(e);
+            main.showOpenErrorMessage({ message: i18n.AppendFumen.Errors.Unexpected(e.message) });
+        }
+    })();
+
+    return undefined;
 };

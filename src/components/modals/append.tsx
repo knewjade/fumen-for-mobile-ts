@@ -2,25 +2,23 @@ import { Component, ComponentWithText, px, style } from '../../lib/types';
 import { h } from 'hyperapp';
 import { resources } from '../../states';
 import { i18n } from '../../locales/keys';
-import { a, div, span } from '@hyperapp/html';
+import { a, div, span, textarea } from '@hyperapp/html';
 
 declare const M: any;
 
 interface AppendFumenModalProps {
     errorMessage?: string;
     textAreaValue: string;
-    currentIndex: number;
-    maxPage: number;
     actions: {
         closeAppendModal: () => void;
-        inputFumenData(data: { value?: string }): void;
+        updateFumenData: (data: { value: string }) => void;
         clearFumenData: () => void;
-        appendFumen(data: { fumen: string, pageIndex: number }): void;
+        commitAppendFumenData: (data: { position: 'next' | 'end' }) => void;
     };
 }
 
 export const AppendFumenModal: Component<AppendFumenModalProps> = (
-    { textAreaValue, errorMessage, currentIndex, maxPage, actions },
+    { textAreaValue, errorMessage, actions },
 ) => {
     const cancel = () => {
         actions.closeAppendModal();
@@ -53,74 +51,25 @@ export const AppendFumenModal: Component<AppendFumenModalProps> = (
         resources.modals.append = undefined;
     };
 
-    const textAreaStyle = style({
-        width: '100%',
-        border: errorMessage !== undefined ? 'solid 1px #ff5252' : undefined,
-    });
-
-    const oninput = (e: TextEvent) => {
-        const inputType = (e as any).inputType;
-        if (inputType === 'insertLineBreak') {
-            const element = document.getElementById('btn-open');
-            if (element !== null) {
-                element.click();
-            }
-            return;
-        }
-
-        // エラーメッセージがある状態で文字を入力したとき or
-        // もともとのテキストエリアが空のとき or
-        // 現在のテキストエリアが空のとき
-        {
-            const value = getInputText();
-            const inputText = value !== undefined && value !== null ? value : '';
-            if (errorMessage !== undefined || inputText === '' || textAreaValue === '') {
-                actions.inputFumenData({ value: inputText });
-            }
-        }
+    const update = ({ value }: { value: string }) => {
+        actions.updateFumenData({ value });
     };
 
-    const onblur = () => {
-        const value = getInputText();
-        if (textAreaValue !== value) {
-            actions.inputFumenData({ value });
+    const focus = () => {
+        const element = document.getElementById('input-fumen');
+        if (element !== null) {
+            element.focus();
         }
-    };
-
-    const getInputText = (): string | undefined => {
-        const element = document.getElementById('input-fumen') as HTMLTextAreaElement;
-        if (element === null) {
-            return undefined;
-        }
-        return element.value !== '' ? element.value : '';
     };
 
     const appendToEnd = () => {
-        const value = getInputText();
-        actions.inputFumenData({ value });
-
-        if (value !== undefined) {
-            actions.appendFumen({ fumen: value, pageIndex: maxPage });
-        }
-
-        const element = document.getElementById('input-fumen');
-        if (element !== null) {
-            element.focus();
-        }
+        actions.commitAppendFumenData({ position: 'end' });
+        focus();
     };
 
     const appendToNext = () => {
-        const value = getInputText();
-        actions.inputFumenData({ value });
-
-        if (value !== undefined) {
-            actions.appendFumen({ fumen: value, pageIndex: currentIndex + 1 });
-        }
-
-        const element = document.getElementById('input-fumen');
-        if (element !== null) {
-            element.focus();
-        }
+        actions.commitAppendFumenData({ position: 'next' });
+        focus();
     };
 
     return (
@@ -130,9 +79,10 @@ export const AppendFumenModal: Component<AppendFumenModalProps> = (
                 <div key="modal-content" className="modal-content">
                     <h4 key="append-fumen-label" dataTest="append-fumen-label">{i18n.AppendFumen.Title()}</h4>
 
-                    <textarea key="input-fumen" dataTest="input-fumen" id="input-fumen" rows={3} style={textAreaStyle}
-                              oninput={oninput} onblur={onblur}
-                              value={textAreaValue} placeholder={i18n.AppendFumen.PlaceHolder()}/>
+                    <TextArea key="input-fumen" dataTest="input-fumen" id="input-fumen"
+                              placeholder={i18n.AppendFumen.PlaceHolder()} error={errorMessage === undefined}
+                              text={textAreaValue} actions={{ update }}
+                    />
 
                     <span key="text-message" datatest="text-message" className="red-text text-accent-2"
                           style={style({ display: errorMessage !== undefined ? undefined : 'none' })}>
@@ -141,10 +91,10 @@ export const AppendFumenModal: Component<AppendFumenModalProps> = (
                 </div>
 
                 <div key="modal-footer" className="modal-footer">
-                    <Button key="btn-cancel" datatest="btn-cancel" width={40} enable={true}
-                            onclick={() => cancel()}>
-                        <ButtonIconContent iconSize={20} iconName="delete"/>
-                    </Button>
+                    <a href="#" key="btn-cancel" datatest="btn-cancel" id="btn-cancel"
+                       className="waves-effect waves-teal btn-flat" onclick={cancel}>
+                        {i18n.AppendFumen.Buttons.Cancel()}
+                    </a>
 
                     <Button key="btn-append-to-next" datatest="btn-append-to-next" width={80} colorTheme="red"
                             enable={textAreaValue !== '' && errorMessage === undefined} onclick={() => appendToNext()}>
@@ -223,4 +173,73 @@ export const ButtonIconContent: ComponentWithText<ButtonIconContentProps> = (
             {content}
         </span>
     </div>;
+};
+
+interface TextAreaProps {
+    id: string;
+    key: string;
+    dataTest: string;
+    placeholder: string;
+    error: boolean;
+    text: string;
+    actions: {
+        update: (data: { value: string }) => void;
+    };
+}
+
+export const TextArea: Component<TextAreaProps> = (
+    { id, key, dataTest, placeholder, error, text, actions },
+) => {
+    const textAreaStyle = style({
+        width: '100%',
+        border: error ? undefined : 'solid 1px #ff5252',
+    });
+
+    const oncreate = (element: HTMLInputElement) => {
+        element.value = text;
+    };
+
+    const oninput = (event: KeyboardEvent) => {
+        if (event.target !== null) {
+            const target = event.target as HTMLInputElement;
+            actions.update({ value: target.value });
+        }
+    };
+
+    const onenter = (event: KeyboardEvent) => {
+        if (event.target !== null) {
+            const target = event.target as HTMLInputElement;
+            target.blur();
+        }
+    };
+
+    let lastComposingOnEnterDown = true;
+
+    const onkeydown = (event: KeyboardEvent) => {
+        // 最後にEnterを押されたときのisComposingを記録する
+        // IMEで変換しているときはtrueになる
+        if (event.key === 'Enter') {
+            lastComposingOnEnterDown = event.isComposing;
+        }
+    };
+
+    const onkeyup = (event: KeyboardEvent) => {
+        // 最後にエンターが押されたか (IMEには反応しない)
+        if (!event.isComposing && !lastComposingOnEnterDown && event.key === 'Enter') {
+            onenter(event);
+        }
+    };
+
+    return textarea({
+        id,
+        key,
+        dataTest,
+        placeholder,
+        oncreate,
+        oninput,
+        onkeydown,
+        onkeyup,
+        rows: 3,
+        style: textAreaStyle,
+    });
 };

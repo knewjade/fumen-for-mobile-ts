@@ -18,8 +18,7 @@ export const resources = {
         Title: 'Append fumen',
         PlaceHolder: 'URL or v115@~ / Support v115 or v110',
         Buttons: {
-            AppendToEnd: 'End',
-            AppendToNext: 'Next',
+            Cancel: 'Cancel',
         },
         Errors: {
             FailedToLoad: 'Failed to load',

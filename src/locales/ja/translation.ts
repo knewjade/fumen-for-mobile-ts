@@ -14,6 +14,9 @@ export const resources = {
     },
     AppendFumen: {
         Title: 'テト譜を追加',
+        Buttons: {
+            Cancel: 'キャンセル',
+        },
         Errors: {
             FailedToLoad: 'テト譜を読み込めませんでした',
         },
