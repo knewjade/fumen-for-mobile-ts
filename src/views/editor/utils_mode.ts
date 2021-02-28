@@ -10,6 +10,7 @@ export const utilsMode = ({ layout, touchType, actions }: {
         changeToShiftMode: () => void;
         changeToFillRowMode: () => void;
         changeToFillMode: () => void;
+        changeToCommentMode: () => void;
         convertToGray: () => void;
         clearField: () => void;
         convertToMirror: () => void;
@@ -49,7 +50,7 @@ export const utilsMode = ({ layout, touchType, actions }: {
             },
         }, iconContents({
             description: 'to gray',
-            iconSize: 22,
+            iconSize: 19,
             iconName: 'color_lens',
         })),
         toolButton({
@@ -68,6 +69,24 @@ export const utilsMode = ({ layout, touchType, actions }: {
             description: 'clear',
             iconSize: 22,
             iconName: 'clear',
+        })),
+        toolButton({
+            borderWidth: 3,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'red',
+            textColor: '#fff',
+            borderColor: touchType === TouchTypes.Fill ? '#fff' : '#f44336',
+            borderType: touchType === TouchTypes.Fill ? 'double' : undefined,
+            datatest: 'btn-comment-mode',
+            key: 'btn-comment-mode',
+            onclick: () => actions.changeToCommentMode(),
+        }, iconContents({
+            marginRight: 0,
+            description: 'comment',
+            descriptionSize: 9,
+            iconSize: 19,
+            iconName: 'title',
         })),
         toolButton({
             borderWidth: 3,

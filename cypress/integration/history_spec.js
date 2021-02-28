@@ -737,4 +737,29 @@ describe('History', () => {
 
         play('v115@9gBtHewwBtGexwR4FewwR4QeSSYWAFLDmClcJSAVDE?HBEooRBMoAVBv/AAAvhBzHJGDJ9gBtA8DegHhlQpBtDexwg?lRpwhwDBeA8xwg0QpxhDei0JeAgWAA', testCases);
     });
+
+    it('Comment mode', () => {
+        const testCases = [
+            {
+                callback: () => {
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.nextPage();
+                    operations.mode.tools.resetComment({ home: true });
+                },
+                fumen: 'v115@vhFAgWFAooMDEPBAAAAgHAgHAgHAgHAgH',
+                count: 1,
+            },
+            {
+                callback: () => {
+                    operations.mode.tools.backPage();
+                    operations.mode.tools.blankComment({ home: true });
+                },
+                fumen: 'v115@vhFAgWFAooMDEPBAAAAgHAgWAAAgHAgHAgH',
+                count: 1,
+            },
+        ];
+
+        play('v115@vhFAgWFAooMDEPBAAAAgHAgHAgWFA3XaDEEBAAAAgH?AgH', testCases);
+    });
 });

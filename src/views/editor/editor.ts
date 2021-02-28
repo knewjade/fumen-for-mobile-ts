@@ -22,6 +22,7 @@ import { slideMode } from './slide_mode';
 import { fillRowMode } from './fill_row_mode';
 import { pieceSelectMode } from './piece_select_mode';
 import { navigatorElement } from '../navigator';
+import { commentMode } from './comment_mode';
 
 export interface EditorLayout {
     canvas: {
@@ -198,6 +199,13 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                     layout,
                     actions,
                     touchType: state.mode.touch,
+                });
+            }
+            case ModeTypes.Comment: {
+                return commentMode({
+                    layout,
+                    actions,
+                    currentIndex: state.fumen.currentIndex,
                 });
             }
             case ModeTypes.Slide: {
