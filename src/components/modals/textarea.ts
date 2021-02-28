@@ -25,7 +25,7 @@ export const TextArea: Component<TextAreaProps> = (
         element.value = text;
     };
 
-    const oninput = (event: KeyboardEvent) => {
+    const update = (event: KeyboardEvent | FocusEvent) => {
         if (event.target !== null) {
             const target = event.target as HTMLInputElement;
             actions.update({ value: target.value });
@@ -62,9 +62,10 @@ export const TextArea: Component<TextAreaProps> = (
         dataTest,
         placeholder,
         oncreate,
-        oninput,
         onkeydown,
         onkeyup,
+        oninput: update,
+        onfocus: update,
         rows: 3,
         style: textAreaStyle,
     });

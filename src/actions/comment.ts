@@ -31,16 +31,13 @@ export const commentActions: Readonly<CommentActions> = {
             ]);
         }
 
-        if (state.comment.text === text) {
-            resources.comment = undefined;
-        } else {
-            resources.comment = {
-                pageIndex,
-                text: text !== undefined ? text : '',
-            };
+        let refresh = false;
+        if (text !== undefined) {
+            refresh = resources.comment === undefined;
+            resources.comment = { pageIndex, text };
         }
 
-        return undefined;
+        return refresh ? {} : undefined;
     },
     commitCommentText: () => (state): NextState => {
         const commentObj = resources.comment;
