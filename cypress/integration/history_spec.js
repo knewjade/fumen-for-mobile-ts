@@ -745,7 +745,7 @@ describe('History', () => {
                     operations.mode.tools.nextPage();
                     operations.mode.tools.nextPage();
                     operations.mode.tools.nextPage();
-                    operations.mode.tools.resetComment({ home: true });
+                    operations.mode.tools.inheritComment({ home: true });
                 },
                 fumen: 'v115@vhFAgWFAooMDEPBAAAAgHAgHAgHAgHAgH',
                 count: 1,
