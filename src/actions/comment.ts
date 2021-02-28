@@ -1,5 +1,8 @@
 import { NextState, sequence } from './commons';
 import { action, actions } from '../actions';
+import { resources, State } from '../states';
+import { Quiz } from '../lib/fumen/quiz';
+import { Page } from '../lib/fumen/types';
 import {
     OperationTask,
     toFreezeCommentTask,
@@ -10,9 +13,7 @@ import {
     toUnfreezeCommentTask,
     toUnsetQuizFlagTask,
 } from '../history_task';
-import { resources, State } from '../states';
 import { isQuizCommentResult, isTextCommentResult, Pages } from '../lib/pages';
-import { Quiz } from '../lib/fumen/quiz';
 
 export interface CommentActions {
     updateCommentText: (data: { text?: string, pageIndex: number }) => action;
@@ -30,16 +31,13 @@ export const commentActions: Readonly<CommentActions> = {
             ]);
         }
 
-        if (state.comment.text === text) {
-            resources.comment = undefined;
-        } else {
-            resources.comment = {
-                pageIndex,
-                text: text !== undefined ? text : '',
-            };
+        let refresh = false;
+        if (text !== undefined) {
+            refresh = resources.comment === undefined;
+            resources.comment = { pageIndex, text };
         }
 
-        return undefined;
+        return refresh ? {} : undefined;
     },
     commitCommentText: () => (state): NextState => {
         const commentObj = resources.comment;
@@ -62,91 +60,150 @@ export const commentActions: Readonly<CommentActions> = {
 };
 
 const commitCommentText = (index: number, text: string) => (state: State): NextState => {
-    let pages = state.fumen.pages;
-    const page = pages[index];
-    if (page === undefined) {
+    const page = state.fumen.pages[index];
+    if (page === undefined || page.comment.text === text) {
         return undefined;
     }
 
-    const prevPageIndex = index - 1;
-    const prevPage = pages[prevPageIndex];
+    if (Quiz.isQuizComment(text)) {
+        return commitQuizCommentText(index, text)(state);
+    }
+    return commitRegularCommentText(index, text)(state);
+};
 
+const findFirstComment = (pages: Page[], startIndex: number) => {
+    let nextPageIndex: number | undefined = undefined;
+    for (let i = startIndex; i < pages.length; i += 1) {
+        if (pages[i].comment.text !== undefined) {
+            nextPageIndex = i;
+        }
+    }
+    return nextPageIndex;
+};
+
+const commitQuizCommentText = (index: number, text: string) => (state: State): NextState => {
+    let pages = state.fumen.pages;
     const pagesObj = new Pages(pages);
-    const comment = prevPage !== undefined ? pagesObj.getComment(index - 1) : undefined;
+
+    const page = pages[index];
+    const nextPageIndex = findFirstComment(pages, index + 1);
+
+    const prevComment = pages[index - 1] !== undefined ? pagesObj.getComment(index - 1) : undefined;
     const tasks: OperationTask[] = [];
 
-    if (page.comment.text === text) {
-        return;
+    // 前のページがQuiz、かつ同じコメントになるか
+    if (
+        prevComment !== undefined && isQuizCommentResult(prevComment)
+        && prevComment.quizAfterOperation.format().toString() === text
+    ) {
+        // refにする
+        if (page.comment.text !== undefined) {
+            // commentをrefに変換する
+            const backupComment = page.comment.text;
+            pagesObj.unfreezeComment(index);
+            tasks.push(toUnfreezeCommentTask(index, backupComment));
+        }
+
+        pages = pagesObj.pages;
+    } else {
+        // textにする
+        if (page.comment.text === undefined) {
+            // commentをtextに変換する
+            pagesObj.freezeComment(index);
+            tasks.push(toFreezeCommentTask(index));
+        }
+
+        // Quizフラグを更新する
+        if (!page.flags.quiz) {
+            pagesObj.setQuizFlag(index);
+            tasks.push(toSetQuizFlagTask(index));
+        }
+
+        // コメントを更新
+        pages = pagesObj.pages;
+        const currentPage = pages[index];
+        const primitivePage = toPrimitivePage(currentPage);
+        currentPage.comment = { text };
+        tasks.push(toSinglePageTask(index, primitivePage, currentPage));
     }
 
-    const isCurrentQuiz = Quiz.isQuizComment(text);
-    if (isCurrentQuiz) {
-        // Quizにする
-
-        if (comment !== undefined && isQuizCommentResult(comment)
-            && comment.quizAfterOperation.format().toString() === text) {
-            // refにする
-            if (page.comment.text !== undefined) {
+    // 次のコメントと同じになるか
+    if (nextPageIndex !== undefined && pages[nextPageIndex] !== undefined) {
+        const comment = pagesObj.getComment(nextPageIndex - 1);
+        if (isQuizCommentResult(comment)) {
+            const lastQuizComment = comment.quizAfterOperation.format().toString();
+            const nextPage = pages[nextPageIndex];
+            if (nextPage.comment.text !== undefined && nextPage.comment.text === lastQuizComment) {
                 // commentをrefに変換する
-                const prevComment = page.comment.text;
-                pagesObj.unfreezeComment(index);
-                tasks.push(toUnfreezeCommentTask(index, prevComment));
+                const backupComment = nextPage.comment.text;
+                pagesObj.unfreezeComment(nextPageIndex);
+                tasks.push(toUnfreezeCommentTask(nextPageIndex, backupComment));
             }
-
-            pages = pagesObj.pages;
-        } else {
-            // textにする
-            if (page.comment.text === undefined) {
-                // commentをtextに変換する
-                pagesObj.freezeComment(index);
-                tasks.push(toFreezeCommentTask(index));
-            }
-
-            // Quizフラグを更新する
-            if (!page.flags.quiz) {
-                pagesObj.setQuizFlag(index);
-                tasks.push(toSetQuizFlagTask(index));
-            }
-
-            // コメントを更新
-            pages = pagesObj.pages;
-            const currentPage = pages[index];
-            const primitivePage = toPrimitivePage(currentPage);
-            currentPage.comment = { text };
-            tasks.push(toSinglePageTask(index, primitivePage, currentPage));
         }
+    }
+
+    return sequence(state, [
+        () => ({
+            fumen: {
+                ...state.fumen,
+                pages,
+            },
+        }),
+        actions.registerHistoryTask({ task: toPageTaskStack(tasks, index) }),
+    ]);
+};
+
+const commitRegularCommentText = (index: number, text: string) => (state: State): NextState => {
+    let pages = state.fumen.pages;
+    const pagesObj = new Pages(pages);
+
+    const page = pages[index];
+    const nextPageIndex = findFirstComment(pages, index + 1);
+
+    const prevComment = pages[index - 1] !== undefined ? pagesObj.getComment(index - 1) : undefined;
+    const tasks: OperationTask[] = [];
+
+    // テキストにする
+    if (prevComment !== undefined && isTextCommentResult(prevComment) && prevComment.text === text) {
+        // refにする
+        if (page.comment.text !== undefined) {
+            // commentをrefに変換する
+            const backupComment = page.comment.text;
+            pagesObj.unfreezeComment(index);
+            tasks.push(toUnfreezeCommentTask(index, backupComment));
+        }
+
+        pages = pagesObj.pages;
     } else {
-        // テキストにする
-        if (comment !== undefined && isTextCommentResult(comment) && comment.text === text) {
-            // refにする
-            if (page.comment.text !== undefined) {
-                // commentをrefに変換する
-                const prevComment = page.comment.text;
-                pagesObj.unfreezeComment(index);
-                tasks.push(toUnfreezeCommentTask(index, prevComment));
-            }
+        // textにする
+        if (page.comment.text === undefined) {
+            // commentをtextに変換する
+            pagesObj.freezeComment(index);
+            tasks.push(toFreezeCommentTask(index));
+        }
 
-            pages = pagesObj.pages;
-        } else {
-            // textにする
-            if (page.comment.text === undefined) {
-                // commentをtextに変換する
-                pagesObj.freezeComment(index);
-                tasks.push(toFreezeCommentTask(index));
-            }
+        // Quizフラグを更新する
+        if (page.flags.quiz) {
+            pagesObj.unsetQuizFlag(index);
+            tasks.push(toUnsetQuizFlagTask(index));
+        }
 
-            // Quizフラグを更新する
-            if (page.flags.quiz) {
-                pagesObj.unsetQuizFlag(index);
-                tasks.push(toUnsetQuizFlagTask(index));
-            }
+        // コメントを更新
+        pages = pagesObj.pages;
+        const currentPage = pages[index];
+        const primitivePage = toPrimitivePage(currentPage);
+        currentPage.comment = { text };
+        tasks.push(toSinglePageTask(index, primitivePage, currentPage));
+    }
 
-            // コメントを更新
-            pages = pagesObj.pages;
-            const currentPage = pages[index];
-            const primitivePage = toPrimitivePage(currentPage);
-            currentPage.comment = { text };
-            tasks.push(toSinglePageTask(index, primitivePage, currentPage));
+    // 次のコメントと同じになるか
+    if (nextPageIndex !== undefined && pages[nextPageIndex] !== undefined) {
+        const nextPage = pages[nextPageIndex];
+        if (nextPage.comment.text !== undefined && nextPage.comment.text === text) {
+            // commentをrefに変換する
+            const backupComment = nextPage.comment.text;
+            pagesObj.unfreezeComment(nextPageIndex);
+            tasks.push(toUnfreezeCommentTask(nextPageIndex, backupComment));
         }
     }
 

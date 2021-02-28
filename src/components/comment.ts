@@ -61,14 +61,14 @@ export const comment: Component<Props> = (
         element.value = text;
     };
 
-    const oninput = (event: KeyboardEvent) => {
+    const update = (event: KeyboardEvent | FocusEvent) => {
         if (event.target !== null) {
             const target = event.target as HTMLInputElement;
             actions.updateCommentText({ text: target.value, pageIndex: currentIndex });
         }
     };
 
-    const onenter = (event: KeyboardEvent) => {
+    const blur = (event: KeyboardEvent) => {
         if (event.target !== null) {
             const target = event.target as HTMLInputElement;
             target.blur();
@@ -92,7 +92,7 @@ export const comment: Component<Props> = (
     const onkeyup = (event: KeyboardEvent) => {
         // 最後にエンターが押されたか (IMEには反応しない)
         if (!event.isComposing && !lastComposingOnEnterDown && event.key === 'Enter') {
-            onenter(event);
+            blur(event);
         }
     };
 
@@ -110,10 +110,11 @@ export const comment: Component<Props> = (
             dataTest,
             placeholder,
             oncreate,
-            oninput,
             onblur,
             onkeydown,
             onkeyup,
+            oninput: update,
+            onfocus: update,
             type: 'text',
             className: backgroundColorClass,
             style: commentStyle,
