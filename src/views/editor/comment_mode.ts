@@ -39,6 +39,7 @@ export const commentMode = ({ layout, currentIndex, actions }: {
             borderColor: '#333',
             datatest: 'btn-comment-inherit',
             key: 'btn-comment-inherit',
+            enable: 0 < currentIndex,
             onclick: () => {
                 actions.resetCommentText({ pageIndex: currentIndex });
             },
