@@ -54,8 +54,11 @@ describe('field', () => {
                 field.add(x, y, 3);
                 expect(field.get(x, y)).toEqual(3);
 
-                field.add(x, y, -4);
-                expect(field.get(x, y)).toEqual(-1);
+                field.add(x, y, -2);
+                expect(field.get(x, y)).toEqual(1);
+
+                field.add(x, y, -2);
+                expect(field.get(x, y)).toEqual(0);
             }
         }
     });

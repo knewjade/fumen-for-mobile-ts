@@ -104,6 +104,11 @@ export class Field {
     isOnGround(piece: Piece, rotation: Rotation, x: number, y: number) {
         return !this.canPut(piece, rotation, x, y - 1);
     }
+
+    convertToGray() {
+        this.playField.convertToGray();
+        this.sentLine.convertToGray();
+    }
 }
 
 export class PlayField {
@@ -151,7 +156,8 @@ export class PlayField {
     }
 
     add(x: number, y: number, value: number) {
-        this.pieces[x + y * FieldConstants.Width] += value;
+        const index = x + y * FieldConstants.Width;
+        this.pieces[index] = Math.max(this.pieces[index] + value, 0);
     }
 
     set(x: number, y: number, piece: Piece) {
@@ -263,5 +269,9 @@ export class PlayField {
         }
 
         return true;
+    }
+
+    convertToGray() {
+        this.pieces = this.pieces.map(piece => piece !== Piece.Empty ? Piece.Gray : Piece.Empty);
     }
 }

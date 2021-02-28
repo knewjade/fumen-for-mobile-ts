@@ -2,6 +2,8 @@ import { Component, style } from '../../lib/types';
 import { h } from 'hyperapp';
 import { resources } from '../../states';
 import { i18n } from '../../locales/keys';
+import { TextArea } from './textarea';
+import { div } from '@hyperapp/@hyperapp/html';
 
 declare const M: any;
 
@@ -10,13 +12,31 @@ interface OpenFumenModalProps {
     textAreaValue: string;
     actions: {
         closeFumenModal: () => void;
-        inputFumenData(data: { value?: string }): void;
+        updateFumenData: (data: { value: string }) => void;
         clearFumenData: () => void;
-        loadFumen(data: { fumen: string }): void;
+        commitOpenFumenData: () => void;
     };
 }
 
 export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, errorMessage, actions }) => {
+    const close = () => {
+        const modal = resources.modals.fumen;
+        if (modal !== undefined) {
+            modal.close();
+        }
+    };
+
+    const destroy = () => {
+        resources.modals.fumen = undefined;
+    };
+
+    const cancel = () => {
+        actions.closeFumenModal();
+        actions.clearFumenData();
+        close();
+        destroy();
+    };
+
     const oncreate = (element: HTMLDivElement) => {
         const instance = M.Modal.init(element, {
             onOpenEnd: () => {
@@ -27,6 +47,8 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
             },
             onCloseStart: () => {
                 actions.closeFumenModal();
+                actions.clearFumenData();
+                destroy();
             },
         });
 
@@ -35,88 +57,36 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
         resources.modals.fumen = instance;
     };
 
-    const ondestroy = () => {
-        const modal = resources.modals.fumen;
-        if (modal !== undefined) {
-            modal.close();
-        }
-        resources.modals.fumen = undefined;
+    const update = ({ value }: { value: string }) => {
+        actions.updateFumenData({ value });
     };
 
-    const textAreaStyle = style({
-        width: '100%',
-        border: errorMessage !== undefined ? 'solid 1px #ff5252' : undefined,
-    });
-
-    const oninput = (e: TextEvent) => {
-        const inputType = (e as any).inputType;
-        if (inputType === 'insertLineBreak') {
-            const element = document.getElementById('btn-open');
-            if (element !== null) {
-                element.click();
-            }
-            return;
-        }
-
-        // エラーメッセージがある状態で文字を入力したとき or
-        // もともとのテキストエリアが空のとき or
-        // 現在のテキストエリアが空のとき
-        {
-            const value = getInputText();
-            const inputText = value !== undefined && value !== null ? value : '';
-            if (errorMessage !== undefined || inputText === '' || textAreaValue === '') {
-                actions.inputFumenData({ value: inputText });
-            }
-        }
-    };
-
-    const onblur = () => {
-        const value = getInputText();
-        if (textAreaValue !== value) {
-            actions.inputFumenData({ value });
-        }
-    };
-
-    const getInputText = (): string | undefined => {
-        const element = document.getElementById('input-fumen') as HTMLTextAreaElement;
-        if (element === null) {
-            return undefined;
-        }
-        return element.value !== '' ? element.value : '';
-    };
-
-    const cancel = () => {
-        actions.closeFumenModal();
-        actions.clearFumenData();
-    };
-
-    const open = () => {
-        const value = getInputText();
-        actions.inputFumenData({ value });
-
-        if (value !== undefined) {
-            actions.loadFumen({ fumen: value });
-        }
-
+    const focus = () => {
         const element = document.getElementById('input-fumen');
         if (element !== null) {
             element.focus();
         }
     };
 
+    const open = () => {
+        actions.commitOpenFumenData();
+        focus();
+    };
+
     const openClassVisibility = textAreaValue !== '' && errorMessage === undefined ? '' : ' disabled';
-    const openClassName = `waves-effect waves-teal btn-flat${openClassVisibility}`;
+    const openClassName = `waves-effect waves-light btn red${openClassVisibility}`;
 
     return (
         <div key="open-fumen-modal-top">
             <div key="mdl-open-fumen" datatest="mdl-open-fumen"
-                 className="modal" oncreate={oncreate} ondestroy={ondestroy}>
+                 className="modal" oncreate={oncreate}>
                 <div key="modal-content" className="modal-content">
                     <h4 key="open-fumen-label" dataTest="open-fumen-label">{i18n.OpenFumen.Title()}</h4>
 
-                    <textarea key="input-fumen" dataTest="input-fumen" id="input-fumen" rows={3} style={textAreaStyle}
-                              oninput={oninput} onblur={onblur}
-                              value={textAreaValue} placeholder={i18n.OpenFumen.PlaceHolder()}/>
+                    <TextArea key="input-fumen" dataTest="input-fumen" id="input-fumen"
+                              placeholder={i18n.OpenFumen.PlaceHolder()} error={errorMessage === undefined}
+                              text={textAreaValue} actions={{ update }}
+                    />
 
                     <span key="text-message" datatest="text-message" className="red-text text-accent-2"
                           style={style({ display: errorMessage !== undefined ? undefined : 'none' })}>

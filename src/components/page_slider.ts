@@ -14,7 +14,7 @@ interface Props {
     };
 }
 
-export const pageSlider: Component<Props> = ({ datatest, size, maxPage, currentIndex, actions }) => {
+export const page_slider: Component<Props> = ({ datatest, size, maxPage, currentIndex, actions }) => {
     const oninput = () => {
         const element = document.getElementById('input-page-number') as HTMLInputElement;
         if (element !== null) {

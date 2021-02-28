@@ -3,7 +3,7 @@ import { operations } from '../support/operations';
 
 describe('Comments', () => {
     it('Should not apply comment to other pages', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.tools.nextPage();
         operations.mode.tools.nextPage();
@@ -23,7 +23,7 @@ describe('Comments', () => {
     });
 
     it('Comment readonly/writable', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -39,7 +39,7 @@ describe('Comments', () => {
     });
 
     it('Write comments', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -113,7 +113,7 @@ describe('Comments', () => {
     });
 
     it('Quiz', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -160,7 +160,7 @@ describe('Comments', () => {
 
     it('Multi quiz', () => {
         visit({
-            mode: 'writable',
+            mode: 'edit',
             fumen: 'v115@vhGyOY3AFLDmClcJSAVjiSAVG88AYS88AZPUABCowA?BR4K6Bl/UtClfJSASE7SAyltSATzarDMjzCATEJm/I3LJtK?JUBJAgH'
         });
 
@@ -200,5 +200,203 @@ describe('Comments', () => {
         cy.get(datatest('text-comment')).should('have.value', 'hello');
 
         expectFumen('v115@vhHyOY3AFLDmClcJSAVjiSAVG88AYS88AZPUABCowA?BR4K6Bl/UtClfJSASE7SAyltSATzarDMjzCATEJm/I3LJtK?JUBJAgHAgH');
+    });
+
+    it('Invalid quiz', () => {
+        visit({ mode: 'edit' });
+
+        operations.mode.piece.open();
+
+        // 1ページ目
+        cy.get(datatest('text-comment')).type('#Q=[](T)OZASLJ');
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[](T)OZASLJ');
+
+        minoPosition(Piece.T, Rotation.Spawn)(1, 0).forEach(([x, y]) => {
+            operations.mode.block.click(x, y);
+        });
+
+        operations.mode.tools.nextPage();
+
+        // 2ページ目
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[](T)OZASLJ');
+
+        minoPosition(Piece.Z, Rotation.Spawn)(3, 0).forEach(([x, y]) => {
+            operations.mode.block.click(x, y);
+        });
+
+        operations.mode.tools.nextPage();
+
+        // 3ページ目
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[](T)OZASLJ');
+
+        minoPosition(Piece.O, Rotation.Spawn)(8, 0).forEach(([x, y]) => {
+            operations.mode.block.click(x, y);
+        });
+
+        cy.get(datatest('text-comment')).clear().type('#Q=[O](S)LJ');
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[O](S)LJ');
+
+        operations.mode.tools.nextPage();
+
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[S](L)J');
+
+        expectFumen('v115@vhD1OYaAFLDmClcJSAVDEHBEooRBUoAVBvnTtCs/AA?A0KJTNYXAFLDmClcJSAVjiSAVG88A4c88AZifBAAgH');
+    });
+
+    it('merge comment1', () => {
+        visit({ mode: 'edit' });
+
+        operations.mode.tools.nextPage();
+        operations.mode.tools.nextPage();
+
+        // 3ページ
+        cy.get(datatest('text-comment')).type('hello');
+        cy.get(datatest('text-comment')).should('have.value', 'hello');
+        // (blank) > [ref] > hello
+
+        operations.mode.tools.backPage();
+        operations.mode.tools.backPage();
+
+        // 1ページ
+        cy.get(datatest('text-comment')).should('have.value', '');
+        cy.get(datatest('text-comment')).type('hello').type('{enter}');
+        cy.get(datatest('text-comment')).should('have.value', 'hello');
+        // hello > [ref] > [ref]
+
+        cy.get(datatest('text-comment')).clear();
+        // (blank) > [ref] > [ref]
+
+        expectFumen('v115@vhCAgHAgHAgH');
+    });
+
+    it('merge comment2', () => {
+        visit({ mode: 'edit' });
+
+        // 1ページ
+        cy.get(datatest('text-comment')).type('こんにちは');
+        cy.get(datatest('text-comment')).should('have.value', 'こんにちは');
+
+        operations.mode.tools.nextPage();
+        operations.mode.tools.nextPage();
+        operations.mode.tools.nextPage();
+
+        // 4ページ
+        cy.get(datatest('text-comment')).should('have.value', 'こんにちは');
+        cy.get(datatest('text-comment')).clear().type('hello');
+        cy.get(datatest('text-comment')).should('have.value', 'hello');
+        // こんにちは > [ref] > [ref] > hello
+
+        operations.mode.tools.backPage();
+        operations.mode.tools.backPage();
+
+        // 2ページ
+        cy.get(datatest('text-comment')).should('have.value', 'こんにちは');
+        cy.get(datatest('text-comment')).clear();
+        cy.get(datatest('text-comment')).should('have.value', '');
+        // こんにちは > (blank) > [ref] > hello
+
+        operations.mode.tools.nextPage();
+        operations.mode.tools.nextPage();
+
+        // 4ページ
+        cy.get(datatest('text-comment')).should('have.value', 'hello');
+        cy.get(datatest('text-comment')).clear();
+        cy.get(datatest('text-comment')).should('have.value', '');
+        // こんにちは > (blank) > [ref] > [ref]
+
+        operations.mode.tools.backPage();
+
+        // 3ページ
+        cy.get(datatest('text-comment')).should('have.value', '');
+        cy.get(datatest('text-comment')).type('world');
+        cy.get(datatest('text-comment')).should('have.value', 'world');
+        // こんにちは > (blank) > world > [ref]
+
+        operations.mode.tools.nextPage();
+
+        // 4ページ
+        cy.get(datatest('text-comment')).should('have.value', 'world');
+
+        operations.mode.tools.backPage();
+        operations.mode.tools.backPage();
+
+        // 2ページ
+        cy.get(datatest('text-comment')).should('have.value', '');
+        cy.get(datatest('text-comment')).type('こんにちは');
+        cy.get(datatest('text-comment')).should('have.value', 'こんにちは');
+        // こんにちは > [ref] > world > [ref]
+
+        operations.mode.tools.backPage();
+
+        // 1ページ
+        cy.get(datatest('text-comment')).should('have.value', 'こんにちは');
+        cy.get(datatest('text-comment')).clear().type('world').type('{enter}');
+        cy.get(datatest('text-comment')).should('have.value', 'world');
+        // world > [ref] > [ref] > [ref]
+
+        cy.get(datatest('text-comment')).clear();
+        // (blank) > [ref] > [ref] > [ref]
+
+        expectFumen('v115@vhDAgHAgHAgHAgH');
+    });
+
+    it('merge quiz', () => {
+        visit({ mode: 'edit' });
+
+        operations.mode.piece.open();
+
+        // 1ページ
+        cy.get(datatest('text-comment')).type('#Q=[](L)JSZOTI');
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[](L)JSZOTI');
+
+        operations.mode.piece.spawn.L();
+        operations.mode.piece.harddrop();
+
+        // 2ページ
+        operations.mode.tools.nextPage();
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[](J)SZOTI');
+
+        operations.mode.piece.spawn.S();
+        operations.mode.piece.harddrop();
+
+        // 3ページ
+        operations.mode.tools.nextPage();
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[J](Z)OTI');
+
+        operations.mode.piece.spawn.Z();
+        operations.mode.piece.harddrop();
+
+        // 4ページ
+        operations.mode.tools.nextPage();
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[J](O)TI');
+
+        operations.mode.tools.backPage();
+        operations.mode.tools.backPage();
+        operations.mode.tools.backPage();
+
+        // 1ページ
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[](L)JSZOTI');
+        cy.get(datatest('text-comment')).clear();
+        cy.get(datatest('text-comment')).should('have.value', '');
+
+        operations.mode.tools.nextPage();
+        operations.mode.tools.nextPage();
+
+        // 3ページ
+        cy.get(datatest('text-comment')).should('have.value', '');
+        cy.get(datatest('text-comment')).type('#Q=[](Z)OJIT');
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[](Z)OJIT');
+
+        operations.mode.tools.backPage();
+        operations.mode.tools.backPage();
+
+        // 1ページ
+        cy.get(datatest('text-comment')).should('have.value', '');
+        cy.get(datatest('text-comment')).type('#Q=[](L)SZOJIT').type('{enter}');
+        cy.get(datatest('text-comment')).should('have.value', '#Q=[](L)SZOJIT');
+
+        cy.get(datatest('text-comment')).clear();
+
+        expectFumen('v115@vhDSQJXGJU8IAgH');
     });
 });

@@ -1,4 +1,5 @@
 import { Color, datatest, mino, pages, Piece, rightTap, Rotation, visit } from '../support/common.js';
+import { operations } from '../support/operations';
 
 // 接着なしのテスト
 describe('No lock', () => {
@@ -126,13 +127,14 @@ describe('No lock', () => {
         });
 
         // 最初に戻る
-        rightTap(2, () => {
+        operations.menu.firstPage();
+        {
             cy.get(datatest('tools')).find(datatest('text-pages')).should('have.text', page(1));
 
             mino(Piece.S, Rotation.Spawn)(1, 0).forEach((block) => {
                 cy.get(block).should('have.attr', 'color', Color.S.Highlight2);
             });
-        });
+        }
 
         // 2週目
         rightTap(4, () => {

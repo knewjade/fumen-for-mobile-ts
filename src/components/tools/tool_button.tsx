@@ -7,6 +7,7 @@ interface Props {
     iconName: string;
     sticky?: boolean;
     marginRight?: number;
+    marginLeft?: number;
     datatest?: string;
     key: string;
     colors: {
@@ -32,7 +33,8 @@ interface IconProps {
 
 export const ToolButton: Component<Props & IconProps> = (
     {
-        height, width, fontSize, key, iconName, sticky = false, marginRight = 0,
+        height, width, fontSize, key, iconName, sticky = false,
+        marginLeft = undefined, marginRight = 0,
         datatest, colors, enable = true, actions,
     },
 ) => {
@@ -40,7 +42,7 @@ export const ToolButton: Component<Props & IconProps> = (
         height: px(height),
         lineHeight: px(height),
         width: px(width),
-        marginLeft: sticky ? 'auto' : undefined,
+        marginLeft: sticky ? 'auto' : marginLeft,
         position: sticky ? 'absolute' : undefined,
         right: sticky ? '10px' : undefined,
         marginRight: px(marginRight),

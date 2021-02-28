@@ -1,9 +1,9 @@
 import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
-import { AnimationState, Piece } from '../lib/enums';
-import { Page, Move, PreCommand  } from '../lib/fumen/types';
+import { AnimationState, Piece, TouchTypes } from '../lib/enums';
+import { Move, Page, PreCommand } from '../lib/fumen/types';
 import { Block } from '../state_types';
-import { PageFieldOperation, Pages, QuizCommentResult, TextCommentResult } from '../lib/pages';
+import { isQuizCommentResult, PageFieldOperation, Pages } from '../lib/pages';
 import {
     OperationTask,
     toFreezeCommentTask,
@@ -29,9 +29,11 @@ export interface PageActions {
     insertNewPage: (data: { index: number }) => action;
     removePage: (data: { index: number }) => action;
     duplicatePage: (data: { index: number }) => action;
+    removeUnsettledItems: () => action;
     backLoopPage: () => action;
     nextLoopPage: () => action;
-    backPage: () => action;
+    backPage: (data: { loop: boolean }) => action;
+    nextPage: (data: { loop: boolean }) => action;
     nextPageOrNewPage: () => action;
     firstPage: () => action;
     lastPage: () => action;
@@ -53,14 +55,10 @@ export const pageActions: Readonly<PageActions> = {
 
         const comment = pages.getComment(index);
 
-        const isQuiz = (comment: TextCommentResult | QuizCommentResult): comment is QuizCommentResult => {
-            return (<QuizCommentResult>comment).quiz !== undefined;
-        };
-
         let text;
         let next;
         let hold;
-        if (isQuiz(comment)) {
+        if (isQuizCommentResult(comment)) {
             text = comment.quiz;
             if (comment.quiz !== '') {
                 next = comment.quizAfterOperation.getNextPieces(5).filter(piece => piece !== Piece.Empty);
@@ -92,6 +90,7 @@ export const pageActions: Readonly<PageActions> = {
                 filledHighlight: page.flags.lock,
                 inferences: state.events.inferences,
                 ghost: state.mode.ghostVisible,
+                allowSplit: state.mode.touch === TouchTypes.Drawing,
             }),
             actions.setFieldColor({ guideLineColor }),
             actions.setSentLine({ sentLine: blocks.sentLine }),
@@ -135,8 +134,7 @@ export const pageActions: Readonly<PageActions> = {
         }
 
         return sequence(state, [
-            actions.fixInferencePiece(),
-            actions.clearInferencePiece(),
+            actions.removeUnsettledItems(),
             actions.commitCommentText(),
             insertRefPage({ index }),
             actions.reopenCurrentPage(),
@@ -150,8 +148,7 @@ export const pageActions: Readonly<PageActions> = {
         }
 
         return sequence(state, [
-            actions.fixInferencePiece(),
-            actions.clearInferencePiece(),
+            actions.removeUnsettledItems(),
             actions.commitCommentText(),
             insertKeyPage({ index }),
             actions.reopenCurrentPage(),
@@ -165,8 +162,7 @@ export const pageActions: Readonly<PageActions> = {
         }
 
         return sequence(state, [
-            actions.fixInferencePiece(),
-            actions.clearInferencePiece(),
+            actions.removeUnsettledItems(),
             actions.commitCommentText(),
             insertNewPage({ index }),
             actions.reopenCurrentPage(),
@@ -180,8 +176,7 @@ export const pageActions: Readonly<PageActions> = {
         }
 
         return sequence(state, [
-            actions.fixInferencePiece(),
-            actions.clearInferencePiece(),
+            actions.removeUnsettledItems(),
             actions.commitCommentText(),
             duplicatePage({ index }),
             actions.reopenCurrentPage(),
@@ -189,12 +184,14 @@ export const pageActions: Readonly<PageActions> = {
     },
     removePage: ({ index }) => (state): NextState => {
         return sequence(state, [
-            actions.fixInferencePiece(),
-            actions.clearInferencePiece(),
+            actions.removeUnsettledItems(),
             actions.commitCommentText(),
             removePage({ index }),
             actions.reopenCurrentPage(),
         ]);
+    },
+    removeUnsettledItems: () => (state): NextState => {
+        return actions.removeUnsettledItemsInField()(state);
     },
     backLoopPage: () => (state): NextState => {
         const index = (state.fumen.currentIndex - 1 + state.fumen.maxPage) % state.fumen.maxPage;
@@ -204,15 +201,42 @@ export const pageActions: Readonly<PageActions> = {
         const index = (state.fumen.currentIndex + 1) % state.fumen.maxPage;
         return pageActions.openPage({ index })(state);
     },
-    backPage: () => (state): NextState => {
+    backPage: ({ loop }) => (state): NextState => {
         const backPage = state.fumen.currentIndex - 1;
-        if (backPage < 0) return;
+        if (backPage < 0) {
+            if (loop) {
+                return sequence(state, [
+                    actions.lastPage(),
+                ]);
+            }
+            return;
+        }
 
         return sequence(state, [
             actions.fixInferencePiece(),
             actions.clearInferencePiece(),
             actions.commitCommentText(),
             pageActions.openPage({ index: backPage }),
+        ]);
+    },
+    nextPage: ({ loop }) => (state): NextState => {
+        const fumen = state.fumen;
+        const nextPage = fumen.currentIndex + 1;
+
+        if (fumen.maxPage <= nextPage) {
+            if (loop) {
+                return sequence(state, [
+                    actions.firstPage(),
+                ]);
+            }
+            return;
+        }
+
+        return sequence(state, [
+            actions.fixInferencePiece(),
+            actions.clearInferencePiece(),
+            actions.commitCommentText(),
+            pageActions.openPage({ index: nextPage }),
         ]);
     },
     nextPageOrNewPage: () => (state): NextState => {
@@ -223,15 +247,11 @@ export const pageActions: Readonly<PageActions> = {
             return sequence(state, [
                 pageActions.insertPage({ index: nextPage }),
                 pageActions.openPage({ index: nextPage }),
-                actions.saveToMemento(),
             ]);
         }
 
         return sequence(state, [
-            actions.fixInferencePiece(),
-            actions.clearInferencePiece(),
-            actions.commitCommentText(),
-            pageActions.openPage({ index: nextPage }),
+            actions.nextPage({ loop: false }),
         ]);
     },
     firstPage: () => (state): NextState => {

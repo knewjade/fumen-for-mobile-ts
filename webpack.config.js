@@ -1,8 +1,12 @@
-const {GenerateSW} = require('workbox-webpack-plugin');
+const { GenerateSW } = require('workbox-webpack-plugin');
 
 const path = require('path');
-const version = process.env.TRAVIS_BUILD_NUMBER || `dev-${new Date().toISOString()}`;
-const isDebug = (!process.env.TRAVIS_BUILD_NUMBER) + '';
+// GitHub Actionsへの移行に合わせて、ビルド番号は1000から開始する
+const buildNumber = process.env.GITHUB_RUN_NUMBER
+    ? parseInt(process.env.GITHUB_RUN_NUMBER) + 1000
+    : undefined
+const version = buildNumber ? `${buildNumber}` : `dev-${new Date().toISOString()}`;
+const isDebug = process.env.DEBUG_ON || 'true'
 const cacheId = 'fumen-for-mobile';
 
 module.exports = {
@@ -50,9 +54,6 @@ module.exports = {
         new GenerateSW({
             cacheId: cacheId,
             swDest: 'sw.js',
-            globDirectory: './public/',
-            globPatterns: ['**/*.{png,html,css,svg,json,bundle.js}'],
-            globIgnores: ['*.js'],
             clientsClaim: true,
             skipWaiting: true,
             offlineGoogleAnalytics: true,

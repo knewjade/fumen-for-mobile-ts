@@ -8,14 +8,14 @@ import {
     Piece,
     Rotation,
     sentBlock,
-    visit
+    visit,
 } from '../support/common';
 import { operations } from '../support/operations';
 
 // テト譜を開く
 describe('Drawing', () => {
     it('Draw blocks', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.block.open();
         operations.mode.block.Gray();
@@ -56,7 +56,7 @@ describe('Drawing', () => {
     });
 
     it('Draw blocks 2', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.block.open();
         operations.mode.block.I();
@@ -81,7 +81,7 @@ describe('Drawing', () => {
     });
 
     it('Completion blocks', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.block.open();
 
@@ -150,7 +150,7 @@ describe('Drawing', () => {
     it('Completion blocks 2', () => {
         visit({
             fumen: 'v115@AhG8CeG8CeH8BeG8JeAgH',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.mode.block.open();
@@ -279,7 +279,7 @@ describe('Drawing', () => {
     it('Completion blocks 3', () => {
         visit({
             fumen: 'v115@vhAAgH',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.mode.block.open();
@@ -331,11 +331,48 @@ describe('Drawing', () => {
         });
     });
 
+    it('Split inference', () => {
+        visit({ mode: 'edit' });
+
+        operations.mode.block.open();
+
+        operations.mode.block.click(5, 5);
+        operations.mode.block.click(4, 5);
+        operations.mode.block.click(3, 5);
+
+        // L
+        operations.mode.block.click(3, 3);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.L.Highlight2);
+        operations.mode.block.click(3, 3);
+
+        operations.mode.block.click(3, 4);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.L.Highlight2);
+        operations.mode.block.click(3, 4);
+
+        // T
+        operations.mode.block.click(4, 3);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.T.Highlight2);
+        operations.mode.block.click(4, 3);
+
+        operations.mode.block.click(4, 4);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.T.Highlight2);
+        operations.mode.block.click(4, 4);
+
+        // J
+        operations.mode.block.click(5, 3);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.J.Highlight2);
+        operations.mode.block.click(5, 3);
+
+        operations.mode.block.click(5, 4);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.J.Highlight2);
+        operations.mode.block.click(5, 4);
+    });
+
     it('Inference without lock flag', () => {
         // 接着なしオンのテト譜
         visit({
             fumen: 'v115@HhE8CeG8CeH8BeB8JeAgl',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.mode.block.open();
@@ -357,7 +394,7 @@ describe('Drawing', () => {
 
     it('Sent block', () => {
         // sentBlockを置くかどうかの判定に、フィールドのブロックを参照してしまう問題に対するテスト
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.menu.newPage();
 
@@ -377,7 +414,7 @@ describe('Drawing', () => {
     });
 
     it('Reset completion when create new page', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.block.open();
 

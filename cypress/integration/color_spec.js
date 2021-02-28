@@ -18,6 +18,7 @@ describe('Color', () => {
             cy.get(block(9, 1)).should('have.attr', 'color', Color.I.Normal);
         }
 
+        cy.wait(500);
         rightTap();
 
         // Lockあり
@@ -50,6 +51,7 @@ describe('Color', () => {
             cy.get(block(9, 1)).should('have.attr', 'color', ClassicColor.I.Normal);
         }
 
+        cy.wait(500);
         rightTap();
 
         // Lockあり

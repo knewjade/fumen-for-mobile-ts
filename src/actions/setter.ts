@@ -8,8 +8,8 @@ import { generateKey } from '../lib/random';
 import { getBlockPositions } from '../lib/piece';
 
 export interface SetterActions {
-    setPages: (args: { pages: Page[], open?: boolean }) => action;
-    inputFumenData: (args: { value?: string }) => action;
+    setPages: (data: { pages: Page[], open?: boolean }) => action;
+    updateFumenData: (data: { value: string }) => action;
     clearFumenData: () => action;
     setComment: (data: { comment: string }) => action;
     setField: (data: {
@@ -18,6 +18,7 @@ export interface SetterActions {
         filledHighlight: boolean,
         inferences: number[],
         ghost: boolean,
+        allowSplit: boolean,
     }) => action;
     setFieldColor: (data: { guideLineColor: boolean }) => action;
     setSentLine: (data: { sentLine: Block[] }) => action;
@@ -45,7 +46,7 @@ export const setterActions: Readonly<SetterActions> = {
             },
         };
     },
-    inputFumenData: ({ value }) => (state): NextState => {
+    updateFumenData: ({ value }) => (state): NextState => {
         return {
             fumen: {
                 ...state.fumen,
@@ -55,18 +56,32 @@ export const setterActions: Readonly<SetterActions> = {
         };
     },
     clearFumenData: () => (state): NextState => {
-        return setterActions.inputFumenData({ value: undefined })(state);
+        return {
+            fumen: {
+                ...state.fumen,
+                value: undefined,
+                errorMessage: undefined,
+            },
+        };
     },
     setComment: ({ comment }) => (state): NextState => {
+        const isChanged = comment !== undefined && comment !== state.comment.text;
+        const text = comment !== undefined ? comment : state.comment.text;
+        if (isChanged === state.comment.isChanged && text === state.comment.text) {
+            return undefined;
+        }
+
         return {
             comment: {
-                isChanged: comment !== undefined && comment !== state.comment.text,
-                text: comment !== undefined ? comment : state.comment.text,
+                isChanged,
+                text,
                 changeKey: generateKey(),
             },
         };
     },
-    setField: ({ field, move, filledHighlight, inferences, ghost }) => (): NextState => {
+    setField: (
+        { field, move, filledHighlight, inferences, ghost, allowSplit },
+    ) => (): NextState => {
         const drawnField: Block[] = field.concat();
 
         // ゴーストの計算
@@ -136,9 +151,20 @@ export const setterActions: Readonly<SetterActions> = {
             }
         }
 
-        try {
+        let piece = undefined;
+        const inferredResult = inferPiece(inferences);
+        if (inferredResult) {
+            if (inferredResult.coordinate) {
+                // 完全なミノ
+                piece = inferredResult.piece;
+            } else if (!inferredResult.coordinate && allowSplit) {
+                // 分離したミノとして解釈できる かつ 完全な予測でなくても良い
+                piece = inferredResult.piece;
+            }
+        }
+
+        if (piece) {
             // InferencePieceが揃っているとき
-            const piece = inferPiece(inferences).piece;
             for (const inference of inferences) {
                 drawnField[inference] = {
                     ...field[inference],
@@ -146,7 +172,7 @@ export const setterActions: Readonly<SetterActions> = {
                     highlight: HighlightType.Highlight2,
                 };
             }
-        } catch (e) {
+        } else {
             // InferencePieceが揃っていないとき
             for (const inference of inferences) {
                 drawnField[inference] = {

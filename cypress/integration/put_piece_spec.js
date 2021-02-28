@@ -4,7 +4,7 @@ import { operations } from '../support/operations';
 // テト譜を開く
 describe('Put pieces', () => {
     it('Move piece', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -41,7 +41,7 @@ describe('Put pieces', () => {
     });
 
     it('Put pieces', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -118,7 +118,7 @@ describe('Put pieces', () => {
     it('Move pieces', () => {
         visit({
             fumen: 'v115@zgB8EeD8HeB8AeE8AeC8BeC8BeC8AeE8AeB8JeAgHz?gBAEeDAHeBAAeEAAeBAAeA8AeAAHeAAEeAAKeAgH0gB8DeB?8AeB8FeD8AeD8AeB8CeA8BeA8DeA8AeAABeAAAeA8KeAgH0?gBAD8BeA8BAAeE8BeBAEeA8BeBAEeA8BeBADeB8LeAgH',
-            mode: 'writable',
+            mode: 'edit',
         });
 
         operations.mode.piece.open();
@@ -223,7 +223,7 @@ describe('Put pieces', () => {
     });
 
     it('Move pieces 2', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -280,6 +280,9 @@ describe('Put pieces', () => {
 
         expectFumen('v115@vhCVPJxMJTLJ');
 
+        // 環境によってはクリップボードのエラーメッセージが消えない場合があるため
+        cy.wait(2000);
+
         // I
         minoPosition(Piece.I, Rotation.Spawn)(6, 18).forEach(position => {
             operations.mode.block.click(position[0], position[1]);
@@ -320,7 +323,7 @@ describe('Put pieces', () => {
     });
 
     it('Show current rotation', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -384,7 +387,7 @@ describe('Put pieces', () => {
     });
 
     it('Spawn guideline piece', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -413,7 +416,7 @@ describe('Put pieces', () => {
     });
 
     it('Spawn classic piece', () => {
-        visit({ fumen: 'v115@vhAAAA', mode: 'writable' });
+        visit({ fumen: 'v115@vhAAAA', mode: 'edit' });
 
         operations.mode.piece.open();
 
@@ -442,7 +445,7 @@ describe('Put pieces', () => {
     });
 
     it('Spawn: usecase 1', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
         operations.mode.piece.open();
 
         {
@@ -494,7 +497,7 @@ describe('Put pieces', () => {
     });
 
     it('Spawn: usecase 2', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
         operations.mode.piece.open();
         operations.mode.piece.draw();  // 自動でmoveに切り替わることを期待
 
@@ -542,7 +545,7 @@ describe('Put pieces', () => {
     });
 
     it('Reset', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
         operations.mode.piece.open();
         operations.mode.piece.draw();
 
@@ -594,7 +597,7 @@ describe('Put pieces', () => {
     });
 
     it('Inference', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
         operations.mode.piece.open();
         operations.mode.piece.draw();
 
@@ -618,8 +621,45 @@ describe('Put pieces', () => {
         cy.get(block(5, 5)).should('not.have.attr', 'color', Color.Completion.Highlight2);
     });
 
+    it('Split inference', () => {
+        visit({ mode: 'edit' });
+        operations.mode.piece.open();
+        operations.mode.piece.draw();
+
+        operations.mode.block.click(5, 5);
+        operations.mode.block.click(4, 5);
+        operations.mode.block.click(3, 5);
+
+        // L
+        operations.mode.block.click(3, 3);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.Completion.Highlight2);
+        operations.mode.block.click(3, 3);
+
+        operations.mode.block.click(3, 4);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.L.Highlight2);
+        operations.mode.block.click(3, 4);
+
+        // T
+        operations.mode.block.click(4, 3);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.Completion.Highlight2);
+        operations.mode.block.click(4, 3);
+
+        operations.mode.block.click(4, 4);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.T.Highlight2);
+        operations.mode.block.click(4, 4);
+
+        // J
+        operations.mode.block.click(5, 3);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.Completion.Highlight2);
+        operations.mode.block.click(5, 3);
+
+        operations.mode.block.click(5, 4);
+        cy.get(block(4, 5)).should('have.attr', 'color', Color.J.Highlight2);
+        operations.mode.block.click(5, 4);
+    });
+
     it('Swap current piece', () => {
-        visit({ mode: 'writable' });
+        visit({ mode: 'edit' });
         operations.mode.piece.open();
 
         {

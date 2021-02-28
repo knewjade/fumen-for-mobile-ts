@@ -3,9 +3,9 @@ import { action, actions, main } from '../actions';
 import { memento } from '../memento';
 import { HistoryTask } from '../history_task';
 import { Page } from '../lib/fumen/types';
+import { State } from '../states';
 
 export interface MementoActions {
-    saveToMemento: () => action;
     registerHistoryTask: (data: { task: HistoryTask, mergeKey?: string }) => action;
     undo: () => action;
     redo: () => action;
@@ -14,13 +14,12 @@ export interface MementoActions {
 }
 
 export const mementoActions: Readonly<MementoActions> = {
-    saveToMemento: () => (state): NextState => {
-        memento.save(state.fumen.pages);
-        return undefined;
-    },
     registerHistoryTask: ({ task, mergeKey }) => (state): NextState => {
         const undoCount = memento.register(task, mergeKey);
-        return mementoActions.setHistoryCount({ undoCount, redoCount: 0 })(state);
+        return sequence(state, [
+            mementoActions.setHistoryCount({ undoCount, redoCount: 0 }),
+            saveToMemento,
+        ]);
     },
     undo: () => (state): NextState => {
         if (0 < state.events.inferences.length) {
@@ -70,7 +69,7 @@ export const mementoActions: Readonly<MementoActions> = {
             actions.setPages({ pages, open: false }),
             actions.openPage({ index }),
             actions.setHistoryCount({ undoCount, redoCount }),
-            actions.saveToMemento(),
+            saveToMemento,
         ]);
     },
     setHistoryCount: ({ undoCount, redoCount }) => (): NextState => {
@@ -78,4 +77,9 @@ export const mementoActions: Readonly<MementoActions> = {
             history: { undoCount, redoCount },
         };
     },
+};
+
+const saveToMemento = (state: Readonly<State>): NextState => {
+    memento.save(state.fumen.pages);
+    return undefined;
 };

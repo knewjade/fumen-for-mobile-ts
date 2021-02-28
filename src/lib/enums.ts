@@ -50,17 +50,21 @@ export enum Screens {
 export enum ModeTypes {
     Drawing = 'Drawing',
     Piece = 'Piece',
+    Fill = 'Fill',
     DrawingTool = 'DrawingTool',
     Flags = 'Flags',
+    Utils = 'Utils',
     Slide = 'Slide',
-    Fill = 'Fill',
+    FillRow = 'FillRow',
     SelectPiece = 'SelectPiece',
+    Comment = 'Comment',
 }
 
 export enum TouchTypes {
     None = 'None',
     Drawing = 'Drawing',
     Piece = 'Piece',
+    Fill = 'Fill',
     MovePiece = 'MovePiece',
     FillRow = 'FillRow',
 }
@@ -69,6 +73,11 @@ export enum CommentType {
     Writable = 'Writable',
     Readonly = 'Readonly',
     PageSlider = 'PageSlider',
+}
+
+export enum Platforms {
+    PC = 'PC',
+    Mobile = 'Mobile',  // Smart Phone or Table
 }
 
 export function parsePieceName(piece: Piece) {

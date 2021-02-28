@@ -15,9 +15,9 @@ export const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: 
         insertNewPage: (data: { index: number }) => void;
         changeToDrawingMode: () => void;
         changeToFlagsMode: () => void;
-        changeToShiftMode: () => void;
-        changeToFillRowMode: () => void;
+        changeToUtilsMode: () => void;
         changeToDrawPieceMode: () => void;
+        changeToFillMode: () => void;
         changeToRef: (data: { index: number }) => void;
         changeToKey: (data: { index: number }) => void;
     };
@@ -31,7 +31,6 @@ export const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: 
             currentIndex,
             actions,
             width: layout.buttons.size.width,
-            height: layout.buttons.size.height,
         }),
         toolSpace({
             flexGrow: 100,
@@ -91,35 +90,19 @@ export const toolMode = ({ layout, currentIndex, keyPage, touchType, actions }: 
             iconName: 'remove_circle_outline',
         })),
         toolButton({
-            borderWidth: 3,
-            width: layout.buttons.size.width,
-            margin: toolButtonMargin,
-            backgroundColorClass: 'red',
-            textColor: '#fff',
-            borderColor: touchType === TouchTypes.FillRow ? '#fff' : '#f44336',
-            borderType: touchType === TouchTypes.FillRow ? 'double' : undefined,
-            datatest: 'btn-fill-row-mode',
-            key: 'btn-fill-row-mode',
-            onclick: () => actions.changeToFillRowMode(),
-        }, iconContents({
-            description: 'row',
-            iconSize: 24,
-            iconName: 'power_input',
-        })),
-        toolButton({
             borderWidth: 1,
             width: layout.buttons.size.width,
             margin: toolButtonMargin,
             backgroundColorClass: 'red',
             textColor: '#fff',
             borderColor: '#f44336',
-            datatest: 'btn-slide-mode',
-            key: 'btn-slide-mode',
-            onclick: () => actions.changeToShiftMode(),
+            datatest: 'btn-utils-mode',
+            key: 'btn-utils-mode',
+            onclick: () => actions.changeToUtilsMode(),
         }, iconContents({
-            description: 'slide',
+            description: 'utils',
             iconSize: 24,
-            iconName: 'swap_vert',
+            iconName: 'widgets',
         })),
         toolButton({
             borderWidth: 1,

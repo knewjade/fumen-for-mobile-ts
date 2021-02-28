@@ -1,9 +1,9 @@
-import { CommentType, ModeTypes, Screens } from '../../lib/enums';
+import { CommentType, ModeTypes, Platforms, Screens } from '../../lib/enums';
 import { Coordinate, Size } from '../commons';
 import { View } from 'hyperapp';
 import { resources, State } from '../../states';
 import { EditorTools } from '../../components/tools/editor_tools';
-import { Palette } from '../../lib/colors';
+import { ColorPalette, Palette } from '../../lib/colors';
 import { Actions } from '../../actions';
 import { Field } from '../../components/field';
 import { KonvaCanvas } from '../../components/konva_canvas';
@@ -11,14 +11,18 @@ import { DrawingEventCanvas } from '../../components/event/drawing_event_canvas'
 import { div } from '@hyperapp/html';
 import { px, style } from '../../lib/types';
 import { comment } from '../../components/comment';
-import { pageSlider } from '../../components/pageSlider';
+import { page_slider } from '../../components/page_slider';
 import { toolMode } from './tool_mode';
 import { blockMode } from './block_mode';
 import { pieceMode } from './piece_mode';
-import { flagsMode } from './flags_mode';
-import { slideMode } from './slide_mode';
 import { fillMode } from './fill_mode';
+import { flagsMode } from './flags_mode';
+import { utilsMode } from './utils_mode';
+import { slideMode } from './slide_mode';
+import { fillRowMode } from './fill_row_mode';
 import { pieceSelectMode } from './piece_select_mode';
+import { navigatorElement } from '../navigator';
+import { commentMode } from './comment_mode';
 
 export interface EditorLayout {
     canvas: {
@@ -44,14 +48,16 @@ export interface EditorLayout {
     };
 }
 
-const getLayout = (display: { width: number, height: number }): EditorLayout => {
+const getLayout = (
+    { topLeftY, width, height }: { topLeftY: number, width: number, height: number },
+): EditorLayout => {
     const commentHeight = 35;
     const toolsHeight = 50;
     const borderWidthBottomField = 2.4;
 
     const canvasSize = {
-        width: display.width,
-        height: display.height - (toolsHeight + commentHeight),
+        width,
+        height: height - (toolsHeight + commentHeight + topLeftY),
     };
 
     const blockSize = Math.min(
@@ -76,7 +82,7 @@ const getLayout = (display: { width: number, height: number }): EditorLayout => 
         canvas: {
             topLeft: {
                 x: 0,
-                y: 0,
+                y: topLeftY,
             },
             size: {
                 width: fieldSize.width,
@@ -101,20 +107,20 @@ const getLayout = (display: { width: number, height: number }): EditorLayout => 
         comment: {
             topLeft: {
                 x: 0,
-                y: display.height - commentHeight - toolsHeight,
+                y: height - commentHeight - toolsHeight,
             },
             size: {
-                width: display.width,
+                width,
                 height: commentHeight,
             },
         },
         tools: {
             topLeft: {
                 x: 0,
-                y: display.height - toolsHeight,
+                y: height - toolsHeight,
             },
             size: {
-                width: display.width,
+                width,
                 height: toolsHeight,
             },
         },
@@ -153,8 +159,6 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                 return blockMode({
                     layout,
                     actions,
-                    keyPage,
-                    currentIndex: state.fumen.currentIndex,
                     colorize: guideLineColor,
                     modePiece: state.mode.piece,
                 });
@@ -173,7 +177,6 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                 return pieceMode({
                     layout,
                     actions,
-                    keyPage,
                     move: page !== undefined ? page.piece : undefined,
                     existInferences: 0 < state.events.inferences.length,
                     pages: state.fumen.pages,
@@ -191,21 +194,38 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
                     currentIndex: state.fumen.currentIndex,
                 });
             }
+            case ModeTypes.Utils: {
+                return utilsMode({
+                    layout,
+                    actions,
+                    touchType: state.mode.touch,
+                });
+            }
+            case ModeTypes.Comment: {
+                return commentMode({
+                    layout,
+                    actions,
+                    currentIndex: state.fumen.currentIndex,
+                });
+            }
             case ModeTypes.Slide: {
                 return slideMode({
                     layout,
                     actions,
-                    keyPage,
-                    flags: page.flags,
-                    currentIndex: state.fumen.currentIndex,
                 });
             }
             case ModeTypes.Fill: {
                 return fillMode({
                     layout,
                     actions,
-                    keyPage,
-                    currentIndex: state.fumen.currentIndex,
+                    colorize: guideLineColor,
+                    modePiece: state.mode.piece,
+                });
+            }
+            case ModeTypes.FillRow: {
+                return fillRowMode({
+                    layout,
+                    actions,
                     colorize: guideLineColor,
                     modePiece: state.mode.piece,
                 });
@@ -268,12 +288,11 @@ const Events = (state: State, actions: Actions) => {
     });
 };
 
-const Tools = (state: State, actions: Actions, height: number) => {
+const Tools = (state: State, actions: Actions, height: number, palette: ColorPalette) => {
     return EditorTools({
         actions,
         height,
-        palette: Palette(Screens.Editor),
-        animationState: state.play.status,
+        palette,
         currentPage: state.fumen.currentIndex + 1,
         maxPage: state.fumen.maxPage,
         modeType: state.mode.type,
@@ -292,14 +311,10 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
         const isCommentKey = resources.comment !== undefined
             || (currentPage !== undefined && currentPage.comment.text !== undefined);
 
-        const element = document.querySelector('#text-comment') as HTMLInputElement;
-        const updateText = () => {
-            if (element) {
-                actions.updateCommentText({ text: element.value, pageIndex: state.fumen.currentIndex });
-            }
-        };
         return comment({
-            key: 'text-comment',
+            currentIndex,
+            actions,
+            key: `text-comment-editor-${state.comment.changeKey}`,
             dataTest: 'text-comment',
             id: 'text-comment',
             textColor: isCommentKey ? '#333' : '#757575',
@@ -308,19 +323,6 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
             text: resources.comment !== undefined ? resources.comment.text : state.comment.text,
             placeholder: 'comment',
             readonly: false,
-            commentKey: state.comment.changeKey,
-            actions: {
-                onupdate: updateText,
-                onenter: () => {
-                    if (element) {
-                        element.blur();
-                    }
-                },
-                onblur: () => {
-                    updateText();
-                    actions.commitCommentText();
-                },
-            },
         });
     }
     case CommentType.Readonly: {
@@ -330,7 +332,9 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
             || (currentPage !== undefined && currentPage.comment.text !== undefined);
 
         return comment({
-            key: 'text-comment',
+            currentIndex,
+            actions,
+            key: `text-comment-editor-readonly-${state.comment.changeKey}`,
             dataTest: 'text-comment',
             id: 'text-comment',
             textColor: isCommentKey ? '#333' : '#757575',
@@ -338,18 +342,17 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
             height: layout.comment.size.height,
             text: resources.comment !== undefined ? resources.comment.text : state.comment.text,
             readonly: true,
-            commentKey: state.comment.changeKey,
         });
     }
     case CommentType.PageSlider: {
-        return pageSlider({
+        return page_slider({
+            currentIndex,
             actions,
             datatest: 'range-page-slider',
             size: {
                 width: layout.comment.size.width * 0.8,
                 height: layout.comment.size.height,
             },
-            currentIndex: state.fumen.currentIndex,
             maxPage: state.fumen.maxPage,
         });
     }
@@ -357,9 +360,14 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
 };
 
 export const view: View<State, Actions> = (state, actions) => {
-    // 初期化
-    const layout = getLayout(state.display);
+    const navigatorHeight = state.platform === Platforms.PC ? 30 : 0;
 
+    // 初期化
+    const layout = getLayout({
+        ...state.display,
+        topLeftY: navigatorHeight,
+    });
+    const palette = Palette(Screens.Editor);
     const batchDraw = () => resources.konva.stage.batchDraw();
 
     return div({
@@ -369,6 +377,12 @@ export const view: View<State, Actions> = (state, actions) => {
     }, [ // Hyperappでは最上位のノードが最後に実行される
         resources.konva.stage.isReady ? Events(state, actions) : undefined as any,
 
+        navigatorElement({
+            palette,
+            actions,
+            height: navigatorHeight,
+        }),
+
         ScreenField(state, actions, layout),
 
         div({
@@ -376,7 +390,7 @@ export const view: View<State, Actions> = (state, actions) => {
         }, [
             getComment(state, actions, layout),
 
-            Tools(state, actions, layout.tools.size.height),
+            Tools(state, actions, layout.tools.size.height, palette),
         ]),
     ]);
 };

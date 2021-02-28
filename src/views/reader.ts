@@ -5,14 +5,15 @@ import { Actions } from '../actions';
 import { div } from '@hyperapp/html';
 import { KonvaCanvas } from '../components/konva_canvas';
 import { comment } from '../components/comment';
-import { CommentType, isMinoPiece, Screens } from '../lib/enums';
+import { CommentType, isMinoPiece, Platforms, Screens } from '../lib/enums';
 import { EventCanvas } from '../components/event/event_canvas';
 import { Box } from '../components/box';
-import { decidePieceColor, Palette } from '../lib/colors';
+import { ColorPalette, decidePieceColor, Palette } from '../lib/colors';
 import { Field } from '../components/field';
 import { ReaderTools } from '../components/tools/reader_tools';
 import { HighlightType } from '../state_types';
-import { pageSlider } from '../components/pageSlider';
+import { page_slider } from '../components/page_slider';
+import { navigatorElement } from './navigator';
 
 interface ReaderLayout {
     canvas: {
@@ -45,15 +46,17 @@ interface ReaderLayout {
     };
 }
 
-const getLayout = (display: { width: number, height: number }): ReaderLayout => {
+const getLayout = (
+    { topLeftY, width, height }: { topLeftY: number, width: number, height: number },
+): ReaderLayout => {
     const commentHeight = 35;
     const toolsHeight = 50;
     const borderWidthBottomField = 2.4;
 
     // キャンバスの大きさ
     const canvasSize = {
-        width: display.width,
-        height: display.height - (toolsHeight + commentHeight),
+        width,
+        height: height - (toolsHeight + commentHeight + topLeftY),
     };
 
     // フィールドのブロックサイズ
@@ -85,7 +88,7 @@ const getLayout = (display: { width: number, height: number }): ReaderLayout => 
         canvas: {
             topLeft: {
                 x: 0,
-                y: 0,
+                y: topLeftY,
             },
             size: canvasSize,
         },
@@ -120,20 +123,20 @@ const getLayout = (display: { width: number, height: number }): ReaderLayout => 
         comment: {
             topLeft: {
                 x: 0,
-                y: display.height - (toolsHeight + commentHeight),
+                y: height - (toolsHeight + commentHeight),
             },
             size: {
-                width: display.width,
+                width,
                 height: commentHeight,
             },
         },
         tools: {
             topLeft: {
                 x: 0,
-                y: display.height - toolsHeight,
+                y: height - toolsHeight,
             },
             size: {
-                width: display.width,
+                width,
                 height: toolsHeight,
             },
         },
@@ -202,20 +205,23 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
     }, getChildren());
 };
 
-const Tools = (state: State, actions: Actions, height: number) => {
+const Tools = (state: State, actions: Actions, height: number, palette: ColorPalette) => {
     return ReaderTools({
         actions,
         height,
-        palette: Palette(Screens.Reader),
+        palette,
+        currentPage: state.fumen.currentIndex + 1,
+        maxPage: state.fumen.maxPage,
         animationState: state.play.status,
         pages: `${state.fumen.currentIndex + 1} / ${state.fumen.maxPage}`,
+        loop: state.mode.loop,
     });
 };
 
 export const getComment = (state: State, actions: Actions, layout: ReaderLayout) => {
     switch (state.mode.comment) {
     case CommentType.PageSlider: {
-        return pageSlider({
+        return page_slider({
             actions,
             datatest: 'range-page-slider',
             size: {
@@ -227,8 +233,11 @@ export const getComment = (state: State, actions: Actions, layout: ReaderLayout)
         });
     }
     default: {
+        const currentIndex = state.fumen.currentIndex;
         return comment({
-            key: 'text-comment',
+            currentIndex,
+            actions,
+            key: `text-comment-reader-${state.comment.changeKey}`,
             dataTest: 'text-comment',
             id: 'text-comment',
             textColor: state.comment.isChanged ? '#fff' : '#333',
@@ -236,16 +245,20 @@ export const getComment = (state: State, actions: Actions, layout: ReaderLayout)
             height: layout.comment.size.height,
             text: state.comment.text,
             readonly: true,
-            commentKey: state.comment.changeKey,
         });
     }
     }
 };
 
 export const view: View<State, Actions> = (state, actions) => {
-    // 初期化
-    const layout = getLayout(state.display);
+    const navigatorHeight = state.platform === Platforms.PC ? 30 : 0;
 
+    // 初期化
+    const layout = getLayout({
+        ...state.display,
+        topLeftY: navigatorHeight,
+    });
+    const palette = Palette(Screens.Reader);
     const batchDraw = () => resources.konva.stage.batchDraw();
 
     return div({
@@ -255,6 +268,12 @@ export const view: View<State, Actions> = (state, actions) => {
     }, [ // Hyperappでは最上位のノードが最後に実行される
         resources.konva.stage.isReady ? Events(state, actions, layout) : undefined as any,
 
+        navigatorElement({
+            palette,
+            actions,
+            height: navigatorHeight,
+        }),
+
         ScreenField(state, actions, layout),
 
         div({
@@ -262,7 +281,7 @@ export const view: View<State, Actions> = (state, actions) => {
         }, [
             getComment(state, actions, layout),
 
-            Tools(state, actions, layout.tools.size.height),
+            Tools(state, actions, layout.tools.size.height, palette),
         ]),
     ]);
 };

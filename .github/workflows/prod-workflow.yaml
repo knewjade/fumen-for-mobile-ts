@@ -1,0 +1,40 @@
+name: prod-workflow
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: yarn install --frozen-lockfile
+      - run: yarn test-ci
+      - run: yarn webpack-prod
+        env:
+          DEBUG_ON: false
+      - run: yarn serve &
+      - run: yarn cy-run-ci
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: yarn install --frozen-lockfile
+      - run: yarn webpack-prod
+        env:
+          DEBUG_ON: false
+      - uses: peaceiris/actions-gh-pages@bbdfb200618d235585ad98e965f4aafc39b4c501
+        with:
+          personal_token: ${{ secrets.PERSONAL_TOKEN }}
+          external_repository: knewjade/fumen-for-mobile
+          publish_branch: master
+          enable_jekyll: false
+          publish_dir: ./public
+      - uses: actions/upload-artifact@v2
+        if: ${{ failure() }}
+        with:
+          path: cypress/screenshots/

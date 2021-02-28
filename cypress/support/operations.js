@@ -18,18 +18,88 @@ export const operations = {
         },
     },
     mode: {
-        reader: {
-            openPage: () => {
-                cy.get(datatest('btn-open-fumen')).click();
-            },
-        },
         block: {
-            open: () => {
+            open: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                }
                 cy.get(datatest('btn-block-mode')).click();
             },
             Completion: () => {
                 cy.get(datatest('btn-piece-inference')).click();
                 cy.wait(100);
+            },
+            J: () => {
+                cy.get(datatest('btn-piece-j')).click();
+                cy.wait(100);
+            },
+            L: () => {
+                cy.get(datatest('btn-piece-l')).click();
+                cy.wait(100);
+            },
+            O: () => {
+                cy.get(datatest('btn-piece-o')).click();
+                cy.wait(100);
+            },
+            I: () => {
+                cy.get(datatest('btn-piece-i')).click();
+                cy.wait(100);
+            },
+            T: () => {
+                cy.get(datatest('btn-piece-t')).click();
+                cy.wait(100);
+            },
+            S: () => {
+                cy.get(datatest('btn-piece-s')).click();
+                cy.wait(100);
+            },
+            Z: () => {
+                cy.get(datatest('btn-piece-z')).click();
+                cy.wait(100);
+            },
+            Gray: () => {
+                cy.get(datatest('btn-piece-gray')).click();
+                cy.wait(100);
+            },
+            Empty: () => {
+                cy.get(datatest('btn-piece-empty')).click();
+                cy.wait(100);
+            },
+            click: (x, y) => {
+                cy.get('body').click(px(x), py(y));
+            },
+            dragToRight: ({ from, to }, y) => {
+                let body = cy.get('body');
+                body = body.trigger('mousedown', px(from), py(y));
+
+                const maxCount = 10;
+                const dx = (to - from) / maxCount;
+                for (let count = 0; count <= maxCount; count++) {
+                    body = body.trigger('mousemove', px(dx * count + from), py(y));
+                }
+
+                body.trigger('mouseup', px(to), py(y));
+            },
+            dragToUp: (x, { from, to }) => {
+                let body = cy.get('body');
+                body = body.trigger('mousedown', px(x), py(from));
+
+                const maxCount = 10;
+                const dy = (to - from) / maxCount;
+                for (let count = 0; count <= maxCount; count++) {
+                    body = body.trigger('mousemove', px(x), py(dy * count + from));
+                }
+
+                body.trigger('mouseup', px(x), py(to));
+            },
+        },
+        fill: {
+            open: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                    cy.get(datatest('btn-utils-mode')).click();
+                }
+                cy.get(datatest('btn-fill-mode')).click();
             },
             J: () => {
                 cy.get(datatest('btn-piece-j')).click();
@@ -193,7 +263,10 @@ export const operations = {
             open: () => {
                 cy.get(datatest('btn-drawing-tool')).click();
             },
-            duplicatePage: () => {
+            duplicatePage: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                }
                 cy.get(datatest('btn-duplicate-page')).click();
             },
             removePage: () => {
@@ -201,6 +274,27 @@ export const operations = {
             },
             addNewPage: () => {
                 cy.get(datatest('btn-insert-new-page')).click();
+            },
+            convertToGray: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                    cy.get(datatest('btn-utils-mode')).click();
+                }
+                cy.get(datatest('btn-convert-to-gray')).click();
+            },
+            clearField: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                    cy.get(datatest('btn-utils-mode')).click();
+                }
+                cy.get(datatest('btn-clear-field')).click();
+            },
+            mirror: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                    cy.get(datatest('btn-utils-mode')).click();
+                }
+                cy.get(datatest('btn-mirror')).click();
             },
             undo: () => {
                 cy.get(datatest('btn-undo')).click();
@@ -223,9 +317,29 @@ export const operations = {
             toKey: () => {
                 cy.get(datatest('btn-key-page-off')).click();
             },
+            inheritComment: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                    cy.get(datatest('btn-utils-mode')).click();
+                    cy.get(datatest('btn-comment-mode')).click();
+                }
+                cy.get(datatest('btn-comment-inherit')).click();
+            },
+            blankComment: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                    cy.get(datatest('btn-utils-mode')).click();
+                    cy.get(datatest('btn-comment-mode')).click();
+                }
+                cy.get(datatest('btn-comment-blank')).click();
+            },
         },
         slide: {
-            open: () => {
+            open: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                    cy.get(datatest('btn-utils-mode')).click();
+                }
                 cy.get(datatest('btn-slide-mode')).click();
             },
             right: () => {
@@ -242,7 +356,11 @@ export const operations = {
             },
         },
         fillRow: {
-            open: () => {
+            open: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                    cy.get(datatest('btn-utils-mode')).click();
+                }
                 cy.get(datatest('btn-fill-row-mode')).click();
             },
             J: () => {
@@ -286,6 +404,10 @@ export const operations = {
     menu: {
         open: () => {
             cy.get(datatest('btn-open-menu')).click();
+        },
+        openPage: () => {
+            operations.menu.open();
+            cy.get(datatest('btn-open-fumen')).click();
         },
         newPage: () => {
             operations.menu.open();
@@ -354,9 +476,24 @@ export const operations = {
             operations.menu.open();
             cy.get(datatest('btn-page-slider')).click();
         },
-        ghostToggle: () => {
+        openUserSettings: () => {
             operations.menu.open();
-            cy.get(datatest('btn-ghost-toggle')).click();
+            cy.get(datatest('btn-user-settings')).click();
+        },
+        ghostOn: () => {
+            operations.menu.openUserSettings();
+            cy.get(datatest('switch-ghost-visible')).check({ force: true });
+            cy.get(datatest('btn-save')).click();
+        },
+        ghostOff: () => {
+            operations.menu.openUserSettings();
+            cy.get(datatest('switch-ghost-visible')).uncheck({ force: true });
+            cy.get(datatest('btn-save')).click();
+        },
+        loopOn: () => {
+            operations.menu.openUserSettings();
+            cy.get(datatest('switch-loop')).check({ force: true });
+            cy.get(datatest('btn-save')).click();
         },
     },
 };

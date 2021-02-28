@@ -64,6 +64,7 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
     })();
 
     const clipboard = (domain: string) => () => {
+        let element: HTMLElement | undefined = undefined;
         encodePromise
             .then((data) => {
                 // データをElementに保存する // 主にテスト用
@@ -74,8 +75,8 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
             .then(data => `${domain}${data}`)
             .then((url) => {
                 // コピー用のelementを作成
-                const element = document.createElement('pre');
-                if (element === undefined || element === null) {
+                element = document.createElement('pre');
+                if (!element) {
                     throw new FumenError('no element');
                 }
 
@@ -99,15 +100,18 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
                 if (!success) {
                     throw new FumenError('command error');
                 }
-
-                // コピー用のelementを削除
-                document.body.removeChild(element);
             })
             .then(() => {
-                M.toast({ html: 'Copied to clipboard', classes: 'top-toast', displayLength: 600 });
+                M.toast({ html: 'Copied to clipboard', classes: 'top-toast', displayLength: 1000 });
             })
             .catch((error) => {
                 M.toast({ html: `Failed to copy: ${error}`, classes: 'top-toast', displayLength: 1500 });
+            })
+            .finally(() => {
+                if (element) {
+                    // コピー用のelementを削除
+                    document.body.removeChild(element);
+                }
             });
     };
 
@@ -145,7 +149,7 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
                     <h4 key="clipboard-label" dataTest="clipboard-label">{i18n.Clipboard.Title()}</h4>
 
                     <div style={buttonsStyle()}>
-                        <form name="clipboard-form" style={formStyle()} action="http://tinyurl.com/create.php"
+                        <form name="clipboard-form" style={formStyle()} action="https://tinyurl.com/create.php"
                               method="get" target="_blank"
                         >
                             <input type="hidden" name="url" id="url"
@@ -169,24 +173,24 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
 
                             <div>
                                 <ClipboardButton key="btn-zui-jp"
-                                                 onclick={clipboard('http://fumen.zui.jp/?')}>
+                                                 onclick={clipboard('https://fumen.zui.jp/?')}>
                                     FUMEN.ZUI.JP
                                 </ClipboardButton>
 
                                 <ClipboardIconButton key="btn-zui-jp-tinyurl"
-                                                     onclick={tinyurl('http://fumen.zui.jp/?')}>
+                                                     onclick={tinyurl('https://fumen.zui.jp/?')}>
                                     archive
                                 </ClipboardIconButton>
                             </div>
 
                             <div>
                                 <ClipboardButton key="btn-harddrop"
-                                                 onclick={clipboard('http://harddrop.com/fumen/?')}>
+                                                 onclick={clipboard('https://harddrop.com/fumen/?')}>
                                     HARDDROP
                                 </ClipboardButton>
 
                                 <ClipboardIconButton key="btn-harddrop-tinyurl"
-                                                     onclick={tinyurl('http://harddrop.com/fumen/?')}>
+                                                     onclick={tinyurl('https://harddrop.com/fumen/?')}>
                                     archive
                                 </ClipboardIconButton>
                             </div>
@@ -237,7 +241,7 @@ export const ClipboardButton: ComponentWithText<ClipboardButtonProps> = (
                paddingLeft: px(padding),
                paddingRight: px(padding),
            })}
-           className={`waves-effect waves-teal btn ${colorName}`} onclick={onClickFunc}>
+           className={`waves-effect waves-light btn ${colorName}`} onclick={onClickFunc}>
             {text}
         </a>
     );
@@ -263,7 +267,7 @@ export const ClipboardIconButton: ComponentWithText<ClipboardButtonProps> = (
     return (
         <a href="#" key={key} datatest={key} id={key} fontSize={px(textSize)}
            style={style({ margin: px(5), paddingLeft: px(padding), paddingRight: px(padding) })}
-           className="waves-effect waves-teal btn white black-text" onclick={onClickFunc}>
+           className="waves-effect waves-light btn white black-text" onclick={onClickFunc}>
             <i className="material-icons" style={properties}>{iconName}</i>
         </a>
     );

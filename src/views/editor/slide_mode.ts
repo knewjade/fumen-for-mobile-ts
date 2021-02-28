@@ -2,20 +2,14 @@ import { div } from '@hyperapp/html';
 import { dualButton, iconContents, toolButton, toolSpace } from '../editor_buttons';
 import { EditorLayout, toolStyle } from './editor';
 
-export const slideMode = ({ layout, currentIndex, keyPage, flags, actions }: {
+export const slideMode = ({ layout, actions }: {
     layout: EditorLayout;
-    currentIndex: number;
-    keyPage: boolean;
-    flags: {
-        lock: boolean;
-        mirror: boolean;
-        rise: boolean;
-    },
     actions: {
         shiftToLeft: () => void;
         shiftToRight: () => void;
         shiftToUp: () => void;
         shiftToBottom: () => void;
+        changeToUtilsMode: () => void;
     };
 }) => {
     const toolButtonMargin = 5;
@@ -82,6 +76,21 @@ export const slideMode = ({ layout, currentIndex, keyPage, flags, actions }: {
             description: '',
             iconSize: 22,
             iconName: 'keyboard_arrow_down',
+        })),
+        toolButton({
+            borderWidth: 3,
+            width: layout.buttons.size.width,
+            margin: toolButtonMargin,
+            backgroundColorClass: 'red',
+            textColor: '#fff',
+            borderColor: '#f44336',
+            datatest: 'btn-piece-mode',
+            key: 'btn-piece-mode',
+            onclick: () => actions.changeToUtilsMode(),
+        }, iconContents({
+            description: 'Back',
+            iconSize: 25,
+            iconName: 'chevron_left',
         })),
     ]);
 };

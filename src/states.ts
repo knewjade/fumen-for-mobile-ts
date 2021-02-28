@@ -1,4 +1,4 @@
-import { AnimationState, CommentType, ModeTypes, Piece, Screens, TouchTypes } from './lib/enums';
+import { AnimationState, CommentType, ModeTypes, Piece, Platforms, Screens, TouchTypes } from './lib/enums';
 import { HyperStage } from './lib/hyper';
 import { Box } from './components/box';
 import { PageEnv } from './env';
@@ -8,6 +8,7 @@ import { generateKey } from './lib/random';
 import konva from 'konva';
 import { Page } from './lib/fumen/types';
 import { Field } from './lib/fumen/field';
+import { getURLQuery } from './params';
 
 const VERSION = PageEnv.Version;
 
@@ -47,6 +48,13 @@ export interface State {
         menu: boolean;
         append: boolean;
         clipboard: boolean;
+        userSettings: boolean;
+    };
+    temporary: {
+        userSettings: {
+            ghostVisible: boolean;
+            loop: boolean;
+        };
     };
     handlers: {
         animation?: NodeJS.Timeout;
@@ -65,12 +73,14 @@ export interface State {
         piece: Piece | undefined;
         comment: CommentType;
         ghostVisible: boolean;
+        loop: boolean;
     };
     history: {
         undoCount: number;
         redoCount: number;
     };
     version: string;
+    platform: Platforms;
 }
 
 export const initState: Readonly<State> = {
@@ -98,7 +108,22 @@ export const initState: Readonly<State> = {
     fumen: {
         currentIndex: 0,
         maxPage: 1,
-        pages: [],
+        pages: [{
+            index: 0,
+            comment: {
+                text: '',
+            },
+            field: {
+                obj: new Field({}),
+            },
+            flags: {
+                colorize: true,
+                lock: true,
+                mirror: false,
+                quiz: false,
+                rise: false,
+            },
+        }],
         value: undefined,
         errorMessage: undefined,
         guideLineColor: true,
@@ -112,30 +137,39 @@ export const initState: Readonly<State> = {
         menu: false,
         append: false,
         clipboard: false,
+        userSettings: false,
+    },
+    temporary: {
+        userSettings: {
+            ghostVisible: true,
+            loop: false,
+        },
     },
     handlers: {
         animation: undefined,
     },
     events: {
-        piece: undefined,
+        piece: undefined,  // 描画処理中のピースの種類
         drawing: false,
         inferences: [],
         prevPage: undefined,
         updated: false,
     },
     mode: {
-        screen: window.location.hash.includes('#/writable') ? Screens.Editor : Screens.Reader,
+        screen: window.location.hash.includes('#/edit') ? Screens.Editor : Screens.Reader,
         type: ModeTypes.DrawingTool,
         touch: TouchTypes.Drawing,
-        piece: undefined,
+        piece: undefined,  // UI上で選択されているのピースの種類
         comment: CommentType.Writable,
         ghostVisible: true,
+        loop: false,
     },
     history: {
         undoCount: 0,
         redoCount: 0,
     },
     version: VERSION,
+    platform: getPlatform(),
 };
 
 export const resources = {
@@ -144,6 +178,7 @@ export const resources = {
         fumen: undefined as any,
         append: undefined as any,
         clipboard: undefined as any,
+        userSettings: undefined as any,
     },
     konva: createKonvaObjects(),
     comment: undefined as ({ text: string, pageIndex: number } | undefined),
@@ -296,4 +331,19 @@ function createKonvaObjects() {
     }
 
     return obj;
+}
+
+// PC or mobileの判定
+function getPlatform(): Platforms {
+    const urlQuery = getURLQuery();
+    const mobile = urlQuery.get('mobile');
+    if (mobile && !!Number(mobile)) {
+        // URLに設定されている
+        return Platforms.Mobile;
+    }
+
+    if (navigator.userAgent.match(/iPhone|iPad|Android/)) {
+        return Platforms.Mobile;
+    }
+    return Platforms.PC;
 }

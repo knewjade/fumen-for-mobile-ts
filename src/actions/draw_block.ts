@@ -33,12 +33,11 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
         }
 
         // InferencePieceが揃っているとき
-        let piece;
-        try {
-            piece = inferPiece(inferences).piece;
-        } catch (e) {
+        const inferredResult = inferPiece(inferences);
+        if (!inferredResult) {
             return undefined;
         }
+        const piece = inferredResult.piece;
 
         const currentPageIndex = state.fumen.currentIndex;
         const pages = state.fumen.pages;
@@ -71,7 +70,6 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
         // 4つ以上あるとき
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(currentPageIndex, prevPage, page) }),
         ]);
     },
@@ -188,7 +186,6 @@ export const drawBlockActions: Readonly<DrawBlockActions> = {
         const page = state.fumen.pages[currentIndex];
         const updated = state.events.updated;
         return sequence(state, [
-            updated && state.events.prevPage !== undefined ? actions.saveToMemento() : undefined,
             updated && state.events.prevPage !== undefined
                 ? actions.registerHistoryTask({ task: toSinglePageTask(currentIndex, state.events.prevPage, page) })
                 : undefined,

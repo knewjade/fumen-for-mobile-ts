@@ -3,6 +3,7 @@ import { action, actions } from '../actions';
 import { NextState, sequence } from './commons';
 import { putPieceActions } from './put_piece';
 import { drawBlockActions } from './draw_block';
+import { fillActions } from './fill';
 import { toPrimitivePage, toSinglePageTask } from '../history_task';
 import { movePieceActions } from './move_piece';
 import { PageFieldOperation, Pages } from '../lib/pages';
@@ -18,6 +19,8 @@ export interface FieldEditorActions {
     clearInferencePiece(): action;
 
     resetInferencePiece(): action;
+
+    removeUnsettledItemsInField(): action;
 
     ontouchStartField(data: { index: number }): action;
 
@@ -80,6 +83,12 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
         }
         return undefined;
     },
+    removeUnsettledItemsInField: () => (state): NextState => {
+        return sequence(state, [
+            fieldEditorActions.fixInferencePiece(),
+            fieldEditorActions.resetInferencePiece(),
+        ]);
+    },
     ontouchStartField: ({ index }) => (state): NextState => {
         switch (state.mode.touch) {
         case TouchTypes.Drawing:
@@ -90,6 +99,8 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return movePieceActions.ontouchStartField({ index })(state);
         case TouchTypes.FillRow:
             return fillRowActions.ontouchStartField({ index })(state);
+        case TouchTypes.Fill:
+            return fillActions.ontouchStartField({ index })(state);
         }
         return undefined;
     },
@@ -103,6 +114,8 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return movePieceActions.ontouchMoveField({ index })(state);
         case TouchTypes.FillRow:
             return fillRowActions.ontouchMoveField({ index })(state);
+        case TouchTypes.Fill:
+            return fillActions.ontouchMoveField({ index })(state);
         }
         return undefined;
     },
@@ -116,6 +129,8 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return movePieceActions.ontouchEnd()(state);
         case TouchTypes.FillRow:
             return fillRowActions.ontouchEnd()(state);
+        case TouchTypes.Fill:
+            return fillActions.ontouchEnd()(state);
         }
         return undefined;
     },
@@ -125,6 +140,8 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return drawBlockActions.ontouchStartSentLine({ index })(state);
         case TouchTypes.FillRow:
             return fillRowActions.ontouchStartSentLine({ index })(state);
+        case TouchTypes.Fill:
+            return fillActions.ontouchStartSentLine({ index })(state);
         }
         return undefined;
     },
@@ -134,13 +151,14 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
             return drawBlockActions.ontouchMoveSentLine({ index })(state);
         case TouchTypes.FillRow:
             return fillRowActions.ontouchMoveSentLine({ index })(state);
+        case TouchTypes.Fill:
+            return fillActions.ontouchMoveSentLine({ index })(state);
         }
         return undefined;
     },
     selectPieceColor: ({ piece }) => (state): NextState => {
         return sequence(state, [
-            fieldEditorActions.fixInferencePiece(),
-            fieldEditorActions.resetInferencePiece(),
+            actions.removeUnsettledItems(),
             newState => ({
                 mode: {
                     ...newState.mode,
@@ -151,8 +169,7 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
     },
     selectInferencePieceColor: () => (state): NextState => {
         return sequence(state, [
-            fieldEditorActions.fixInferencePiece(),
-            fieldEditorActions.resetInferencePiece(),
+            actions.removeUnsettledItems(),
             newState => ({
                 mode: {
                     ...newState.mode,
@@ -201,7 +218,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);
@@ -223,7 +239,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);
@@ -272,7 +287,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);
@@ -321,7 +335,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);
@@ -360,7 +373,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);
@@ -404,7 +416,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);
@@ -443,7 +454,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);
@@ -487,7 +497,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);
@@ -532,7 +541,6 @@ export const fieldEditorActions: Readonly<FieldEditorActions> = {
 
         return sequence(state, [
             fieldEditorActions.resetInferencePiece(),
-            actions.saveToMemento(),
             actions.registerHistoryTask({ task: toSinglePageTask(pageIndex, prevPage, page) }),
             actions.reopenCurrentPage(),
         ]);

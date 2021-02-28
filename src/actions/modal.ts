@@ -7,10 +7,12 @@ export interface ModalActions {
     openMenuModal: () => action;
     openAppendModal: () => action;
     openClipboardModal: () => action;
+    openUserSettingsModal: () => action;
     closeFumenModal: () => action;
     closeMenuModal: () => action;
     closeAppendModal: () => action;
     closeClipboardModal: () => action;
+    closeUserSettingsModal: () => action;
     closeAllModals: () => action;
 }
 
@@ -57,6 +59,14 @@ export const modalActions: Readonly<ModalActions> = {
             },
         };
     },
+    openUserSettingsModal: () => (state): NextState => {
+        return {
+            modal: {
+                ...state.modal,
+                userSettings: true,
+            },
+        };
+    },
     closeFumenModal: () => (state): NextState => {
         return {
             modal: {
@@ -89,6 +99,14 @@ export const modalActions: Readonly<ModalActions> = {
             },
         };
     },
+    closeUserSettingsModal: () => (state): NextState => {
+        return {
+            modal: {
+                ...state.modal,
+                userSettings: false,
+            },
+        };
+    },
     closeAllModals: () => (): NextState => {
         return {
             modal: {
@@ -96,6 +114,7 @@ export const modalActions: Readonly<ModalActions> = {
                 fumen: false,
                 menu: false,
                 clipboard: false,
+                userSettings: false,
             },
         };
     },

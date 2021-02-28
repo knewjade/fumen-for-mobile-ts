@@ -10,7 +10,7 @@ import {
     rightTap,
     Rotation,
     sentBlock,
-    visit
+    visit,
 } from '../support/common';
 
 // テト譜を開く
@@ -20,6 +20,7 @@ describe('Sent line', () => {
 
         visit({
             fumen: 'v115@vhMSwQaAFLDmClcJSAVDEHBEooRBMoAVBqHDMCzOBA?AWyBUoBTpBXmBJnBVhBpeQaAFLDmClcJSAVDEHBEooRBJoA?VBvHUxCqCBAAzdB0XBPTBOfB6WBlhA8AeH8AoFvhDliBtnB?elBFdFlhC8Q4g0wwAtQpglwhAAAvhDA4BAAeAAAAAA',
+            sleepInMill: 1000,
         });
 
         {
