@@ -20,7 +20,7 @@ import { CommentActions, commentActions } from './actions/comment';
 import { convertActions, ConvertActions } from './actions/convert';
 import { userSettingsActions, UserSettingsActions } from './actions/user_settings';
 import { i18n } from './locales/keys';
-import { getURLQuery } from './params';
+import { getURLQuery, Query } from './params';
 import { localStorageWrapper } from './memento';
 
 export type action = (state: Readonly<State>) => NextState;
@@ -60,21 +60,6 @@ const mount = (isDebug: boolean = false): Actions => {
 };
 export const main = mount(PageEnv.Debug);
 
-// Loading
-i18next.use(LanguageDetector).init({
-    fallbackLng: 'en',
-    resources: {
-        en: { translation: resourcesEn },
-        ja: { translation: resourcesJa },
-    },
-}, (error) => {
-    if (error) {
-        console.error('Failed to load i18n');
-    } else {
-        main.refresh();
-    }
-});
-
 window.onresize = () => {
     main.resize({
         width: window.document.body.clientWidth,
@@ -85,13 +70,13 @@ window.onresize = () => {
 declare const M: any;
 
 window.addEventListener('load', () => {
-    loadFumen();
+    const urlQuery = getURLQuery();
+    setupI18n(urlQuery);
+    loadFumen(urlQuery);
     loadUserSettings();
 });
 
-const loadFumen = () => {
-    const urlQuery = getURLQuery();
-
+const setupI18n = (urlQuery: Query) => {
     // i18nの設定
     const languageDetector = new LanguageDetector(null, {
         order: ['myQueryDetector', 'querystring', 'navigator', 'path', 'subdomain'],
@@ -114,14 +99,16 @@ const loadFumen = () => {
                 en: { translation: resourcesEn },
                 ja: { translation: resourcesJa },
             },
-        }, (error) => {
-            if (error) {
-                console.error('Failed to load i18n');
-            } else {
-                main.refresh();
-            }
+        })
+        .then(() => {
+            main.refresh();
+        })
+        .catch(() => {
+            console.error('Failed to load i18n');
         });
+};
 
+const loadFumen = (urlQuery: Query) => {
     // URLからロードする
     {
         const fumen = urlQuery.get('d');
