@@ -317,13 +317,13 @@ export const operations = {
             toKey: () => {
                 cy.get(datatest('btn-key-page-off')).click();
             },
-            resetComment: ({ home = true } = {}) => {
+            inheritComment: ({ home = true } = {}) => {
                 if (home) {
                     operations.mode.tools.home()
                     cy.get(datatest('btn-utils-mode')).click();
                     cy.get(datatest('btn-comment-mode')).click();
                 }
-                cy.get(datatest('btn-comment-reset')).click();
+                cy.get(datatest('btn-comment-inherit')).click();
             },
             blankComment: ({ home = true } = {}) => {
                 if (home) {

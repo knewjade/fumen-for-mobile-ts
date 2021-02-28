@@ -37,15 +37,16 @@ export const commentMode = ({ layout, currentIndex, actions }: {
             backgroundColorClass: 'white',
             textColor: '#333',
             borderColor: '#333',
-            datatest: 'btn-comment-reset',
-            key: 'btn-comment-reset',
+            datatest: 'btn-comment-inherit',
+            key: 'btn-comment-inherit',
+            enable: 0 < currentIndex,
             onclick: () => {
                 actions.resetCommentText({ pageIndex: currentIndex });
             },
         }, iconContents({
-            description: 'remove',
+            description: 'inherit',
             iconSize: 22,
-            iconName: 'clear',
+            iconName: 'forward',
         })),
     ]);
 };
