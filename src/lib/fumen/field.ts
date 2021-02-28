@@ -156,7 +156,8 @@ export class PlayField {
     }
 
     add(x: number, y: number, value: number) {
-        this.pieces[x + y * FieldConstants.Width] += value;
+        const index = x + y * FieldConstants.Width;
+        this.pieces[index] = Math.max(this.pieces[index] + value, 0);
     }
 
     set(x: number, y: number, piece: Piece) {
