@@ -8,6 +8,7 @@ public/*.bundle.js
 public/sw.js
 public/precache-*.js
 public/**/workbox-*.js
+public/*.LICENSE.txt
 coverage/
 cypress/videos/
 cypress/screenshots/

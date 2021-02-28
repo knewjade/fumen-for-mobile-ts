@@ -21,9 +21,22 @@ interface AppendFumenModalProps {
 export const AppendFumenModal: Component<AppendFumenModalProps> = (
     { textAreaValue, errorMessage, actions },
 ) => {
+    const close = () => {
+        const modal = resources.modals.fumen;
+        if (modal !== undefined) {
+            modal.close();
+        }
+    };
+
+    const destroy = () => {
+        resources.modals.fumen = undefined;
+    };
+
     const cancel = () => {
         actions.closeAppendModal();
         actions.clearFumenData();
+        close();
+        destroy();
     };
 
     const oncreate = (element: HTMLDivElement) => {
@@ -35,21 +48,15 @@ export const AppendFumenModal: Component<AppendFumenModalProps> = (
                 }
             },
             onCloseStart: () => {
-                cancel();
+                actions.closeAppendModal();
+                actions.clearFumenData();
+                destroy();
             },
         });
 
         instance.open();
 
         resources.modals.append = instance;
-    };
-
-    const ondestroy = () => {
-        const modal = resources.modals.append;
-        if (modal !== undefined) {
-            modal.close();
-        }
-        resources.modals.append = undefined;
     };
 
     const update = ({ value }: { value: string }) => {
@@ -76,7 +83,7 @@ export const AppendFumenModal: Component<AppendFumenModalProps> = (
     return (
         <div key="append-fumen-modal-top">
             <div key="mdl-append-fumen" datatest="mdl-append-fumen"
-                 className="modal" oncreate={oncreate} ondestroy={ondestroy}>
+                 className="modal" oncreate={oncreate}>
                 <div key="modal-content" className="modal-content">
                     <h4 key="append-fumen-label" dataTest="append-fumen-label">{i18n.AppendFumen.Title()}</h4>
 

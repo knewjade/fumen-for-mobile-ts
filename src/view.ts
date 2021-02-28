@@ -58,5 +58,8 @@ export const view: View<State, Actions> = (state, actions) => {
             ghostVisible: state.temporary.userSettings.ghostVisible,
             loop: state.temporary.userSettings.loop,
         }) : undefined as any,
+
+        // key付きの空のdivを置くことで、配列末尾の要素でも存在の有無を判定できるようにする
+        div({ key: 'view-end' }),
     ]);
 };

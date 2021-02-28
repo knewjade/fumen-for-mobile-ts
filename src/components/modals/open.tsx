@@ -19,9 +19,22 @@ interface OpenFumenModalProps {
 }
 
 export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, errorMessage, actions }) => {
+    const close = () => {
+        const modal = resources.modals.fumen;
+        if (modal !== undefined) {
+            modal.close();
+        }
+    };
+
+    const destroy = () => {
+        resources.modals.fumen = undefined;
+    };
+
     const cancel = () => {
         actions.closeFumenModal();
         actions.clearFumenData();
+        close();
+        destroy();
     };
 
     const oncreate = (element: HTMLDivElement) => {
@@ -33,21 +46,15 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
                 }
             },
             onCloseStart: () => {
-                cancel();
+                actions.closeFumenModal();
+                actions.clearFumenData();
+                destroy();
             },
         });
 
         instance.open();
 
         resources.modals.fumen = instance;
-    };
-
-    const ondestroy = () => {
-        const modal = resources.modals.fumen;
-        if (modal !== undefined) {
-            modal.close();
-        }
-        resources.modals.fumen = undefined;
     };
 
     const update = ({ value }: { value: string }) => {
@@ -72,7 +79,7 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
     return (
         <div key="open-fumen-modal-top">
             <div key="mdl-open-fumen" datatest="mdl-open-fumen"
-                 className="modal" oncreate={oncreate} ondestroy={ondestroy}>
+                 className="modal" oncreate={oncreate}>
                 <div key="modal-content" className="modal-content">
                     <h4 key="open-fumen-label" dataTest="open-fumen-label">{i18n.OpenFumen.Title()}</h4>
 
