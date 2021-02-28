@@ -13,6 +13,7 @@ import {
 import { resources, State } from '../states';
 import { isQuizCommentResult, isTextCommentResult, Pages } from '../lib/pages';
 import { Quiz } from '../lib/fumen/quiz';
+import { Page } from '../lib/fumen/types';
 
 export interface CommentActions {
     updateCommentText: (data: { text?: string, pageIndex: number }) => action;
@@ -64,33 +65,37 @@ export const commentActions: Readonly<CommentActions> = {
 const commitCommentText = (index: number, text: string) => (state: State): NextState => {
     let pages = state.fumen.pages;
     const page = pages[index];
-    if (page === undefined) {
+    if (page === undefined || page.comment.text === text) {
         return undefined;
     }
 
-    const prevPageIndex = index - 1;
-    const prevPage = pages[prevPageIndex];
+    const prevPage: Page | undefined = pages[index - 1];
 
-    const pagesObj = new Pages(pages);
-    const comment = prevPage !== undefined ? pagesObj.getComment(index - 1) : undefined;
-    const tasks: OperationTask[] = [];
-
-    if (page.comment.text === text) {
-        return;
+    let nextPageIndex: number | undefined = undefined;
+    for (let i = index + 1; i < pages.length; i += 1) {
+        if (pages[i].comment.text !== undefined) {
+            nextPageIndex = i;
+        }
     }
 
+    const pagesObj = new Pages(pages);
+    const prevComment = prevPage !== undefined ? pagesObj.getComment(index - 1) : undefined;
+    const tasks: OperationTask[] = [];
+
+    // 新しく追加するコメントがQuizか
     const isCurrentQuiz = Quiz.isQuizComment(text);
     if (isCurrentQuiz) {
-        // Quizにする
-
-        if (comment !== undefined && isQuizCommentResult(comment)
-            && comment.quizAfterOperation.format().toString() === text) {
+        // 前のページがQuiz、かつ同じコメントになるか
+        if (
+            prevComment !== undefined && isQuizCommentResult(prevComment)
+            && prevComment.quizAfterOperation.format().toString() === text
+        ) {
             // refにする
             if (page.comment.text !== undefined) {
                 // commentをrefに変換する
-                const prevComment = page.comment.text;
+                const backupComment = page.comment.text;
                 pagesObj.unfreezeComment(index);
-                tasks.push(toUnfreezeCommentTask(index, prevComment));
+                tasks.push(toUnfreezeCommentTask(index, backupComment));
             }
 
             pages = pagesObj.pages;
@@ -115,15 +120,30 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
             currentPage.comment = { text };
             tasks.push(toSinglePageTask(index, primitivePage, currentPage));
         }
+
+        // 次のコメントと同じになるか
+        if (nextPageIndex !== undefined && pages[nextPageIndex] !== undefined) {
+            const c = pagesObj.getComment(nextPageIndex - 1);
+            if (isQuizCommentResult(c)) {
+                const p = c.quizAfterOperation.format().toString();
+                const nextPage = pages[nextPageIndex];
+                if (nextPage.comment.text !== undefined && nextPage.comment.text === p) {
+                    // commentをrefに変換する
+                    const backupComment = nextPage.comment.text;
+                    pagesObj.unfreezeComment(nextPageIndex);
+                    tasks.push(toUnfreezeCommentTask(nextPageIndex, backupComment));
+                }
+            }
+        }
     } else {
         // テキストにする
-        if (comment !== undefined && isTextCommentResult(comment) && comment.text === text) {
+        if (prevComment !== undefined && isTextCommentResult(prevComment) && prevComment.text === text) {
             // refにする
             if (page.comment.text !== undefined) {
                 // commentをrefに変換する
-                const prevComment = page.comment.text;
+                const backupComment = page.comment.text;
                 pagesObj.unfreezeComment(index);
-                tasks.push(toUnfreezeCommentTask(index, prevComment));
+                tasks.push(toUnfreezeCommentTask(index, backupComment));
             }
 
             pages = pagesObj.pages;
@@ -147,6 +167,17 @@ const commitCommentText = (index: number, text: string) => (state: State): NextS
             const primitivePage = toPrimitivePage(currentPage);
             currentPage.comment = { text };
             tasks.push(toSinglePageTask(index, primitivePage, currentPage));
+        }
+
+        // 次のコメントと同じになるか
+        if (nextPageIndex !== undefined && pages[nextPageIndex] !== undefined) {
+            const nextPage = pages[nextPageIndex];
+            if (nextPage.comment.text !== undefined && nextPage.comment.text === text) {
+                // commentをrefに変換する
+                const backupComment = nextPage.comment.text;
+                pagesObj.unfreezeComment(nextPageIndex);
+                tasks.push(toUnfreezeCommentTask(nextPageIndex, backupComment));
+            }
         }
     }
 
