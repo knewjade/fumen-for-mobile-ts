@@ -1,4 +1,8 @@
-export const getURLQuery = () => {
+export interface Query {
+    get: (name: string) => string | undefined;
+}
+
+export const getURLQuery = (): Query => {
     // Query文字列を取得
     let search = '';
     if (location.search !== '') {
