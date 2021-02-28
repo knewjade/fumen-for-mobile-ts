@@ -317,6 +317,22 @@ export const operations = {
             toKey: () => {
                 cy.get(datatest('btn-key-page-off')).click();
             },
+            resetComment: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                    cy.get(datatest('btn-utils-mode')).click();
+                    cy.get(datatest('btn-comment-mode')).click();
+                }
+                cy.get(datatest('btn-comment-reset')).click();
+            },
+            blankComment: ({ home = true } = {}) => {
+                if (home) {
+                    operations.mode.tools.home()
+                    cy.get(datatest('btn-utils-mode')).click();
+                    cy.get(datatest('btn-comment-mode')).click();
+                }
+                cy.get(datatest('btn-comment-blank')).click();
+            },
         },
         slide: {
             open: ({ home = true } = {}) => {

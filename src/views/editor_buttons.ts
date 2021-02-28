@@ -106,8 +106,10 @@ export const inferenceButton = ({ layout, highlight, actions }: {
 };
 
 export const iconContents = (
-    { description, iconSize, iconName }: {
+    { marginRight = 2, description, descriptionSize = 11, iconSize, iconName }: {
+        marginRight?: number;
         description: string;
+        descriptionSize?: number;
         iconSize: number;
         iconName: string;
     },
@@ -116,7 +118,7 @@ export const iconContents = (
         display: 'block',
         fontSize: px(iconSize),
         border: 'solid 0px #333',
-        marginRight: px(2),
+        marginRight: px(marginRight),
         cursor: 'pointer',
     });
 
@@ -127,7 +129,12 @@ export const iconContents = (
         style: properties,
     }, iconName);
 
-    return [icon, ' ', span({ style: style({ fontSize: px(11) }) }, description)];
+    return [icon, ' ', span({
+        style: style({
+            fontSize: px(descriptionSize),
+            whiteSpace: 'nowrap',
+        }),
+    }, description)];
 };
 
 export const switchIconContents = (
