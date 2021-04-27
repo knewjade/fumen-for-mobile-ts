@@ -5,6 +5,7 @@ import { i18n } from '../../locales/keys';
 import { encode } from '../../lib/fumen/fumen';
 import { Page } from '../../lib/fumen/types';
 import { FumenError } from '../../lib/errors';
+import { BlockIcon } from '../atomics/icons';
 
 declare const M: any;
 
@@ -256,19 +257,17 @@ export const ClipboardIconButton: ComponentWithText<ClipboardButtonProps> = (
         event.preventDefault();
     };
 
-    const properties = style({
-        display: 'block',
-        fontSize: px(textSize),
-        border: 'solid 0px #000',
-        marginRight: px(2),
+    const aProperties = style({
+        margin: px(5),
+        paddingLeft: px(padding),
+        paddingRight: px(padding),
         cursor: 'pointer',
     });
 
     return (
         <a href="#" key={key} datatest={key} id={key} fontSize={px(textSize)}
-           style={style({ margin: px(5), paddingLeft: px(padding), paddingRight: px(padding) })}
-           className="waves-effect waves-light btn white black-text" onclick={onClickFunc}>
-            <i className="material-icons" style={properties}>{iconName}</i>
+           style={aProperties} className="waves-effect waves-light btn white black-text" onclick={onClickFunc}>
+            <BlockIcon key="icon" iconSize={textSize}>{iconName}</BlockIcon>
         </a>
     );
 };

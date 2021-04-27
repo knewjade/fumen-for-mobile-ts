@@ -4,6 +4,7 @@ import { resources } from '../../states';
 import { i18n } from '../../locales/keys';
 import { a, div, span } from '@hyperapp/html';
 import { TextArea } from './textarea';
+import { BlockIcon } from '../atomics/icons';
 
 declare const M: any;
 
@@ -104,12 +105,12 @@ export const AppendFumenModal: Component<AppendFumenModalProps> = (
                         {i18n.AppendFumen.Buttons.Cancel()}
                     </a>
 
-                    <Button key="btn-append-to-next" datatest="btn-append-to-next" width={80} colorTheme="red"
+                    <Button key="btn-append-to-next" datatest="btn-append-to-next" width={85} colorTheme="red"
                             enable={textAreaValue !== '' && errorMessage === undefined} onclick={() => appendToNext()}>
                         <ButtonIconContent iconSize={20} iconName="library_add">next</ButtonIconContent>
                     </Button>
 
-                    <Button key="btn-append-to-end" datatest="btn-append-to-end" width={80} colorTheme="red"
+                    <Button key="btn-append-to-end" datatest="btn-append-to-end" width={85} colorTheme="red"
                             enable={textAreaValue !== '' && errorMessage === undefined} onclick={() => appendToEnd()}>
                         <ButtonIconContent iconSize={20} iconName="library_add">end</ButtonIconContent>
                     </Button>
@@ -166,17 +167,10 @@ interface ButtonIconContentProps {
 export const ButtonIconContent: ComponentWithText<ButtonIconContentProps> = (
     { iconSize, iconName, textSize = 13 }, content: string,
 ) => {
-    return <div>
-        <i className="material-icons left"
-           style={style({
-               display: 'block',
-               fontSize: px(iconSize),
-               border: 'solid 0px #000',
-               marginRight: px(2),
-               cursor: 'pointer',
-           })}>
-            {iconName}
-        </i>
+    return <div style={style({ cursor: 'pointer' })}>
+        <span style={style({ marginRight: px(2) })}>
+            <BlockIcon key="icon" iconSize={iconSize} classNames={['left']}>{iconName}</BlockIcon>
+        </span>
         <span style={style({ fontSize: px(textSize) })}>
             {content}
         </span>
