@@ -1,9 +1,9 @@
 import { Component, ComponentWithText, px, style } from '../../lib/types';
 import { h } from 'hyperapp';
 import { resources } from '../../states';
-import { i } from '@hyperapp/html';
 import { CommentType, Screens } from '../../lib/enums';
 import { i18n } from '../../locales/keys';
+import { Icon } from '../atomics/icons';
 
 declare const M: any;
 
@@ -271,13 +271,9 @@ export const SettingButton: ComponentWithText<SettingButtonProps> = (
     { href = '#', key, onclick, icons, datatest, textSize = 13, enable = true }, showName,
 ) => {
     const iconsElements = icons.map(icon => (
-        <i key={`${key}-icon-${icon.name}`} className={`material-icons ${enable ? ' ' : 'disabled'}`}
-           style={style({
-               fontSize: px(icon.size),
-           })}
-        >
+        <Icon key={`${key}-icon-${icon.name}`} classNames={enable ? [] : ['disabled']} iconSize={icon.size}>
             {icon.name}
-        </i>
+        </Icon>
     ));
     return <a key={key} href={href} onclick={onclick !== undefined ? (event: MouseEvent) => {
         onclick(event);

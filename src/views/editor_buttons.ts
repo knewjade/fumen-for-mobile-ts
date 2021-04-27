@@ -1,8 +1,9 @@
 import { px, style } from '../lib/types';
-import { a, div, i, img, span } from '@hyperapp/html';
+import { a, div, img, span } from '@hyperapp/html';
 import { EditorLayout } from './editor/editor';
 import { VNode } from 'hyperapp';
 import { parsePieceName, parseRotationName, Piece, Rotation } from '../lib/enums';
+import { BlockIcon } from '../components/atomics/icons';
 
 export const colorButton = ({ layout, piece, highlight, colorize, onclick }: {
     layout: EditorLayout,
@@ -114,20 +115,19 @@ export const iconContents = (
         iconName: string;
     },
 ) => {
-    const properties = style({
-        display: 'block',
-        fontSize: px(iconSize),
-        border: 'solid 0px #333',
-        marginRight: px(marginRight),
-        cursor: 'pointer',
-    });
-
-    const className = 'material-icons left';
-
-    const icon = i({
-        className,
-        style: properties,
-    }, iconName);
+    const icon = div(
+        {
+            style: style({
+                marginRight: px(marginRight),
+            }),
+        },
+        [
+            BlockIcon({
+                iconSize,
+                key: 'icon',
+            }, iconName),
+        ],
+    );
 
     return [icon, ' ', span({
         style: style({
@@ -144,20 +144,19 @@ export const switchIconContents = (
         enable: boolean;
     },
 ) => {
-    const properties = style({
-        display: 'block',
-        fontSize: px(iconSize),
-        border: 'solid 0px #000',
-        marginRight: px(2),
-        cursor: 'pointer',
-    });
-
-    const className = 'material-icons left';
-
-    const icon = i({
-        className,
-        style: properties,
-    }, enable ? 'check_box' : 'check_box_outline_blank');
+    const icon = div(
+        {
+            style: style({
+                marginRight: px(2),
+            }),
+        },
+        [
+            BlockIcon({
+                iconSize,
+                key: 'icon',
+            }, enable ? 'check_box' : 'check_box_outline_blank'),
+        ],
+    );
 
     return [icon, ' ', span({ style: style({ fontSize: px(11) }) }, description)];
 };
@@ -230,6 +229,7 @@ export const toolButton = (
             width: px(width),
             maxWidth: px(width),
             textAlign: 'center',
+            cursor: 'pointer',
         }),
         onclick: onclick !== undefined ? (event: MouseEvent) => {
             onclick(event);
