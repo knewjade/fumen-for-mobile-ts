@@ -211,7 +211,7 @@ export async function innerDecode(
                         const nextQuiz = store.quiz.nextIfEnd();
                         const operation = nextQuiz.getOperation(action.piece.type);
                         store.quiz = nextQuiz.operate(operation);
-                    } catch (e) {
+                    } catch (e: any) {
                         console.error(e.message);
 
                         // Not operate
