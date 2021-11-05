@@ -189,7 +189,7 @@ const loadFumen = (fumen: string, purgeOnFailed: boolean): NextState => {
         let pages: Page[];
         try {
             pages = await decode(fumen);
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
             if (purgeOnFailed) {
                 main.loadNewFumen();
@@ -205,7 +205,7 @@ const loadFumen = (fumen: string, purgeOnFailed: boolean): NextState => {
             main.loadPages({ pages, loadedFumen: fumen });
             main.closeAllModals();
             main.clearFumenData();
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
             if (purgeOnFailed) {
                 main.loadNewFumen();
@@ -230,7 +230,7 @@ const appendFumen = (fumen: string, pageIndex: number): NextState => {
         let pages: Page[];
         try {
             pages = await decode(fumen);
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
             if (e instanceof FumenError) {
                 main.showOpenErrorMessage({ message: i18n.AppendFumen.Errors.FailedToLoad() });
@@ -244,7 +244,7 @@ const appendFumen = (fumen: string, pageIndex: number): NextState => {
             main.appendPages({ pages, pageIndex });
             main.closeAllModals();
             main.clearFumenData();
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
             main.showOpenErrorMessage({ message: i18n.AppendFumen.Errors.Unexpected(e.message) });
         }
