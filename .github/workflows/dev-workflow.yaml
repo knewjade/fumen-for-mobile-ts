@@ -9,6 +9,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
       - run: yarn install --frozen-lockfile
       - run: yarn test-ci
       - run: yarn webpack-prod
@@ -23,9 +25,12 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
       - run: yarn install --frozen-lockfile
       - run: yarn webpack-prod
       - run: sed s/fumen-for-mobile/fumen-for-mobile-dev/ public/manifest.json > public/manifest_copy.json
