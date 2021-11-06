@@ -1,4 +1,5 @@
-import { Piece, Rotation } from './enums';
+import { isInPlayField, Piece, Rotation } from './enums';
+import { getBlockPositions } from './piece';
 
 const results = [
     { positions: [0, 1, 10, 11], result: { piece: Piece.O, rotate: Rotation.Spawn, offset: { x: 0, y: 0 } } },
@@ -86,14 +87,20 @@ export const inferPiece = (inferences: number[]) => {
     }
 
     const minIndex = sortedIndices[0];
-    const x = minIndex % 10;
-    const y = Math.floor(minIndex / 10);
+    const x = minIndex % 10 + result.offset.x;
+    const y = Math.floor(minIndex / 10) + result.offset.y;
+
+    // 回転軸を基準にフィールド内に収まるか確認
+    // 上下に分離していても、通常の状態で確認 (左右にはみ出していないかを確認したいので、上下の分離には影響を受けない)
+    const positions = getBlockPositions(result.piece, result.rotate, x, y);
+    const canPut = positions.every(([x, y]) => isInPlayField(x, y));
+    if (!canPut) {
+        return undefined;
+    }
+
     return {
         piece: result.piece,
         rotate: result.rotate,
-        coordinate: split ? undefined : {
-            x: x + result.offset.x,
-            y: y + result.offset.y,
-        },
+        coordinate: split ? undefined : ({ x, y }),
     };
 };
