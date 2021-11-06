@@ -368,6 +368,76 @@ describe('Drawing', () => {
         operations.mode.block.click(5, 4);
     });
 
+    // 左右にはみ出した形状をしているケース
+    it('Invalid split inference', () => {
+        visit({ mode: 'edit' });
+
+        operations.mode.block.open();
+
+        // Invalid S
+        operations.mode.block.Completion();
+        operations.mode.block.click(0, 5);
+        operations.mode.block.click(0, 4);
+        operations.mode.block.click(9, 5);
+        operations.mode.block.click(9, 4);
+
+        cy.get(block(0, 5)).should('have.attr', 'color', Color.Completion.Normal);
+
+        // Invalid Z
+        operations.mode.block.Completion();
+        operations.mode.block.click(0, 0);
+        operations.mode.block.click(0, 1);
+        operations.mode.block.click(1, 0);
+        operations.mode.block.click(9, 0);
+
+        cy.get(block(0, 0)).should('have.attr', 'color', Color.Completion.Normal);
+
+        // Invalid I
+        operations.mode.block.Completion();
+        operations.mode.block.click(0, 1);
+        operations.mode.block.click(7, 0);
+        operations.mode.block.click(8, 0);
+        operations.mode.block.click(9, 0);
+
+        cy.get(block(0, 1)).should('have.attr', 'color', Color.Completion.Normal);
+
+        // Invalid O
+        operations.mode.block.Completion();
+        operations.mode.block.click(0, 1);
+        operations.mode.block.click(0, 2);
+        operations.mode.block.click(9, 0);
+        operations.mode.block.click(9, 1);
+
+        cy.get(block(0, 1)).should('have.attr', 'color', Color.Completion.Normal);
+
+        // Invalid T
+        operations.mode.block.Completion();
+        operations.mode.block.click(0, 1);
+        operations.mode.block.click(0, 2);
+        operations.mode.block.click(0, 3);
+        operations.mode.block.click(9, 1);
+
+        cy.get(block(0, 1)).should('have.attr', 'color', Color.Completion.Normal);
+
+        // Invalid L
+        operations.mode.block.Completion();
+        operations.mode.block.click(0, 1);
+        operations.mode.block.click(0, 2);
+        operations.mode.block.click(0, 3);
+        operations.mode.block.click(9, 2);
+
+        cy.get(block(0, 1)).should('have.attr', 'color', Color.Completion.Normal);
+
+        // Invalid J
+        operations.mode.block.Completion();
+        operations.mode.block.click(0, 1);
+        operations.mode.block.click(0, 2);
+        operations.mode.block.click(0, 3);
+        operations.mode.block.click(9, 0);
+
+        cy.get(block(0, 1)).should('have.attr', 'color', Color.Completion.Normal);
+    });
+
     it('Inference without lock flag', () => {
         // 接着なしオンのテト譜
         visit({
