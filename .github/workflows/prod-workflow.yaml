@@ -8,9 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 16.x
       - run: yarn install --frozen-lockfile
       - run: yarn test-ci
       - run: yarn webpack-prod
@@ -24,20 +24,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 16.x
       - run: yarn install --frozen-lockfile
       - run: yarn webpack-prod
         env:
           DEBUG_ON: false
-      - uses: peaceiris/actions-gh-pages@bbdfb200618d235585ad98e965f4aafc39b4c501
+      - uses: peaceiris/actions-gh-pages@068dc23d9710f1ba62e86896f84735d869951305
         with:
           personal_token: ${{ secrets.PERSONAL_TOKEN }}
           external_repository: knewjade/fumen-for-mobile
           publish_branch: master
           enable_jekyll: false
-          publish_dir: ./public
+          publish_dir: ./dest
       - uses: actions/upload-artifact@v2
         if: ${{ failure() }}
         with:

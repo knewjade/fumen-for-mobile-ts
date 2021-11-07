@@ -1,3 +1,4 @@
+const CopyPlugin = require("copy-webpack-plugin");
 const { GenerateSW } = require('workbox-webpack-plugin');
 
 const path = require('path');
@@ -8,14 +9,15 @@ const buildNumber = process.env.GITHUB_RUN_NUMBER
 const version = buildNumber ? `${buildNumber}` : `dev-${new Date().toISOString()}`;
 const isDebug = process.env.DEBUG_ON || 'true'
 const cacheId = 'fumen-for-mobile';
+const destDirectory = path.join(__dirname, 'dest')
 
 module.exports = {
     entry: [
-        './src/actions.ts'
+        './src/actions.ts',
     ],
     output: {
         filename: '[name].bundle.js',
-        path: path.join(__dirname, 'public')
+        path: destDirectory,
     },
     module: {
         rules: [
@@ -37,7 +39,11 @@ module.exports = {
             },
             {
                 test: /\.tsx?$/,
-                use: 'ts-loader'
+                use: 'ts-loader',
+            },
+            {
+                test: /\.css$/i,
+                use: 'css-loader',
             },
         ]
     },
@@ -48,37 +54,35 @@ module.exports = {
         },
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.jsx']
+        extensions: ['.ts', '.tsx', '.js', '.jsx'],
     },
     plugins: [
+        new CopyPlugin({
+            patterns: [
+                {
+                    from: path.join(__dirname, 'resources'),
+                    to: destDirectory,
+                },
+                {
+                    from: path.join(__dirname, 'node_modules/materialize-css/dist/js/materialize.min.js'),
+                    to: path.join(destDirectory, 'materialize'),
+                },
+                {
+                    from: path.join(__dirname, 'node_modules/materialize-css/dist/css/materialize.min.css'),
+                    to: path.join(destDirectory, 'materialize'),
+                },
+                {
+                    from: path.join(__dirname, 'node_modules/material-icons/iconfont'),
+                    to: path.join(destDirectory, 'material-iconfont'),
+                },
+            ],
+        }),
         new GenerateSW({
             cacheId: cacheId,
             swDest: 'sw.js',
             clientsClaim: true,
             skipWaiting: true,
             offlineGoogleAnalytics: true,
-            runtimeCaching: [
-                {
-                    urlPattern: /^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/materialize\/.+\.(js|css)$/,
-                    handler: "CacheFirst",
-                    options: {
-                        cacheName: cacheId + "-materialize-cache",
-                        expiration: {
-                            maxAgeSeconds: 60 * 60 * 24 * 14,
-                        },
-                    },
-                },
-                {
-                    urlPattern: /^https:\/\/fonts\.googleapis\.com\/icon\?family=Material\+Icons$/,
-                    handler: "CacheFirst",
-                    options: {
-                        cacheName: cacheId + "-materialize-font-cache",
-                        expiration: {
-                            maxAgeSeconds: 60 * 60 * 24 * 14,
-                        },
-                    },
-                },
-            ],
-        })
+        }),
     ]
 };
