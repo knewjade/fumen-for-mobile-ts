@@ -4,8 +4,7 @@ import { resources } from '../../states';
 import { CommentType, Screens } from '../../lib/enums';
 import { i18n } from '../../locales/keys';
 import { Icon } from '../atomics/icons';
-
-declare const M: any;
+import materializeCss from 'materialize-css';
 
 interface MenuProps {
     version: string;
@@ -37,7 +36,7 @@ export const MenuModal: Component<MenuProps> = (
     { version, screen, currentIndex, maxPageIndex, comment, actions },
 ) => {
     const oncreate = (element: HTMLDivElement) => {
-        const instance = M.Modal.init(element, {
+        const instance = materializeCss.Modal.init(element, {
             onOpenEnd: () => {
                 const element = document.getElementById('textarea-fumen');
                 if (element !== null) {
@@ -234,7 +233,7 @@ export const MenuModal: Component<MenuProps> = (
                                                actions.changeCommentMode({ type: CommentType.Readonly });
                                                actions.closeMenuModal();
                                            } : () => {
-                                               M.toast({
+                                               materializeCss.toast({
                                                    html: i18n.Menu.Messages.NoAvailableCommentButton(),
                                                    classes: 'top-toast',
                                                    displayLength: 3000,

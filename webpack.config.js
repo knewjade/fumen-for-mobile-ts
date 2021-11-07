@@ -59,7 +59,22 @@ module.exports = {
     plugins: [
         new CopyPlugin({
             patterns: [
-                { from: path.join(__dirname, 'resources'), to: destDirectory },
+                {
+                    from: path.join(__dirname, 'resources'),
+                    to: destDirectory,
+                },
+                {
+                    from: path.join(__dirname, 'node_modules/materialize-css/dist/js/materialize.min.js'),
+                    to: path.join(destDirectory, 'materialize'),
+                },
+                {
+                    from: path.join(__dirname, 'node_modules/materialize-css/dist/css/materialize.min.css'),
+                    to: path.join(destDirectory, 'materialize'),
+                },
+                {
+                    from: path.join(__dirname, 'node_modules/material-icons/iconfont'),
+                    to: path.join(destDirectory, 'material-iconfont'),
+                },
             ],
         }),
         new GenerateSW({

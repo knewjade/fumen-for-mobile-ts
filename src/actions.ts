@@ -1,8 +1,3 @@
-// For material
-import 'material-icons/iconfont/material-icons.css';
-import 'materialize-css/dist/css/materialize.min.css';
-import 'materialize-css/dist/js/materialize.min';
-
 import { initState, State } from './states';
 import { view } from './view';
 import { app } from 'hyperapp';
@@ -71,8 +66,7 @@ window.onresize = () => {
         height: window.document.body.clientHeight,
     });
 };
-
-declare const M: any;
+import materializeCss from 'materialize-css';
 
 window.addEventListener('load', () => {
     const urlQuery = getURLQuery();
@@ -82,7 +76,6 @@ window.addEventListener('load', () => {
 });
 
 const setupI18n = (urlQuery: Query) => {
-    console.log('############## setupI18n ###################');
     // i18nの設定
     const languageDetector = new LanguageDetector(null, {
         order: ['myQueryDetector', 'querystring', 'navigator', 'path', 'subdomain'],
@@ -127,7 +120,7 @@ const loadFumen = (urlQuery: Query) => {
     {
         const fumen = localStorageWrapper.loadFumen();
         if (fumen) {
-            M.toast({ html: i18n.Top.RestoreFromStorage(), classes: 'top-toast', displayLength: 1500 });
+            materializeCss.toast({ html: i18n.Top.RestoreFromStorage(), classes: 'top-toast', displayLength: 1500 });
             return main.loadFumen({ fumen });
         }
     }

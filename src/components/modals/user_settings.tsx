@@ -2,8 +2,7 @@ import { Component, px, style } from '../../lib/types';
 import { h } from 'hyperapp';
 import { resources } from '../../states';
 import { i18n } from '../../locales/keys';
-
-declare const M: any;
+import materializeCss from 'materialize-css';
 
 interface UserSettingsModalProps {
     ghostVisible: boolean;
@@ -21,7 +20,7 @@ export const UserSettingsModal: Component<UserSettingsModalProps> = (
     { ghostVisible, loop, actions },
 ) => {
     const oncreate = (element: HTMLDivElement) => {
-        const instance = M.Modal.init(element, {
+        const instance = materializeCss.Modal.init(element, {
             onCloseStart: () => {
                 actions.closeUserSettingsModal();
             },

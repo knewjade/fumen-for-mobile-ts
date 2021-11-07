@@ -4,8 +4,7 @@ import { resources } from '../../states';
 import { i18n } from '../../locales/keys';
 import { TextArea } from './textarea';
 import { div } from '@hyperapp/@hyperapp/html';
-
-declare const M: any;
+import materializeCss from 'materialize-css';
 
 interface OpenFumenModalProps {
     errorMessage?: string;
@@ -38,7 +37,7 @@ export const OpenFumenModal: Component<OpenFumenModalProps> = ({ textAreaValue, 
     };
 
     const oncreate = (element: HTMLDivElement) => {
-        const instance = M.Modal.init(element, {
+        const instance = materializeCss.Modal.init(element, {
             onOpenEnd: () => {
                 const element = document.getElementById('input-fumen');
                 if (element !== null) {
