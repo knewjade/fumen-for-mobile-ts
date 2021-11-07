@@ -5,7 +5,8 @@ import { i18n } from '../../locales/keys';
 import { a, div, span } from '@hyperapp/html';
 import { TextArea } from './textarea';
 import { BlockIcon } from '../atomics/icons';
-import materializeCss from 'materialize-css';
+
+declare const M: any;
 
 interface AppendFumenModalProps {
     errorMessage?: string;
@@ -40,7 +41,7 @@ export const AppendFumenModal: Component<AppendFumenModalProps> = (
     };
 
     const oncreate = (element: HTMLDivElement) => {
-        const instance = materializeCss.Modal.init(element, {
+        const instance = M.Modal.init(element, {
             onOpenEnd: () => {
                 const element = document.getElementById('input-fumen');
                 if (element !== null) {

@@ -6,7 +6,8 @@ import { encode } from '../../lib/fumen/fumen';
 import { Page } from '../../lib/fumen/types';
 import { FumenError } from '../../lib/errors';
 import { BlockIcon } from '../atomics/icons';
-import materializeCss from 'materialize-css';
+
+declare const M: any;
 
 interface ClipboardModalProps {
     pages: Page[];
@@ -34,7 +35,7 @@ const formStyle = () => {
 
 export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages }) => {
     const oncreate = (element: HTMLDivElement) => {
-        const instance = materializeCss.Modal.init(element, {
+        const instance = M.Modal.init(element, {
             onCloseStart: () => {
                 actions.closeClipboardModal();
             },
@@ -102,10 +103,10 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
                 }
             })
             .then(() => {
-                materializeCss.toast({ html: 'Copied to clipboard', classes: 'top-toast', displayLength: 1000 });
+                M.toast({ html: 'Copied to clipboard', classes: 'top-toast', displayLength: 1000 });
             })
             .catch((error) => {
-                materializeCss.toast({ html: `Failed to copy: ${error}`, classes: 'top-toast', displayLength: 1500 });
+                M.toast({ html: `Failed to copy: ${error}`, classes: 'top-toast', displayLength: 1500 });
             })
             .finally(() => {
                 if (element) {
@@ -133,7 +134,7 @@ export const ClipboardModal: Component<ClipboardModalProps> = ({ actions, pages 
                 form.submit();
             })
             .catch((error) => {
-                materializeCss.toast({
+                M.toast({
                     html: `Failed to open tinyurl: ${error}`,
                     classes: 'top-toast',
                     displayLength: 1500,

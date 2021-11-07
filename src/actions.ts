@@ -66,7 +66,8 @@ window.onresize = () => {
         height: window.document.body.clientHeight,
     });
 };
-import materializeCss from 'materialize-css';
+
+declare const M: any;
 
 window.addEventListener('load', () => {
     const urlQuery = getURLQuery();
@@ -120,7 +121,7 @@ const loadFumen = (urlQuery: Query) => {
     {
         const fumen = localStorageWrapper.loadFumen();
         if (fumen) {
-            materializeCss.toast({ html: i18n.Top.RestoreFromStorage(), classes: 'top-toast', displayLength: 1500 });
+            M.toast({ html: i18n.Top.RestoreFromStorage(), classes: 'top-toast', displayLength: 1500 });
             return main.loadFumen({ fumen });
         }
     }

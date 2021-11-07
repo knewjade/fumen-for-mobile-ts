@@ -16,7 +16,8 @@ import {
 import { State } from '../states';
 import { Pages } from '../lib/pages';
 import { Page } from '../lib/fumen/types';
-import materializeCss from 'materialize-css';
+
+declare const M: any;
 
 export interface UtilsActions {
     resize: (data: { width: number, height: number }) => action;
@@ -97,9 +98,7 @@ export const utilsActions: Readonly<UtilsActions> = {
                         window.open(url, '_blank');
                     })
                     .catch((error) => {
-                        materializeCss.toast({
-                            html: `Failed to open in PC: ${error}`, classes: 'top-toast', displayLength: 1500,
-                        });
+                        M.toast({ html: `Failed to open in PC: ${error}`, classes: 'top-toast', displayLength: 1500 });
                     });
 
                 return undefined;
