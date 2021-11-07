@@ -4,11 +4,7 @@ dist/
 yarn-*.log
 src/**/*.js
 src/**/*.js.map
-public/*.bundle.js
-public/sw.js
-public/precache-*.js
-public/**/workbox-*.js
-public/*.LICENSE.txt
+dest/
 coverage/
 cypress/videos/
 cypress/screenshots/

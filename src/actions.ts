@@ -1,3 +1,8 @@
+// For material
+import 'material-icons/iconfont/material-icons.css';
+import 'materialize-css/dist/css/materialize.min.css';
+import 'materialize-css/dist/js/materialize.min';
+
 import { initState, State } from './states';
 import { view } from './view';
 import { app } from 'hyperapp';
@@ -77,6 +82,7 @@ window.addEventListener('load', () => {
 });
 
 const setupI18n = (urlQuery: Query) => {
+    console.log('############## setupI18n ###################');
     // i18nの設定
     const languageDetector = new LanguageDetector(null, {
         order: ['myQueryDetector', 'querystring', 'navigator', 'path', 'subdomain'],

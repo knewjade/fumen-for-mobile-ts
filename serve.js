@@ -1,11 +1,12 @@
-var listeningPort = 8080;
-var uiDir = './public/';
+const http = require('http');
+const connect = require('connect');
+const serveStatic = require('serve-static');
 
-var http = require('http');
-var connect = require('connect');
-var serveStatic = require('serve-static');
-var app = connect();
-app.use(serveStatic(uiDir));
-var server = http.createServer(app);
-server.listen(listeningPort);
-console.log('Listening on port: http://localhost:' + listeningPort);
+const app = connect();
+app.use('/fumen-for-mobile',serveStatic('dest'));
+
+const server = http.createServer(app);
+const port = 8080;
+server.listen(port);
+
+console.log(`Listening: http://localhost:${port}/fumen-for-mobile`);
