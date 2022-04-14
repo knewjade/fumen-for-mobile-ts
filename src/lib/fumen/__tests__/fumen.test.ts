@@ -343,6 +343,24 @@ describe('fumen', () => {
                 },
             } as Page);
         });
+
+        test('all cyan', async () => {
+            const pages = await decode('v115@flAgH');
+
+            expect(pages).toHaveLength(1);
+            expect(pages[0]).toMatchObject({
+                flags: {
+                    mirror: false,
+                    quiz: false,
+                },
+                field: {
+                    obj: new Field({
+                        field: PlayField.load('IIIIIIIIII'.repeat(23)),
+                        sentLine: PlayField.loadMinify('IIIIIIIIII'),
+                    }),
+                },
+            });
+        });
     });
 
     test('illegal short fumen', async () => {
@@ -767,6 +785,11 @@ describe('fumen', () => {
                 '2Blvs2A0EEfETY9KBlvs2A0?yDfETY12Blvs2AUxDfETYVOBlfnBCVbAAA';
             const pages = await decode(fumen);
             await expect(encode(pages)).resolves.toEqual(fumen.substr(5));
+        });
+
+        test('all cyan', async () => {
+            const pages = await decode('v115@flAgH');
+            await expect(encode(pages)).resolves.toEqual('flAgH');
         });
     });
 });

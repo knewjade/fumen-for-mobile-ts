@@ -87,7 +87,7 @@ export async function innerDecode(
 
     const updateField = (prev: Field) => {
         const result = {
-            changed: false,
+            changed: true,
             field: prev,
         };
 
@@ -98,8 +98,8 @@ export async function innerDecode(
 
             const numOfBlocks = diffBlock % FIELD_BLOCKS;
 
-            if (numOfBlocks !== FIELD_BLOCKS - 1) {
-                result.changed = true;
+            if (diff === 8 && numOfBlocks === FIELD_BLOCKS - 1) {
+                result.changed = false;
             }
 
             for (let block = 0; block < numOfBlocks + 1; block += 1) {
@@ -301,7 +301,7 @@ export async function encode(inputPages: Page[], isAsync: boolean = false): Prom
             // フィールドを記録して、リピートを終了する
             allValues.merge(values);
             lastRepeatIndex = -1;
-        } else if (lastRepeatIndex < 0 || allValues.get(lastRepeatIndex) === ENCODE_TABLE_LENGTH - 1) {
+        } else if (lastRepeatIndex < 0 || (allValues.get(lastRepeatIndex) === ENCODE_TABLE_LENGTH - 1)) {
             // フィールドを記録して、リピートを開始する
             allValues.merge(values);
             allValues.push(0);
@@ -463,7 +463,7 @@ function encodeField(prev: Field, current: Field) {
     };
 
     // フィールド値から連続したブロック数に変換
-    let changed = false;
+    let changed = true;
     let prev_diff = getDiff(0, 0);
     let counter = -1;
     for (let yIndex = 0; yIndex < FIELD_MAX_HEIGHT; yIndex += 1) {
@@ -473,7 +473,6 @@ function encodeField(prev: Field, current: Field) {
                 recordBlockCounts(prev_diff, counter);
                 counter = 0;
                 prev_diff = diff;
-                changed = true;
             } else {
                 counter += 1;
             }
@@ -482,6 +481,9 @@ function encodeField(prev: Field, current: Field) {
 
     // 最後の連続ブロックを処理
     recordBlockCounts(prev_diff, counter);
+    if (prev_diff === 8 && counter === FIELD_BLOCKS - 1) {
+        changed = false;
+    }
 
     return {
         values,
