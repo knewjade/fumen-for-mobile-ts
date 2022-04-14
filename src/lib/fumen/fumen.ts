@@ -301,7 +301,7 @@ export async function encode(inputPages: Page[], isAsync: boolean = false): Prom
             // フィールドを記録して、リピートを終了する
             allValues.merge(values);
             lastRepeatIndex = -1;
-        } else if (lastRepeatIndex < 0 || (allValues.get(lastRepeatIndex) === ENCODE_TABLE_LENGTH - 1)) {
+        } else if (lastRepeatIndex < 0 || allValues.get(lastRepeatIndex) === ENCODE_TABLE_LENGTH - 1) {
             // フィールドを記録して、リピートを開始する
             allValues.merge(values);
             allValues.push(0);
