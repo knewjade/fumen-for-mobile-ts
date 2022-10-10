@@ -123,6 +123,37 @@ export const MenuModal: Component<MenuProps> = (
                             {i18n.Menu.Buttons.New()}
                         </SettingButton>
 
+                        <SettingButton key="btn-file-download" href="#"
+                                       datatest="btn-file-download"
+                                       icons={[{ name: 'file_download', size: 30 }]}
+                                       onclick={() => {
+                                           function downloadURI(uri: string, name: string) {
+                                               const link = document.createElement('a');
+                                               if (link == null) {
+                                                   throw new Error('Unexpected: Failed to create an a-element');
+                                               }
+
+                                               link.download = name;
+                                               link.href = uri;
+                                               document.body.appendChild(link);
+                                               link.click();
+                                               document.body.removeChild(link);
+                                           }
+
+                                           const dataURL = resources.konva.stage.toDataURL();
+                                           if (dataURL != null) {
+                                               downloadURI(dataURL, 'playfield_fumen.png');
+                                           } else {
+                                               M.toast({
+                                                   html: 'Failed to download image',
+                                                   classes: 'top-toast',
+                                                   displayLength: 5000,
+                                               });
+                                           }
+                                       }}>
+                            {i18n.Menu.Buttons.SavePlayfieldToImage()}
+                        </SettingButton>
+
                         <SettingButton key="btn-open-fumen" datatest="btn-open-fumen" href="#"
                                        icons={[{ name: 'open_in_new', size: 32.3 }]}
                                        onclick={() => {
