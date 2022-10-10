@@ -73,7 +73,7 @@ export const getFieldLayout = (
     // フィールドの大きさ
     const fieldSize = {
         width: (blockSize + 1) * 10 + 1,
-        height: (blockSize + 1) * 23.5 + 1 + borderWidthBottomField + 1,
+        height: (blockSize + 1) * 23.5 + 1 + borderWidthBottomField,
     };
 
     // フィールドの左上
