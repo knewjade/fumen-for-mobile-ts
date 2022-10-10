@@ -40,6 +40,8 @@ export const view: View<State, Actions> = (state, actions) => {
             currentIndex: state.fumen.currentIndex,
             maxPageIndex: state.fumen.maxPage,
             comment: state.mode.comment,
+            display: state.display,
+            platform: state.platform,
         }) : undefined as any,
 
         state.modal.append ? AppendFumenModal({

@@ -1,5 +1,5 @@
-import { CommentType, ModeTypes, Platforms, Screens } from '../../lib/enums';
-import { Coordinate, Size } from '../commons';
+import { CommentType, ModeTypes, Screens } from '../../lib/enums';
+import { Coordinate, getNavigatorHeight, Size } from '../commons';
 import { View } from 'hyperapp';
 import { resources, State } from '../../states';
 import { EditorTools } from '../../components/tools/editor_tools';
@@ -24,6 +24,11 @@ import { pieceSelectMode } from './piece_select_mode';
 import { navigatorElement } from '../navigator';
 import { commentMode } from './comment_mode';
 
+interface FieldLayout {
+    topLeft: Coordinate;
+    size: Size;
+}
+
 export interface EditorLayout {
     canvas: {
         topLeft: Coordinate;
@@ -47,6 +52,40 @@ export interface EditorLayout {
         size: Size;
     };
 }
+
+export const getFieldLayout = (
+    { topLeftY, width, height }: { topLeftY: number, width: number, height: number },
+): FieldLayout => {
+    const commentHeight = 35;
+    const toolsHeight = 50;
+    const borderWidthBottomField = 2.4;
+
+    const canvasSize = {
+        width,
+        height: height - (toolsHeight + commentHeight + topLeftY),
+    };
+
+    const blockSize = Math.min(
+        (canvasSize.height - borderWidthBottomField - 2) / 24,
+        (canvasSize.width - 90) / 10.5,  // 横のスペースが最低でも90pxは残るようにする
+    ) - 1;
+
+    const fieldSize = {
+        width: (blockSize + 1) * 10 + 1,
+        height: (blockSize + 1) * 23.5 + 1 + borderWidthBottomField,
+    };
+
+    return {
+        topLeft: {
+            x: 0,
+            y: (canvasSize.height - fieldSize.height) / 2.0,
+        },
+        size: {
+            width: fieldSize.width,
+            height: fieldSize.height,
+        },
+    };
+};
 
 const getLayout = (
     { topLeftY, width, height }: { topLeftY: number, width: number, height: number },
@@ -360,7 +399,7 @@ export const getComment = (state: State, actions: Actions, layout: EditorLayout)
 };
 
 export const view: View<State, Actions> = (state, actions) => {
-    const navigatorHeight = state.platform === Platforms.PC ? 30 : 0;
+    const navigatorHeight = getNavigatorHeight(state.platform);
 
     // 初期化
     const layout = getLayout({

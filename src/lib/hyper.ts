@@ -74,4 +74,14 @@ export class HyperStage {
             }, 0);
         }
     }
+
+    toDataURL(config: { x: number, y: number, width: number, height: number }): string | null {
+        if (this.stage !== undefined) {
+            return this.stage.toDataURL({
+                ...config,
+                pixelRatio: 4,
+            });
+        }
+        return null;
+    }
 }

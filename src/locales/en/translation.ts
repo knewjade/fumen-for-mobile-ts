@@ -71,6 +71,7 @@ export const resources = {
             GhostOn: 'GhostOn',
             GhostOff: 'GhostOff',
             UserSettings: 'Settings',
+            SavePlayfieldToImage: 'Image/field',
         },
         Messages: {
             NoAvailableCommentButton: 'Available only when writable mode',

@@ -76,6 +76,7 @@ export const i18n = {
             GhostOn: () => t('Menu.Buttons.GhostOn'),
             GhostOff: () => t('Menu.Buttons.GhostOff'),
             UserSettings: () => t('Menu.Buttons.UserSettings'),
+            SavePlayfieldToImage: () => t('Menu.Buttons.SavePlayfieldToImage'),
         },
         Messages: {
             NoAvailableCommentButton: () => t('Menu.Messages.NoAvailableCommentButton'),
