@@ -1,9 +1,12 @@
 import { Component, ComponentWithText, px, style } from '../../lib/types';
 import { h } from 'hyperapp';
 import { resources } from '../../states';
-import { CommentType, Screens } from '../../lib/enums';
+import { CommentType, Platforms, Screens } from '../../lib/enums';
 import { i18n } from '../../locales/keys';
 import { Icon } from '../atomics/icons';
+import { getFieldLayout as getReaderFieldLayout } from '../../views/reader';
+import { getFieldLayout as getEditorFieldLayout } from '../../views/editor/editor';
+import { getNavigatorHeight } from '../../views/commons';
 
 declare const M: any;
 
@@ -13,6 +16,11 @@ interface MenuProps {
     currentIndex: number;
     maxPageIndex: number;
     comment: CommentType;
+    display: {
+        width: number;
+        height: number;
+    };
+    platform: Platforms;
     actions: {
         closeMenuModal: () => void;
         changeToReaderScreen: () => void;
@@ -34,7 +42,10 @@ interface MenuProps {
 }
 
 export const MenuModal: Component<MenuProps> = (
-    { version, screen, currentIndex, maxPageIndex, comment, actions },
+    {
+        version, screen, currentIndex, maxPageIndex, comment,
+        display, platform, actions,
+    },
 ) => {
     const oncreate = (element: HTMLDivElement) => {
         const instance = M.Modal.init(element, {
@@ -123,41 +134,69 @@ export const MenuModal: Component<MenuProps> = (
                             {i18n.Menu.Buttons.New()}
                         </SettingButton>
 
-                        <SettingButton key="btn-save-playfield-to-image" href="#"
-                                       datatest="btn-save-playfield-to-image"
-                                       icons={[{ name: 'file_download', size: 30 }]}
-                                       onclick={() => {
-                                           function downloadURI(uri: string, name: string) {
-                                               const link = document.createElement('a');
-                                               if (link == null) {
-                                                   throw new Error('Unexpected: Failed to create an a-element');
+                        {screen === Screens.Reader || screen === Screens.Editor ?
+                            <SettingButton key="btn-save-playfield-to-image" href="#"
+                                           datatest="btn-save-playfield-to-image"
+                                           icons={[{ name: 'file_download', size: 30 }]}
+                                           onclick={() => {
+                                               function downloadURI(uri: string, name: string) {
+                                                   const link = document.createElement('a');
+                                                   if (link == null) {
+                                                       throw new Error('Unexpected: Failed to create an a-element');
+                                                   }
+
+                                                   link.download = name;
+                                                   link.href = uri;
+                                                   document.body.appendChild(link);
+                                                   link.click();
+                                                   document.body.removeChild(link);
                                                }
 
-                                               link.download = name;
-                                               link.href = uri;
-                                               document.body.appendChild(link);
-                                               link.click();
-                                               document.body.removeChild(link);
-                                           }
+                                               function savePlayfieldToImage(
+                                                   config: { x: number, y: number, width: number, height: number },
+                                               ) {
+                                                   const dataURL = resources.konva.stage.toDataURL(config);
+                                                   if (dataURL != null) {
+                                                       downloadURI(dataURL, 'playfield_fumen.png');
+                                                   } else {
+                                                       M.toast({
+                                                           html: 'Failed to download image',
+                                                           classes: 'top-toast',
+                                                           displayLength: 5000,
+                                                       });
+                                                   }
+                                               }
 
-                                           function savePlayfieldToImage() {
-                                               const dataURL = resources.konva.stage.toDataURL();
-                                               if (dataURL != null) {
-                                                   downloadURI(dataURL, 'playfield_fumen.png');
-                                               } else {
-                                                   M.toast({
-                                                       html: 'Failed to download image',
-                                                       classes: 'top-toast',
-                                                       displayLength: 5000,
+                                               switch (screen) {
+                                               case Screens.Reader: {
+                                                   const layout = getReaderFieldLayout({
+                                                       ...display,
+                                                       topLeftY: getNavigatorHeight(platform),
                                                    });
+                                                   savePlayfieldToImage({
+                                                       ...layout.topLeft,
+                                                       ...layout.size,
+                                                   });
+                                                   break;
                                                }
-                                           }
+                                               case Screens.Editor: {
+                                                   const layout = getEditorFieldLayout({
+                                                       ...display,
+                                                       topLeftY: getNavigatorHeight(platform),
+                                                   });
+                                                   savePlayfieldToImage({
+                                                       ...layout.topLeft,
+                                                       ...layout.size,
+                                                   });
+                                                   break;
+                                               }
+                                               }
 
-                                           savePlayfieldToImage();
-                                           actions.closeMenuModal();
-                                       }}>
-                            {i18n.Menu.Buttons.SavePlayfieldToImage()}
-                        </SettingButton>
+                                               actions.closeMenuModal();
+                                           }}>
+                                {i18n.Menu.Buttons.SavePlayfieldToImage()}
+                            </SettingButton>
+                            : undefined}
 
                         <SettingButton key="btn-open-fumen" datatest="btn-open-fumen" href="#"
                                        icons={[{ name: 'open_in_new', size: 32.3 }]}

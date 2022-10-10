@@ -1,11 +1,11 @@
-import { Coordinate, Size } from './commons';
+import { Coordinate, getNavigatorHeight, Size } from './commons';
 import { View } from 'hyperapp';
 import { resources, State } from '../states';
 import { Actions } from '../actions';
 import { div } from '@hyperapp/html';
 import { KonvaCanvas } from '../components/konva_canvas';
 import { comment } from '../components/comment';
-import { CommentType, isMinoPiece, Platforms, Screens } from '../lib/enums';
+import { CommentType, isMinoPiece, Screens } from '../lib/enums';
 import { EventCanvas } from '../components/event/event_canvas';
 import { Box } from '../components/box';
 import { ColorPalette, decidePieceColor, Palette } from '../lib/colors';
@@ -14,6 +14,11 @@ import { ReaderTools } from '../components/tools/reader_tools';
 import { HighlightType } from '../state_types';
 import { page_slider } from '../components/page_slider';
 import { navigatorElement } from './navigator';
+
+interface FieldLayout {
+    topLeft: Coordinate;
+    size: Size;
+}
 
 interface ReaderLayout {
     canvas: {
@@ -46,7 +51,44 @@ interface ReaderLayout {
     };
 }
 
-const getLayout = (
+export const getFieldLayout = (
+    { topLeftY, width, height }: { topLeftY: number, width: number, height: number },
+): FieldLayout => {
+    const commentHeight = 35;
+    const toolsHeight = 50;
+    const borderWidthBottomField = 2.4;
+
+    // キャンバスの大きさ
+    const canvasSize = {
+        width,
+        height: height - (toolsHeight + commentHeight + topLeftY),
+    };
+
+    // フィールドのブロックサイズ
+    const blockSize = Math.min(
+        Math.floor(Math.min(canvasSize.height / 23.5, canvasSize.width / 10)) - 2,
+        (canvasSize.width / 16),
+    );
+
+    // フィールドの大きさ
+    const fieldSize = {
+        width: (blockSize + 1) * 10 + 1,
+        height: (blockSize + 1) * 23.5 + 1 + borderWidthBottomField + 1,
+    };
+
+    // フィールドの左上
+    const fieldTopLeft = {
+        x: (canvasSize.width - fieldSize.width) / 2,
+        y: (canvasSize.height - fieldSize.height) / 2,
+    };
+
+    return {
+        topLeft: fieldTopLeft,
+        size: fieldSize,
+    };
+};
+
+export const getLayout = (
     { topLeftY, width, height }: { topLeftY: number, width: number, height: number },
 ): ReaderLayout => {
     const commentHeight = 35;
@@ -251,7 +293,7 @@ export const getComment = (state: State, actions: Actions, layout: ReaderLayout)
 };
 
 export const view: View<State, Actions> = (state, actions) => {
-    const navigatorHeight = state.platform === Platforms.PC ? 30 : 0;
+    const navigatorHeight = getNavigatorHeight(state.platform);
 
     // 初期化
     const layout = getLayout({

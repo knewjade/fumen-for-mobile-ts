@@ -77,7 +77,7 @@ export enum CommentType {
 
 export enum Platforms {
     PC = 'PC',
-    Mobile = 'Mobile',  // Smart Phone or Table
+    Mobile = 'Mobile',  // Smart Phone or Tablet
 }
 
 export function parsePieceName(piece: Piece) {
