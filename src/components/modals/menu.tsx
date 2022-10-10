@@ -123,8 +123,8 @@ export const MenuModal: Component<MenuProps> = (
                             {i18n.Menu.Buttons.New()}
                         </SettingButton>
 
-                        <SettingButton key="btn-file-download" href="#"
-                                       datatest="btn-file-download"
+                        <SettingButton key="btn-save-playfield-to-image" href="#"
+                                       datatest="btn-save-playfield-to-image"
                                        icons={[{ name: 'file_download', size: 30 }]}
                                        onclick={() => {
                                            function downloadURI(uri: string, name: string) {
@@ -140,16 +140,21 @@ export const MenuModal: Component<MenuProps> = (
                                                document.body.removeChild(link);
                                            }
 
-                                           const dataURL = resources.konva.stage.toDataURL();
-                                           if (dataURL != null) {
-                                               downloadURI(dataURL, 'playfield_fumen.png');
-                                           } else {
-                                               M.toast({
-                                                   html: 'Failed to download image',
-                                                   classes: 'top-toast',
-                                                   displayLength: 5000,
-                                               });
+                                           function savePlayfieldToImage() {
+                                               const dataURL = resources.konva.stage.toDataURL();
+                                               if (dataURL != null) {
+                                                   downloadURI(dataURL, 'playfield_fumen.png');
+                                               } else {
+                                                   M.toast({
+                                                       html: 'Failed to download image',
+                                                       classes: 'top-toast',
+                                                       displayLength: 5000,
+                                                   });
+                                               }
                                            }
+
+                                           savePlayfieldToImage();
+                                           actions.closeMenuModal();
                                        }}>
                             {i18n.Menu.Buttons.SavePlayfieldToImage()}
                         </SettingButton>
