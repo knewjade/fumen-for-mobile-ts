@@ -79,7 +79,7 @@ export class HyperStage {
         if (this.stage !== undefined) {
             return this.stage.toDataURL({
                 ...config,
-                pixelRatio: 2,
+                pixelRatio: 4,
             });
         }
         return null;
