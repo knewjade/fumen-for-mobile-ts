@@ -38,6 +38,9 @@ export const resources = {
             Off: () => 'Off',
             On: () => 'On',
         },
+        Gradient: {
+            Title: 'Adding a marker to the surface of the block',
+        },
         Buttons: {
             Save: 'Save',
             Cancel: 'Cancel',

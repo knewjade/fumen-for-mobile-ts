@@ -5,10 +5,10 @@ import { Actions } from '../actions';
 import { div } from '@hyperapp/html';
 import { KonvaCanvas } from '../components/konva_canvas';
 import { comment } from '../components/comment';
-import { CommentType, isMinoPiece, Screens } from '../lib/enums';
+import { CommentType, GradientPattern, isMinoPiece, Piece, Screens } from '../lib/enums';
 import { EventCanvas } from '../components/event/event_canvas';
 import { Box } from '../components/box';
-import { ColorPalette, decidePieceColor, Palette } from '../lib/colors';
+import { ColorPalette, decideMarkPieceColor, decidePieceColor, Palette } from '../lib/colors';
 import { Field } from '../components/field';
 import { ReaderTools } from '../components/tools/reader_tools';
 import { HighlightType } from '../state_types';
@@ -194,6 +194,18 @@ const Events = (state: State, actions: Actions, layout: any) => {
 };
 
 const ScreenField = (state: State, actions: Actions, layout: any) => {
+    const getGradientPattern = (piece: Piece | 'inference') => {
+        if (piece === 'inference') {
+            return GradientPattern.None;
+        }
+        const gradient = state.mode.gradient[piece];
+
+        if (gradient) {
+            return gradient;
+        }
+        return GradientPattern.None;
+    };
+
     const getChildren = () => {
         return [   // canvas:Field とのマッピング用仮想DOM
             KonvaCanvas({  // canvas空間のみ
@@ -203,6 +215,7 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
             }),
 
             Field({
+                getGradientPattern,
                 fieldMarginWidth: layout.field.bottomBorderWidth,
                 topLeft: layout.field.topLeft,
                 blockSize: layout.field.blockSize,
@@ -222,6 +235,10 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
                     color: decidePieceColor(state.hold, HighlightType.Highlight2, state.fumen.guideLineColor),
                     size: layout.hold.boxSize / 4 - 1,
                 } : undefined,
+                mark: isMinoPiece(state.hold) ? {
+                    type: getGradientPattern(state.hold),
+                    color: decideMarkPieceColor(state.hold, state.fumen.guideLineColor),
+                } : undefined,
             }) : undefined as any,
 
             // Nexts
@@ -235,6 +252,10 @@ const ScreenField = (state: State, actions: Actions, layout: any) => {
                         type: value,
                         color: decidePieceColor(value, HighlightType.Highlight2, state.fumen.guideLineColor),
                         size: layout.nexts.boxSize / 4 - 1,
+                    } : undefined,
+                    mark: isMinoPiece(value) ? {
+                        type: getGradientPattern(value),
+                        color: decideMarkPieceColor(value, state.fumen.guideLineColor),
                     } : undefined,
                 });
             }),

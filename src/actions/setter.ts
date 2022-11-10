@@ -1,6 +1,6 @@
 import { NextState } from './commons';
 import { action, main } from '../actions';
-import { FieldConstants, isInPlayField, Piece } from '../lib/enums';
+import { FieldConstants, isInPlayField, isMinoPiece, Piece } from '../lib/enums';
 import { Block, HighlightType } from '../state_types';
 import { Move, Page } from '../lib/fumen/types';
 import { inferPiece } from '../lib/inference';
@@ -25,6 +25,10 @@ export interface SetterActions {
     setHold: (data: { hold?: Piece }) => action;
     setNext: (data: { next?: Piece[] }) => action;
 }
+
+const isMarkablePiece = (piece: Piece | 'inference') => {
+    return piece !== 'inference' ? isMinoPiece(piece) : false;
+};
 
 export const setterActions: Readonly<SetterActions> = {
     setPages: ({ pages, open = true }) => (state): NextState => {
@@ -84,6 +88,11 @@ export const setterActions: Readonly<SetterActions> = {
     ) => (): NextState => {
         const drawnField: Block[] = field.concat();
 
+        // マークを追加できるピースを選択
+        for (const block of drawnField) {
+            block.markable = isMarkablePiece(block.piece);
+        }
+
         // ゴーストの計算
         // 操作しているミノに重ならないように先に計算する
         let ghostY: number | undefined = undefined;
@@ -109,7 +118,11 @@ export const setterActions: Readonly<SetterActions> = {
             const positions = getBlockPositions(piece, move.rotation, move.coordinate.x, move.coordinate.y);
             for (const [x, y] of positions) {
                 if (isInPlayField(x, y)) {
-                    drawnField[x + y * 10] = { piece, highlight: HighlightType.Highlight2 };
+                    drawnField[x + y * 10] = {
+                        piece,
+                        highlight: HighlightType.Highlight2,
+                        markable: isMarkablePiece(piece),
+                    };
                 }
             }
         }
@@ -170,6 +183,7 @@ export const setterActions: Readonly<SetterActions> = {
                     ...field[inference],
                     piece,
                     highlight: HighlightType.Highlight2,
+                    markable: isMarkablePiece(piece),
                 };
             }
         } else {
@@ -194,7 +208,7 @@ export const setterActions: Readonly<SetterActions> = {
         };
     },
     setSentLine: ({ sentLine }) => (): NextState => {
-        return { sentLine };
+        return { sentLine: sentLine.map(block => ({ ...block, markable: isMarkablePiece(block.piece) })) };
     },
     setHold: ({ hold }) => (): NextState => {
         return { hold };

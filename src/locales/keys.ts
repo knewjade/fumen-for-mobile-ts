@@ -43,6 +43,9 @@ export const i18n = {
             Off: () => t('UserSettings.Loop.Off'),
             On: () => t('UserSettings.Loop.On'),
         },
+        Gradient: {
+            Title: () => t('UserSettings.Gradient.Title'),
+        },
         Buttons: {
             Save: () => t('UserSettings.Buttons.Save'),
             Cancel: () => t('UserSettings.Buttons.Cancel'),

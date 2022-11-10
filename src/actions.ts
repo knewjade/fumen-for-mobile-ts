@@ -144,6 +144,11 @@ const loadUserSettings = () => {
         updated = true;
     }
 
+    if (settings.gradient !== undefined) {
+        main.changeGradient({ gradientStr: settings.gradient });
+        updated = true;
+    }
+
     if (updated) {
         main.reopenCurrentPage();
     }

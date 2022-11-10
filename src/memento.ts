@@ -144,6 +144,7 @@ export const memento = (() => {
 interface UserSettings {
     ghostVisible: boolean;
     loop: boolean;
+    gradient: string;  // Pieceの順に数字で保存する e.g., 112233001
 }
 
 const safer = {
@@ -181,6 +182,7 @@ export const localStorageWrapper = {
         return {
             ghostVisible: safer.boolean(obj.ghostVisible),
             loop: safer.boolean(obj.loop),
+            gradient: safer.string(obj.gradient),
         };
     },
 };
