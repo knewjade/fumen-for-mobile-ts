@@ -135,7 +135,7 @@ export const UserSettingsModal: Component<UserSettingsModalProps> = (
                                 const name = `group${piece}`;
                                 const selected = gradient[index] || '0';
                                 const params = [
-                                    { label: 'None', value: `${GradientPattern.None}` },
+                                    { label: '■', value: `${GradientPattern.None}` },
                                     { label: '●', value: `${GradientPattern.Circle}` },
                                     { label: '/', value: `${GradientPattern.Line}` },
                                     { label: '◢', value: `${GradientPattern.Triangle}` },
@@ -149,9 +149,7 @@ export const UserSettingsModal: Component<UserSettingsModalProps> = (
                                 });
 
                                 return div([
-                                    <div style={
-                                        style({ display: 'inline-block', width: px(10), marginRight: px(10) })
-                                    }>{parsePieceName(piece)}</div>,
+                                    <div>{parsePieceName(piece)}</div>,
                                     ...labels,
                                 ]);
                             })}
