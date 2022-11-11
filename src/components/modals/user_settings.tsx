@@ -136,9 +136,10 @@ export const UserSettingsModal: Component<UserSettingsModalProps> = (
                                 const selected = gradient[index] || '0';
                                 const params = [
                                     { label: '■', value: `${GradientPattern.None}` },
-                                    { label: '●', value: `${GradientPattern.Circle}` },
-                                    { label: '/', value: `${GradientPattern.Line}` },
                                     { label: '◢', value: `${GradientPattern.Triangle}` },
+                                    { label: '/', value: `${GradientPattern.Line}` },
+                                    { label: '●', value: `${GradientPattern.Circle}` },
+
                                 ];
                                 const labels = params.map(({ label, value }) => {
                                     return <label>
