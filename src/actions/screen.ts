@@ -1,8 +1,9 @@
 import { NextState, sequence } from './commons';
 import { action, actions, main } from '../actions';
-import { CommentType, ModeTypes, Piece, Screens, TouchTypes } from '../lib/enums';
+import { CommentType, gradientPatternFrom, ModeTypes, Piece, Screens, TouchTypes } from '../lib/enums';
 import { resources, State } from '../states';
 import { animationActions } from './animation';
+import { gradientPieces } from './user_settings';
 
 export interface ScreenActions {
     changeToReaderScreen: () => action;
@@ -23,6 +24,7 @@ export interface ScreenActions {
     changeCommentMode: (data: { type: CommentType }) => action;
     changeGhostVisible: (data: { visible: boolean }) => action;
     changeLoop: (data: { enable: boolean }) => action;
+    changeGradient: (data: { gradientStr: string }) => action;
 }
 
 export const modeActions: Readonly<ScreenActions> = {
@@ -161,6 +163,25 @@ export const modeActions: Readonly<ScreenActions> = {
                     mode: {
                         ...state.mode,
                         loop: enable,
+                    },
+                };
+            },
+        ]);
+    },
+    changeGradient: ({ gradientStr }) => (state): NextState => {
+        let str = gradientStr;
+        const gradientObj: State['mode']['gradient'] = {};
+        for (const piece of gradientPieces) {
+            gradientObj[piece] = gradientPatternFrom(str[0] || '0');
+            str = str.substring(1);
+        }
+
+        return sequence(state, [
+            (state) => {
+                return {
+                    mode: {
+                        ...state.mode,
+                        gradient: gradientObj,
                     },
                 };
             },

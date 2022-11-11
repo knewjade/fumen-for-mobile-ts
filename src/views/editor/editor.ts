@@ -1,4 +1,4 @@
-import { CommentType, ModeTypes, Screens } from '../../lib/enums';
+import { CommentType, GradientPattern, ModeTypes, Piece, Screens } from '../../lib/enums';
 import { Coordinate, getNavigatorHeight, Size } from '../commons';
 import { View } from 'hyperapp';
 import { resources, State } from '../../states';
@@ -191,6 +191,18 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
     // テト譜の仕様により、最初のページのフラグが全体に反映される
     const guideLineColor = state.fumen.pages[0] !== undefined ? state.fumen.pages[0].flags.colorize : true;
 
+    const getGradientPattern = (piece: Piece | 'inference') => {
+        if (piece === 'inference') {
+            return GradientPattern.None;
+        }
+        const gradient = state.mode.gradient[piece];
+
+        if (gradient) {
+            return gradient;
+        }
+        return GradientPattern.None;
+    };
+
     const getChildren = () => {
         const getMode = () => {
             switch (state.mode.type) {
@@ -288,6 +300,7 @@ const ScreenField = (state: State, actions: Actions, layout: EditorLayout) => {
             }),
 
             Field({
+                getGradientPattern,
                 fieldMarginWidth: layout.field.bottomBorderWidth,
                 topLeft: layout.field.topLeft,
                 blockSize: layout.field.blockSize,

@@ -80,6 +80,24 @@ export enum Platforms {
     Mobile = 'Mobile',  // Smart Phone or Tablet
 }
 
+export enum GradientPattern {
+    None = 0,
+    Line = 1,
+    Triangle = 2,
+    Circle = 3,
+}
+
+export function gradientPatternFrom(value: string): GradientPattern | undefined {
+    switch (value) {
+    case '0':
+    case '1':
+    case '2':
+    case '3':
+        return parseInt(value, 10) as GradientPattern;
+    }
+    return undefined;
+}
+
 export function parsePieceName(piece: Piece) {
     switch (piece) {
     case Piece.I:

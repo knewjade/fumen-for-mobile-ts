@@ -2,23 +2,28 @@ import { Component, px, style } from '../../lib/types';
 import { h } from 'hyperapp';
 import { resources } from '../../states';
 import { i18n } from '../../locales/keys';
+import { div } from '@hyperapp/html';
+import { gradientPieces } from '../../actions/user_settings';
+import { GradientPattern, parsePieceName } from '../../lib/enums';
 
 declare const M: any;
 
 interface UserSettingsModalProps {
     ghostVisible: boolean;
     loop: boolean;
+    gradient: string;
     actions: {
         closeUserSettingsModal: () => void;
         commitUserSettings: () => void;
         copyUserSettingsToTemporary: () => void;
         keepGhostVisible: (data: { visible: boolean }) => void;
         keepLoop: (data: { enable: boolean }) => void;
+        keepGradient: (data: { gradient: string }) => void;
     };
 }
 
 export const UserSettingsModal: Component<UserSettingsModalProps> = (
-    { ghostVisible, loop, actions },
+    { ghostVisible, loop, gradient, actions },
 ) => {
     const oncreate = (element: HTMLDivElement) => {
         const instance = M.Modal.init(element, {
@@ -29,6 +34,9 @@ export const UserSettingsModal: Component<UserSettingsModalProps> = (
 
         actions.copyUserSettingsToTemporary();
         instance.open();
+
+        const elems = document.querySelectorAll('select');
+        M.FormSelect.init(elems);
 
         resources.modals.userSettings = instance;
     };
@@ -78,6 +86,11 @@ export const UserSettingsModal: Component<UserSettingsModalProps> = (
         actions.keepLoop({ enable: target.checked });
     };
 
+    const onchangeGradient = (index: number, value: string) => {
+        const replaced = gradient.substring(0, index) + value + gradient.substring(index + 1, gradient.length);
+        actions.keepGradient({ gradient: replaced });
+    };
+
     return (
         <div key="user-settings-modal-top">
             <div key="mdl-user-settings" datatest="mdl-user-settings"
@@ -113,6 +126,33 @@ export const UserSettingsModal: Component<UserSettingsModalProps> = (
                                 <span class="lever"/>
                                 {i18n.UserSettings.Loop.On()}
                             </label>
+                        </div>
+
+                        <div>
+                            <h6>{i18n.UserSettings.Gradient.Title()}</h6>
+
+                            {gradientPieces.map((piece, index) => {
+                                const name = `group${piece}`;
+                                const selected = gradient[index] || '0';
+                                const params = [
+                                    { label: '■', value: `${GradientPattern.None}` },
+                                    { label: '●', value: `${GradientPattern.Circle}` },
+                                    { label: '/', value: `${GradientPattern.Line}` },
+                                    { label: '◢', value: `${GradientPattern.Triangle}` },
+                                ];
+                                const labels = params.map(({ label, value }) => {
+                                    return <label>
+                                        <input name={name} type="radio" checked={value === selected}
+                                               onchange={() => onchangeGradient(index, value)}/>
+                                        <span style={style({ marginRight: px(20) })}>{label}</span>
+                                    </label>;
+                                });
+
+                                return div([
+                                    <div>{parsePieceName(piece)}</div>,
+                                    ...labels,
+                                ]);
+                            })}
                         </div>
                     </div>
                 </div>

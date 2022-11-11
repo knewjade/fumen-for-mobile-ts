@@ -1,4 +1,13 @@
-import { AnimationState, CommentType, ModeTypes, Piece, Platforms, Screens, TouchTypes } from './lib/enums';
+import {
+    AnimationState,
+    CommentType,
+    GradientPattern,
+    ModeTypes,
+    Piece,
+    Platforms,
+    Screens,
+    TouchTypes,
+} from './lib/enums';
 import { HyperStage } from './lib/hyper';
 import { Box } from './components/box';
 import { PageEnv } from './env';
@@ -54,6 +63,7 @@ export interface State {
         userSettings: {
             ghostVisible: boolean;
             loop: boolean;
+            gradient: string;
         };
     };
     handlers: {
@@ -74,6 +84,9 @@ export interface State {
         comment: CommentType;
         ghostVisible: boolean;
         loop: boolean;
+        gradient: {
+            [piece in Piece]?: GradientPattern;
+        };
     };
     history: {
         undoCount: number;
@@ -143,6 +156,7 @@ export const initState: Readonly<State> = {
         userSettings: {
             ghostVisible: true,
             loop: false,
+            gradient: '0000000',
         },
     },
     handlers: {
@@ -163,6 +177,7 @@ export const initState: Readonly<State> = {
         comment: CommentType.Writable,
         ghostVisible: true,
         loop: false,
+        gradient: {},
     },
     history: {
         undoCount: 0,

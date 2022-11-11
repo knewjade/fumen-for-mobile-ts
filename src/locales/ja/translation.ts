@@ -34,6 +34,9 @@ export const resources = {
             Off: () => '無効',
             On: () => '有効',
         },
+        Gradient: {
+            Title: 'ブロックの表面のマーク',
+        },
         Buttons: {
             Save: '保存',
             Cancel: 'キャンセル',
